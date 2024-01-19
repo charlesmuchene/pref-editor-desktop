@@ -2,7 +2,7 @@ package com.charlesmuchene.prefedit.resources
 
 import java.util.*
 
-object TextBundle {
+class TextBundle {
 
     private val texts: Properties? by lazy(::loadText)
 
@@ -15,10 +15,24 @@ object TextBundle {
         }
     }
 
-    private const val DEFAULT_MESSAGE = "--"
-    private const val BUNDLE_NAME = "TextBundle.properties"
+    companion object {
+        private const val DEFAULT_MESSAGE = "--"
+        private const val BUNDLE_NAME = "TextBundle.properties"
+    }
 }
 
-enum class TextKey(val key: String) {
+interface TextKey {
+    val key: String
+}
+
+enum class AppKey(override val key: String) : TextKey {
     Title(key = "app.title")
+}
+
+enum class HomeKey(override val key: String) : TextKey {
+    UnknownBridgeStatus(key = "home.unknown.bridge.status"),
+    UnavailableBridgeStatus(key = "home.unavailable.bridge.status"),
+    EmptyDeviceList(key = "home.empty.device.list"),
+    DeviceListError(key = "home.device.list.error"),
+    ConnectedDevices(key = "home.connected.devices"),
 }

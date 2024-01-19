@@ -2,35 +2,44 @@
 
 package com.charlesmuchene.prefedit
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import com.charlesmuchene.prefedit.bridge.Bridge
+import com.charlesmuchene.prefedit.providers.LocalBridge
+import com.charlesmuchene.prefedit.providers.LocalBundle
+import com.charlesmuchene.prefedit.resources.AppKey.Title
 import com.charlesmuchene.prefedit.resources.TextBundle
-import com.charlesmuchene.prefedit.resources.TextKey.Title
+import com.charlesmuchene.prefedit.screens.home.Home
+import com.charlesmuchene.prefedit.ui.padding
 
-@Composable
-@Preview
-fun App() {
-    MaterialTheme {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            Text(text = "Shared Preferences Editor", textAlign = TextAlign.Center)
+fun main() = application {
+    val bridge = Bridge()
+
+    val state = rememberWindowState(position = WindowPosition.Aligned(alignment = Alignment.Center))
+    val icon = rememberVectorPainter(Icons.Rounded.Edit)
+
+    initProviders {
+        val bundle = LocalBundle.current
+        Window(state = state, title = bundle[Title], onCloseRequest = ::exitApplication, icon = icon) {
+            Home(bridge = bridge, modifier = Modifier.padding(padding))
         }
     }
 }
 
-fun main() = application {
-    val state = rememberWindowState(position = WindowPosition.Aligned(alignment = Alignment.Center))
-    Window(state = state, title = TextBundle[Title], onCloseRequest = ::exitApplication) {
-        App()
-    }
+@Composable
+private fun initProviders(content: @Composable () -> Unit) {
+    CompositionLocalProvider(
+        LocalBridge provides Bridge(),
+        LocalBundle provides TextBundle(),
+    ) { content() }
 }
