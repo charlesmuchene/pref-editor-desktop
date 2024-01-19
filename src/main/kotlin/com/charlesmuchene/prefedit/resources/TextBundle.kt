@@ -26,7 +26,8 @@ interface TextKey {
 }
 
 enum class AppKey(override val key: String) : TextKey {
-    Title(key = "app.title")
+    Title(key = "app.title"),
+    HomeTitle(key = "app.main.window.title"),
 }
 
 enum class HomeKey(override val key: String) : TextKey {

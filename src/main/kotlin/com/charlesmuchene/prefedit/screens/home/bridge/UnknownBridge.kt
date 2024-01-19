@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.HomeKey
+import com.charlesmuchene.prefedit.ui.padding
 
 @Composable
 fun UnknownBridge(modifier: Modifier = Modifier) {
@@ -21,7 +22,7 @@ fun UnknownBridge(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CircularProgressIndicator()
-        Spacer(modifier = Modifier.width(24.dp))
+        Spacer(modifier = Modifier.width(padding))
         Text(text = bundle[HomeKey.UnknownBridgeStatus], style = typography.h5)
     }
 }
