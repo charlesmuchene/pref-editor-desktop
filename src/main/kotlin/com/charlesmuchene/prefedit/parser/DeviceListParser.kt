@@ -1,13 +1,16 @@
 package com.charlesmuchene.prefedit.parser
 
+import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.Devices
 import okio.BufferedSource
-import java.io.BufferedReader
 
 class DeviceListParser : Parser<Devices> {
 
-    override fun parse(reader: BufferedSource): Devices {
-        return emptyList()
+    override fun parse(source: BufferedSource): Devices {
+        source.readUtf8Line() // discard header
+        val list = mutableListOf<Device>()
+        // TODO Perform regex matching
+        return list
     }
 
 }

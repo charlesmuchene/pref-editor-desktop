@@ -14,13 +14,23 @@ repositories {
     google()
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
     // Note, if you develop a library, you should use compose.desktop.common.
     // compose.desktop.currentOs should be used in launcher-sourceSet
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
-    implementation("com.squareup.okio:okio:3.7.0")
+    implementation(libs.okio)
+
+    testImplementation(libs.kotlin.test)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 compose.desktop {
