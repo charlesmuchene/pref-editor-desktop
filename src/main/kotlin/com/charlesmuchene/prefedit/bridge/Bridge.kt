@@ -24,13 +24,22 @@ class Bridge(private val context: CoroutineContext = Dispatchers.IO + CoroutineN
         val processBuilder = ProcessBuilder(ADB, command.command).apply {
             redirectErrorStream(true)
         }
-        try {
-            val process = processBuilder.start()
-            val source = process.inputStream.source().buffer()
-            Result.success(command.execute(source))
+        val process = try {
+            processBuilder.start()
         } catch (t: Throwable) {
-            Result.failure(t)
+            return@withContext Result.failure(t)
         }
+        process
+            .inputStream
+            .source()
+            .buffer()
+            .use { source ->
+                try {
+                    Result.success(command.execute(source))
+                } catch (t: Throwable) {
+                    Result.failure(t)
+                }
+            }
     }
 
     companion object {
