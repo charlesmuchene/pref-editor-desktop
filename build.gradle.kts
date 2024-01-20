@@ -1,21 +1,27 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    kotlin("jvm")
-    id("org.jetbrains.compose")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.compose.desktop)
 }
 
 group = "com.charlesmuchene.prefedit"
 version = "1.0.0"
 
-repositories {
-    mavenCentral()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-    google()
+kotlin {
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+        vendor = JvmVendorSpec.JETBRAINS
+    }
 }
 
-kotlin {
-    jvmToolchain(17)
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+        vendor = JvmVendorSpec.JETBRAINS
+    }
 }
 
 dependencies {
@@ -24,6 +30,8 @@ dependencies {
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
+    implementation(libs.jewel.standalone)
+    implementation(libs.jewel.deco.win)
     implementation(libs.okio)
 
     testImplementation(libs.kotlin.test)
@@ -37,10 +45,25 @@ compose.desktop {
     application {
         mainClass = "com.charlesmuchene.prefedit.App"
 
+        jvmArgs("-Dorg.jetbrains.jewel.debug=true")
+
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "PrefEdit"
+            packageName = "Preferences Editor"
             packageVersion = "1.0.0"
+            description = "Edit shared preferences"
+            vendor = "Charles Muchene"
+        }
+    }
+
+    tasks {
+        withType<JavaExec> {
+            afterEvaluate {
+                javaLauncher = project.javaToolchains.launcherFor {
+                    languageVersion = JavaLanguageVersion.of(17)
+                    vendor = JvmVendorSpec.JETBRAINS
+                }
+            }
         }
     }
 }
