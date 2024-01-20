@@ -5,11 +5,11 @@ import com.charlesmuchene.prefedit.bridge.BridgeStatus.Unavailable
 import com.charlesmuchene.prefedit.command.Command
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import okio.BufferedSource
 import okio.buffer
 import okio.source
+import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
 class Bridge(private val context: CoroutineContext = Dispatchers.IO + CoroutineName(name = "Bridge")) {
@@ -51,11 +51,10 @@ class Bridge(private val context: CoroutineContext = Dispatchers.IO + CoroutineN
                 .redirectOutput(ProcessBuilder.Redirect.DISCARD)
                 .redirectError(ProcessBuilder.Redirect.DISCARD)
 
-            val async = async { builder.start().waitFor() == 0 }
-
             try {
-                if (async.await()) Available else Unavailable
-            } catch (e: Exception) {
+                builder.start()
+                Available
+            } catch (_: IOException) {
                 Unavailable
             }
         }
