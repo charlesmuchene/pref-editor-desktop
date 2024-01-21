@@ -58,15 +58,17 @@ fun main() {
             val state = rememberWindowState(position = Aligned(alignment = Alignment.Center))
             val painter by rememberIconPainter(name = "app")
             val bundle = LocalBundle.current
+            val title = bundle[Title]
             DecoratedWindow(
                 state = state,
                 icon = painter,
+                title = title,
                 onCloseRequest = ::exitApplication,
             ) {
                 TitleBar(
                     gradientStartColor = teal,
                     modifier = Modifier.newFullscreenControls()
-                ) { Text(text = bundle[Title]) }
+                ) { Text(text = title) }
                 Home(modifier = Modifier.padding(padding), viewModel = HomeViewModel(scope = scope))
             }
         }
