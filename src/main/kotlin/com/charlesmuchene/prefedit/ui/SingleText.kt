@@ -24,14 +24,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.TextKey
+import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 fun SingleText(key: TextKey, modifier: Modifier = Modifier) {
-    val bundle = LocalBundle.current
-    val text = bundle[key]
+    val text = LocalBundle.current[key]
 
-    Box(modifier = modifier.fillMaxSize().padding(top = padding), contentAlignment = Alignment.TopCenter) {
-        Text(text = text)
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = text, style = PrefEditFonts.heading)
     }
 }
