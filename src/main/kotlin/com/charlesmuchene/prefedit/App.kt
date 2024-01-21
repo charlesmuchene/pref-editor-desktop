@@ -19,9 +19,7 @@
 package com.charlesmuchene.prefedit
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.WindowPosition.Aligned
@@ -31,9 +29,10 @@ import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.extensions.rememberIconPainter
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
-import com.charlesmuchene.prefedit.resources.AppKey
+import com.charlesmuchene.prefedit.resources.AppKey.Title
 import com.charlesmuchene.prefedit.resources.TextBundle
 import com.charlesmuchene.prefedit.screens.home.Home
+import com.charlesmuchene.prefedit.screens.home.HomeViewModel
 import com.charlesmuchene.prefedit.ui.padding
 import com.charlesmuchene.prefedit.ui.theme.teal
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -48,12 +47,14 @@ import org.jetbrains.jewel.ui.ComponentStyling
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.window.DecoratedWindow
 import org.jetbrains.jewel.window.TitleBar
+import org.jetbrains.jewel.window.newFullscreenControls
 import org.jetbrains.jewel.window.styling.DecoratedWindowStyle
 import org.jetbrains.jewel.window.styling.TitleBarStyle
 
 fun main() {
     application {
-        provideAppState(isDark = true) {
+        val scope = rememberCoroutineScope()
+        provideAppState {
             val state = rememberWindowState(position = Aligned(alignment = Alignment.Center))
             val painter by rememberIconPainter(name = "app")
             val bundle = LocalBundle.current
@@ -62,15 +63,20 @@ fun main() {
                 icon = painter,
                 onCloseRequest = ::exitApplication,
             ) {
-                TitleBar(gradientStartColor = teal) { Text(text = bundle[AppKey.Title]) }
-                Home(modifier = Modifier.padding(padding))
+                TitleBar(
+                    gradientStartColor = teal,
+                    modifier = Modifier.newFullscreenControls()
+                ) { Text(text = bundle[Title]) }
+                Home(modifier = Modifier.padding(padding), viewModel = HomeViewModel(scope = scope))
             }
         }
     }
 }
 
 @Composable
-private fun provideAppState(isDark: Boolean, content: @Composable () -> Unit) {
+private fun provideAppState(content: @Composable () -> Unit) {
+    val viewModel = remember { AppViewModel() }
+    val isDark = viewModel.theme.isDark()
     CompositionLocalProvider(
         LocalBridge provides Bridge(),
         LocalBundle provides TextBundle(),

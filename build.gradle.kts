@@ -55,6 +55,12 @@ compose.desktop {
             packageVersion = "1.0.0"
             description = "Edit shared preferences"
             vendor = "Charles Muchene"
+
+            macOS {
+                dockName = "Preferences Editor"
+                bundleID = "com.charlesmuchene.prefedit"
+                // iconFile = file(path = "icons/prefedit.icns") TODO Provide icons
+            }
         }
     }
 
@@ -65,6 +71,7 @@ compose.desktop {
                     languageVersion = JavaLanguageVersion.of(17)
                     vendor = JvmVendorSpec.JETBRAINS
                 }
+                setExecutable(javaLauncher.map { it.executablePath.asFile.absoluteFile }.get())
             }
         }
     }

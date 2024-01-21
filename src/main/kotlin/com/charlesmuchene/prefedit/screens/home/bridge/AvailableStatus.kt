@@ -39,7 +39,7 @@ import com.charlesmuchene.prefedit.ui.padding
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun AvailableBridge(modifier: Modifier = Modifier) {
+fun AvailableBridge(viewModel: HomeViewModel, modifier: Modifier = Modifier) {
 
     val bridge = LocalBridge.current
     var result by remember(bridge) {
@@ -53,7 +53,7 @@ fun AvailableBridge(modifier: Modifier = Modifier) {
     when {
         result.isSuccess -> result.getOrNull()?.let { devices ->
             if (devices.isEmpty()) NoDevices(modifier = modifier)
-            else DeviceList(devices = devices, modifier = modifier)
+            else DeviceList(devices = devices, modifier = modifier, viewModel = viewModel)
         } ?: DeviceListError(modifier = modifier)
 
         result.isFailure -> DeviceListError(modifier = modifier)
@@ -62,10 +62,10 @@ fun AvailableBridge(modifier: Modifier = Modifier) {
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun DeviceList(devices: Devices, modifier: Modifier = Modifier) {
+private fun DeviceList(devices: Devices, viewModel: HomeViewModel, modifier: Modifier = Modifier) {
     val bundle = LocalBundle.current
     val header = bundle[HomeKey.ConnectedDevices]
-    val viewModel = HomeViewModel()
+
     LazyColumn(modifier = modifier.fillMaxSize().padding(vertical = padding)) {
         stickyHeader {
             Text(text = header)
@@ -91,7 +91,7 @@ private fun DeviceRow(device: Device, viewModel: HomeViewModel, modifier: Modifi
         Column(modifier = modifier) {
             Text(text = device.serial)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = viewModel.formatAttributes(device))
+            Text(text = viewModel.formatDeviceAttributes(device))
         }
     }
 }

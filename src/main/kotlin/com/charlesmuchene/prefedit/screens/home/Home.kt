@@ -29,7 +29,7 @@ import kotlinx.coroutines.Dispatchers
 
 @Preview
 @Composable
-fun Home(modifier: Modifier = Modifier) {
+fun Home(viewModel: HomeViewModel, modifier: Modifier = Modifier) {
     var bridgeStatus by remember { mutableStateOf<BridgeStatus>(Unknown) }
 
     LaunchedEffect(Unit) {
@@ -37,8 +37,8 @@ fun Home(modifier: Modifier = Modifier) {
     }
 
     when (bridgeStatus) {
-        Unavailable -> UnavailableBridge(modifier = modifier)
-        Available -> AvailableBridge(modifier = modifier)
         Unknown -> UnknownBridge(modifier = modifier)
+        Unavailable -> UnavailableBridge(modifier = modifier)
+        Available -> AvailableBridge(modifier = modifier, viewModel = viewModel)
     }
 }
