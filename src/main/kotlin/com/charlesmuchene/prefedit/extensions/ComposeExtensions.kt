@@ -20,8 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.painter.Painter
 import com.charlesmuchene.prefedit.resources.TextBundle
+import com.charlesmuchene.prefedit.ui.icon.IconExtension
+import com.charlesmuchene.prefedit.ui.icon.IconExtension.SVG
 import org.jetbrains.jewel.ui.painter.rememberResourcePainterProvider
 
 @Composable
-fun rememberIconPainter(icon: String): State<Painter> =
-    rememberResourcePainterProvider(path = "icons/$icon", iconClass = TextBundle::class.java).getPainter()
+fun rememberIconPainter(name: String, extension: IconExtension = SVG): State<Painter> =
+    rememberResourcePainterProvider(
+        iconClass = TextBundle::class.java,
+        path = "icons/$name.${extension.extension}",
+    ).getPainter()

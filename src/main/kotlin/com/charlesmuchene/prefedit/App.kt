@@ -55,7 +55,7 @@ fun main() {
     application {
         provideAppState(isDark = true) {
             val state = rememberWindowState(position = Aligned(alignment = Alignment.Center))
-            val painter by rememberIconPainter(icon = "app.svg")
+            val painter by rememberIconPainter(name = "app")
             val bundle = LocalBundle.current
             DecoratedWindow(
                 state = state,
