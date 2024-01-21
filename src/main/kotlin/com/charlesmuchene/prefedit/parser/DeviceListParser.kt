@@ -28,11 +28,12 @@ class DeviceListParser : Parser<Devices> {
         source.readUtf8Line() // discard header
         while (true) {
             val line = source.readUtf8Line() ?: break
-            add(parseDevice(line = line))
+            if (line.isNotBlank()) add(parseDevice(line = line))
         }
     }
 
     private fun parseDevice(line: String): Device {
+        require(line.isNotBlank())
         val tokens = line.split(" ").filterNot(String::isEmpty)
         val attributes = tokens.subList(fromIndex = 2, toIndex = tokens.size).map {
             val value = it.split(":")

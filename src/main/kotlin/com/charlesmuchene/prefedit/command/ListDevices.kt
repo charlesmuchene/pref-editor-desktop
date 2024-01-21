@@ -21,5 +21,5 @@ import com.charlesmuchene.prefedit.parser.DeviceListParser
 import com.charlesmuchene.prefedit.parser.Parser
 
 data class ListDevices(override val parser: Parser<Devices> = DeviceListParser()) : Command<Devices> {
-    override val command: String = "devices -l"
+    override val commands: Array<String> = arrayOf("devices", "-l")
 }

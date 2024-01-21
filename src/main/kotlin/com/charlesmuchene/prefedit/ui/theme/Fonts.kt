@@ -17,6 +17,12 @@
 package com.charlesmuchene.prefedit.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 
-val teal = Color(red = 0, green = 50, blue = 50)
-val green = Color(color = 0xFF08A045)
+object PrefEditFonts {
+    val heading = TextStyle.Default.copy(fontSize = TextUnit(value = 24f, type = TextUnitType.Sp))
+    val primary = TextStyle.Default.copy(fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))
+    val secondary = TextStyle.Default.copy(fontSize = TextUnit(value = 12f, type = TextUnitType.Sp), color = Color.LightGray)
+}

@@ -17,14 +17,24 @@
 package com.charlesmuchene.prefedit.screens.home.bridge
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.data.Device
@@ -35,7 +45,14 @@ import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailableViewModel.UIState
 import com.charlesmuchene.prefedit.ui.SingleText
 import com.charlesmuchene.prefedit.ui.padding
+import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts.heading
+import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts.primary
+import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts.secondary
+import com.charlesmuchene.prefedit.ui.theme.green
+import org.jetbrains.jewel.ui.Orientation
+import org.jetbrains.jewel.ui.component.Divider
 import org.jetbrains.jewel.ui.component.Text
+import java.awt.Cursor
 
 @Composable
 fun BridgeAvailable(modifier: Modifier = Modifier) {
@@ -57,38 +74,59 @@ fun BridgeAvailable(modifier: Modifier = Modifier) {
 }
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
 private fun DeviceList(devices: Devices, viewModel: BridgeAvailableViewModel, modifier: Modifier = Modifier) {
-    val bundle = LocalBundle.current
-    val header = bundle[HomeKey.ConnectedDevices]
+    val header = LocalBundle.current[HomeKey.ConnectedDevices]
+    val state = rememberLazyListState()
 
-    LazyColumn(modifier = modifier.fillMaxSize().padding(vertical = padding)) {
-        stickyHeader {
-            Text(text = header)
-            Spacer(modifier = Modifier.height(padding))
-        }
-        items(items = devices, key = Device::serial) { device ->
-            DeviceRow(device = device, viewModel = viewModel)
+    Column(modifier = modifier.fillMaxSize()) {
+        Text(text = header, style = heading)
+        Spacer(modifier = Modifier.height(4.dp))
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(modifier = Modifier.padding(end = 18.dp), state = state) {
+                items(items = devices, key = Device::serial) { device ->
+                    DeviceRow(device = device, viewModel = viewModel)
+                }
+            }
+            VerticalScrollbar(
+                adapter = rememberScrollbarAdapter(scrollState = state),
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+            )
         }
     }
 }
 
 @Composable
 private fun DeviceRow(device: Device, viewModel: BridgeAvailableViewModel, modifier: Modifier = Modifier) {
-    val color = if (device.type == Device.Type.Device) Color.Green
-    else Color.LightGray
+    val statusColor = viewModel.statusColor(device = device)
     val radius = with(LocalDensity.current) { 12.dp.toPx() }
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Canvas(modifier = Modifier.size(12.dp).weight(0.1f)) {
-            drawCircle(color = color, radius = radius)
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
+
+    Column(modifier = modifier) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .pointerOnHover()
+                .hoverable(interactionSource)
+                .drawBehind {
+                    if (isHovered)
+                        drawRoundRect(green, cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(width = 2f))
+                }
+                .padding(vertical = 12.dp)
+        ) {
+            Canvas(modifier = Modifier.size(12.dp).weight(0.1f)) {
+                drawCircle(color = statusColor, radius = radius)
+            }
+            Spacer(modifier = Modifier.width(4.dp))
+            Column(modifier = Modifier.weight(0.85f)) {
+                Text(text = device.serial, style = primary)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = viewModel.formatDeviceAttributes(device), style = secondary, color = Color.DarkGray)
+                Spacer(modifier = Modifier.height(4.dp))
+            }
         }
-        Spacer(modifier = Modifier.width(4.dp))
-        Column(modifier = modifier) {
-            Text(text = device.serial)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = viewModel.formatDeviceAttributes(device))
-        }
+        Divider(orientation = Orientation.Horizontal, color = Color.LightGray.copy(alpha = 0.5f), startIndent = padding)
     }
 }
 
@@ -101,3 +139,6 @@ private fun DeviceListError(modifier: Modifier = Modifier) {
 private fun NoDevices(modifier: Modifier = Modifier) {
     SingleText(key = HomeKey.EmptyDeviceList, modifier = modifier)
 }
+
+@Composable
+private fun Modifier.pointerOnHover() = pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))

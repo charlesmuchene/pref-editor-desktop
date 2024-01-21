@@ -16,9 +16,11 @@
 
 package com.charlesmuchene.prefedit.screens.home.bridge
 
+import androidx.compose.ui.graphics.Color
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.ListDevices
 import com.charlesmuchene.prefedit.data.Device
+import com.charlesmuchene.prefedit.ui.theme.green
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,9 +36,7 @@ class BridgeAvailableViewModel(
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     init {
-        launch {
-            _uiState.emit(determineState())
-        }
+        launch { _uiState.emit(determineState()) }
     }
 
     private suspend fun determineState(): UIState {
@@ -51,9 +51,15 @@ class BridgeAvailableViewModel(
         }
     }
 
-    fun formatDeviceAttributes(device: Device): String = device.attributes.joinToString(transform = { attribute ->
-        "${attribute.name}:${attribute.value}"
-    })
+    fun formatDeviceAttributes(device: Device): String = device.attributes.joinToString(
+        separator = " ",
+        transform = { attribute ->
+            "${attribute.name}:${attribute.value}"
+        }
+    )
+
+    fun statusColor(device: Device): Color = if (device.type == Device.Type.Device) green
+    else Color.Red
 
     sealed interface UIState {
         data object Error : UIState
