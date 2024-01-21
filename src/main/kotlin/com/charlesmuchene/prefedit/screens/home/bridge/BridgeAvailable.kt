@@ -17,21 +17,11 @@
 package com.charlesmuchene.prefedit.screens.home.bridge
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.data.Device
@@ -41,17 +31,10 @@ import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailableViewModel.UIState
-import com.charlesmuchene.prefedit.ui.Listing
-import com.charlesmuchene.prefedit.ui.SingleText
-import com.charlesmuchene.prefedit.ui.Toast
-import com.charlesmuchene.prefedit.ui.padding
+import com.charlesmuchene.prefedit.ui.*
 import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle.primary
 import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle.secondary
-import com.charlesmuchene.prefedit.ui.theme.green
-import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.Divider
 import org.jetbrains.jewel.ui.component.Text
-import java.awt.Cursor
 
 @Composable
 fun BridgeAvailable(modifier: Modifier = Modifier) {
@@ -95,34 +78,17 @@ private fun DeviceRow(device: Device, viewModel: BridgeAvailableViewModel, modif
     val statusColor = viewModel.statusColor(device = device)
     val radius = with(LocalDensity.current) { 12.dp.toPx() }
 
-    val interactionSource = remember { MutableInteractionSource() }
-    val isHovered by interactionSource.collectIsHoveredAsState()
-
-    Column(modifier = modifier) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .pointerOnHover()
-                .hoverable(interactionSource)
-                .drawBehind {
-                    if (isHovered)
-                        drawRoundRect(green, cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(width = 2f))
-                }
-                .padding(vertical = 12.dp)
-                .clickable { viewModel.deviceSelected(device = device) }
-        ) {
-            Canvas(modifier = Modifier.size(12.dp).weight(0.1f)) {
-                drawCircle(color = statusColor, radius = radius)
-            }
-            Spacer(modifier = Modifier.width(4.dp))
-            Column(modifier = Modifier.weight(0.85f)) {
-                Text(text = device.serial, style = primary)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = viewModel.formatDeviceAttributes(device), style = secondary, color = Color.DarkGray)
-                Spacer(modifier = Modifier.height(4.dp))
-            }
+    ListingRow(item = device, dividerIndentation = padding, modifier = modifier, onClick = viewModel::deviceSelected) {
+        Canvas(modifier = Modifier.size(12.dp).weight(0.1f)) {
+            drawCircle(color = statusColor, radius = radius)
         }
-        Divider(orientation = Orientation.Horizontal, color = Color.LightGray.copy(alpha = 0.5f), startIndent = padding)
+        Spacer(modifier = Modifier.width(4.dp))
+        Column(modifier = Modifier.weight(0.85f)) {
+            Text(text = device.serial, style = primary)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = viewModel.formatDeviceAttributes(device), style = secondary, color = Color.DarkGray)
+            Spacer(modifier = Modifier.height(4.dp))
+        }
     }
 }
 
@@ -135,6 +101,3 @@ private fun DeviceListError(modifier: Modifier = Modifier) {
 private fun NoDevices(modifier: Modifier = Modifier) {
     SingleText(key = HomeKey.EmptyDeviceList, modifier = modifier)
 }
-
-@Composable
-private fun Modifier.pointerOnHover() = pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))

@@ -16,7 +16,9 @@
 
 package com.charlesmuchene.prefedit.navigation
 
+import com.charlesmuchene.prefedit.data.Device
+
 interface Screen
 
 data object Home : Screen
-data object Apps : Screen
+data class Apps(val device: Device) : Screen

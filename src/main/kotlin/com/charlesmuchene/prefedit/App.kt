@@ -25,16 +25,18 @@ import com.charlesmuchene.prefedit.app.scaffold
 import com.charlesmuchene.prefedit.navigation.Apps
 import com.charlesmuchene.prefedit.navigation.Home
 import com.charlesmuchene.prefedit.providers.LocalAppState
-import com.charlesmuchene.prefedit.screens.device.AppScreen
+import com.charlesmuchene.prefedit.screens.device.AppsScreen
 import com.charlesmuchene.prefedit.screens.home.Home
 
 fun main() {
     application {
         scaffold { modifier ->
+            // TODO Pills for navigation: for device -> app -> prefs
+            // TODO Animate screen by sliding-left
             val screen by LocalAppState.current.screen.collectAsState()
             when (screen) {
                 Home -> Home(modifier = modifier)
-                Apps -> AppScreen(modifier = modifier)
+                is Apps -> AppsScreen(modifier = modifier, device = (screen as Apps).device)
             }
         }
     }

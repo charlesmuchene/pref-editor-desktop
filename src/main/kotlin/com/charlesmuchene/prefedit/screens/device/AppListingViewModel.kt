@@ -19,31 +19,31 @@ package com.charlesmuchene.prefedit.screens.device
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.ListApps
 import com.charlesmuchene.prefedit.data.App
+import com.charlesmuchene.prefedit.data.Device
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class AppListingViewModel(private val bridge: Bridge, private val scope: CoroutineScope): CoroutineScope by scope {
+class AppListingViewModel(private val device: Device, private val bridge: Bridge, private val scope: CoroutineScope) :
+    CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     init {
-        launch {
-            val state = getApps()
-            _uiState.emit(state)
-        }
+        launch { _uiState.emit(getApps()) }
     }
 
     private suspend fun getApps(): UIState {
-        val result = bridge.execute(command = ListApps())
+        val result = bridge.execute(command = ListApps(device = device))
         return when {
-            result.isSuccess -> result.getOrNull()?.let {apps ->
+            result.isSuccess -> result.getOrNull()?.let { apps ->
                 if (apps.isEmpty()) UIState.Error
                 else UIState.Apps(apps)
             } ?: UIState.Error
+
             else -> UIState.Error
         }
     }

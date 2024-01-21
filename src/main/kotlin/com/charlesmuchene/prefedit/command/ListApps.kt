@@ -17,9 +17,10 @@
 package com.charlesmuchene.prefedit.command
 
 import com.charlesmuchene.prefedit.data.Apps
+import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.parser.AppListParser
 import com.charlesmuchene.prefedit.parser.Parser
 
-data class ListApps(override val parser: Parser<Apps> = AppListParser()) : Command<Apps> {
-    override val command: String = "shell pm list packages -3 --user 0"
+data class ListApps(val device: Device, override val parser: Parser<Apps> = AppListParser()) : Command<Apps> {
+    override val command: String = "-s ${device.serial} shell pm list packages -3 --user 0"
 }

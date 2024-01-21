@@ -16,27 +16,31 @@
 
 package com.charlesmuchene.prefedit.screens.device
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Apps
+import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.DeviceKey
 import com.charlesmuchene.prefedit.screens.device.AppListingViewModel.UIState
 import com.charlesmuchene.prefedit.ui.Listing
+import com.charlesmuchene.prefedit.ui.ListingRow
 import com.charlesmuchene.prefedit.ui.Loading
 import com.charlesmuchene.prefedit.ui.SingleText
 import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun AppScreen(modifier: Modifier = Modifier) {
+fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
     val bridge = LocalBridge.current
-    val viewModel = remember { AppListingViewModel(bridge = bridge, scope = scope) }
+    val viewModel = remember { AppListingViewModel(bridge = bridge, scope = scope, device = device) }
     val state by viewModel.uiState.collectAsState()
 
     when (state) {
@@ -61,7 +65,7 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 private fun AppListing(apps: Apps, modifier: Modifier = Modifier) {
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
     Listing(items = apps, header = header, modifier = modifier) {
-        items(items = apps, key = { App::packageName }) { app ->
+        items(items = apps, key = App::packageName) { app ->
             AppRow(app = app)
         }
     }
@@ -69,5 +73,7 @@ private fun AppListing(apps: Apps, modifier: Modifier = Modifier) {
 
 @Composable
 private fun AppRow(app: App, modifier: Modifier = Modifier) {
-    Text(text = app.packageName, style = PrefEditTextStyle.primary, modifier = modifier)
+    ListingRow(item = app, modifier = modifier) {
+        Text(text = app.packageName, style = PrefEditTextStyle.primary, modifier = Modifier.padding(4.dp))
+    }
 }
