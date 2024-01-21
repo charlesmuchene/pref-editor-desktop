@@ -19,43 +19,80 @@
 package com.charlesmuchene.prefedit
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.WindowPosition.Aligned
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.charlesmuchene.prefedit.bridge.Bridge
+import com.charlesmuchene.prefedit.extensions.rememberIconPainter
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
-import com.charlesmuchene.prefedit.resources.AppKey.Title
+import com.charlesmuchene.prefedit.resources.AppKey
 import com.charlesmuchene.prefedit.resources.TextBundle
 import com.charlesmuchene.prefedit.screens.home.Home
 import com.charlesmuchene.prefedit.ui.padding
+import com.charlesmuchene.prefedit.ui.theme.teal
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.foundation.theme.ThemeDefinition
+import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
+import org.jetbrains.jewel.intui.standalone.theme.darkThemeDefinition
+import org.jetbrains.jewel.intui.standalone.theme.lightThemeDefinition
+import org.jetbrains.jewel.intui.window.decoratedWindow
+import org.jetbrains.jewel.intui.window.styling.dark
+import org.jetbrains.jewel.intui.window.styling.light
+import org.jetbrains.jewel.ui.ComponentStyling
+import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.window.DecoratedWindow
+import org.jetbrains.jewel.window.TitleBar
+import org.jetbrains.jewel.window.styling.DecoratedWindowStyle
+import org.jetbrains.jewel.window.styling.TitleBarStyle
 
-fun main() = application {
-    val bridge = Bridge()
-
-    val state = rememberWindowState(position = WindowPosition.Aligned(alignment = Alignment.Center))
-    val icon = rememberVectorPainter(Icons.Rounded.Edit)
-
-    initProviders {
-        val bundle = LocalBundle.current
-        Window(state = state, title = bundle[Title], onCloseRequest = ::exitApplication, icon = icon) {
-            Home(bridge = bridge, modifier = Modifier.padding(padding))
+fun main() {
+    application {
+        provideAppState(isDark = true) {
+            val state = rememberWindowState(position = Aligned(alignment = Alignment.Center))
+            val painter by rememberIconPainter(icon = "app.svg")
+            val bundle = LocalBundle.current
+            DecoratedWindow(
+                state = state,
+                icon = painter,
+                onCloseRequest = ::exitApplication,
+            ) {
+                TitleBar(gradientStartColor = teal) { Text(text = bundle[AppKey.Title]) }
+                Home(modifier = Modifier.padding(padding))
+            }
         }
     }
 }
 
 @Composable
-private fun initProviders(content: @Composable () -> Unit) {
+private fun provideAppState(isDark: Boolean, content: @Composable () -> Unit) {
     CompositionLocalProvider(
         LocalBridge provides Bridge(),
         LocalBundle provides TextBundle(),
-    ) { content() }
+    ) {
+        IntUiTheme(
+            content = content,
+            theme = theme(isDark = isDark),
+            styling = ComponentStyling.decoratedWindow(
+                windowStyle = windowStyle(isDark = isDark),
+                titleBarStyle = titleBarStyle(isDark = isDark),
+            ),
+        )
+    }
 }
+
+@Composable
+private fun theme(isDark: Boolean): ThemeDefinition =
+    if (isDark) JewelTheme.darkThemeDefinition() else JewelTheme.lightThemeDefinition()
+
+@Composable
+private fun windowStyle(isDark: Boolean): DecoratedWindowStyle =
+    if (isDark) DecoratedWindowStyle.dark() else DecoratedWindowStyle.light()
+
+@Composable
+private fun titleBarStyle(isDark: Boolean): TitleBarStyle = if (isDark) TitleBarStyle.dark() else TitleBarStyle.light()

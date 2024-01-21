@@ -17,16 +17,14 @@
 package com.charlesmuchene.prefedit.screens.home.bridge
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme.typography
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.ui.padding
+import org.jetbrains.jewel.ui.component.CircularProgressIndicator
+import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 fun UnknownBridge(modifier: Modifier = Modifier) {
@@ -39,6 +37,6 @@ fun UnknownBridge(modifier: Modifier = Modifier) {
     ) {
         CircularProgressIndicator()
         Spacer(modifier = Modifier.width(padding))
-        Text(text = bundle[HomeKey.UnknownBridgeStatus], style = typography.h5)
+        Text(text = bundle[HomeKey.UnknownBridgeStatus])
     }
 }

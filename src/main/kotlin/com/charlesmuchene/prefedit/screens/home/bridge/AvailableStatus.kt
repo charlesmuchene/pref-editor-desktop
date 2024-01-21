@@ -21,9 +21,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.MaterialTheme.typography
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +36,7 @@ import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.screens.home.HomeViewModel
 import com.charlesmuchene.prefedit.ui.SingleText
 import com.charlesmuchene.prefedit.ui.padding
+import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 fun AvailableBridge(modifier: Modifier = Modifier) {
@@ -70,7 +68,7 @@ private fun DeviceList(devices: Devices, modifier: Modifier = Modifier) {
     val viewModel = HomeViewModel()
     LazyColumn(modifier = modifier.fillMaxSize().padding(vertical = padding)) {
         stickyHeader {
-            Text(text = header, style = typography.h5)
+            Text(text = header)
             Spacer(modifier = Modifier.height(padding))
         }
         items(items = devices, key = Device::serial) { device ->
@@ -81,7 +79,7 @@ private fun DeviceList(devices: Devices, modifier: Modifier = Modifier) {
 
 @Composable
 private fun DeviceRow(device: Device, viewModel: HomeViewModel, modifier: Modifier = Modifier) {
-    val color = if (device.type == Device.Type.Device) MaterialTheme.colors.primaryVariant
+    val color = if (device.type == Device.Type.Device) Color.Green
     else Color.LightGray
     val radius = with(LocalDensity.current) { 12.dp.toPx() }
 
@@ -91,9 +89,9 @@ private fun DeviceRow(device: Device, viewModel: HomeViewModel, modifier: Modifi
         }
         Spacer(modifier = Modifier.width(4.dp))
         Column(modifier = modifier) {
-            Text(text = device.serial, style = typography.h6)
+            Text(text = device.serial)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = viewModel.formatAttributes(device), style = typography.subtitle1)
+            Text(text = viewModel.formatAttributes(device))
         }
     }
 }

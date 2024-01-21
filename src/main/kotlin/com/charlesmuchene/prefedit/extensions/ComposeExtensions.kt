@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.ui.theme
+package com.charlesmuchene.prefedit.extensions
 
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.ui.graphics.painter.Painter
+import com.charlesmuchene.prefedit.resources.TextBundle
+import org.jetbrains.jewel.ui.painter.rememberResourcePainterProvider
 
-val teal = Color(red = 0, green = 50, blue = 50)
+@Composable
+fun rememberIconPainter(icon: String): State<Painter> =
+    rememberResourcePainterProvider(path = "icons/$icon", iconClass = TextBundle::class.java).getPainter()

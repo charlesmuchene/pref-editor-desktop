@@ -29,9 +29,11 @@ dependencies {
     // compose.desktop.currentOs should be used in launcher-sourceSet
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
-    implementation(compose.desktop.currentOs)
+    implementation(compose.desktop.currentOs) {
+        exclude(group = "org.jetbrains.compose.material") // we're jeweling up! :D
+    }
     implementation(libs.jewel.standalone)
-    implementation(libs.jewel.deco.win)
+    implementation(libs.jewel.deco.window)
     implementation(libs.okio)
 
     testImplementation(libs.kotlin.test)

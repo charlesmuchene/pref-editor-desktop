@@ -8,7 +8,7 @@ compose-desktop = "1.6.0-dev1369"
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 jewel-standalone = { module = "org.jetbrains.jewel:jewel-int-ui-standalone", version.ref = "jewel" }
-jewel-deco-win = { group = "org.jetbrains.jewel", name = "jewel-int-ui-decorated-window", version.ref = "jewel" }
+jewel-deco-window = { group = "org.jetbrains.jewel", name = "jewel-int-ui-decorated-window", version.ref = "jewel" }
 
 [plugins]
 compose-desktop = { id = "org.jetbrains.compose", version.ref = "compose-desktop" }
