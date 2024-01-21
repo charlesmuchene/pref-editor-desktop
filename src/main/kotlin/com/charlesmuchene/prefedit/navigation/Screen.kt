@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.home.bridge
+package com.charlesmuchene.prefedit.navigation
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.charlesmuchene.prefedit.providers.LocalBundle
-import com.charlesmuchene.prefedit.resources.HomeKey
-import com.charlesmuchene.prefedit.ui.Loading
+interface Screen
 
-@Composable
-fun BridgeStatusLoading(modifier: Modifier = Modifier) {
-    val text = LocalBundle.current[HomeKey.UnknownBridgeStatus]
-    Loading(text = text, modifier = modifier)
-}
+data object Home : Screen
+data object Apps : Screen

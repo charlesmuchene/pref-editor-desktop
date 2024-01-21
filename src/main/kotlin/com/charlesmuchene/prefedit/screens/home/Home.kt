@@ -17,23 +17,23 @@
 package com.charlesmuchene.prefedit.screens.home
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefedit.bridge.BridgeStatus.*
 import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailable
-import com.charlesmuchene.prefedit.screens.home.bridge.BridgeStatusLoading
+import com.charlesmuchene.prefedit.screens.home.bridge.BridgeStatusUnknown
 import com.charlesmuchene.prefedit.screens.home.bridge.BridgeUnavailable
 
 @Preview
 @Composable
-fun Home(viewModel: HomeViewModel, modifier: Modifier = Modifier) {
+fun Home(modifier: Modifier = Modifier) {
+    val scope = rememberCoroutineScope()
+    val viewModel = remember { HomeViewModel(scope = scope) }
     val bridgeStatus by viewModel.bridgeStatus.collectAsState()
 
     when (bridgeStatus) {
         Available -> BridgeAvailable(modifier = modifier)
-        Unknown -> BridgeStatusLoading(modifier = modifier)
+        Unknown -> BridgeStatusUnknown(modifier = modifier)
         Unavailable -> BridgeUnavailable(modifier = modifier)
     }
 }

@@ -14,11 +14,24 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit
+package com.charlesmuchene.prefedit.app
 
+import com.charlesmuchene.prefedit.navigation.Home
+import com.charlesmuchene.prefedit.navigation.Screen
 import com.charlesmuchene.prefedit.ui.theme.PrefEditTheme
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-class AppViewModel {
+class AppState {
+    private val _screen = MutableStateFlow<Screen>(Home)
+
     // TODO Theme components dark
     val theme: PrefEditTheme = PrefEditTheme.Light
+
+    val screen: StateFlow<Screen> = _screen.asStateFlow()
+
+    suspend fun moveTo(screen: Screen) {
+        _screen.emit(screen)
+    }
 }

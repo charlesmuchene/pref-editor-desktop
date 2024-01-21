@@ -19,13 +19,13 @@ package com.charlesmuchene.prefedit.screens.home
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.bridge.BridgeStatus
 import com.charlesmuchene.prefedit.bridge.BridgeStatus.Unknown
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class HomeViewModel(private val scope: CoroutineScope, private val dispatcher: CoroutineDispatcher = Dispatchers.IO) :
-    CoroutineScope by scope + dispatcher {
+class HomeViewModel(private val scope: CoroutineScope) : CoroutineScope by scope {
 
     private val _bridgeStatus = MutableStateFlow<BridgeStatus>(Unknown)
     val bridgeStatus: StateFlow<BridgeStatus> = _bridgeStatus.asStateFlow()

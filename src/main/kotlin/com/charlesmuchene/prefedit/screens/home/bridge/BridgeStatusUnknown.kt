@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.providers
+package com.charlesmuchene.prefedit.screens.home.bridge
 
-import androidx.compose.runtime.compositionLocalOf
-import com.charlesmuchene.prefedit.app.AppState
-import com.charlesmuchene.prefedit.bridge.Bridge
-import com.charlesmuchene.prefedit.resources.TextBundle
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.charlesmuchene.prefedit.providers.LocalBundle
+import com.charlesmuchene.prefedit.resources.HomeKey
+import com.charlesmuchene.prefedit.ui.Loading
 
-val LocalAppState = compositionLocalOf<AppState> { TODO("No app state provided") }
-val LocalBundle = compositionLocalOf<TextBundle> { TODO("No bundle provided") }
-val LocalBridge = compositionLocalOf<Bridge> { TODO("No bridge provided") }
+@Composable
+fun BridgeStatusUnknown(modifier: Modifier = Modifier) {
+    val text = LocalBundle.current[HomeKey.UnknownBridgeStatus]
+    Loading(text = text, modifier = modifier)
+}
