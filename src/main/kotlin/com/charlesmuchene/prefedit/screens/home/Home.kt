@@ -17,28 +17,23 @@
 package com.charlesmuchene.prefedit.screens.home
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.charlesmuchene.prefedit.bridge.Bridge
-import com.charlesmuchene.prefedit.bridge.BridgeStatus
 import com.charlesmuchene.prefedit.bridge.BridgeStatus.*
-import com.charlesmuchene.prefedit.screens.home.bridge.AvailableBridge
-import com.charlesmuchene.prefedit.screens.home.bridge.UnavailableBridge
-import com.charlesmuchene.prefedit.screens.home.bridge.UnknownBridge
-import kotlinx.coroutines.Dispatchers
+import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailable
+import com.charlesmuchene.prefedit.screens.home.bridge.BridgeStatusUnknown
+import com.charlesmuchene.prefedit.screens.home.bridge.BridgeUnavailable
 
 @Preview
 @Composable
 fun Home(viewModel: HomeViewModel, modifier: Modifier = Modifier) {
-    var bridgeStatus by remember { mutableStateOf<BridgeStatus>(Unknown) }
-
-    LaunchedEffect(Unit) {
-        bridgeStatus = Bridge.checkBridge(context = coroutineContext + Dispatchers.IO)
-    }
+    val bridgeStatus by viewModel.bridgeStatus.collectAsState()
 
     when (bridgeStatus) {
-        Unknown -> UnknownBridge(modifier = modifier)
-        Unavailable -> UnavailableBridge(modifier = modifier)
-        Available -> AvailableBridge(modifier = modifier, viewModel = viewModel)
+        Available -> BridgeAvailable(modifier = modifier)
+        Unknown -> BridgeStatusUnknown(modifier = modifier)
+        Unavailable -> BridgeUnavailable(modifier = modifier)
     }
 }

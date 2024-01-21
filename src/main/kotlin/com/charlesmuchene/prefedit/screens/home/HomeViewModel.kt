@@ -19,14 +19,13 @@ package com.charlesmuchene.prefedit.screens.home
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.bridge.BridgeStatus
 import com.charlesmuchene.prefedit.bridge.BridgeStatus.Unknown
-import com.charlesmuchene.prefedit.data.Device
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class HomeViewModel(private val scope: CoroutineScope, private val dispatcher: CoroutineDispatcher = Dispatchers.IO) :
-    CoroutineScope by scope + dispatcher{
+    CoroutineScope by scope + dispatcher {
 
     private val _bridgeStatus = MutableStateFlow<BridgeStatus>(Unknown)
     val bridgeStatus: StateFlow<BridgeStatus> = _bridgeStatus.asStateFlow()
@@ -34,8 +33,4 @@ class HomeViewModel(private val scope: CoroutineScope, private val dispatcher: C
     init {
         launch { _bridgeStatus.emit(Bridge.checkBridge()) }
     }
-
-    fun formatDeviceAttributes(device: Device): String = device.attributes.joinToString(transform = { attribute ->
-        "${attribute.name}:${attribute.value}"
-    })
 }

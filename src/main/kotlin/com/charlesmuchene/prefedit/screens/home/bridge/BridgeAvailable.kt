@@ -27,42 +27,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefedit.command.ListDevices
 import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.Devices
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.HomeKey
-import com.charlesmuchene.prefedit.screens.home.HomeViewModel
+import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailableViewModel.UIState
 import com.charlesmuchene.prefedit.ui.SingleText
 import com.charlesmuchene.prefedit.ui.padding
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun AvailableBridge(viewModel: HomeViewModel, modifier: Modifier = Modifier) {
+fun BridgeAvailable(modifier: Modifier = Modifier) {
 
     val bridge = LocalBridge.current
-    var result by remember(bridge) {
-        mutableStateOf<Result<Devices>>(Result.success(emptyList()))
-    }
+    val scope = rememberCoroutineScope()
+    val viewModel = remember { BridgeAvailableViewModel(scope = scope, bridge = bridge) }
+    val state by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        result = bridge.execute(command = ListDevices())
-    }
-
-    when {
-        result.isSuccess -> result.getOrNull()?.let { devices ->
-            if (devices.isEmpty()) NoDevices(modifier = modifier)
-            else DeviceList(devices = devices, modifier = modifier, viewModel = viewModel)
-        } ?: DeviceListError(modifier = modifier)
-
-        result.isFailure -> DeviceListError(modifier = modifier)
+    when (state) {
+        UIState.Error -> DeviceListError(modifier = modifier)
+        UIState.NoDevices -> NoDevices(modifier = modifier)
+        is UIState.Devices -> DeviceList(
+            devices = (state as UIState.Devices).devices,
+            modifier = modifier,
+            viewModel = viewModel
+        )
     }
 }
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun DeviceList(devices: Devices, viewModel: HomeViewModel, modifier: Modifier = Modifier) {
+private fun DeviceList(devices: Devices, viewModel: BridgeAvailableViewModel, modifier: Modifier = Modifier) {
     val bundle = LocalBundle.current
     val header = bundle[HomeKey.ConnectedDevices]
 
@@ -78,7 +74,7 @@ private fun DeviceList(devices: Devices, viewModel: HomeViewModel, modifier: Mod
 }
 
 @Composable
-private fun DeviceRow(device: Device, viewModel: HomeViewModel, modifier: Modifier = Modifier) {
+private fun DeviceRow(device: Device, viewModel: BridgeAvailableViewModel, modifier: Modifier = Modifier) {
     val color = if (device.type == Device.Type.Device) Color.Green
     else Color.LightGray
     val radius = with(LocalDensity.current) { 12.dp.toPx() }

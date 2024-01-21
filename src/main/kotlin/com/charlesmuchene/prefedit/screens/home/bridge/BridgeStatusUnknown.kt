@@ -27,7 +27,7 @@ import org.jetbrains.jewel.ui.component.CircularProgressIndicator
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun UnknownBridge(modifier: Modifier = Modifier) {
+fun BridgeStatusUnknown(modifier: Modifier = Modifier) {
     val bundle = LocalBundle.current
 
     Row(

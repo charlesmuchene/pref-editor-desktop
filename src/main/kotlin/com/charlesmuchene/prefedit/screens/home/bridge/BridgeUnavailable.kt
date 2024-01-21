@@ -22,6 +22,6 @@ import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.ui.SingleText
 
 @Composable
-fun UnavailableBridge(modifier: Modifier = Modifier) {
+fun BridgeUnavailable(modifier: Modifier = Modifier) {
     SingleText(key = HomeKey.UnavailableBridgeStatus, modifier = modifier)
 }
