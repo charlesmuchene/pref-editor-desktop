@@ -28,7 +28,7 @@ import com.charlesmuchene.prefedit.screens.device.AppListingViewModel.UIState
 import com.charlesmuchene.prefedit.ui.Listing
 import com.charlesmuchene.prefedit.ui.Loading
 import com.charlesmuchene.prefedit.ui.SingleText
-import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts
+import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -69,5 +69,5 @@ private fun AppListing(apps: Apps, modifier: Modifier = Modifier) {
 
 @Composable
 private fun AppRow(app: App, modifier: Modifier = Modifier) {
-    Text(text = app.packageName, style = PrefEditFonts.primary, modifier = modifier)
+    Text(text = app.packageName, style = PrefEditTextStyle.primary, modifier = modifier)
 }

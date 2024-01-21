@@ -18,13 +18,12 @@ package com.charlesmuchene.prefedit.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.TextKey
-import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts
+import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -32,6 +31,6 @@ fun SingleText(key: TextKey, modifier: Modifier = Modifier) {
     val text = LocalBundle.current[key]
 
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = text, style = PrefEditFonts.heading)
+        Text(text = text, style = PrefEditTextStyle.heading)
     }
 }

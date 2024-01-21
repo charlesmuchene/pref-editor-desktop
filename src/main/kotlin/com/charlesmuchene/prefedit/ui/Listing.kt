@@ -26,7 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts
+import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -34,7 +34,7 @@ fun <T> Listing(items: List<T>, header: String, modifier: Modifier = Modifier, c
     val state = rememberLazyListState()
 
     Column(modifier = modifier.fillMaxSize()) {
-        Text(text = header, style = PrefEditFonts.heading)
+        Text(text = header, style = PrefEditTextStyle.heading)
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(modifier = Modifier.padding(end = 18.dp), state = state, content = content)

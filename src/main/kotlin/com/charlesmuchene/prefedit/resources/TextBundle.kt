@@ -52,6 +52,8 @@ enum class HomeKey(override val key: String) : TextKey {
     EmptyDeviceList(key = "home.empty.device.list"),
     DeviceListError(key = "home.device.list.error"),
     ConnectedDevices(key = "home.connected.devices"),
+    UnauthorizedDevice(key = "home.device.unauthorized"),
+    UnknownDevice(key = "home.device.unknown"),
 }
 
 enum class DeviceKey(override val key: String) : TextKey {

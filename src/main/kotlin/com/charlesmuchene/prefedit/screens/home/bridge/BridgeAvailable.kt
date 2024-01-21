@@ -17,6 +17,7 @@
 package com.charlesmuchene.prefedit.screens.home.bridge
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -35,15 +36,17 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.Devices
+import com.charlesmuchene.prefedit.providers.LocalAppState
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailableViewModel.UIState
 import com.charlesmuchene.prefedit.ui.Listing
 import com.charlesmuchene.prefedit.ui.SingleText
+import com.charlesmuchene.prefedit.ui.Toast
 import com.charlesmuchene.prefedit.ui.padding
-import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts.primary
-import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts.secondary
+import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle.primary
+import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle.secondary
 import com.charlesmuchene.prefedit.ui.theme.green
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.Divider
@@ -54,8 +57,11 @@ import java.awt.Cursor
 fun BridgeAvailable(modifier: Modifier = Modifier) {
 
     val bridge = LocalBridge.current
+    val bundle = LocalBundle.current
+    val appState = LocalAppState.current
     val scope = rememberCoroutineScope()
-    val viewModel = remember { BridgeAvailableViewModel(scope = scope, bridge = bridge) }
+    val viewModel =
+        remember { BridgeAvailableViewModel(scope = scope, bridge = bridge, appState = appState, bundle = bundle) }
     val state by viewModel.uiState.collectAsState()
 
     when (state) {
@@ -67,6 +73,10 @@ fun BridgeAvailable(modifier: Modifier = Modifier) {
             viewModel = viewModel
         )
     }
+
+    // TODO Collect similar values
+    val message by viewModel.message.collectAsState(initial = null)
+    message?.let { Toast(text = it) }
 }
 
 @Composable
@@ -99,6 +109,7 @@ private fun DeviceRow(device: Device, viewModel: BridgeAvailableViewModel, modif
                         drawRoundRect(green, cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(width = 2f))
                 }
                 .padding(vertical = 12.dp)
+                .clickable { viewModel.deviceSelected(device = device) }
         ) {
             Canvas(modifier = Modifier.size(12.dp).weight(0.1f)) {
                 drawCircle(color = statusColor, radius = radius)

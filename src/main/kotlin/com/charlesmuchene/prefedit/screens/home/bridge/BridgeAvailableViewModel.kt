@@ -17,23 +17,30 @@
 package com.charlesmuchene.prefedit.screens.home.bridge
 
 import androidx.compose.ui.graphics.Color
+import com.charlesmuchene.prefedit.app.AppState
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.ListDevices
 import com.charlesmuchene.prefedit.data.Device
+import com.charlesmuchene.prefedit.data.Device.Type
+import com.charlesmuchene.prefedit.navigation.Apps
+import com.charlesmuchene.prefedit.resources.HomeKey
+import com.charlesmuchene.prefedit.resources.TextBundle
 import com.charlesmuchene.prefedit.ui.theme.green
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class BridgeAvailableViewModel(
     private val bridge: Bridge,
+    private val appState: AppState,
+    private val bundle: TextBundle,
     private val scope: CoroutineScope,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : CoroutineScope by scope + dispatcher {
+) : CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
+    private val _message = MutableSharedFlow<String?>()
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
+    val message: SharedFlow<String?> = _message.asSharedFlow()
 
     init {
         launch { _uiState.emit(determineState()) }
@@ -58,8 +65,18 @@ class BridgeAvailableViewModel(
         }
     )
 
-    fun statusColor(device: Device): Color = if (device.type == Device.Type.Device) green
+    fun statusColor(device: Device): Color = if (device.type == Type.Device) green
     else Color.Red
+
+    fun deviceSelected(device: Device) {
+        launch {
+            when (device.type) {
+                Type.Device -> appState.moveTo(screen = Apps)
+                Type.Unknown -> _message.emit(bundle[HomeKey.UnknownDevice])
+                Type.Unauthorized -> _message.emit(bundle[HomeKey.UnauthorizedDevice])
+            }
+        }
+    }
 
     sealed interface UIState {
         data object Error : UIState
