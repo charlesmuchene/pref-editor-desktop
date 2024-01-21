@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.command
+package com.charlesmuchene.prefedit.screens.home.bridge
 
-import com.charlesmuchene.prefedit.parser.Parser
-import okio.BufferedSource
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.charlesmuchene.prefedit.providers.LocalBundle
+import com.charlesmuchene.prefedit.resources.HomeKey
+import com.charlesmuchene.prefedit.ui.Loading
 
-interface Command<T> {
-    val command: String
-    val parser: Parser<T>
-
-    fun execute(source: BufferedSource): T = parser.parse(source)
+@Composable
+fun BridgeStatusLoading(modifier: Modifier = Modifier) {
+    val text = LocalBundle.current[HomeKey.UnknownBridgeStatus]
+    Loading(text = text, modifier = modifier)
 }

@@ -53,3 +53,9 @@ enum class HomeKey(override val key: String) : TextKey {
     DeviceListError(key = "home.device.list.error"),
     ConnectedDevices(key = "home.connected.devices"),
 }
+
+enum class DeviceKey(override val key: String) : TextKey {
+    AppListingTitle(key = "device.app.listing.title"),
+    AppListingError(key = "device.app.listing.error"),
+    AppListingLoading(key = "device.app.listing.loading"),
+}

@@ -23,7 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefedit.bridge.BridgeStatus.*
 import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailable
-import com.charlesmuchene.prefedit.screens.home.bridge.BridgeStatusUnknown
+import com.charlesmuchene.prefedit.screens.home.bridge.BridgeStatusLoading
 import com.charlesmuchene.prefedit.screens.home.bridge.BridgeUnavailable
 
 @Preview
@@ -33,7 +33,7 @@ fun Home(viewModel: HomeViewModel, modifier: Modifier = Modifier) {
 
     when (bridgeStatus) {
         Available -> BridgeAvailable(modifier = modifier)
-        Unknown -> BridgeStatusUnknown(modifier = modifier)
+        Unknown -> BridgeStatusLoading(modifier = modifier)
         Unavailable -> BridgeUnavailable(modifier = modifier)
     }
 }

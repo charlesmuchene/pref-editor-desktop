@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.home.bridge
+package com.charlesmuchene.prefedit.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.charlesmuchene.prefedit.providers.LocalBundle
-import com.charlesmuchene.prefedit.resources.HomeKey
-import com.charlesmuchene.prefedit.ui.padding
+import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts.primary
 import org.jetbrains.jewel.ui.component.CircularProgressIndicator
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun BridgeStatusUnknown(modifier: Modifier = Modifier) {
-    val bundle = LocalBundle.current
-
+fun Loading(text: String, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.Center,
@@ -37,6 +33,6 @@ fun BridgeStatusUnknown(modifier: Modifier = Modifier) {
     ) {
         CircularProgressIndicator()
         Spacer(modifier = Modifier.width(padding))
-        Text(text = bundle[HomeKey.UnknownBridgeStatus])
+        Text(text = text, style = primary)
     }
 }

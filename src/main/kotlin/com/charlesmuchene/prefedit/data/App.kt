@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.command
+package com.charlesmuchene.prefedit.data
 
-import com.charlesmuchene.prefedit.parser.Parser
-import okio.BufferedSource
+typealias Apps = List<App>
 
-interface Command<T> {
-    val command: String
-    val parser: Parser<T>
-
-    fun execute(source: BufferedSource): T = parser.parse(source)
-}
+data class App(val packageName: String)

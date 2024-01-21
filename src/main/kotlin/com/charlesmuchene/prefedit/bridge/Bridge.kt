@@ -37,7 +37,8 @@ class Bridge(private val context: CoroutineContext = Dispatchers.IO + CoroutineN
      * @return [Result] of [BufferedSource] for parsing
      */
     suspend fun <T> execute(command: Command<T>): Result<T> = withContext(context) {
-        val processBuilder = ProcessBuilder(ADB, *command.commands).apply {
+        val commandTokens = command.command.split(" ").toTypedArray()
+        val processBuilder = ProcessBuilder(ADB, *commandTokens).apply {
             redirectErrorStream(true)
         }
         val process = try {

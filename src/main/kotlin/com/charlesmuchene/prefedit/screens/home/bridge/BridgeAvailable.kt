@@ -17,15 +17,11 @@
 package com.charlesmuchene.prefedit.screens.home.bridge
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,9 +39,9 @@ import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailableViewModel.UIState
+import com.charlesmuchene.prefedit.ui.Listing
 import com.charlesmuchene.prefedit.ui.SingleText
 import com.charlesmuchene.prefedit.ui.padding
-import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts.heading
 import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts.primary
 import com.charlesmuchene.prefedit.ui.theme.PrefEditFonts.secondary
 import com.charlesmuchene.prefedit.ui.theme.green
@@ -76,21 +72,10 @@ fun BridgeAvailable(modifier: Modifier = Modifier) {
 @Composable
 private fun DeviceList(devices: Devices, viewModel: BridgeAvailableViewModel, modifier: Modifier = Modifier) {
     val header = LocalBundle.current[HomeKey.ConnectedDevices]
-    val state = rememberLazyListState()
 
-    Column(modifier = modifier.fillMaxSize()) {
-        Text(text = header, style = heading)
-        Spacer(modifier = Modifier.height(4.dp))
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(modifier = Modifier.padding(end = 18.dp), state = state) {
-                items(items = devices, key = Device::serial) { device ->
-                    DeviceRow(device = device, viewModel = viewModel)
-                }
-            }
-            VerticalScrollbar(
-                adapter = rememberScrollbarAdapter(scrollState = state),
-                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-            )
+    Listing(items = devices, header = header, modifier = modifier) {
+        items(items = devices, key = Device::serial) { device ->
+            DeviceRow(device = device, viewModel = viewModel)
         }
     }
 }
