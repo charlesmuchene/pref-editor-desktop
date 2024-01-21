@@ -19,5 +19,6 @@ package com.charlesmuchene.prefedit
 import com.charlesmuchene.prefedit.ui.theme.PrefEditTheme
 
 class AppViewModel {
-    val theme: PrefEditTheme = PrefEditTheme.Dark
+    // TODO Theme components dark
+    val theme: PrefEditTheme = PrefEditTheme.Light
 }
