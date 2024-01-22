@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class PreferencesParserTest {
+class SuccessParserTest {
 
     private lateinit var parser: PrefParser
 

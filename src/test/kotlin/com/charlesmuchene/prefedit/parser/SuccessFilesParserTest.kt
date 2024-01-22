@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class PreferencesFilesParserTest {
+class SuccessFilesParserTest {
 
     private lateinit var parser: PrefFilesParser
 
