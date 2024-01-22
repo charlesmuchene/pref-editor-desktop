@@ -32,7 +32,7 @@ class PrefFilesParser : Parser<PrefFiles> {
     private fun parseFile(line: String): PrefFile? {
         if (line.isBlank()) return null
         if (line == NO_PREFS || line == NO_FILES) return null
-        return null
+        return PrefFile(name = line, type = PrefFile.Type.KEY_VALUE)
     }
 
     private companion object {
