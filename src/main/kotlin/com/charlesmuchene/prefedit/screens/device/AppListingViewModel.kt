@@ -16,17 +16,24 @@
 
 package com.charlesmuchene.prefedit.screens.device
 
+import com.charlesmuchene.prefedit.app.AppState
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.ListApps
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
+import com.charlesmuchene.prefedit.navigation.PrefList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class AppListingViewModel(private val device: Device, private val bridge: Bridge, private val scope: CoroutineScope) :
+class AppListingViewModel(
+    private val appState: AppState,
+    private val device: Device,
+    private val bridge: Bridge,
+    private val scope: CoroutineScope,
+) :
     CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
@@ -49,7 +56,9 @@ class AppListingViewModel(private val device: Device, private val bridge: Bridge
     }
 
     fun appSelected(app: App) {
-
+        launch {
+            appState.moveTo(screen = PrefList(app = app, device = device))
+        }
     }
 
     sealed interface UIState {

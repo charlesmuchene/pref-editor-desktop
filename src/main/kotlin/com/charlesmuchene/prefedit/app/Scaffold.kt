@@ -30,7 +30,6 @@ import com.charlesmuchene.prefedit.extensions.rememberIconPainter
 import com.charlesmuchene.prefedit.providers.LocalAppState
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
-import com.charlesmuchene.prefedit.resources.AppKey
 import com.charlesmuchene.prefedit.resources.ApplicationKey
 import com.charlesmuchene.prefedit.resources.TextBundle
 import com.charlesmuchene.prefedit.ui.padding
@@ -67,8 +66,7 @@ fun ApplicationScope.scaffold(content: @Composable (Modifier) -> Unit) {
                 gradientStartColor = teal,
                 modifier = Modifier.newFullscreenControls()
             ) { Text(text = title) }
-            val modifier = Modifier.padding(padding)
-            content(modifier)
+            content(Modifier.padding(padding))
         }
     }
 }

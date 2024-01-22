@@ -24,9 +24,13 @@ import androidx.compose.ui.window.application
 import com.charlesmuchene.prefedit.app.scaffold
 import com.charlesmuchene.prefedit.navigation.Apps
 import com.charlesmuchene.prefedit.navigation.Home
+import com.charlesmuchene.prefedit.navigation.PrefEdit
+import com.charlesmuchene.prefedit.navigation.PrefList
 import com.charlesmuchene.prefedit.providers.LocalAppState
+import com.charlesmuchene.prefedit.screens.app.PrefListing
 import com.charlesmuchene.prefedit.screens.device.AppsScreen
 import com.charlesmuchene.prefedit.screens.home.Home
+import com.charlesmuchene.prefedit.screens.prefs.PrefEditor
 
 fun main() {
     application {
@@ -37,6 +41,20 @@ fun main() {
             when (screen) {
                 Home -> Home(modifier = modifier)
                 is Apps -> AppsScreen(modifier = modifier, device = (screen as Apps).device)
+                is PrefList -> {
+                    val prefList = (screen as PrefList)
+                    PrefListing(modifier = modifier, device = prefList.device, app = prefList.app)
+                }
+
+                is PrefEdit -> {
+                    val prefEditor = (screen as PrefEdit)
+                    PrefEditor(
+                        modifier = modifier,
+                        app = prefEditor.app,
+                        file = prefEditor.file,
+                        device = prefEditor.device,
+                    )
+                }
             }
         }
     }

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Apps
 import com.charlesmuchene.prefedit.data.Device
+import com.charlesmuchene.prefedit.providers.LocalAppState
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.DeviceKey
@@ -40,13 +41,16 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
     val bridge = LocalBridge.current
-    val viewModel = remember { AppListingViewModel(bridge = bridge, scope = scope, device = device) }
+    val appState = LocalAppState.current
+    val viewModel = remember {
+        AppListingViewModel(bridge = bridge, scope = scope, device = device, appState = appState)
+    }
     val state by viewModel.uiState.collectAsState()
 
     when (state) {
         UIState.Loading -> LoadingApps(modifier = modifier)
         UIState.Error -> LoadingAppError(modifier = modifier)
-        is UIState.Apps -> AppListing(apps = (state as UIState.Apps).apps, modifier = modifier)
+        is UIState.Apps -> AppListing(apps = (state as UIState.Apps).apps, modifier = modifier, viewModel = viewModel)
     }
 }
 
@@ -62,18 +66,18 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AppListing(apps: Apps, modifier: Modifier = Modifier) {
+private fun AppListing(apps: Apps, modifier: Modifier = Modifier, viewModel: AppListingViewModel) {
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
     Listing(header = header, modifier = modifier) {
         items(items = apps, key = App::packageName) { app ->
-            AppRow(app = app)
+            AppRow(app = app, onClick = viewModel::appSelected)
         }
     }
 }
 
 @Composable
-private fun AppRow(app: App, modifier: Modifier = Modifier) {
-    ListingRow(item = app, modifier = modifier) {
+private fun AppRow(app: App, modifier: Modifier = Modifier, onClick: (App) -> Unit) {
+    ListingRow(item = app, modifier = modifier, onClick = onClick) {
         Text(text = app.packageName, style = PrefEditTextStyle.primary, modifier = Modifier.padding(4.dp))
     }
 }

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.navigation
+package com.charlesmuchene.prefedit.screens.prefs
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.PrefFile
 
-interface Screen
+@Composable
+fun PrefEditor(file: PrefFile, app: App, device: Device, modifier: Modifier = Modifier) {
 
-data object Home : Screen
-data class Apps(val device: Device) : Screen
-data class PrefList(val app: App, val device: Device) : Screen
-data class PrefEdit(val file: PrefFile, val app: App, val device: Device) : Screen
+}
