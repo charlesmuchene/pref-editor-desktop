@@ -45,8 +45,13 @@ class PrefEditorViewModel(
 
     private suspend fun fetchPreferences(): UIState {
         val result = bridge.execute(command = FetchPref(app = app, device = device, prefFile = prefFile))
-        println(result)
-        return UIState.Loading
+        return when {
+            result.isSuccess -> result.getOrNull()?.let { pref ->
+                UIState.Preferences(pref = pref)
+            } ?: UIState.Error
+
+            else -> UIState.Error
+        }
     }
 
     sealed interface UIState {

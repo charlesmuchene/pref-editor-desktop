@@ -20,9 +20,5 @@ import com.charlesmuchene.prefedit.data.Pref
 import okio.BufferedSource
 
 class PrefParser : Parser<Pref> {
-
-    override fun parse(source: BufferedSource): Pref {
-        // TODO Parse content: from file, stream?
-        return Pref(text = "")
-    }
+    override fun parse(source: BufferedSource): Pref = Pref(text = source.readUtf8())
 }

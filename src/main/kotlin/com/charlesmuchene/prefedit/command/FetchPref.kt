@@ -29,5 +29,6 @@ data class FetchPref(
     private val prefFile: PrefFile,
     override val parser: Parser<Pref> = PrefParser(),
 ) : Command<Pref> {
-    override val command: String = "command-moto-moto"
+    override val command: String =
+        "-s ${device.serial} exec-out run-as ${app.packageName} cat /data/data/${app.packageName}/shared_prefs/${prefFile.name}"
 }
