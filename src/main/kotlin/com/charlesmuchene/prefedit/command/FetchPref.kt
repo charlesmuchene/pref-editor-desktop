@@ -18,7 +18,7 @@ package com.charlesmuchene.prefedit.command
 
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
-import com.charlesmuchene.prefedit.data.Pref
+import com.charlesmuchene.prefedit.data.Preferences
 import com.charlesmuchene.prefedit.data.PrefFile
 import com.charlesmuchene.prefedit.parser.Parser
 import com.charlesmuchene.prefedit.parser.PrefParser
@@ -27,8 +27,8 @@ data class FetchPref(
     private val app: App,
     private val device: Device,
     private val prefFile: PrefFile,
-    override val parser: Parser<Pref> = PrefParser(),
-) : Command<Pref> {
+    override val parser: Parser<Preferences> = PrefParser(),
+) : Command<Preferences> {
     override val command: String =
         "-s ${device.serial} exec-out run-as ${app.packageName} cat /data/data/${app.packageName}/shared_prefs/${prefFile.name}"
 }

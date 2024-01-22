@@ -16,4 +16,4 @@
 
 package com.charlesmuchene.prefedit.data
 
-data class Pref(val text: String)
+data class Preferences(val entries: List<Entry>)

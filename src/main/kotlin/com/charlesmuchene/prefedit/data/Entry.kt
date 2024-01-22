@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.prefs
+package com.charlesmuchene.prefedit.data
 
-import com.charlesmuchene.prefedit.data.Preferences
-import kotlinx.coroutines.CoroutineScope
+sealed interface Entry
 
-class EditorViewModel(private val preferences: Preferences, private val scope: CoroutineScope): CoroutineScope by scope {
-    init {
-        // TODO Bundle file name in pref?
-        println("Editing: $preferences")
-    }
-}
+data class BooleanEntry(val name: String, val value: Boolean) : Entry
+data class StringEntry(val name: String, val value: String) : Entry
+data class FloatEntry(val name: String, val value: Float) : Entry
+data class LongEntry(val name: String, val value: Long) : Entry
+data class IntEntry(val name: String, val value: Int) : Entry
+
+data class SetEntry(val name: String, val entries: List<String>) : Entry

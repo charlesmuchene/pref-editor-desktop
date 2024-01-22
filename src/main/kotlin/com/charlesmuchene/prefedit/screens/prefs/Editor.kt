@@ -20,14 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.charlesmuchene.prefedit.data.Pref
+import com.charlesmuchene.prefedit.data.Preferences
 import com.charlesmuchene.prefedit.resources.PrefKey
 import com.charlesmuchene.prefedit.ui.SingleText
 
 @Composable
-fun Editor(pref: Pref, modifier: Modifier = Modifier) {
+fun Editor(preferences: Preferences, modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
-    val viewModel = remember { EditorViewModel(pref = pref, scope = scope) }
+    val viewModel = remember { EditorViewModel(preferences = preferences, scope = scope) }
     println(viewModel)
     SingleText(key = PrefKey.PrefTitle, modifier = modifier)
 }

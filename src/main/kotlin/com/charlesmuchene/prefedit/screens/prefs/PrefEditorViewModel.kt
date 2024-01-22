@@ -20,7 +20,6 @@ import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.FetchPref
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
-import com.charlesmuchene.prefedit.data.Pref
 import com.charlesmuchene.prefedit.data.PrefFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +46,7 @@ class PrefEditorViewModel(
         val result = bridge.execute(command = FetchPref(app = app, device = device, prefFile = prefFile))
         return when {
             result.isSuccess -> result.getOrNull()?.let { pref ->
-                UIState.Preferences(pref = pref)
+                UIState.Preferences(preferences = pref)
             } ?: UIState.Error
 
             else -> UIState.Error
@@ -57,6 +56,6 @@ class PrefEditorViewModel(
     sealed interface UIState {
         data object Error : UIState
         data object Loading : UIState
-        data class Preferences(val pref: Pref) : UIState
+        data class Preferences(val preferences: com.charlesmuchene.prefedit.data.Preferences) : UIState
     }
 }
