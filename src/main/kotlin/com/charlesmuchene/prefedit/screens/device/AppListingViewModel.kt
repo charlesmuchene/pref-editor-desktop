@@ -57,7 +57,7 @@ class AppListingViewModel(
 
     fun appSelected(app: App) {
         launch {
-            appState.moveTo(screen = PrefList(app = app, device = device))
+            appState.navigateTo(screen = PrefList(app = app, device = device))
         }
     }
 

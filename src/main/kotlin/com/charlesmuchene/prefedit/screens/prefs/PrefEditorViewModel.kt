@@ -14,59 +14,44 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.app
+package com.charlesmuchene.prefedit.screens.prefs
 
-import com.charlesmuchene.prefedit.app.AppState
 import com.charlesmuchene.prefedit.bridge.Bridge
-import com.charlesmuchene.prefedit.command.ListPrefFiles
+import com.charlesmuchene.prefedit.command.FetchPref
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
+import com.charlesmuchene.prefedit.data.Pref
 import com.charlesmuchene.prefedit.data.PrefFile
-import com.charlesmuchene.prefedit.data.PrefFiles
-import com.charlesmuchene.prefedit.navigation.PrefEdit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PrefListingViewModel(
+class PrefEditorViewModel(
     private val app: App,
     private val device: Device,
     private val bridge: Bridge,
-    private val appState: AppState,
-    private val scope: CoroutineScope
+    private val prefFile: PrefFile,
+    private val scope: CoroutineScope,
 ) : CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     init {
-        launch {
-            _uiState.emit(getPrefFiles())
-        }
+        launch { _uiState.emit(fetchPreferences()) }
     }
 
-    private suspend fun getPrefFiles(): UIState {
-        val result = bridge.execute(command = ListPrefFiles(app = app, device = device))
-        return when {
-            result.isSuccess -> result.getOrNull()?.let { prefFiles ->
-                UIState.Files(prefFiles)
-            } ?: UIState.Error
-
-            else -> UIState.Error
-        }
-    }
-
-    fun fileSelected(prefFile: PrefFile) {
-        launch {
-            appState.navigateTo(screen = PrefEdit(prefFile = prefFile, app = app, device = device))
-        }
+    private suspend fun fetchPreferences(): UIState {
+        val result = bridge.execute(command = FetchPref(app = app, device = device, prefFile = prefFile))
+        println(result)
+        return UIState.Loading
     }
 
     sealed interface UIState {
         data object Error : UIState
         data object Loading : UIState
-        data class Files(val files: PrefFiles) : UIState
+        data class Preferences(val pref: Pref) : UIState
     }
 }

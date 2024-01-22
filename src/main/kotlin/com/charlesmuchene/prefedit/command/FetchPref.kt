@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.navigation
+package com.charlesmuchene.prefedit.command
 
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
+import com.charlesmuchene.prefedit.data.Pref
 import com.charlesmuchene.prefedit.data.PrefFile
+import com.charlesmuchene.prefedit.parser.Parser
+import com.charlesmuchene.prefedit.parser.PrefParser
 
-interface Screen
-
-data object Home : Screen
-data class Apps(val device: Device) : Screen
-data class PrefList(val app: App, val device: Device) : Screen
-data class PrefEdit(val prefFile: PrefFile, val app: App, val device: Device) : Screen
+data class FetchPref(
+    private val app: App,
+    private val device: Device,
+    private val prefFile: PrefFile,
+    override val parser: Parser<Pref> = PrefParser(),
+) : Command<Pref> {
+    override val command: String = "command-moto-moto"
+}

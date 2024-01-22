@@ -68,3 +68,9 @@ enum class AppKey(override val key: String) : TextKey {
     PrefListingTitle(key = "app.pref.listing.title"),
     PrefListingEmpty(key = "app.pref.listing.empty"),
 }
+
+enum class PrefKey(override val key: String) : TextKey {
+    PrefLoading(key = "pref.editor.loading"),
+    PrefError(key = "pref.editor.error"),
+    PrefTitle(key = "pref.editor.title"),
+}

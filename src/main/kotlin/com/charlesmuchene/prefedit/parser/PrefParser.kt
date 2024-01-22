@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.navigation
+package com.charlesmuchene.prefedit.parser
 
-import com.charlesmuchene.prefedit.data.App
-import com.charlesmuchene.prefedit.data.Device
-import com.charlesmuchene.prefedit.data.PrefFile
+import com.charlesmuchene.prefedit.data.Pref
+import okio.BufferedSource
 
-interface Screen
+class PrefParser : Parser<Pref> {
 
-data object Home : Screen
-data class Apps(val device: Device) : Screen
-data class PrefList(val app: App, val device: Device) : Screen
-data class PrefEdit(val prefFile: PrefFile, val app: App, val device: Device) : Screen
+    override fun parse(source: BufferedSource): Pref {
+        // TODO Parse content: from file, stream?
+        return Pref(text = "")
+    }
+}

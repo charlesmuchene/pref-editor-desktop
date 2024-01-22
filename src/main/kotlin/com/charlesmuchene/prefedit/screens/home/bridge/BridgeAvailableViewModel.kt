@@ -71,7 +71,7 @@ class BridgeAvailableViewModel(
     fun deviceSelected(device: Device) {
         launch {
             when (device.type) {
-                Type.Device -> appState.moveTo(screen = Apps(device = device))
+                Type.Device -> appState.navigateTo(screen = Apps(device = device))
                 Type.Unknown -> _message.emit(bundle[HomeKey.UnknownDevice])
                 Type.Unauthorized -> _message.emit(bundle[HomeKey.UnauthorizedDevice])
             }

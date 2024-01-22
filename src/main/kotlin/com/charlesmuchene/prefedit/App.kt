@@ -51,7 +51,7 @@ fun main() {
                     PrefEditor(
                         modifier = modifier,
                         app = prefEditor.app,
-                        file = prefEditor.file,
+                        prefFile = prefEditor.prefFile,
                         device = prefEditor.device,
                     )
                 }

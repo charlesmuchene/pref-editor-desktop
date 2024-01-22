@@ -31,7 +31,7 @@ class AppState {
 
     val screen: StateFlow<Screen> = _screen.asStateFlow()
 
-    suspend fun moveTo(screen: Screen) {
+    suspend fun navigateTo(screen: Screen) {
         _screen.emit(screen)
     }
 }

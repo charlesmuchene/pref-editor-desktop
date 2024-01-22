@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.navigation
+package com.charlesmuchene.prefedit.screens.prefs
 
-import com.charlesmuchene.prefedit.data.App
-import com.charlesmuchene.prefedit.data.Device
-import com.charlesmuchene.prefedit.data.PrefFile
+import com.charlesmuchene.prefedit.data.Pref
+import kotlinx.coroutines.CoroutineScope
 
-interface Screen
-
-data object Home : Screen
-data class Apps(val device: Device) : Screen
-data class PrefList(val app: App, val device: Device) : Screen
-data class PrefEdit(val prefFile: PrefFile, val app: App, val device: Device) : Screen
+class EditorViewModel(private val pref: Pref, private val scope: CoroutineScope): CoroutineScope by scope {
+    init {
+        // TODO Bundle file name in pref?
+        println("Editing: $pref")
+    }
+}

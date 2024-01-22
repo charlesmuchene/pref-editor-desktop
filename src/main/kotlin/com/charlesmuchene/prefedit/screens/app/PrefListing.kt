@@ -29,6 +29,7 @@ import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.PrefFile
 import com.charlesmuchene.prefedit.data.PrefFiles
+import com.charlesmuchene.prefedit.providers.LocalAppState
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.AppKey
@@ -43,14 +44,21 @@ import org.jetbrains.jewel.ui.component.Text
 @Composable
 fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
     val bridge = LocalBridge.current
+    val appState = LocalAppState.current
     val scope = rememberCoroutineScope()
-    val viewModel = remember { PrefListingViewModel(app = app, device = device, bridge = bridge, scope = scope) }
+    val viewModel = remember {
+        PrefListingViewModel(app = app, device = device, bridge = bridge, scope = scope, appState = appState)
+    }
     val state by viewModel.uiState.collectAsState()
 
     when (state) {
         UIState.Error -> PrefListingError(modifier = modifier)
         UIState.Loading -> PrefListingLoading(modifier = modifier)
-        is UIState.Files -> PrefListingSuccess(modifier = modifier, prefFiles = (state as UIState.Files).files)
+        is UIState.Files -> PrefListingSuccess(
+            modifier = modifier,
+            viewModel = viewModel,
+            prefFiles = (state as UIState.Files).files,
+        )
     }
 }
 
@@ -67,19 +75,19 @@ private fun PrefListingLoading(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PrefListingSuccess(prefFiles: PrefFiles, modifier: Modifier = Modifier) {
+private fun PrefListingSuccess(prefFiles: PrefFiles, modifier: Modifier = Modifier, viewModel: PrefListingViewModel) {
     val bundle = LocalBundle.current
     if (prefFiles.isEmpty()) SingleText(key = AppKey.PrefListingEmpty, modifier = modifier)
     else Listing(header = bundle[AppKey.PrefListingTitle], modifier = modifier) {
         items(items = prefFiles, key = PrefFile::name) { prefFile ->
-            PrefListingRow(prefFile = prefFile)
+            PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected)
         }
     }
 }
 
 @Composable
-private fun PrefListingRow(prefFile: PrefFile, modifier: Modifier = Modifier) {
-    ListingRow(prefFile) {
+private fun PrefListingRow(prefFile: PrefFile, modifier: Modifier = Modifier, onClick: (PrefFile) -> Unit) {
+    ListingRow(item = prefFile, onClick = onClick) {
         Column(modifier = modifier.padding(4.dp)) {
             Text(text = prefFile.name, style = PrefEditTextStyle.primary)
             Spacer(modifier = Modifier.height(2.dp))
