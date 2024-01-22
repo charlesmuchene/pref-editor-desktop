@@ -41,7 +41,7 @@ interface TextKey {
     val key: String
 }
 
-enum class AppKey(override val key: String) : TextKey {
+enum class ApplicationKey(override val key: String) : TextKey {
     Title(key = "app.title"),
     HomeTitle(key = "app.main.window.title"),
 }
@@ -60,4 +60,11 @@ enum class DeviceKey(override val key: String) : TextKey {
     AppListingTitle(key = "device.app.listing.title"),
     AppListingError(key = "device.app.listing.error"),
     AppListingLoading(key = "device.app.listing.loading"),
+}
+
+enum class AppKey(override val key: String) : TextKey {
+    PrefListingError(key = "app.pref.listing.error"),
+    PrefListingLoading(key = "app.pref.listing.loading"),
+    PrefListingTitle(key = "app.pref.listing.title"),
+    PrefListingEmpty(key = "app.pref.listing.empty"),
 }

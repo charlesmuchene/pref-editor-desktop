@@ -18,8 +18,8 @@ package com.charlesmuchene.prefedit.data
 
 typealias PrefFiles = List<PrefFile>
 
-data class PrefFile(val name: String, val type: PrefFileType)
-
-enum class PrefFileType {
-    KEY_VALUE, DATA_STORE
+data class PrefFile(val name: String, val type: Type) {
+    enum class Type(val text: String) {
+        KEY_VALUE(text = "Key-Value"), DATA_STORE(text = "Data Store")
+    }
 }

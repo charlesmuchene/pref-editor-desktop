@@ -66,7 +66,7 @@ fun BridgeAvailable(modifier: Modifier = Modifier) {
 private fun DeviceList(devices: Devices, viewModel: BridgeAvailableViewModel, modifier: Modifier = Modifier) {
     val header = LocalBundle.current[HomeKey.ConnectedDevices]
 
-    Listing(items = devices, header = header, modifier = modifier) {
+    Listing(header = header, modifier = modifier) {
         items(items = devices, key = Device::serial) { device ->
             DeviceRow(device = device, viewModel = viewModel)
         }

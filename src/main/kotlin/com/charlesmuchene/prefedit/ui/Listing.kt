@@ -30,7 +30,7 @@ import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun <T> Listing(items: List<T>, header: String, modifier: Modifier = Modifier, content: LazyListScope.() -> Unit) {
+fun Listing(header: String, modifier: Modifier = Modifier, content: LazyListScope.() -> Unit) {
     val state = rememberLazyListState()
 
     Column(modifier = modifier.fillMaxSize()) {

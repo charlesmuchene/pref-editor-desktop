@@ -16,15 +16,18 @@
 
 package com.charlesmuchene.prefedit.command
 
+import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.PrefFiles
 import com.charlesmuchene.prefedit.parser.Parser
-import com.charlesmuchene.prefedit.parser.PrefListParser
+import com.charlesmuchene.prefedit.parser.PrefFilesParser
 
 data class ListPrefFiles(
+    val app: App,
     val device: Device,
-    override val parser: Parser<PrefFiles> = PrefListParser()
+    override val parser: Parser<PrefFiles> = PrefFilesParser()
 ) : Command<PrefFiles> {
+
     // TODO Add listing files for data store api
-    override val command: String = "shell run-as ${device.serial} ls shared_prefs"
+    override val command: String = "-s ${device.serial} shell run-as ${app.packageName} ls shared_prefs"
 }

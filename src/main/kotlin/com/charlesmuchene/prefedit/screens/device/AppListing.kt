@@ -64,7 +64,7 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 @Composable
 private fun AppListing(apps: Apps, modifier: Modifier = Modifier) {
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
-    Listing(items = apps, header = header, modifier = modifier) {
+    Listing(header = header, modifier = modifier) {
         items(items = apps, key = App::packageName) { app ->
             AppRow(app = app)
         }

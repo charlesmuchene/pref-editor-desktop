@@ -31,6 +31,7 @@ import com.charlesmuchene.prefedit.providers.LocalAppState
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.AppKey
+import com.charlesmuchene.prefedit.resources.ApplicationKey
 import com.charlesmuchene.prefedit.resources.TextBundle
 import com.charlesmuchene.prefedit.ui.padding
 import com.charlesmuchene.prefedit.ui.theme.teal
@@ -55,7 +56,7 @@ fun ApplicationScope.scaffold(content: @Composable (Modifier) -> Unit) {
     provideAppState {
         val state = rememberWindowState(position = WindowPosition.Aligned(alignment = Alignment.Center))
         val painter by rememberIconPainter(name = "app")
-        val title = LocalBundle.current[AppKey.Title]
+        val title = LocalBundle.current[ApplicationKey.Title]
         DecoratedWindow(
             state = state,
             icon = painter,

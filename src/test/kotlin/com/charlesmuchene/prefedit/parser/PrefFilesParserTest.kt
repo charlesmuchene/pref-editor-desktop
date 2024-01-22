@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class PrefListParserTest {
+class PrefFilesParserTest {
 
-    private lateinit var parser: PrefListParser
+    private lateinit var parser: PrefFilesParser
 
     @BeforeEach
     fun setup() {
-        parser = PrefListParser()
+        parser = PrefFilesParser()
     }
 
     @Test

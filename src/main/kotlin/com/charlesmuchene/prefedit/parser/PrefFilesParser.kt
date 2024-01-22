@@ -20,7 +20,7 @@ import com.charlesmuchene.prefedit.data.PrefFile
 import com.charlesmuchene.prefedit.data.PrefFiles
 import okio.BufferedSource
 
-class PrefListParser : Parser<PrefFiles> {
+class PrefFilesParser : Parser<PrefFiles> {
 
     override fun parse(source: BufferedSource): PrefFiles = buildList {
         while (true) {
