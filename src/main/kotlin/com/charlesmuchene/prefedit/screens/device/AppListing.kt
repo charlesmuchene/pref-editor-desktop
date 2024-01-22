@@ -44,9 +44,9 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
     val state by viewModel.uiState.collectAsState()
 
     when (state) {
-        is UIState.Apps -> AppListing(apps = (state as UIState.Apps).apps, modifier = modifier)
-        UIState.Error -> LoadingAppError(modifier = modifier)
         UIState.Loading -> LoadingApps(modifier = modifier)
+        UIState.Error -> LoadingAppError(modifier = modifier)
+        is UIState.Apps -> AppListing(apps = (state as UIState.Apps).apps, modifier = modifier)
     }
 }
 

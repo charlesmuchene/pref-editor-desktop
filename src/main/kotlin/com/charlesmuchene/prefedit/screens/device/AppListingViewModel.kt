@@ -48,6 +48,10 @@ class AppListingViewModel(private val device: Device, private val bridge: Bridge
         }
     }
 
+    fun appSelected(app: App) {
+
+    }
+
     sealed interface UIState {
         data object Error : UIState
         data object Loading : UIState

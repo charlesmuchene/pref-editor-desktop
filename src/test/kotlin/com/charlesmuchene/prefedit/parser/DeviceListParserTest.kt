@@ -1,6 +1,7 @@
 package com.charlesmuchene.prefedit.parser
 
 import com.charlesmuchene.prefedit.data.Device
+import com.charlesmuchene.prefedit.utils.buffered
 import okio.BufferedSource
 import okio.buffer
 import okio.source
@@ -49,8 +50,6 @@ class DeviceListParserTest {
             assertEquals(expected = listOf(unauthorized, deviceTwo), actual = devices)
         }
     }
-
-    private fun String.buffered(block: BufferedSource.() -> Unit): Unit = byteInputStream().source().buffer().use(block)
 
     private companion object {
         private val NO_DEVICE = """List of devices attached
