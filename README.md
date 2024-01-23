@@ -6,7 +6,9 @@ A desktop app to edit in-device shared preferences.
 > A local installation of ADB is required. It should be included in the Android SDK Platform Tools package downloaded while setting up Android Studio.
 > If not, download the package with the SDK Manager or get the standalone tools from [here](https://developer.android.com/studio/releases/platform-tools)
 
-![image](./images/start-from-somewhere.png)
+| Device Listing                     | Editing preferences              |
+|------------------------------------|----------------------------------|
+| ![image](./images/device-list.png) | ![image](./images/pref-edit.png) |
 
 From the main window:
 * Select a device
