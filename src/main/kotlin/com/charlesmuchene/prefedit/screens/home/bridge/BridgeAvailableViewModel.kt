@@ -22,7 +22,7 @@ import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.ListDevices
 import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.Device.Type
-import com.charlesmuchene.prefedit.navigation.Apps
+import com.charlesmuchene.prefedit.navigation.AppsScreen
 import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.resources.TextBundle
 import com.charlesmuchene.prefedit.ui.theme.green
@@ -71,7 +71,7 @@ class BridgeAvailableViewModel(
     fun deviceSelected(device: Device) {
         launch {
             when (device.type) {
-                Type.Device -> appState.navigateTo(screen = Apps(device = device))
+                Type.Device -> appState.navigateTo(screen = AppsScreen(device = device))
                 Type.Unknown -> _message.emit(bundle[HomeKey.UnknownDevice])
                 Type.Unauthorized -> _message.emit(bundle[HomeKey.UnauthorizedDevice])
             }

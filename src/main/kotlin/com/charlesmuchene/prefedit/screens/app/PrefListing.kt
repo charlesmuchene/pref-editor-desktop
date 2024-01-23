@@ -38,7 +38,7 @@ import com.charlesmuchene.prefedit.ui.Listing
 import com.charlesmuchene.prefedit.ui.ListingRow
 import com.charlesmuchene.prefedit.ui.Loading
 import com.charlesmuchene.prefedit.ui.SingleText
-import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle
+import com.charlesmuchene.prefedit.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -89,9 +89,9 @@ private fun PrefListingSuccess(prefFiles: PrefFiles, modifier: Modifier = Modifi
 private fun PrefListingRow(prefFile: PrefFile, modifier: Modifier = Modifier, onClick: (PrefFile) -> Unit) {
     ListingRow(item = prefFile, onClick = onClick) {
         Column(modifier = modifier.padding(4.dp)) {
-            Text(text = prefFile.name, style = PrefEditTextStyle.primary)
+            Text(text = prefFile.name, style = Typography.primary)
             Spacer(modifier = Modifier.height(2.dp))
-            Text(text = prefFile.type.text, style = PrefEditTextStyle.secondary, color = Color.DarkGray)
+            Text(text = prefFile.type.text, style = Typography.secondary, color = Color.DarkGray)
             Spacer(modifier = Modifier.height(2.dp))
         }
     }

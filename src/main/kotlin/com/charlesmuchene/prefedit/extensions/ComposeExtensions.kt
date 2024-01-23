@@ -18,11 +18,15 @@ package com.charlesmuchene.prefedit.extensions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import com.charlesmuchene.prefedit.resources.TextBundle
 import com.charlesmuchene.prefedit.ui.icon.IconExtension
 import com.charlesmuchene.prefedit.ui.icon.IconExtension.SVG
 import org.jetbrains.jewel.ui.painter.rememberResourcePainterProvider
+import java.awt.Cursor
 
 @Composable
 fun rememberIconPainter(name: String, extension: IconExtension = SVG): State<Painter> =
@@ -30,3 +34,6 @@ fun rememberIconPainter(name: String, extension: IconExtension = SVG): State<Pai
         iconClass = TextBundle::class.java,
         path = "icons/$name.${extension.extension}",
     ).getPainter()
+
+@Composable
+fun Modifier.pointerOnHover() = pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))

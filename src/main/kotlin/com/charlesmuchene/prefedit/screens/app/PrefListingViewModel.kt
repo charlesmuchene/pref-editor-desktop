@@ -23,7 +23,7 @@ import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.PrefFile
 import com.charlesmuchene.prefedit.data.PrefFiles
-import com.charlesmuchene.prefedit.navigation.PrefEdit
+import com.charlesmuchene.prefedit.navigation.PrefEditScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -60,7 +60,7 @@ class PrefListingViewModel(
 
     fun fileSelected(prefFile: PrefFile) {
         launch {
-            appState.navigateTo(screen = PrefEdit(prefFile = prefFile, app = app, device = device))
+            appState.navigateTo(screen = PrefEditScreen(prefFile = prefFile, app = app, device = device))
         }
     }
 

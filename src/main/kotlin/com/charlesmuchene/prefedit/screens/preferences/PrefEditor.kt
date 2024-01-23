@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.prefs
+package com.charlesmuchene.prefedit.screens.preferences
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -24,7 +24,8 @@ import com.charlesmuchene.prefedit.data.PrefFile
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.PrefKey
-import com.charlesmuchene.prefedit.screens.prefs.PrefEditorViewModel.UIState
+import com.charlesmuchene.prefedit.screens.preferences.PrefEditorViewModel.UIState
+import com.charlesmuchene.prefedit.screens.preferences.editor.Editor
 import com.charlesmuchene.prefedit.ui.Loading
 import com.charlesmuchene.prefedit.ui.SingleText
 

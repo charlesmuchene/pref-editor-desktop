@@ -30,14 +30,12 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.PointerIcon
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefedit.extensions.pointerOnHover
 import com.charlesmuchene.prefedit.ui.theme.green
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.Divider
-import java.awt.Cursor
 
 @Composable
 fun <T> ListingRow(
@@ -45,7 +43,7 @@ fun <T> ListingRow(
     onClick: (T) -> Unit = {},
     dividerIndentation: Dp = Dp.Hairline,
     modifier: Modifier = Modifier,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
@@ -72,6 +70,3 @@ fun <T> ListingRow(
         )
     }
 }
-
-@Composable
-private fun Modifier.pointerOnHover() = pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))

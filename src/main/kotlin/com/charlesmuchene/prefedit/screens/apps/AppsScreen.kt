@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.device
+package com.charlesmuchene.prefedit.screens.apps
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
@@ -28,12 +28,12 @@ import com.charlesmuchene.prefedit.providers.LocalAppState
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.DeviceKey
-import com.charlesmuchene.prefedit.screens.device.AppListingViewModel.UIState
+import com.charlesmuchene.prefedit.screens.apps.AppsScreenViewModel.UIState
 import com.charlesmuchene.prefedit.ui.Listing
 import com.charlesmuchene.prefedit.ui.ListingRow
 import com.charlesmuchene.prefedit.ui.Loading
 import com.charlesmuchene.prefedit.ui.SingleText
-import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle
+import com.charlesmuchene.prefedit.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -43,7 +43,7 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
     val bridge = LocalBridge.current
     val appState = LocalAppState.current
     val viewModel = remember {
-        AppListingViewModel(bridge = bridge, scope = scope, device = device, appState = appState)
+        AppsScreenViewModel(bridge = bridge, scope = scope, device = device, appState = appState)
     }
     val state by viewModel.uiState.collectAsState()
 
@@ -66,7 +66,7 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AppListing(apps: Apps, modifier: Modifier = Modifier, viewModel: AppListingViewModel) {
+private fun AppListing(apps: Apps, modifier: Modifier = Modifier, viewModel: AppsScreenViewModel) {
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
     Listing(header = header, modifier = modifier) {
         items(items = apps, key = App::packageName) { app ->
@@ -78,6 +78,6 @@ private fun AppListing(apps: Apps, modifier: Modifier = Modifier, viewModel: App
 @Composable
 private fun AppRow(app: App, modifier: Modifier = Modifier, onClick: (App) -> Unit) {
     ListingRow(item = app, modifier = modifier, onClick = onClick) {
-        Text(text = app.packageName, style = PrefEditTextStyle.primary, modifier = Modifier.padding(4.dp))
+        Text(text = app.packageName, style = Typography.primary, modifier = Modifier.padding(4.dp))
     }
 }

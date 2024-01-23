@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle
+import com.charlesmuchene.prefedit.ui.theme.Typography
 import kotlinx.coroutines.delay
 import org.jetbrains.jewel.ui.component.Text
 
@@ -58,7 +58,7 @@ fun Toast(text: String, modifier: Modifier = Modifier) {
             ) {
                 Text(
                     text = text,
-                    style = PrefEditTextStyle.primary,
+                    style = Typography.primary,
                     color = Color.White,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

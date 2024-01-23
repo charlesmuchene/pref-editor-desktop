@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.prefs
+package com.charlesmuchene.prefedit.screens.preferences
 
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.FetchPref

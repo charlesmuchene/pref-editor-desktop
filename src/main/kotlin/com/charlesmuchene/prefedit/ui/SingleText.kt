@@ -23,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.TextKey
-import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle
+import com.charlesmuchene.prefedit.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -31,6 +31,6 @@ fun SingleText(key: TextKey, modifier: Modifier = Modifier) {
     val text = LocalBundle.current[key]
 
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = text, style = PrefEditTextStyle.heading)
+        Text(text = text, style = Typography.heading)
     }
 }

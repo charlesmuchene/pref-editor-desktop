@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle.primary
+import com.charlesmuchene.prefedit.ui.theme.Typography.primary
 import org.jetbrains.jewel.ui.component.CircularProgressIndicator
 import org.jetbrains.jewel.ui.component.Text
 

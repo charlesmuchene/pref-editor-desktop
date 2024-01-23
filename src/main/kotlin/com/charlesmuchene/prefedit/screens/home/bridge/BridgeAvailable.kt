@@ -32,8 +32,8 @@ import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailableViewModel.UIState
 import com.charlesmuchene.prefedit.ui.*
-import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle.primary
-import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle.secondary
+import com.charlesmuchene.prefedit.ui.theme.Typography.primary
+import com.charlesmuchene.prefedit.ui.theme.Typography.secondary
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable

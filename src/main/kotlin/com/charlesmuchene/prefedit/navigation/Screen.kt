@@ -22,7 +22,7 @@ import com.charlesmuchene.prefedit.data.PrefFile
 
 interface Screen
 
-data object Home : Screen
-data class Apps(val device: Device) : Screen
-data class PrefList(val app: App, val device: Device) : Screen
-data class PrefEdit(val prefFile: PrefFile, val app: App, val device: Device) : Screen
+data object HomeScreen : Screen
+data class AppsScreen(val device: Device) : Screen
+data class PrefListScreen(val app: App, val device: Device) : Screen
+data class PrefEditScreen(val prefFile: PrefFile, val app: App, val device: Device) : Screen

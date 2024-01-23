@@ -16,7 +16,7 @@
 
 package com.charlesmuchene.prefedit.app
 
-import com.charlesmuchene.prefedit.navigation.Home
+import com.charlesmuchene.prefedit.navigation.HomeScreen
 import com.charlesmuchene.prefedit.navigation.Screen
 import com.charlesmuchene.prefedit.ui.theme.PrefEditTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class AppState {
-    private val _screen = MutableStateFlow<Screen>(Home)
+    private val _screen = MutableStateFlow<Screen>(HomeScreen)
 
     // TODO Theme components dark
     val theme: PrefEditTheme = PrefEditTheme.Light

@@ -21,8 +21,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 
-object PrefEditTextStyle {
+object Typography {
     val heading = TextStyle.Default.copy(fontSize = TextUnit(value = 24f, type = TextUnitType.Sp))
     val primary = TextStyle.Default.copy(fontSize = TextUnit(value = 18f, type = TextUnitType.Sp))
-    val secondary = TextStyle.Default.copy(fontSize = TextUnit(value = 12f, type = TextUnitType.Sp), color = Color.LightGray)
+    val secondary = TextStyle.Default.copy(fontSize = TextUnit(value = 12f, type = TextUnitType.Sp))
 }

@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.device
+package com.charlesmuchene.prefedit.screens.apps
 
 import com.charlesmuchene.prefedit.app.AppState
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.ListApps
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
-import com.charlesmuchene.prefedit.navigation.PrefList
+import com.charlesmuchene.prefedit.navigation.PrefListScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class AppListingViewModel(
+class AppsScreenViewModel(
     private val appState: AppState,
     private val device: Device,
     private val bridge: Bridge,
@@ -57,7 +57,7 @@ class AppListingViewModel(
 
     fun appSelected(app: App) {
         launch {
-            appState.navigateTo(screen = PrefList(app = app, device = device))
+            appState.navigateTo(screen = PrefListScreen(app = app, device = device))
         }
     }
 

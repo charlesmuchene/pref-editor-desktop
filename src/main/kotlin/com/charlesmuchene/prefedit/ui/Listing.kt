@@ -26,17 +26,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefedit.ui.theme.PrefEditTextStyle
+import com.charlesmuchene.prefedit.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 fun Listing(header: String, modifier: Modifier = Modifier, content: LazyListScope.() -> Unit) {
     val state = rememberLazyListState()
 
-    Column(modifier = modifier.fillMaxSize()) {
-        Text(text = header, style = PrefEditTextStyle.heading)
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(text = header, style = Typography.heading)
         Spacer(modifier = Modifier.height(4.dp))
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxWidth()) {
             LazyColumn(modifier = Modifier.padding(end = 18.dp), state = state, content = content)
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(scrollState = state),
