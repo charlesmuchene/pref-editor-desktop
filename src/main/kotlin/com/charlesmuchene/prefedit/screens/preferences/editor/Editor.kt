@@ -31,11 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefedit.data.Entry
-import com.charlesmuchene.prefedit.data.Preferences
-import com.charlesmuchene.prefedit.data.SetEntry
-import com.charlesmuchene.prefedit.providers.LocalBundle
-import com.charlesmuchene.prefedit.resources.PrefKey
+import com.charlesmuchene.prefedit.data.*
+import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.PrimitiveEntry
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.rows.SetEntryRow
 import com.charlesmuchene.prefedit.ui.padding
@@ -45,18 +42,27 @@ import org.jetbrains.jewel.ui.component.Divider
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun Editor(preferences: Preferences, modifier: Modifier = Modifier) {
+fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Device, modifier: Modifier = Modifier) {
 
-    val text = LocalBundle.current[PrefKey.PrefTitle] // TODO Display file name under edit
     val scope = rememberCoroutineScope()
-    val viewModel = remember { EditorViewModel(preferences = preferences, scope = scope) }
+    val bridge = LocalBridge.current
+    val viewModel = remember {
+        EditorViewModel(
+            app = app,
+            scope = scope,
+            device = device,
+            bridge = bridge,
+            prefFile = prefFile,
+            preferences = preferences,
+        )
+    }
 
     val (setEntries, primitiveEntries) = viewModel.prefs
 
     val state = rememberLazyListState()
 
     Column(modifier = modifier.fillMaxSize()) {
-        Text(text = text, style = Typography.heading)
+        Text(text = viewModel.title, style = Typography.heading)
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxSize()) {
             Column {

@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefedit.screens.preferences.editor
 
+import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.data.*
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.SetSubEntry
 import kotlinx.coroutines.CoroutineScope
@@ -23,11 +24,16 @@ import org.jetbrains.jewel.ui.Outline
 
 class EditorViewModel(
     preferences: Preferences,
+    private val app: App,
+    private val device: Device,
+    private val bridge: Bridge,
+    private val prefFile: PrefFile,
     private val scope: CoroutineScope,
 ) : CoroutineScope by scope {
-        // TODO Bundle file name in pref?
 
     val prefs = preferences.entries.partition { it is SetEntry }
+
+    val title = prefFile.name
 
     fun setUIEntries(entry: SetEntry): Pair<SetSubEntry.Header, List<SetSubEntry.Entry>> =
         Pair(SetSubEntry.Header(entry.name), entry.entries.map(SetSubEntry::Entry))
