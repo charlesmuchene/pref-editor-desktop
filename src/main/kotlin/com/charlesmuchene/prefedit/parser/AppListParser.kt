@@ -20,13 +20,16 @@ import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Apps
 import okio.BufferedSource
 
-class AppListParser : Parser<Apps> {
+class AppListParser(private val sorted: Boolean = true) : Parser<Apps> {
 
-    override fun parse(source: BufferedSource): Apps = buildList {
-        while (true) {
-            val line = source.readUtf8Line() ?: break
-            add(parseApp(line = line))
+    override fun parse(source: BufferedSource): Apps {
+        val listing = buildList {
+            while (true) {
+                val line = source.readUtf8Line() ?: break
+                add(parseApp(line = line))
+            }
         }
+        return if (sorted) listing.sortedBy(App::packageName) else listing
     }
 
     private fun parseApp(line: String): App {
