@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefedit.data.StringEntry
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.componentSpacing
@@ -27,14 +28,18 @@ import com.charlesmuchene.prefedit.screens.preferences.editor.entries.nameCompon
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.valueComponentWeight
 import com.charlesmuchene.prefedit.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
-import org.jetbrains.jewel.ui.component.TextField
+import org.jetbrains.jewel.ui.component.TextArea
 
 @Composable
 fun StringEntryRow(entry: StringEntry, modifier: Modifier = Modifier) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(componentSpacing)) {
-        Text(text = entry.name, style = Typography.primary, modifier = Modifier.weight(nameComponentWeight))
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(componentSpacing),
+    ) {
+        Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(nameComponentWeight))
         var value by remember { mutableStateOf(entry.value) }
-        TextField(
+        TextArea(
             value = value,
             onValueChange = { value = it },
             placeholder = { Text(text = value) },

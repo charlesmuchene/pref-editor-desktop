@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import com.charlesmuchene.prefedit.data.LongEntry
@@ -34,8 +35,12 @@ import org.jetbrains.jewel.ui.component.TextField
 
 @Composable
 fun LongEntryRow(entry: LongEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(componentSpacing)) {
-        Text(text = entry.name, style = Typography.primary, modifier = Modifier.weight(nameComponentWeight))
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(componentSpacing),
+    ) {
+        Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(nameComponentWeight))
         val initialValue = entry.value.toString()
         var value by remember { mutableStateOf(initialValue) }
         var outline by remember { mutableStateOf(Outline.None) }

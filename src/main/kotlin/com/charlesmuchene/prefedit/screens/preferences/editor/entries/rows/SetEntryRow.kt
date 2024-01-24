@@ -57,7 +57,7 @@ fun SetEntryRow(entry: SetEntry, viewModel: EditorViewModel, modifier: Modifier 
 
 @Composable
 private fun SetSubEntryHeaderRow(header: SetSubEntry.Header, modifier: Modifier = Modifier) {
-    Text(text = header.name, style = Typography.primary, modifier = modifier)
+    Text(text = header.name, style = Typography.secondary, modifier = modifier)
 }
 
 @Composable

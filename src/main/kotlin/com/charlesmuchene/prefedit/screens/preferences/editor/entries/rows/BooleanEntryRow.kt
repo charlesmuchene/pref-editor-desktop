@@ -19,6 +19,7 @@ package com.charlesmuchene.prefedit.screens.preferences.editor.entries.rows
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.data.BooleanEntry
@@ -32,8 +33,12 @@ import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 fun BooleanEntryRow(entry: BooleanEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(componentSpacing)) {
-        Text(text = entry.name, style = Typography.primary, modifier = Modifier.weight(nameComponentWeight))
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(componentSpacing)
+    ) {
+        Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(nameComponentWeight))
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.weight(valueComponentWeight)) {
             var isTrue by remember { mutableStateOf(entry.value) }
             val outline = viewModel.outline(entry, isTrue)
