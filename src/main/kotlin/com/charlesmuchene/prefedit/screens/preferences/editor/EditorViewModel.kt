@@ -61,6 +61,8 @@ class EditorViewModel(
             newValue = value,
         )
 
+        is StringEntry -> if (entry.value == value) Outline.None else Outline.Warning
+
         else -> Outline.None
     }
 

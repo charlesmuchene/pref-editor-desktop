@@ -23,6 +23,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefedit.data.StringEntry
+import com.charlesmuchene.prefedit.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.componentSpacing
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.nameComponentWeight
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.valueComponentWeight
@@ -31,7 +32,7 @@ import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextArea
 
 @Composable
-fun StringEntryRow(entry: StringEntry, modifier: Modifier = Modifier) {
+fun StringEntryRow(entry: StringEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -45,6 +46,7 @@ fun StringEntryRow(entry: StringEntry, modifier: Modifier = Modifier) {
             placeholder = { Text(text = value) },
             modifier = Modifier.weight(valueComponentWeight),
             keyboardOptions = KeyboardOptions(autoCorrect = false),
+            outline = viewModel.outline(entry = entry, value = value),
         )
     }
 }

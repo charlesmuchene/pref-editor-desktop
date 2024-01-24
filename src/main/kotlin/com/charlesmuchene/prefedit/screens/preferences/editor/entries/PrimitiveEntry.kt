@@ -35,7 +35,7 @@ fun PrimitiveEntry(entry: Entry, modifier: Modifier = Modifier, viewModel: Edito
         is FloatEntry -> FloatEntryRow(modifier = modifier, entry = entry, viewModel = viewModel)
         is IntEntry -> IntEntryRow(modifier = modifier, entry = entry, viewModel = viewModel)
         is LongEntry -> LongEntryRow(modifier = modifier, entry = entry, viewModel = viewModel)
-        is StringEntry -> StringEntryRow(modifier = modifier, entry = entry)
+        is StringEntry -> StringEntryRow(modifier = modifier, entry = entry, viewModel = viewModel)
         else -> Unit
     }
 }
