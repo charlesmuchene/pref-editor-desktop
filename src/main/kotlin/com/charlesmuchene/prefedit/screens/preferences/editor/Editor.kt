@@ -84,6 +84,8 @@ private fun LazyListScope.sets(
     setEntries: List<Entry>,
     viewModel: EditorViewModel,
 ) {
+    if (setEntries.isEmpty()) return
+
     item {
         Divider(
             orientation = Orientation.Horizontal,
