@@ -30,11 +30,18 @@ import com.charlesmuchene.prefedit.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun Listing(header: String, modifier: Modifier = Modifier, content: LazyListScope.() -> Unit) {
+fun Listing(
+    header: String,
+    modifier: Modifier = Modifier,
+    onFilter: (String) -> Unit = {},
+    content: LazyListScope.() -> Unit,
+) {
     val state = rememberLazyListState()
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(text = header, style = Typography.heading)
+        Spacer(modifier = Modifier.height(4.dp))
+        FilterTextField(changed = onFilter)
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxWidth()) {
             LazyColumn(modifier = Modifier.padding(end = 18.dp), state = state, content = content)

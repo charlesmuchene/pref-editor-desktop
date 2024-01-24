@@ -33,8 +33,7 @@ class AppsScreenViewModel(
     private val bridge: Bridge,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
-) :
-    CoroutineScope by scope {
+) : CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()

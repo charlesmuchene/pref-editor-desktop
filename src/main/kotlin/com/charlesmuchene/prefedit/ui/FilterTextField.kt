@@ -16,16 +16,27 @@
 
 package com.charlesmuchene.prefedit.ui
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import org.jetbrains.jewel.foundation.modifier.onHover
+import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 
 @Composable
-fun FilterTextField(modifier: Modifier = Modifier) {
+fun FilterTextField(modifier: Modifier = Modifier, changed: (String) -> Unit) {
     // TODO Leading icon is search
     // TODO Trailing icon is cancel
 
-    TextField(value = "", onValueChange = {
-        // TODO Update people
-    })
+    var value by remember { mutableStateOf("") }
+    var undecorated by remember { mutableStateOf(true) }
+    TextField(
+        value = value,
+        undecorated = undecorated,
+        placeholder = { Text(text = "Filter") },
+        modifier = modifier.onHover { undecorated = !it },
+        onValueChange = { text ->
+            value = text
+            changed(text)
+        }
+    )
 }
