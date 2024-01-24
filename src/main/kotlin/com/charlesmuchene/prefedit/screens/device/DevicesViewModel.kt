@@ -37,13 +37,16 @@ class DevicesViewModel(
     private val navigation: Navigation,
 ) : CoroutineScope by scope {
 
+    private val devices = mutableListOf<Device>()
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
     private val _message = MutableSharedFlow<String?>()
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     init {
-        launch { _uiState.emit(determineState()) }
+        launch {
+            _uiState.emit(determineState())
+        }
     }
 
     private suspend fun determineState(): UIState {
@@ -51,7 +54,9 @@ class DevicesViewModel(
         return when {
             result.isSuccess -> result.getOrNull()?.let { devices ->
                 if (devices.isEmpty()) UIState.NoDevices
-                else UIState.Devices(devices)
+                else UIState.Devices(devices).also {
+                    this.devices.addAll(it.devices)
+                }
             } ?: UIState.Error
 
             else -> UIState.Error
@@ -75,6 +80,12 @@ class DevicesViewModel(
                 Type.Unknown -> _message.emit(bundle[HomeKey.UnknownDevice])
                 Type.Unauthorized -> _message.emit(bundle[HomeKey.UnauthorizedDevice])
             }
+        }
+    }
+
+    fun filter(input: String) {
+        launch {
+            _uiState.emit(UIState.Devices(devices.filter { it.serial.contains(input) })) // TODO Include meta-date in filter
         }
     }
 

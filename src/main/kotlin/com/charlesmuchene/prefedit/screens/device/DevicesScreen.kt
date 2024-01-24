@@ -32,6 +32,7 @@ import com.charlesmuchene.prefedit.providers.LocalNavigation
 import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.screens.device.DevicesViewModel.UIState
 import com.charlesmuchene.prefedit.ui.*
+import com.charlesmuchene.prefedit.ui.theme.Typography
 import com.charlesmuchene.prefedit.ui.theme.Typography.primary
 import com.charlesmuchene.prefedit.ui.theme.Typography.secondary
 import org.jetbrains.jewel.ui.component.Text
@@ -43,8 +44,9 @@ fun DevicesScreen(modifier: Modifier = Modifier) {
     val bundle = LocalBundle.current
     val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
-    val viewModel =
-        remember { DevicesViewModel(scope = scope, bridge = bridge, navigation = navigation, bundle = bundle) }
+    val viewModel = remember {
+        DevicesViewModel(scope = scope, bridge = bridge, navigation = navigation, bundle = bundle)
+    }
     val state by viewModel.uiState.collectAsState()
 
     when (state) {
@@ -66,8 +68,9 @@ fun DevicesScreen(modifier: Modifier = Modifier) {
 private fun DeviceList(devices: Devices, viewModel: DevicesViewModel, modifier: Modifier = Modifier) {
     val header = LocalBundle.current[HomeKey.ConnectedDevices]
 
-    Listing(header = header, modifier = modifier) {
-        items(items = devices, key = Device::serial) { device ->
+    Listing(header = header, modifier = modifier, onFilter = viewModel::filter) {
+        if (devices.isEmpty()) item { Text(text = "No devices matching filter", style = Typography.primary) }
+        else items(items = devices, key = Device::serial) { device ->
             DeviceRow(device = device, viewModel = viewModel)
         }
     }
