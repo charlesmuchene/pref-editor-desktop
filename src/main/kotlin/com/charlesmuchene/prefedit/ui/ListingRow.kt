@@ -53,6 +53,7 @@ fun <T> ListingRow(
             verticalAlignment = Alignment.CenterVertically,
             content = content,
             modifier = Modifier
+                .clickable { onClick(item) }
                 .fillMaxWidth()
                 .pointerOnHover()
                 .hoverable(interactionSource)
@@ -60,8 +61,7 @@ fun <T> ListingRow(
                     if (isHovered)
                         drawRoundRect(green, cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(width = 2f))
                 }
-                .padding(vertical = 12.dp)
-                .clickable { onClick(item) },
+                .padding(vertical = 12.dp),
         )
         Divider(
             orientation = Orientation.Horizontal,
