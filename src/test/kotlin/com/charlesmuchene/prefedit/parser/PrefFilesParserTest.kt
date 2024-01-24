@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class SuccessFilesParserTest {
+class PrefFilesParserTest {
 
     private lateinit var parser: PrefFilesParser
 
@@ -41,6 +41,14 @@ class SuccessFilesParserTest {
             assertEquals(expected = 2, actual = result.size)
             assertEquals(expected = "com.charlesmuchene.player_preferences.xml", actual = result.first().name)
             assertEquals(expected = PrefFile.Type.KEY_VALUE, actual = result.first().type)
+        }
+    }
+
+    @Test
+    fun `preference listing when app is not debuggable`() {
+        "run-as: package not debuggable:".buffered {
+            val result = parser.parse(this)
+            assertTrue(result.isEmpty())
         }
     }
 }

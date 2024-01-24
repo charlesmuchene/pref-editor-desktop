@@ -31,12 +31,13 @@ class PrefFilesParser : Parser<PrefFiles> {
 
     private fun parseFile(line: String): PrefFile? {
         if (line.isBlank()) return null
-        if (line == NO_PREFS || line == NO_FILES) return null
+        if (line == NO_PREFS || line == NO_FILES || line.startsWith(NON_DEBUGGABLE)) return null
         return PrefFile(name = line, type = PrefFile.Type.KEY_VALUE)
     }
 
     private companion object {
         private const val NO_PREFS = "ls: shared_prefs: No such file or directory"
         private const val NO_FILES = "ls: files: No such file or directory"
+        private const val NON_DEBUGGABLE = "run-as: package not debuggable:"
     }
 }

@@ -26,20 +26,19 @@ class NavigationTest {
 
     @Test
     fun `navigation always has home as start`() = runTest(dispatcher) {
-        navigation.screens.test {
-            assertEquals(expected = HomeScreen, actual = awaitItem().first())
+        navigation.current.test {
+            assertEquals(expected = HomeScreen, actual = awaitItem())
         }
     }
 
     @Test
     fun `forward navigation appends screen to stack`() = runTest(dispatcher) {
-        navigation.screens.test {
+        navigation.current.test {
+            assertEquals(expected = HomeScreen, actual = awaitItem())
 
             navigation.navigate(AppsScreen(device))
 
-            val screens = awaitItem()
-            assertEquals(expected = HomeScreen, actual = screens.first())
-            assertEquals(expected = HomeScreen, actual = screens.first())
+            assertTrue(awaitItem() is AppsScreen)
         }
     }
 
@@ -47,15 +46,12 @@ class NavigationTest {
     fun `backwards navigation pops screens on stack exclusively`() = runTest(dispatcher) {
         navigation.navigate(AppsScreen(device))
         navigation.navigate(PrefListScreen(app, device))
+        navigation.navigate(AppsScreen(device))
 
-        navigation.screens.test {
+        val screens = navigation.screens
+        assertTrue(screens.size == 2)
+        assertTrue(screens.last() is AppsScreen)
 
-            navigation.navigate(AppsScreen(device))
-
-            val screens = awaitItem()
-            assertTrue(screens.size == 2)
-            assertTrue(screens.last() is AppsScreen)
-        }
     }
 
     @Test
@@ -63,14 +59,11 @@ class NavigationTest {
         navigation.navigate(AppsScreen(device))
         navigation.navigate(PrefListScreen(app, device))
 
-        navigation.screens.test {
+        navigation.navigate(HomeScreen)
 
-            navigation.navigate(HomeScreen)
-
-            val screens = awaitItem()
-            assertTrue(screens.size == 1)
-            assertTrue(screens.first() is HomeScreen)
-        }
+        val screens = navigation.screens
+        assertTrue(screens.size == 1)
+        assertTrue(screens.first() is HomeScreen)
     }
 
     private val device = Device(
