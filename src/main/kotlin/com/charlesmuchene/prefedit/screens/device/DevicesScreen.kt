@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.home.bridge
+package com.charlesmuchene.prefedit.screens.device
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
@@ -30,21 +30,21 @@ import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.providers.LocalNavigation
 import com.charlesmuchene.prefedit.resources.HomeKey
-import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailableViewModel.UIState
+import com.charlesmuchene.prefedit.screens.device.DevicesViewModel.UIState
 import com.charlesmuchene.prefedit.ui.*
 import com.charlesmuchene.prefedit.ui.theme.Typography.primary
 import com.charlesmuchene.prefedit.ui.theme.Typography.secondary
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun BridgeAvailable(modifier: Modifier = Modifier) {
+fun DevicesScreen(modifier: Modifier = Modifier) {
 
     val bridge = LocalBridge.current
     val bundle = LocalBundle.current
     val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel =
-        remember { BridgeAvailableViewModel(scope = scope, bridge = bridge, navigation = navigation, bundle = bundle) }
+        remember { DevicesViewModel(scope = scope, bridge = bridge, navigation = navigation, bundle = bundle) }
     val state by viewModel.uiState.collectAsState()
 
     when (state) {
@@ -63,7 +63,7 @@ fun BridgeAvailable(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun DeviceList(devices: Devices, viewModel: BridgeAvailableViewModel, modifier: Modifier = Modifier) {
+private fun DeviceList(devices: Devices, viewModel: DevicesViewModel, modifier: Modifier = Modifier) {
     val header = LocalBundle.current[HomeKey.ConnectedDevices]
 
     Listing(header = header, modifier = modifier) {
@@ -74,7 +74,7 @@ private fun DeviceList(devices: Devices, viewModel: BridgeAvailableViewModel, mo
 }
 
 @Composable
-private fun DeviceRow(device: Device, viewModel: BridgeAvailableViewModel, modifier: Modifier = Modifier) {
+private fun DeviceRow(device: Device, viewModel: DevicesViewModel, modifier: Modifier = Modifier) {
     val statusColor = viewModel.statusColor(device = device)
     val radius = with(LocalDensity.current) { 12.dp.toPx() }
 

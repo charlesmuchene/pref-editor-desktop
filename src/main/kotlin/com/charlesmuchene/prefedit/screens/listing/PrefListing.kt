@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.app
+package com.charlesmuchene.prefedit.screens.listing
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -33,7 +33,7 @@ import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.providers.LocalNavigation
 import com.charlesmuchene.prefedit.resources.AppKey
-import com.charlesmuchene.prefedit.screens.app.PrefListingViewModel.UIState
+import com.charlesmuchene.prefedit.screens.listing.PrefListingViewModel.UIState
 import com.charlesmuchene.prefedit.ui.Listing
 import com.charlesmuchene.prefedit.ui.ListingRow
 import com.charlesmuchene.prefedit.ui.Loading

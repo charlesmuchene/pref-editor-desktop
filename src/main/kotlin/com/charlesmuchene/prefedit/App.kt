@@ -24,7 +24,7 @@ import androidx.compose.ui.window.application
 import com.charlesmuchene.prefedit.app.scaffold
 import com.charlesmuchene.prefedit.navigation.*
 import com.charlesmuchene.prefedit.providers.LocalNavigation
-import com.charlesmuchene.prefedit.screens.app.PrefListing
+import com.charlesmuchene.prefedit.screens.listing.PrefListing
 import com.charlesmuchene.prefedit.screens.apps.AppsScreen
 import com.charlesmuchene.prefedit.screens.home.Home
 import com.charlesmuchene.prefedit.screens.preferences.PrefEditor

@@ -20,9 +20,9 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefedit.bridge.BridgeStatus.*
-import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailable
-import com.charlesmuchene.prefedit.screens.home.bridge.BridgeStatusUnknown
-import com.charlesmuchene.prefedit.screens.home.bridge.BridgeUnavailable
+import com.charlesmuchene.prefedit.screens.device.DevicesScreen
+import com.charlesmuchene.prefedit.screens.bridge.BridgeLoading
+import com.charlesmuchene.prefedit.screens.bridge.BridgeUnavailable
 
 @Preview
 @Composable
@@ -32,8 +32,8 @@ fun Home(modifier: Modifier = Modifier) {
     val bridgeStatus by viewModel.bridgeStatus.collectAsState()
 
     when (bridgeStatus) {
-        Available -> BridgeAvailable(modifier = modifier)
-        Unknown -> BridgeStatusUnknown(modifier = modifier)
+        Available -> DevicesScreen(modifier = modifier)
+        Unknown -> BridgeLoading(modifier = modifier)
         Unavailable -> BridgeUnavailable(modifier = modifier)
     }
 }

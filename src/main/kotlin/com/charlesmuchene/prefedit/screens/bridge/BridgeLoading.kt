@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.home.bridge
+package com.charlesmuchene.prefedit.screens.bridge
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.charlesmuchene.prefedit.providers.LocalBundle
 import com.charlesmuchene.prefedit.resources.HomeKey
-import com.charlesmuchene.prefedit.ui.SingleText
+import com.charlesmuchene.prefedit.ui.Loading
 
 @Composable
-fun BridgeUnavailable(modifier: Modifier = Modifier) {
-    SingleText(key = HomeKey.UnavailableBridgeStatus, modifier = modifier)
+fun BridgeLoading(modifier: Modifier = Modifier) {
+    val text = LocalBundle.current[HomeKey.BridgeLoading]
+    Loading(text = text, modifier = modifier)
 }

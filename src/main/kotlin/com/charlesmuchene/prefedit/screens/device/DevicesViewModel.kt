@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.home.bridge
+package com.charlesmuchene.prefedit.screens.device
 
 import androidx.compose.ui.graphics.Color
 import com.charlesmuchene.prefedit.bridge.Bridge
@@ -30,7 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class BridgeAvailableViewModel(
+class DevicesViewModel(
     private val bridge: Bridge,
     private val bundle: TextBundle,
     private val scope: CoroutineScope,

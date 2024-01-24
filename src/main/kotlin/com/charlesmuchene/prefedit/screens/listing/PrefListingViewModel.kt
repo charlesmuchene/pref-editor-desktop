@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.screens.app
+package com.charlesmuchene.prefedit.screens.listing
 
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.ListPrefFiles
