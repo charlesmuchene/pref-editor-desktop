@@ -40,6 +40,7 @@ import com.charlesmuchene.prefedit.screens.preferences.editor.entries.rows.SetEn
 import com.charlesmuchene.prefedit.ui.padding
 import com.charlesmuchene.prefedit.ui.theme.Typography
 import org.jetbrains.jewel.ui.Orientation
+import org.jetbrains.jewel.ui.component.DefaultButton
 import org.jetbrains.jewel.ui.component.Divider
 import org.jetbrains.jewel.ui.component.Text
 
@@ -64,7 +65,13 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
     val state = rememberLazyListState()
 
     Column(modifier = modifier.fillMaxSize()) {
-        Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
+        Row(modifier = Modifier.padding(end = padding)) {
+            Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
+            Spacer(modifier = Modifier.weight(1f))
+            DefaultButton(onClick = {}) {
+                Text(text = "Save")
+            }
+        }
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxSize()) {
             Column {
