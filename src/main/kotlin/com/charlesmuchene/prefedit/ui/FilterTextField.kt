@@ -28,12 +28,12 @@ fun FilterTextField(modifier: Modifier = Modifier, changed: (String) -> Unit) {
     // TODO Trailing icon is cancel
 
     var value by remember { mutableStateOf("") }
-    var undecorated by remember { mutableStateOf(true) }
+    var hovered by remember { mutableStateOf(false) }
     TextField(
         value = value,
-        undecorated = undecorated,
-        placeholder = { Text(text = "Filter") },
-        modifier = modifier.onHover { undecorated = !it },
+        undecorated = !hovered && value.isBlank(),
+        placeholder = { Text(text = "Filter items") },
+        modifier = modifier.onHover { hovered = it },
         onValueChange = { text ->
             value = text
             changed(text)
