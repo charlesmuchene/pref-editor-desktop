@@ -52,6 +52,7 @@ fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
     val state by viewModel.uiState.collectAsState()
 
     when (state) {
+        UIState.Empty -> PrefListingEmpty(modifier = modifier)
         UIState.Error -> PrefListingError(modifier = modifier)
         UIState.Loading -> PrefListingLoading(modifier = modifier)
         is UIState.Files -> PrefListingSuccess(
@@ -63,8 +64,12 @@ fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
 }
 
 @Composable
+private fun PrefListingEmpty(modifier: Modifier = Modifier) {
+    SingleText(key = AppKey.PrefListingEmpty, modifier = modifier)
+}
+
+@Composable
 private fun PrefListingError(modifier: Modifier = Modifier) {
-    // TODO Add title, which device, for which app
     SingleText(key = AppKey.PrefListingError, modifier = modifier)
 }
 
@@ -76,9 +81,9 @@ private fun PrefListingLoading(modifier: Modifier = Modifier) {
 
 @Composable
 private fun PrefListingSuccess(prefFiles: PrefFiles, modifier: Modifier = Modifier, viewModel: PrefListingViewModel) {
-    val bundle = LocalBundle.current
-    if (prefFiles.isEmpty()) SingleText(key = AppKey.PrefListingEmpty, modifier = modifier)
-    else Listing(header = bundle[AppKey.PrefListingTitle], modifier = modifier) {
+    val header = LocalBundle.current[AppKey.PrefListingTitle]
+    Listing(header = header, filterPlaceholder = "Filter preferences", modifier = modifier, onFilter = viewModel::filter) {
+        if (prefFiles.isEmpty()) item { Text(text = "No preferences matching filter", style = Typography.primary) }
         items(items = prefFiles, key = PrefFile::name) { prefFile ->
             PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected)
         }

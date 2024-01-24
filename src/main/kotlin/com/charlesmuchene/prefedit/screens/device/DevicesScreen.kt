@@ -68,7 +68,7 @@ fun DevicesScreen(modifier: Modifier = Modifier) {
 private fun DeviceList(devices: Devices, viewModel: DevicesViewModel, modifier: Modifier = Modifier) {
     val header = LocalBundle.current[HomeKey.ConnectedDevices]
 
-    Listing(header = header, modifier = modifier, onFilter = viewModel::filter) {
+    Listing(header = header, filterPlaceholder = "Filter devices", modifier = modifier, onFilter = viewModel::filter) {
         if (devices.isEmpty()) item { Text(text = "No devices matching filter", style = Typography.primary) }
         else items(items = devices, key = Device::serial) { device ->
             DeviceRow(device = device, viewModel = viewModel)
@@ -86,7 +86,7 @@ private fun DeviceRow(device: Device, viewModel: DevicesViewModel, modifier: Mod
             drawCircle(color = statusColor, radius = radius)
         }
         Spacer(modifier = Modifier.width(4.dp))
-        Column(modifier = Modifier.weight(0.85f)) {
+        Column(modifier = Modifier.weight(0.9f)) {
             Text(text = device.serial, style = primary)
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = viewModel.formatDeviceAttributes(device), style = secondary, color = Color.DarkGray)

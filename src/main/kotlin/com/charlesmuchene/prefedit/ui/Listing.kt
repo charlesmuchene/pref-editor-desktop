@@ -33,6 +33,7 @@ import org.jetbrains.jewel.ui.component.Text
 fun Listing(
     header: String,
     modifier: Modifier = Modifier,
+    filterPlaceholder: String = "Filter",
     onFilter: (String) -> Unit = {},
     content: LazyListScope.() -> Unit,
 ) {
@@ -41,7 +42,7 @@ fun Listing(
     Column(modifier = modifier.fillMaxWidth()) {
         Text(text = header, style = Typography.heading)
         Spacer(modifier = Modifier.height(4.dp))
-        FilterTextField(changed = onFilter)
+        FilterTextField(placeHolder = filterPlaceholder, changed = onFilter)
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxWidth()) {
             LazyColumn(modifier = Modifier.padding(end = 18.dp), state = state, content = content)

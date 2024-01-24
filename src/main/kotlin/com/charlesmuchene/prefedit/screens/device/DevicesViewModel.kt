@@ -85,7 +85,7 @@ class DevicesViewModel(
 
     fun filter(input: String) {
         launch {
-            _uiState.emit(UIState.Devices(devices.filter { it.serial.contains(input) })) // TODO Include meta-date in filter
+            _uiState.emit(UIState.Devices(devices.filter { it.serial.contains(input, ignoreCase = true) })) // TODO Include meta-date in filter
         }
     }
 

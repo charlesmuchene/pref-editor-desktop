@@ -23,7 +23,7 @@ import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 
 @Composable
-fun FilterTextField(modifier: Modifier = Modifier, changed: (String) -> Unit) {
+fun FilterTextField(placeHolder: String, modifier: Modifier = Modifier, changed: (String) -> Unit) {
     // TODO Leading icon is search
     // TODO Trailing icon is cancel
 
@@ -32,7 +32,7 @@ fun FilterTextField(modifier: Modifier = Modifier, changed: (String) -> Unit) {
     TextField(
         value = value,
         undecorated = !hovered && value.isBlank(),
-        placeholder = { Text(text = "Filter items") },
+        placeholder = { Text(text = placeHolder) },
         modifier = modifier.onHover { hovered = it },
         onValueChange = { text ->
             value = text

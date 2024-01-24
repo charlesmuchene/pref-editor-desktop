@@ -68,7 +68,8 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 @Composable
 private fun AppListing(apps: Apps, modifier: Modifier = Modifier, viewModel: AppsScreenViewModel) {
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
-    Listing(header = header, modifier = modifier) {
+    Listing(header = header, filterPlaceholder = "Filter apps", modifier = modifier, onFilter = viewModel::filter) {
+        if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }
         items(items = apps, key = App::packageName) { app ->
             AppRow(app = app, onClick = viewModel::appSelected)
         }

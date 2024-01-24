@@ -38,20 +38,22 @@ class PrefListingViewModel(
     private val navigation: Navigation,
 ) : CoroutineScope by scope {
 
+    private val files = mutableListOf<PrefFile>()
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     init {
-        launch {
-            _uiState.emit(getPrefFiles())
-        }
+        launch { _uiState.emit(getPrefFiles()) }
     }
 
     private suspend fun getPrefFiles(): UIState {
         val result = bridge.execute(command = ListPrefFiles(app = app, device = device))
         return when {
             result.isSuccess -> result.getOrNull()?.let { prefFiles ->
-                UIState.Files(prefFiles)
+                if (prefFiles.isEmpty()) UIState.Empty
+                else UIState.Files(prefFiles).also {
+                    this.files.addAll(it.files)
+                }
             } ?: UIState.Error
 
             else -> UIState.Error
@@ -64,8 +66,13 @@ class PrefListingViewModel(
         }
     }
 
+    fun filter(input: String) {
+        launch { _uiState.emit(UIState.Files(files.filter { it.name.contains(input, ignoreCase = true) })) }
+    }
+
     sealed interface UIState {
         data object Error : UIState
+        data object Empty : UIState
         data object Loading : UIState
         data class Files(val files: PrefFiles) : UIState
     }

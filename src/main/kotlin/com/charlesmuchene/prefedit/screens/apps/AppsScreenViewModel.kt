@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefedit.screens.apps
 
+import androidx.compose.ui.text.toLowerCase
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.ListApps
 import com.charlesmuchene.prefedit.data.App
@@ -35,6 +36,7 @@ class AppsScreenViewModel(
     private val navigation: Navigation,
 ) : CoroutineScope by scope {
 
+    private val apps = mutableListOf<App>()
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
@@ -47,7 +49,9 @@ class AppsScreenViewModel(
         return when {
             result.isSuccess -> result.getOrNull()?.let { apps ->
                 if (apps.isEmpty()) UIState.Error
-                else UIState.Apps(apps)
+                else UIState.Apps(apps).also {
+                    this.apps.addAll(it.apps)
+                }
             } ?: UIState.Error
 
             else -> UIState.Error
@@ -58,6 +62,10 @@ class AppsScreenViewModel(
         launch {
             navigation.navigate(screen = PrefListScreen(app = app, device = device))
         }
+    }
+
+    fun filter(input: String) {
+        launch { _uiState.emit(UIState.Apps(apps.filter { it.packageName.contains(input, ignoreCase = true) })) }
     }
 
     sealed interface UIState {
