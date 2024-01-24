@@ -33,6 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.data.*
 import com.charlesmuchene.prefedit.providers.LocalBridge
+import com.charlesmuchene.prefedit.providers.LocalBundle
+import com.charlesmuchene.prefedit.resources.PrefKey
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.PrimitiveEntry
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.rows.SetEntryRow
 import com.charlesmuchene.prefedit.ui.padding
@@ -62,7 +64,7 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
     val state = rememberLazyListState()
 
     Column(modifier = modifier.fillMaxSize()) {
-        Text(text = viewModel.title, style = Typography.heading)
+        Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxSize()) {
             Column {

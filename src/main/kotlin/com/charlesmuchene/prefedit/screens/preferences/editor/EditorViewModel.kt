@@ -33,8 +33,6 @@ class EditorViewModel(
 
     val prefs = preferences.entries.partition { it is SetEntry }
 
-    val title = prefFile.name
-
     fun setUIEntries(entry: SetEntry): Pair<SetSubEntry.Header, List<SetSubEntry.Entry>> =
         Pair(SetSubEntry.Header(entry.name), entry.entries.map(SetSubEntry::Entry))
 

@@ -56,9 +56,9 @@ private fun item(screen: Screen, selected: Boolean, modifier: Modifier = Modifie
 
     val text = when (screen) {
         HomeScreen -> "Home"
-        is AppsScreen -> "Apps"
-        is PrefListScreen -> "Preferences"
-        is PrefEditScreen -> "Editor"
+        is AppsScreen -> screen.device.serial
+        is PrefListScreen -> screen.app.packageName
+        is PrefEditScreen -> screen.prefFile.name
         else -> "Unknown"
     }
     Row(
