@@ -59,7 +59,9 @@ import org.jetbrains.jewel.window.styling.TitleBarStyle
 @Composable
 fun ApplicationScope.scaffold(content: @Composable ColumnScope.(Modifier) -> Unit) {
     provideAppState {
-        val state = rememberWindowState(position = WindowPosition.Aligned(alignment = Alignment.Center))
+        val (width, height) = LocalAppState.current.windowSize
+        val position = WindowPosition.Aligned(alignment = Alignment.Center)
+        val state = rememberWindowState(position = position, width = width, height = height)
         val painter by rememberIconPainter(name = "app")
         val title = LocalBundle.current[ApplicationKey.Title]
         DecoratedWindow(

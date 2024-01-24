@@ -16,11 +16,15 @@
 
 package com.charlesmuchene.prefedit.app
 
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.ui.theme.PrefEditTheme
 
 class AppState {
 
     // TODO Theme components dark
     val theme: PrefEditTheme = PrefEditTheme.Light
+
+    val windowSize = DpSize(width = 1900.dp, height = 1600.dp)
 
 }
