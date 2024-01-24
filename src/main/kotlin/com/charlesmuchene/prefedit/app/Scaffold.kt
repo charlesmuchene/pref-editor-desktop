@@ -16,6 +16,8 @@
 
 package com.charlesmuchene.prefedit.app
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -23,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
@@ -54,7 +57,7 @@ import org.jetbrains.jewel.window.styling.DecoratedWindowStyle
 import org.jetbrains.jewel.window.styling.TitleBarStyle
 
 @Composable
-fun ApplicationScope.scaffold(content: @Composable (Modifier) -> Unit) {
+fun ApplicationScope.scaffold(content: @Composable ColumnScope.(Modifier) -> Unit) {
     provideAppState {
         val state = rememberWindowState(position = WindowPosition.Aligned(alignment = Alignment.Center))
         val painter by rememberIconPainter(name = "app")
@@ -69,7 +72,11 @@ fun ApplicationScope.scaffold(content: @Composable (Modifier) -> Unit) {
                 gradientStartColor = teal,
                 modifier = Modifier.newFullscreenControls()
             ) { Text(text = title) }
-            content(Modifier.padding(padding))
+            Column(
+                modifier = Modifier.padding(start = padding, end = padding, top = 12.dp, bottom = padding)
+            ) {
+                content(Modifier.padding(top = 12.dp))
+            }
         }
     }
 }

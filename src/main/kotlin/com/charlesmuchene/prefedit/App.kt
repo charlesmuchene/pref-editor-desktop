@@ -22,10 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.window.application
 import com.charlesmuchene.prefedit.app.scaffold
-import com.charlesmuchene.prefedit.navigation.AppsScreen
-import com.charlesmuchene.prefedit.navigation.HomeScreen
-import com.charlesmuchene.prefedit.navigation.PrefEditScreen
-import com.charlesmuchene.prefedit.navigation.PrefListScreen
+import com.charlesmuchene.prefedit.navigation.*
 import com.charlesmuchene.prefedit.providers.LocalNavigation
 import com.charlesmuchene.prefedit.screens.app.PrefListing
 import com.charlesmuchene.prefedit.screens.apps.AppsScreen
@@ -35,28 +32,22 @@ import com.charlesmuchene.prefedit.screens.preferences.PrefEditor
 fun main() {
     application {
         scaffold { modifier ->
-            // TODO Pills for navigation: for device -> app -> prefs
+            // TODO Theme this: see sample apps
             // TODO Animate screen by sliding-left
 
-            // TODO Theme this: see sample apps
-            val screens by LocalNavigation.current.screens.collectAsState()
-            when (val screen = screens.last()) {
+            val screen by LocalNavigation.current.current.collectAsState()
+            NavigationBar(screen)
+
+            when (screen) {
                 HomeScreen -> Home(modifier = modifier)
                 is AppsScreen -> AppsScreen(modifier = modifier, device = (screen as AppsScreen).device)
-                is PrefListScreen -> {
-                    val prefListScreen = (screen as PrefListScreen)
-                    PrefListing(modifier = modifier, device = prefListScreen.device, app = prefListScreen.app)
-                }
-
-                is PrefEditScreen -> {
-                    val prefEditorScreen = (screen as PrefEditScreen)
-                    PrefEditor(
-                        modifier = modifier,
-                        app = prefEditorScreen.app,
-                        prefFile = prefEditorScreen.prefFile,
-                        device = prefEditorScreen.device,
-                    )
-                }
+                is PrefListScreen -> PrefListing(modifier = modifier, device = (screen as PrefListScreen).device, app = (screen as PrefListScreen).app)
+                is PrefEditScreen -> PrefEditor(
+                    app = (screen as PrefEditScreen).app,
+                    modifier = modifier,
+                    device = (screen as PrefEditScreen).device,
+                    prefFile = (screen as PrefEditScreen).prefFile,
+                )
             }
         }
     }

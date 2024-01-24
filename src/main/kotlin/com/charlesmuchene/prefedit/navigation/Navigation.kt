@@ -17,25 +17,25 @@
 package com.charlesmuchene.prefedit.navigation
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class Navigation(private val scope: CoroutineScope) : CoroutineScope by scope {
 
     private val stack = mutableListOf<Screen>(HomeScreen)
-    private val _screens = MutableSharedFlow<List<Screen>>()
 
-    val screens: StateFlow<List<Screen>> = _screens
-        .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = stack)
+    val screens: List<Screen> get() = stack
+
+    private val _currentScreen = MutableStateFlow<Screen>(HomeScreen)
+    val current: StateFlow<Screen> = _currentScreen.asStateFlow()
 
     fun navigate(screen: Screen) {
         when (val index = stack.indexOf(screen)) {
             -1 -> navigateForwardTo(screen)
             0 -> navigateHome()
-            else -> navigateBackwardTo(screen, index)
+            else -> navigateBackwardTo(index)
         }
     }
 
@@ -51,13 +51,13 @@ class Navigation(private val scope: CoroutineScope) : CoroutineScope by scope {
         updateObservers()
     }
 
-    private fun navigateBackwardTo(screen: Screen, index: Int) {
+    private fun navigateBackwardTo(index: Int) {
         if (stack.lastIndex == index) return
         stack.removeAll(stack.subList(index + 1, stack.size))
         updateObservers()
     }
 
     private fun updateObservers() {
-        launch { _screens.emit(stack) }
+        launch { _currentScreen.emit(stack.last()) }
     }
 }
