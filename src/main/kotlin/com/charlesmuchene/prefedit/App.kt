@@ -26,7 +26,7 @@ import com.charlesmuchene.prefedit.navigation.AppsScreen
 import com.charlesmuchene.prefedit.navigation.HomeScreen
 import com.charlesmuchene.prefedit.navigation.PrefEditScreen
 import com.charlesmuchene.prefedit.navigation.PrefListScreen
-import com.charlesmuchene.prefedit.providers.LocalAppState
+import com.charlesmuchene.prefedit.providers.LocalNavigation
 import com.charlesmuchene.prefedit.screens.app.PrefListing
 import com.charlesmuchene.prefedit.screens.apps.AppsScreen
 import com.charlesmuchene.prefedit.screens.home.Home
@@ -39,8 +39,8 @@ fun main() {
             // TODO Animate screen by sliding-left
 
             // TODO Theme this: see sample apps
-            val screen by LocalAppState.current.screen.collectAsState()
-            when (screen) {
+            val screens by LocalNavigation.current.screens.collectAsState()
+            when (val screen = screens.last()) {
                 HomeScreen -> Home(modifier = modifier)
                 is AppsScreen -> AppsScreen(modifier = modifier, device = (screen as AppsScreen).device)
                 is PrefListScreen -> {

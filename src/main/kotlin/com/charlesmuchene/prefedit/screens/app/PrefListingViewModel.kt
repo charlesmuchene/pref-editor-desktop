@@ -16,13 +16,13 @@
 
 package com.charlesmuchene.prefedit.screens.app
 
-import com.charlesmuchene.prefedit.app.AppState
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.ListPrefFiles
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.PrefFile
 import com.charlesmuchene.prefedit.data.PrefFiles
+import com.charlesmuchene.prefedit.navigation.Navigation
 import com.charlesmuchene.prefedit.navigation.PrefEditScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,8 +34,8 @@ class PrefListingViewModel(
     private val app: App,
     private val device: Device,
     private val bridge: Bridge,
-    private val appState: AppState,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    private val navigation: Navigation,
 ) : CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
@@ -60,7 +60,7 @@ class PrefListingViewModel(
 
     fun fileSelected(prefFile: PrefFile) {
         launch {
-            appState.navigateTo(screen = PrefEditScreen(prefFile = prefFile, app = app, device = device))
+            navigation.navigate(screen = PrefEditScreen(prefFile = prefFile, app = app, device = device))
         }
     }
 

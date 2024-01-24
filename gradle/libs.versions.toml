@@ -3,13 +3,17 @@ kotlin = "1.9.20"
 okio = "3.7.0"
 jewel = "0.13.2"
 kxml2 = "2.3.0"
+turbine = "1.0.0"
+coroutines-test = "1.7.2"
 compose-desktop = "1.6.0-dev1369"
 
 [libraries]
 kxml2 = { module = "net.sf.kxml:kxml2", version.ref = "kxml2" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+turbine = { module = "app.cash.turbine:turbine-jvm", version.ref = "turbine" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 jewel-standalone = { module = "org.jetbrains.jewel:jewel-int-ui-standalone", version.ref = "jewel" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-test" }
 jewel-deco-window = { group = "org.jetbrains.jewel", name = "jewel-int-ui-decorated-window", version.ref = "jewel" }
 
 [plugins]

@@ -19,8 +19,10 @@ package com.charlesmuchene.prefedit.providers
 import androidx.compose.runtime.compositionLocalOf
 import com.charlesmuchene.prefedit.app.AppState
 import com.charlesmuchene.prefedit.bridge.Bridge
+import com.charlesmuchene.prefedit.navigation.Navigation
 import com.charlesmuchene.prefedit.resources.TextBundle
 
-val LocalAppState = compositionLocalOf<AppState> { TODO("No app state provided") }
-val LocalBundle = compositionLocalOf<TextBundle> { TODO("No bundle provided") }
-val LocalBridge = compositionLocalOf<Bridge> { TODO("No bridge provided") }
+val LocalNavigation = compositionLocalOf<Navigation> { error("No navigation provided") }
+val LocalAppState = compositionLocalOf<AppState> { error("No app state provided") }
+val LocalBundle = compositionLocalOf<TextBundle> { error("No bundle provided") }
+val LocalBridge = compositionLocalOf<Bridge> { error("No bridge provided") }

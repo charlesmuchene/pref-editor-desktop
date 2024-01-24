@@ -37,7 +37,9 @@ dependencies {
     implementation(libs.kxml2)
     implementation(libs.okio)
 
+    testImplementation(libs.turbine)
     testImplementation(libs.kotlin.test)
+    testImplementation(libs.coroutines.test)
 }
 
 tasks.test {

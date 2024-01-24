@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.app
+package com.charlesmuchene.prefedit.ui
 
-import com.charlesmuchene.prefedit.ui.theme.PrefEditTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.charlesmuchene.prefedit.providers.LocalAppState
 
-class AppState {
-
-    // TODO Theme components dark
-    val theme: PrefEditTheme = PrefEditTheme.Light
-
+@Composable
+fun NavigationBar(modifier: Modifier = Modifier) {
+    val appState = LocalAppState.current
 }

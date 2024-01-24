@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefedit.app
+package com.charlesmuchene.prefedit.ui
 
-import com.charlesmuchene.prefedit.ui.theme.PrefEditTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import org.jetbrains.jewel.ui.component.TextField
 
-class AppState {
+@Composable
+fun FilterTextField(modifier: Modifier = Modifier) {
+    // TODO Leading icon is search
+    // TODO Trailing icon is cancel
 
-    // TODO Theme components dark
-    val theme: PrefEditTheme = PrefEditTheme.Light
-
+    TextField(value = "", onValueChange = {
+        // TODO Update people
+    })
 }

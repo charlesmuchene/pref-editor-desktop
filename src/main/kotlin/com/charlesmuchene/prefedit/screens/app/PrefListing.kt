@@ -29,9 +29,9 @@ import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.PrefFile
 import com.charlesmuchene.prefedit.data.PrefFiles
-import com.charlesmuchene.prefedit.providers.LocalAppState
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
+import com.charlesmuchene.prefedit.providers.LocalNavigation
 import com.charlesmuchene.prefedit.resources.AppKey
 import com.charlesmuchene.prefedit.screens.app.PrefListingViewModel.UIState
 import com.charlesmuchene.prefedit.ui.Listing
@@ -44,10 +44,10 @@ import org.jetbrains.jewel.ui.component.Text
 @Composable
 fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
     val bridge = LocalBridge.current
-    val appState = LocalAppState.current
+    val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
-        PrefListingViewModel(app = app, device = device, bridge = bridge, scope = scope, appState = appState)
+        PrefListingViewModel(app = app, device = device, bridge = bridge, scope = scope, navigation = navigation)
     }
     val state by viewModel.uiState.collectAsState()
 

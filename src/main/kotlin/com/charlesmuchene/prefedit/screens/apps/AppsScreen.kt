@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Apps
 import com.charlesmuchene.prefedit.data.Device
-import com.charlesmuchene.prefedit.providers.LocalAppState
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
+import com.charlesmuchene.prefedit.providers.LocalNavigation
 import com.charlesmuchene.prefedit.resources.DeviceKey
 import com.charlesmuchene.prefedit.screens.apps.AppsScreenViewModel.UIState
 import com.charlesmuchene.prefedit.ui.Listing
@@ -41,9 +41,9 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
     val bridge = LocalBridge.current
-    val appState = LocalAppState.current
+    val navigation = LocalNavigation.current
     val viewModel = remember {
-        AppsScreenViewModel(bridge = bridge, scope = scope, device = device, appState = appState)
+        AppsScreenViewModel(bridge = bridge, scope = scope, device = device, navigation = navigation)
     }
     val state by viewModel.uiState.collectAsState()
 

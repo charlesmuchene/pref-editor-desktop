@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ApplicationScope
@@ -27,9 +28,11 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.extensions.rememberIconPainter
+import com.charlesmuchene.prefedit.navigation.Navigation
 import com.charlesmuchene.prefedit.providers.LocalAppState
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
+import com.charlesmuchene.prefedit.providers.LocalNavigation
 import com.charlesmuchene.prefedit.resources.ApplicationKey
 import com.charlesmuchene.prefedit.resources.TextBundle
 import com.charlesmuchene.prefedit.ui.padding
@@ -77,6 +80,7 @@ private fun provideAppState(content: @Composable () -> Unit) {
         LocalBridge provides Bridge(),
         LocalBundle provides TextBundle(),
         LocalAppState provides AppState(),
+        LocalNavigation provides Navigation(rememberCoroutineScope()),
     ) {
         val viewModel = LocalAppState.current
         val isDark = viewModel.theme.isDark()

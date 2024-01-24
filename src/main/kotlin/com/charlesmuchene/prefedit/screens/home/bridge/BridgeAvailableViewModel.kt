@@ -17,12 +17,12 @@
 package com.charlesmuchene.prefedit.screens.home.bridge
 
 import androidx.compose.ui.graphics.Color
-import com.charlesmuchene.prefedit.app.AppState
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.ListDevices
 import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.Device.Type
 import com.charlesmuchene.prefedit.navigation.AppsScreen
+import com.charlesmuchene.prefedit.navigation.Navigation
 import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.resources.TextBundle
 import com.charlesmuchene.prefedit.ui.theme.green
@@ -32,9 +32,9 @@ import kotlinx.coroutines.launch
 
 class BridgeAvailableViewModel(
     private val bridge: Bridge,
-    private val appState: AppState,
     private val bundle: TextBundle,
     private val scope: CoroutineScope,
+    private val navigation: Navigation,
 ) : CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
@@ -71,7 +71,7 @@ class BridgeAvailableViewModel(
     fun deviceSelected(device: Device) {
         launch {
             when (device.type) {
-                Type.Device -> appState.navigateTo(screen = AppsScreen(device = device))
+                Type.Device -> navigation.navigate(screen = AppsScreen(device = device))
                 Type.Unknown -> _message.emit(bundle[HomeKey.UnknownDevice])
                 Type.Unauthorized -> _message.emit(bundle[HomeKey.UnauthorizedDevice])
             }

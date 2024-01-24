@@ -26,9 +26,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.data.Device
 import com.charlesmuchene.prefedit.data.Devices
-import com.charlesmuchene.prefedit.providers.LocalAppState
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
+import com.charlesmuchene.prefedit.providers.LocalNavigation
 import com.charlesmuchene.prefedit.resources.HomeKey
 import com.charlesmuchene.prefedit.screens.home.bridge.BridgeAvailableViewModel.UIState
 import com.charlesmuchene.prefedit.ui.*
@@ -41,10 +41,10 @@ fun BridgeAvailable(modifier: Modifier = Modifier) {
 
     val bridge = LocalBridge.current
     val bundle = LocalBundle.current
-    val appState = LocalAppState.current
+    val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel =
-        remember { BridgeAvailableViewModel(scope = scope, bridge = bridge, appState = appState, bundle = bundle) }
+        remember { BridgeAvailableViewModel(scope = scope, bridge = bridge, navigation = navigation, bundle = bundle) }
     val state by viewModel.uiState.collectAsState()
 
     when (state) {

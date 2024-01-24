@@ -16,11 +16,11 @@
 
 package com.charlesmuchene.prefedit.screens.apps
 
-import com.charlesmuchene.prefedit.app.AppState
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.ListApps
 import com.charlesmuchene.prefedit.data.App
 import com.charlesmuchene.prefedit.data.Device
+import com.charlesmuchene.prefedit.navigation.Navigation
 import com.charlesmuchene.prefedit.navigation.PrefListScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,10 +29,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AppsScreenViewModel(
-    private val appState: AppState,
     private val device: Device,
     private val bridge: Bridge,
     private val scope: CoroutineScope,
+    private val navigation: Navigation,
 ) :
     CoroutineScope by scope {
 
@@ -57,7 +57,7 @@ class AppsScreenViewModel(
 
     fun appSelected(app: App) {
         launch {
-            appState.navigateTo(screen = PrefListScreen(app = app, device = device))
+            navigation.navigate(screen = PrefListScreen(app = app, device = device))
         }
     }
 
