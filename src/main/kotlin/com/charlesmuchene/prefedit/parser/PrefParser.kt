@@ -17,6 +17,13 @@
 package com.charlesmuchene.prefedit.parser
 
 import com.charlesmuchene.prefedit.data.*
+import com.charlesmuchene.prefedit.data.Tags.BOOLEAN
+import com.charlesmuchene.prefedit.data.Tags.FLOAT
+import com.charlesmuchene.prefedit.data.Tags.INT
+import com.charlesmuchene.prefedit.data.Tags.LONG
+import com.charlesmuchene.prefedit.data.Tags.ROOT
+import com.charlesmuchene.prefedit.data.Tags.SET
+import com.charlesmuchene.prefedit.data.Tags.STRING
 import okio.BufferedSource
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
@@ -130,15 +137,5 @@ class PrefParser : Parser<Preferences> {
         nextTag()
         require(XmlPullParser.END_TAG, null, tag)
         return result
-    }
-
-    private companion object Tags {
-        const val ROOT = "map"
-        const val SET = "set"
-        const val INT = "int"
-        const val LONG = "long"
-        const val FLOAT = "float"
-        const val STRING = "string"
-        const val BOOLEAN = "boolean"
     }
 }
