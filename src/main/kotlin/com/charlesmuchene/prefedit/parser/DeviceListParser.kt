@@ -35,8 +35,9 @@ class DeviceListParser : Parser<Devices> {
     private fun parseDevice(line: String): Device {
         require(line.isNotBlank())
         val tokens = line.split(" ").filterNot(String::isEmpty)
-        val attributes = tokens.subList(fromIndex = 2, toIndex = tokens.size).map {
-            val value = it.split(":")
+        val attributesIndex = tokens.indexOfFirst { token -> token.contains(ATTRIBUTE_DELIMITER) }
+        val attributes = tokens.subList(fromIndex = attributesIndex, toIndex = tokens.size).map {
+            val value = it.split(ATTRIBUTE_DELIMITER)
             Device.Attribute(name = value[0], value = value[1])
         }
         val type = when (tokens[1]) {
@@ -49,6 +50,7 @@ class DeviceListParser : Parser<Devices> {
 
     private companion object {
         const val DEVICE = "device"
+        const val ATTRIBUTE_DELIMITER = ":"
         const val UNAUTHORIZED = "unauthorized"
     }
 }
