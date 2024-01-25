@@ -122,7 +122,7 @@ private fun LazyListScope.sets(
         SetEntryRow(
             entry as SetEntry,
             viewModel = viewModel,
-            modifier = Modifier.padding(end = 18.dp).fillMaxWidth().height(200.dp),
+            modifier = Modifier.padding(end = 18.dp).fillMaxWidth().height((64 * entry.entries.size).dp),
         )
     }
 }
