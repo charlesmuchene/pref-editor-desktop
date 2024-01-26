@@ -40,7 +40,7 @@ data class WritePref(
     override val parser: Parser<Unit> = NoOpParser
     override val command: String by lazy {
         buildString {
-            append("-s ", device.serial, " exec-out run-as ", app.packageName, " sed -Ei ")
+            append("-s ", device.serial, " exec-out run-as ", app.packageName, " sed -Ei.backup ")
             append("-e '1s", SEP, ".*", SEP, PATTERN, SEP, "g'")
             append("-e '", SEP, "^", PATTERN, SEP, "!d'")
             append("-e '", SEP, PATTERN, SEP, content(), SEP, "g")
