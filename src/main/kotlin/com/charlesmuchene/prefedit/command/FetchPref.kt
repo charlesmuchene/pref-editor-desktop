@@ -30,5 +30,5 @@ data class FetchPref(
     override val parser: Parser<Preferences> = PrefParser(),
 ) : Command<Preferences> {
     override val command: String =
-        "-s ${device.serial} exec-out run-as ${app.packageName} cat /data/data/${app.packageName}/shared_prefs/${prefFile.name}"
+        "adb -s ${device.serial} exec-out run-as ${app.packageName} cat /data/data/${app.packageName}/shared_prefs/${prefFile.name}"
 }

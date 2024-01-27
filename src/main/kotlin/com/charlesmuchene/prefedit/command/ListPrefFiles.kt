@@ -29,5 +29,5 @@ data class ListPrefFiles(
 ) : Command<PrefFiles> {
 
     // TODO Add listing files for data store api
-    override val command: String = "-s ${device.serial} shell run-as ${app.packageName} ls shared_prefs"
+    override val command: String = "adb -s ${device.serial} shell run-as ${app.packageName} ls shared_prefs"
 }

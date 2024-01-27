@@ -22,5 +22,5 @@ import com.charlesmuchene.prefedit.parser.AppListParser
 import com.charlesmuchene.prefedit.parser.Parser
 
 data class ListApps(val device: Device, override val parser: Parser<Apps> = AppListParser()) : Command<Apps> {
-    override val command: String = "-s ${device.serial} shell pm list packages -3 --user 0"
+    override val command: String = "adb -s ${device.serial} shell pm list packages -3 --user 0"
 }
