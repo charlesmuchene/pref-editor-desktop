@@ -41,8 +41,7 @@ fun FloatEntryRow(entry: FloatEntry, viewModel: EditorViewModel, modifier: Modif
         horizontalArrangement = Arrangement.spacedBy(componentSpacing)
     ) {
         Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(nameComponentWeight))
-        val initialValue = entry.value.toString()
-        var value by remember { mutableStateOf(initialValue) }
+        var value by remember { mutableStateOf(entry.value) }
         var outline by remember { mutableStateOf(Outline.None) }
         TextField(
             outline = outline,
@@ -52,7 +51,7 @@ fun FloatEntryRow(entry: FloatEntry, viewModel: EditorViewModel, modifier: Modif
                 outline = viewModel.outline(entry, value)
                 viewModel.edited(entry = entry, change = changed)
             },
-            placeholder = { Text(text = initialValue) },
+            placeholder = { Text(text = entry.value) },
             modifier = Modifier.weight(valueComponentWeight),
             keyboardOptions = KeyboardOptions(autoCorrect = false, keyboardType = KeyboardType.Decimal),
         )

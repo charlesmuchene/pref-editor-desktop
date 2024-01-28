@@ -43,7 +43,7 @@ fun StringEntryRow(entry: StringEntry, viewModel: EditorViewModel, modifier: Mod
         TextArea(
             value = value,
             onValueChange = { value = it; viewModel.edited(entry = entry, change = it) },
-            placeholder = { Text(text = value) },
+            placeholder = { Text(text = entry.value) },
             modifier = Modifier.weight(valueComponentWeight),
             keyboardOptions = KeyboardOptions(autoCorrect = false),
             outline = viewModel.outline(entry = entry, value = value),
