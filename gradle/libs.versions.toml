@@ -5,12 +5,14 @@ jewel = "0.13.2"
 kxml2 = "2.3.0"
 turbine = "1.0.0"
 coroutines-test = "1.7.2"
-compose-desktop = "1.6.0-dev1369"
+logging = "5.0.1"
+compose-desktop = "1.6.0-dev1385"
 
 [libraries]
 kxml2 = { module = "net.sf.kxml:kxml2", version.ref = "kxml2" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 turbine = { module = "app.cash.turbine:turbine-jvm", version.ref = "turbine" }
+logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "logging" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 jewel-standalone = { module = "org.jetbrains.jewel:jewel-int-ui-standalone", version.ref = "jewel" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-test" }

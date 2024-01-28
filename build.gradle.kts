@@ -34,6 +34,7 @@ dependencies {
     }
     implementation(libs.jewel.standalone)
     implementation(libs.jewel.deco.window)
+    implementation(libs.logging)
     implementation(libs.kxml2)
     implementation(libs.okio)
 
