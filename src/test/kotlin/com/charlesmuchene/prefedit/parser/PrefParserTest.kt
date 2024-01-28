@@ -25,7 +25,7 @@ class PrefParserTest {
             val entries = result.entries
             val entry = entries.first()
             assertTrue(entry is BooleanEntry)
-            assertFalse(entry.value)
+            assertFalse(entry.value.toBooleanStrict())
             assertEquals(expected = "boolean", actual = entry.name)
         }
     }
@@ -53,9 +53,9 @@ class PrefParserTest {
             val entryTwo = entries[3]
             assertTrue(entryOne is IntEntry)
             assertTrue(entryTwo is IntEntry)
-            assertEquals(expected = 0, actual = entryOne.value)
-            assertEquals(expected = "another", actual = entryOne.name)
-            assertEquals(expected = -1, actual = entryTwo.value)
+            assertEquals(expected = 0, actual = entryOne.value.toInt())
+            assertEquals(expected = "another-integer", actual = entryOne.name)
+            assertEquals(expected = -1, actual = entryTwo.value.toInt())
             assertEquals(expected = "integer", actual = entryTwo.name)
         }
     }
@@ -68,7 +68,7 @@ class PrefParserTest {
             val entries = result.entries
             val entry = entries[4]
             assertTrue(entry is FloatEntry)
-            assertEquals(expected = 0.0f, actual = entry.value)
+            assertEquals(expected = 0.0f, actual = entry.value.toFloat())
             assertEquals(expected = "float", actual = entry.name)
         }
     }
@@ -81,7 +81,7 @@ class PrefParserTest {
             val entries = result.entries
             val entry = entries[6]
             assertTrue(entry is LongEntry)
-            assertEquals(expected = 100L, actual = entry.value)
+            assertEquals(expected = 100L, actual = entry.value.toLong())
             assertEquals(expected = "long", actual = entry.name)
         }
     }

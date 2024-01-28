@@ -36,13 +36,13 @@ object TestFixtures {
 
     val prefs = Preferences(
         entries = listOf(
-            BooleanEntry(name = "boolean", value = false),
+            BooleanEntry(name = "boolean", value = "false"),
             StringEntry(name = "string", value = "string"),
-            IntEntry(name = "another", value = 0),
-            IntEntry(name = "integer", value = -1),
-            FloatEntry(name = "float", value = 0.0f),
+            IntEntry(name = "another-integer", value = "0"),
+            IntEntry(name = "integer", value = "-1"),
+            FloatEntry(name = "float", value = "0.0"),
             SetEntry(name = "string-set", entries = listOf("strings", "one", "two", "three")),
-            LongEntry(name = "long", value = 0)
+            LongEntry(name = "long", value = "0")
         )
     )
 
