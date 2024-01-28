@@ -35,7 +35,7 @@ object PrefEditFiles {
     fun copyPushScript() {
         val inputStream = javaClass.classLoader.getResourceAsStream("$SCRIPTS_DIR/$PUSH_FILE") ?: return
         val path = appPath().resolve(PUSH_FILE)
-        /*if (!path.exists()) */Files.copy(inputStream, path)
+        if (!path.exists()) Files.copy(inputStream, path)
     }
 
 }

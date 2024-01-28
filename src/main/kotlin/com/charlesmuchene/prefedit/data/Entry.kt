@@ -16,12 +16,15 @@
 
 package com.charlesmuchene.prefedit.data
 
-sealed interface Entry
+sealed class Entry(open val name: String, open val value: String) {
+    fun toPair() = name to (this::class to value)
+}
 
-data class BooleanEntry(val name: String, val value: Boolean) : Entry
-data class StringEntry(val name: String, val value: String) : Entry
-data class FloatEntry(val name: String, val value: Float) : Entry
-data class LongEntry(val name: String, val value: Long) : Entry
-data class IntEntry(val name: String, val value: Int) : Entry
+data class BooleanEntry(override val name: String, override val value: String) : Entry(name = name, value = value)
+data class StringEntry(override val name: String, override val value: String) : Entry(name = name, value = value)
+data class FloatEntry(override val name: String, override val value: String) : Entry(name = name, value = value)
+data class LongEntry(override val name: String, override val value: String) : Entry(name = name, value = value)
+data class IntEntry(override val name: String, override val value: String) : Entry(name = name, value = value)
 
-data class SetEntry(val name: String, val entries: List<String>) : Entry
+data class SetEntry(override val name: String, val entries: List<String>) :
+    Entry(name = name, value = entries.joinToString())

@@ -33,7 +33,7 @@ import org.jetbrains.jewel.ui.component.TextField
 @OptIn(ExperimentalJewelApi::class)
 @Composable
 fun SetEntryRow(entry: SetEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
-    val entries = viewModel.setUIEntries(entry)
+    val entries = viewModel.createSetSubEntries(entry)
     val tree = remember {
         buildTree {
             addNode(entries.first) {

@@ -49,8 +49,6 @@ class Bridge(private val context: CoroutineContext = Dispatchers.IO + CoroutineN
 
     suspend fun <T> execute(command: WriteCommand<T>): Result<T> = withContext(context) {
         val tokens = command.command.split(DELIMITER)
-        println(command.command)
-        println(command.content)
         with(ProcessBuilder(tokens)) {
             environment()[PATH] += ":${appPath().pathString}"
             environment()[CONTENT] = command.content

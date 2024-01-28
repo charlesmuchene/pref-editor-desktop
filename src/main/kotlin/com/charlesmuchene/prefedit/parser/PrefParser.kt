@@ -58,22 +58,22 @@ class PrefParser : Parser<Preferences> {
     @Throws(XmlPullParserException::class)
     private fun parseBoolean(parser: XmlPullParser): BooleanEntry =
         parse(tag = BOOLEAN, parser = parser) { name, value ->
-            BooleanEntry(name = name, value = value.toBooleanStrict())
+            BooleanEntry(name = name, value = value)
         }
 
     @Throws(XmlPullParserException::class)
     private fun parseInt(parser: XmlPullParser): IntEntry = parse(tag = INT, parser = parser) { name, value ->
-        IntEntry(name = name, value = value.toInt())
+        IntEntry(name = name, value = value)
     }
 
     @Throws(XmlPullParserException::class)
     private fun parseFloat(parser: XmlPullParser): FloatEntry = parse(tag = FLOAT, parser = parser) { name, value ->
-        FloatEntry(name = name, value = value.toFloat())
+        FloatEntry(name = name, value = value)
     }
 
     @Throws(XmlPullParserException::class)
     private fun parseLong(parser: XmlPullParser): LongEntry = parse(tag = LONG, parser = parser) { name, value ->
-        LongEntry(name = name, value = value.toLong())
+        LongEntry(name = name, value = value)
     }
 
     @Throws(XmlPullParserException::class)

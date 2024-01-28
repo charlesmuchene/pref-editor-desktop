@@ -41,11 +41,26 @@ fun BooleanEntryRow(entry: BooleanEntry, viewModel: EditorViewModel, modifier: M
         Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(nameComponentWeight))
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.weight(valueComponentWeight)) {
             var isTrue by remember { mutableStateOf(entry.value) }
-            val outline = viewModel.outline(entry, isTrue)
-            RadioButtonRow(selected = isTrue, onClick = { isTrue = true }, outline = outline.first) {
+            val trueString = true.toString()
+            val falseString = false.toString()
+            RadioButtonRow(
+                selected = isTrue.toBooleanStrict(),
+                onClick = {
+                    isTrue = trueString
+                    viewModel.edited(entry = entry, change = trueString)
+                },
+                outline = viewModel.outline(entry = entry, value = trueString)
+            ) {
                 Text(text = "True")
             }
-            RadioButtonRow(selected = !isTrue, onClick = { isTrue = false }, outline = outline.second) {
+            RadioButtonRow(
+                selected = !isTrue.toBooleanStrict(),
+                onClick = {
+                    isTrue = falseString
+                    viewModel.edited(entry = entry, change = falseString)
+                },
+                outline = viewModel.outline(entry = entry, value = falseString)
+            ) {
                 Text(text = "False")
             }
         }

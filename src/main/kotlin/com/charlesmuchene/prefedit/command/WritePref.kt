@@ -49,10 +49,10 @@ data class WritePref(
         buildContent {
             preferences.entries.forEach { entry ->
                 when (entry) {
-                    is BooleanEntry -> tag(BOOLEAN) { attribute(name = entry.name, value = entry.value.toString()) }
-                    is FloatEntry -> tag(FLOAT) { attribute(name = entry.name, value = entry.value.toString()) }
-                    is LongEntry -> tag(LONG) { attribute(name = entry.name, value = entry.value.toString()) }
-                    is IntEntry -> tag(INT) { attribute(name = entry.name, value = entry.value.toString()) }
+                    is BooleanEntry -> tag(BOOLEAN) { attribute(name = entry.name, value = entry.value) }
+                    is FloatEntry -> tag(FLOAT) { attribute(name = entry.name, value = entry.value) }
+                    is LongEntry -> tag(LONG) { attribute(name = entry.name, value = entry.value) }
+                    is IntEntry -> tag(INT) { attribute(name = entry.name, value = entry.value) }
 
                     is StringEntry -> tag(STRING) {
                         attribute(null, NAME, entry.name)

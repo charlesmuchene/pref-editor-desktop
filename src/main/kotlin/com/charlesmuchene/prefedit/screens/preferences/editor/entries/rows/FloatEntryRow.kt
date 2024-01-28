@@ -50,6 +50,7 @@ fun FloatEntryRow(entry: FloatEntry, viewModel: EditorViewModel, modifier: Modif
             onValueChange = { changed ->
                 value = changed
                 outline = viewModel.outline(entry, value)
+                viewModel.edited(entry = entry, change = changed)
             },
             placeholder = { Text(text = initialValue) },
             modifier = Modifier.weight(valueComponentWeight),

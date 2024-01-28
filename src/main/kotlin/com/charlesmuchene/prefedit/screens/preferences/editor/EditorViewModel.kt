@@ -20,64 +20,63 @@ import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.WritePref
 import com.charlesmuchene.prefedit.data.*
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.SetSubEntry
+import com.charlesmuchene.prefedit.validation.PreferenceValidator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.ui.Outline
 
 class EditorViewModel(
-    private val preferences: Preferences,
     private val app: App,
     private val device: Device,
     private val bridge: Bridge,
     private val prefFile: PrefFile,
     private val scope: CoroutineScope,
+    private val preferences: Preferences,
+    private val validator: PreferenceValidator = PreferenceValidator(original = preferences.entries),
 ) : CoroutineScope by scope {
 
+    private val edits = preferences.entries.associate(Entry::toPair).toMutableMap()
     val prefs = preferences.entries.partition { it is SetEntry }
 
-    fun setUIEntries(entry: SetEntry): Pair<SetSubEntry.Header, List<SetSubEntry.Entry>> =
+    fun createSetSubEntries(entry: SetEntry): Pair<SetSubEntry.Header, List<SetSubEntry.Entry>> =
         Pair(SetSubEntry.Header(entry.name), entry.entries.map(SetSubEntry::Entry))
 
-    fun outline(entry: BooleanEntry, value: Boolean): Pair<Outline, Outline> {
-        val trueUIOutline = if (!entry.value && value) Outline.Warning else Outline.None
-        val falseUIOutline = if (entry.value && !value) Outline.Warning else Outline.None
-        return Pair(trueUIOutline, falseUIOutline)
-    }
-
     fun outline(entry: Entry, value: String): Outline = when (entry) {
-        is FloatEntry -> numberOutline(
-            converter = String::toFloatOrNull,
-            initialValue = entry.value,
-            newValue = value,
-        )
+        is FloatEntry, is IntEntry, is LongEntry -> numberOutline(entry = entry, value = value)
 
-        is IntEntry -> numberOutline(
-            converter = String::toIntOrNull,
-            initialValue = entry.value,
-            newValue = value,
-        )
-
-        is LongEntry -> numberOutline(
-            converter = String::toLongOrNull,
-            initialValue = entry.value,
-            newValue = value,
-        )
-
-        is StringEntry -> if (entry.value == value) Outline.None else Outline.Warning
+        is BooleanEntry, is StringEntry -> if (entry.value == value) Outline.None else Outline.Warning
 
         else -> Outline.None
     }
 
-    private fun <T> numberOutline(initialValue: T, newValue: String, converter: (String) -> T?): Outline {
-        val result = converter(newValue) ?: return Outline.Error
-        return if (initialValue == result) Outline.None else Outline.Warning
+    private fun numberOutline(entry: Entry, value: String): Outline {
+        if (entry.value == value) return Outline.None
+        return if (validator.isValid(entry, value)) Outline.Warning else Outline.Error
+    }
+
+    fun edited(entry: Entry, change: String) {
+        if (entry !is SetEntry) {
+            val value = edits[entry.name] ?: return
+            edits[entry.name] = value.copy(second = change)
+        }
     }
 
     fun save() {
         launch {
-            val command = WritePref(app = app, device = device, prefFile = prefFile, preferences = preferences)
-            val result = bridge.execute(command).getOrNull() ?: false
-            if (!result) println("Error writing preferences")
+            val isValid = validator.isValid(edits = edits)
+            if (isValid) pushPrefs() else invalidEdits()
         }
+    }
+
+    private fun invalidEdits() {
+        // TODO Indicate invalid prefs
+        println("Invalid preferences")
+    }
+
+    private suspend fun pushPrefs() {
+        val preferences = validator.editsToPreferences(edits = edits)
+        val command = WritePref(app = app, device = device, prefFile = prefFile, preferences = preferences)
+        val result = bridge.execute(command).getOrNull() ?: false
+        if (!result) println("Error writing preferences")
     }
 }

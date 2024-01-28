@@ -50,6 +50,7 @@ fun LongEntryRow(entry: LongEntry, viewModel: EditorViewModel, modifier: Modifie
             onValueChange = { changed ->
                 value = changed
                 outline = viewModel.outline(entry, value)
+                viewModel.edited(entry = entry, change = changed)
             },
             placeholder = { Text(text = initialValue) },
             modifier = Modifier.weight(valueComponentWeight),
