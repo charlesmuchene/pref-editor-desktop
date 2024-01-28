@@ -25,6 +25,8 @@ import com.charlesmuchene.prefedit.data.Tags.ROOT
 import com.charlesmuchene.prefedit.data.Tags.SET
 import com.charlesmuchene.prefedit.data.Tags.STRING
 import com.charlesmuchene.prefedit.files.PrefEditFiles
+import com.charlesmuchene.prefedit.providers.TimeStampProviderImpl
+import com.charlesmuchene.prefedit.providers.TimestampProvider
 import okio.Buffer
 import okio.BufferedSource
 import org.xmlpull.v1.XmlPullParserFactory
@@ -36,14 +38,17 @@ data class WritePref(
     private val prefFile: PrefFile,
     private val enableBackup: Boolean,
     private val preferences: Preferences,
+    private val timestampProvider: TimestampProvider = TimeStampProviderImpl(),
 ) : WriteCommand<Boolean> {
 
     init {
         PrefEditFiles.copyPushScript()
     }
 
+    private val backupInput = if (enableBackup) "i.backup_${timestampProvider()}" else "i"
+
     override val command: String by lazy {
-        "sh push.sh ${device.serial} ${app.packageName} ${System.currentTimeMillis()} ${prefFile.name}"
+        "sh push.sh ${device.serial} ${app.packageName} $backupInput ${prefFile.name}"
     }
 
     override val content: String by lazy {

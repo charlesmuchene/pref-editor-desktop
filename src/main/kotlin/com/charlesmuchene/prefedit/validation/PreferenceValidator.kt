@@ -29,10 +29,12 @@ class PreferenceValidator(private val original: List<Entry>) {
 
     fun editsToPreferences(edits: Map<String, Pair<KClass<out Entry>, String>>): Preferences =
         Preferences(entries = buildList<Entry> {
-            edits.entries.forEach { entry ->
+            val setEntries = original.filterIsInstance<SetEntry>()
+            val setEntryNames = setEntries.map(SetEntry::name).toSet()
+            edits.entries.filter { it.key !in setEntryNames }.forEach { entry ->
                 add(toEntry(klass = entry.value.first, name = entry.key, value = entry.value.second))
             }
-            original.filterIsInstance<SetEntry>().forEach(::add)
+            setEntries.forEach(::add)
         })
 
     private fun toEntry(klass: KClass<out Entry>, name: String, value: String): Entry = when (klass) {

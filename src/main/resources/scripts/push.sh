@@ -17,7 +17,7 @@
 
 adb -s "$1" exec-out \
 run-as "$2" \
-sed -Ei.backup-"$3" \
+sed -E"$3" \
 -e "1s/.*/@@/g" \
 -e "#^@@#!d" \
 -e "s#@@#${PREF_EDIT_CONTENT}#" \

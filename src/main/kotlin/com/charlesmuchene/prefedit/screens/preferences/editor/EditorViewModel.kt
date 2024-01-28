@@ -45,9 +45,7 @@ class EditorViewModel(
     val prefs = preferences.entries.partition { it is SetEntry }
 
     val enableSave: StateFlow<Boolean> = changes
-        .onEach { println("Changes: $it") }
         .map { validator.validEdits(edits) }
-        .onEach { println("boolean: $it") }
         .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = false)
 
     fun createSetSubEntries(entry: SetEntry): Pair<SetSubEntry.Header, List<SetSubEntry.Entry>> =
