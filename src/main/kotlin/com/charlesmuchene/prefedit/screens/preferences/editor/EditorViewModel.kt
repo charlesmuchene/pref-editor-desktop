@@ -24,6 +24,7 @@ import com.charlesmuchene.prefedit.navigation.PrefListScreen
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.SetSubEntry
 import com.charlesmuchene.prefedit.validation.PreferenceValidator
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.ui.Outline
 
@@ -38,8 +39,15 @@ class EditorViewModel(
     private val validator: PreferenceValidator = PreferenceValidator(original = preferences.entries),
 ) : CoroutineScope by scope {
 
+    private val changes = MutableSharedFlow<CharSequence>()
     private val edits = preferences.entries.associate(Entry::toPair).toMutableMap()
     val prefs = preferences.entries.partition { it is SetEntry }
+
+    val enableSave: StateFlow<Boolean> = changes
+        .onEach { println("Changes: $it") }
+        .map { validator.validEdits(edits) }
+        .onEach { println("boolean: $it") }
+        .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = false)
 
     fun createSetSubEntries(entry: SetEntry): Pair<SetSubEntry.Header, List<SetSubEntry.Entry>> =
         Pair(SetSubEntry.Header(entry.name), entry.entries.map(SetSubEntry::Entry))
@@ -58,6 +66,7 @@ class EditorViewModel(
     }
 
     fun edited(entry: Entry, change: String) {
+        launch { changes.emit(change) }
         if (entry !is SetEntry) {
             val value = edits[entry.name] ?: return
             edits[entry.name] = value.copy(second = change)

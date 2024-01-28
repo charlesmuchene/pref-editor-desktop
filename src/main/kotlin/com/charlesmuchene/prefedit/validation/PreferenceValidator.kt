@@ -21,6 +21,12 @@ import kotlin.reflect.KClass
 
 class PreferenceValidator(private val original: List<Entry>) {
 
+    fun validEdits(edits: Map<String, Pair<KClass<out Entry>, String>>): Boolean =
+        original.fold(initial = false) { accumulator, entry ->
+            accumulator || if (entry is SetEntry) false
+            else (edits[entry.name]?.second != entry.value && edits[entry.name]?.let(::isValid) ?: false)
+        }
+
     fun editsToPreferences(edits: Map<String, Pair<KClass<out Entry>, String>>): Preferences =
         Preferences(entries = buildList<Entry> {
             edits.entries.forEach { entry ->

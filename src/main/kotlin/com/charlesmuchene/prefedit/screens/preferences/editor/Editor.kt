@@ -24,9 +24,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -71,7 +69,8 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
         Row(modifier = Modifier.padding(end = padding)) {
             Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
             Spacer(modifier = Modifier.weight(1f))
-            DefaultButton(onClick = viewModel::save) {
+            val enabled by viewModel.enableSave.collectAsState()
+            DefaultButton(onClick = viewModel::save, enabled = enabled) {
                 Text(text = "Save")
             }
         }
