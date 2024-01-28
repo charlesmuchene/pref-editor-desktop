@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.compose.desktop)
 }
 
-group = "com.charlesmuchene.prefedit"
+group = "com.charlesmuchene.prefeditor"
 version = "1.0.0"
 
 kotlin {
@@ -48,7 +48,7 @@ tasks.test {
 
 compose.desktop {
     application {
-        mainClass = "com.charlesmuchene.prefedit.App"
+        mainClass = "com.charlesmuchene.prefeditor.App"
 
         jvmArgs("-Dorg.jetbrains.jewel.debug=true")
 
@@ -56,13 +56,13 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Preferences Editor"
             packageVersion = "1.0.0"
-            description = "Edit shared preferences"
+            description = "Edit preferences"
             vendor = "Charles Muchene"
 
             macOS {
                 dockName = "Preferences Editor"
-                bundleID = "com.charlesmuchene.prefedit"
-                // iconFile = file(path = "icons/prefedit.icns") TODO Provide icons
+                bundleID = "com.charlesmuchene.prefeditor"
+                // iconFile = file(path = "icons/prefeditor.icns") TODO Provide icons
             }
         }
     }

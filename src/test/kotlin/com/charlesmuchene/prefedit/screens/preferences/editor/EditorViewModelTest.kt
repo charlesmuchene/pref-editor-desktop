@@ -1,3 +1,0 @@
-package com.charlesmuchene.prefedit.screens.preferences.editor
-
-class EditorViewModelTest

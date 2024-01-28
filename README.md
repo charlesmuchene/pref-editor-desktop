@@ -1,25 +1,29 @@
 # Preferences Editor
-A desktop app to edit in-device shared preferences.
+A desktop app to edit on-device shared preferences.
 
 # Usage
+> Ensure `adb` is available on your `PATH`.
 
-> A local installation of ADB is required. It should be included in the Android SDK Platform Tools package downloaded while setting up Android Studio.
-> If not, download the package with the SDK Manager or get the standalone tools from [here](https://developer.android.com/studio/releases/platform-tools)
+A local installation of ADB is required. It should be included in the Android SDK Platform Tools package downloaded while setting up Android Studio.
+If not, download the package with the SDK Manager or get the standalone tools from [here](https://developer.android.com/studio/releases/platform-tools).
 
-| Device Listing                     | Editing preferences              |
-|------------------------------------|----------------------------------|
-| ![image](./images/device-list.png) | ![image](./images/pref-edit.png) |
+| Device Listing                                | App Listing                                |
+|-----------------------------------------------|--------------------------------------------|
+| ![image](./images/01-pref-editor-devices.png) | ![image](./images/02-pref-editor-apps.png) |
+
+| Preferences Files Listing                   | Editing Preferences                        |
+|---------------------------------------------|--------------------------------------------|
+| ![image](./images/03-pref-editor-files.png) | ![image](./images/04-pref-editor-edit.png) |
 
 From the main window:
-* Select a device
+* Select device
 * Choose your app
-* View/Edit shared preferences
+* Select preferences file
+* View/Edit preferences
 
 # Installation
 
-Using Homebrew (for Mac users)
-___
-Tap from this and this
+// TBD
 
 # License
 
