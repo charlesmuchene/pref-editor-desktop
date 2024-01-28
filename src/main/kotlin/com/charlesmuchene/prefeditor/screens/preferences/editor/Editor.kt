@@ -36,6 +36,7 @@ import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.PrefKey
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.PrimitiveEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows.SetEntryRow
+import com.charlesmuchene.prefeditor.ui.Toast
 import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.Orientation
@@ -79,6 +80,9 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
             )
         }
     }
+
+    val message by viewModel.message.collectAsState(initial = null)
+    message?.let { Toast(text = it) }
 }
 
 @Composable

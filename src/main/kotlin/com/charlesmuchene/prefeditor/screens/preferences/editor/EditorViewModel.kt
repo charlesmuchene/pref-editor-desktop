@@ -43,9 +43,11 @@ class EditorViewModel(
 ) : CoroutineScope by scope {
 
     private var enableBackup = false
+    private val _message = MutableSharedFlow<String?>()
     private val changes = MutableSharedFlow<CharSequence>()
     private val edits = preferences.entries.associate(Entry::toPair).toMutableMap()
     val prefs = preferences.entries.partition { it is SetEntry }
+    val message: SharedFlow<String?> = _message.asSharedFlow()
 
     val enableSave: StateFlow<Boolean> = changes
         .map { validator.validEdits(edits) }
@@ -87,8 +89,9 @@ class EditorViewModel(
     }
 
     private fun invalidEdits() {
-        // TODO Indicate invalid prefs
-        logger.info { "Invalid preferences: $edits" }
+        val message = "Invalid edits"
+        launch { _message.emit(message) }
+        logger.info { "$message: $edits" }
     }
 
     private suspend fun pushPrefs() {
@@ -100,10 +103,18 @@ class EditorViewModel(
             preferences = preferences,
             enableBackup = enableBackup,
         )
-        val result = bridge.execute(command).getOrNull() ?: false
-        if (!result) logger.error { "Error writing preferences" }
+        val result = bridge.execute(command)
+        when {
+            result.isSuccess -> {
+                _message.emit("Saving successful")
+                navigation.navigate(screen = PrefListScreen(app = app, device = device))
+            }
 
-        // TODO Indicate edit success toast
-        navigation.navigate(screen = PrefListScreen(app = app, device = device))
+            else -> {
+                val message = "Error saving preferences"
+                _message.emit(message)
+                logger.error(result.exceptionOrNull()) { message }
+            }
+        }
     }
 }
