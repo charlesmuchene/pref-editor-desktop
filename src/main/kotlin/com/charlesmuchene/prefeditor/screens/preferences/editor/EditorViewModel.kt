@@ -23,10 +23,13 @@ import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefListScreen
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.SetSubEntry
 import com.charlesmuchene.prefeditor.validation.PreferenceValidator
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.ui.Outline
+
+private val logger = KotlinLogging.logger {}
 
 class EditorViewModel(
     private val app: App,
@@ -85,7 +88,7 @@ class EditorViewModel(
 
     private fun invalidEdits() {
         // TODO Indicate invalid prefs
-        println("Invalid preferences")
+        logger.info { "Invalid preferences: $edits" }
     }
 
     private suspend fun pushPrefs() {
@@ -98,7 +101,7 @@ class EditorViewModel(
             enableBackup = enableBackup,
         )
         val result = bridge.execute(command).getOrNull() ?: false
-        if (!result) println("Error writing preferences")
+        if (!result) logger.error { "Error writing preferences" }
 
         // TODO Indicate edit success toast
         navigation.navigate(screen = PrefListScreen(app = app, device = device))
