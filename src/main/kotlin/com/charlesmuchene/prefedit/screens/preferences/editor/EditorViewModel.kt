@@ -19,6 +19,8 @@ package com.charlesmuchene.prefedit.screens.preferences.editor
 import com.charlesmuchene.prefedit.bridge.Bridge
 import com.charlesmuchene.prefedit.command.WritePref
 import com.charlesmuchene.prefedit.data.*
+import com.charlesmuchene.prefedit.navigation.Navigation
+import com.charlesmuchene.prefedit.navigation.PrefListScreen
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.SetSubEntry
 import com.charlesmuchene.prefedit.validation.PreferenceValidator
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +33,7 @@ class EditorViewModel(
     private val bridge: Bridge,
     private val prefFile: PrefFile,
     private val scope: CoroutineScope,
+    private val navigation: Navigation,
     private val preferences: Preferences,
     private val validator: PreferenceValidator = PreferenceValidator(original = preferences.entries),
 ) : CoroutineScope by scope {
@@ -78,5 +81,8 @@ class EditorViewModel(
         val command = WritePref(app = app, device = device, prefFile = prefFile, preferences = preferences)
         val result = bridge.execute(command).getOrNull() ?: false
         if (!result) println("Error writing preferences")
+
+        // TODO Indicate edit success toast
+        navigation.navigate(screen = PrefListScreen(app = app, device = device))
     }
 }

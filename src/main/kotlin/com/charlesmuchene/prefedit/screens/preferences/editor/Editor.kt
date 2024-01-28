@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefedit.data.*
 import com.charlesmuchene.prefedit.providers.LocalBridge
 import com.charlesmuchene.prefedit.providers.LocalBundle
+import com.charlesmuchene.prefedit.providers.LocalNavigation
 import com.charlesmuchene.prefedit.resources.PrefKey
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.PrimitiveEntry
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.rows.SetEntryRow
@@ -49,6 +50,7 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
 
     val scope = rememberCoroutineScope()
     val bridge = LocalBridge.current
+    val navigation = LocalNavigation.current
     val viewModel = remember {
         EditorViewModel(
             app = app,
@@ -56,6 +58,7 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
             device = device,
             bridge = bridge,
             prefFile = prefFile,
+            navigation = navigation,
             preferences = preferences,
         )
     }
