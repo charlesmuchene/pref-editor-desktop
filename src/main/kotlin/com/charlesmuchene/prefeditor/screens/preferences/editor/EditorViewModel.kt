@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.editor
 
+import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.command.WritePref
 import com.charlesmuchene.prefeditor.data.*
@@ -36,6 +37,7 @@ class EditorViewModel(
     private val device: Device,
     private val bridge: Bridge,
     private val prefFile: PrefFile,
+    private val appState: AppState,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
     private val preferences: Preferences,
@@ -106,7 +108,7 @@ class EditorViewModel(
         val result = bridge.execute(command)
         when {
             result.isSuccess -> {
-                _message.emit("Saving successful")
+                appState.showToast("'${prefFile.name}' saved successfully!")
                 navigation.navigate(screen = PrefListScreen(app = app, device = device))
             }
 

@@ -19,6 +19,8 @@ package com.charlesmuchene.prefeditor.app
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.ui.theme.PrefEditorTheme
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 class AppState {
 
@@ -27,4 +29,10 @@ class AppState {
 
     val windowSize = DpSize(width = 1020.dp, height = 800.dp)
 
+    private val _toastMessage = MutableSharedFlow<String?>()
+    val toastMessage: SharedFlow<String?> = _toastMessage
+
+    suspend fun showToast(message: String) {
+        _toastMessage.emit(message)
+    }
 }

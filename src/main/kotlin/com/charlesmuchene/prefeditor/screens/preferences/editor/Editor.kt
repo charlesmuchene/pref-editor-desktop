@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -47,6 +48,7 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
 
     val scope = rememberCoroutineScope()
     val bridge = LocalBridge.current
+    val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val viewModel = remember {
         EditorViewModel(
@@ -55,6 +57,7 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
             device = device,
             bridge = bridge,
             prefFile = prefFile,
+            appState = appState,
             navigation = navigation,
             preferences = preferences,
         )

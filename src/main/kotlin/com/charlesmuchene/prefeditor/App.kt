@@ -23,11 +23,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.window.application
 import com.charlesmuchene.prefeditor.app.scaffold
 import com.charlesmuchene.prefeditor.navigation.*
+import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.screens.listing.PrefListing
 import com.charlesmuchene.prefeditor.screens.apps.AppsScreen
 import com.charlesmuchene.prefeditor.screens.home.Home
 import com.charlesmuchene.prefeditor.screens.preferences.PrefEditor
+import com.charlesmuchene.prefeditor.ui.Toast
 
 fun main() {
     application {
@@ -37,6 +39,9 @@ fun main() {
 
             val screen by LocalNavigation.current.current.collectAsState()
             NavigationBar(screen)
+
+            val message by LocalAppState.current.toastMessage.collectAsState(initial = null)
+            message?.let { Toast(text = it) }
 
             when (screen) {
                 HomeScreen -> Home(modifier = modifier)
