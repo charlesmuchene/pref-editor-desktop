@@ -24,21 +24,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.providers.LocalBundle
-import com.charlesmuchene.prefeditor.resources.TextKey
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun FullScreenText(key: TextKey, modifier: Modifier = Modifier, secondary: String? = null) {
-    val text = LocalBundle.current[key]
-
+fun FullScreenText(primary: String, modifier: Modifier = Modifier, secondary: String? = null) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = text, style = Typography.heading)
+        Text(text = primary, style = Typography.heading)
         secondary?.let {
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = secondary, color = Color.Gray, fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))

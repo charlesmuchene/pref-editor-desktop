@@ -58,5 +58,6 @@ private fun PrefLoading(modifier: Modifier = Modifier) {
 
 @Composable
 private fun PrefError(message: String?, modifier: Modifier = Modifier) {
-    FullScreenText(key = PrefKey.PrefError, secondary = message, modifier = modifier)
+    val primary = LocalBundle.current[PrefKey.PrefError]
+    FullScreenText(primary = primary, secondary = message, modifier = modifier)
 }

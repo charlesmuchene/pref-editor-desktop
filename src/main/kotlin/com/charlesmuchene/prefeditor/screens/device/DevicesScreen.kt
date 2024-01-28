@@ -97,10 +97,12 @@ private fun DeviceRow(device: Device, viewModel: DevicesViewModel, modifier: Mod
 
 @Composable
 private fun DeviceListError(modifier: Modifier = Modifier) {
-    FullScreenText(key = HomeKey.DeviceListError, modifier = modifier)
+    val primary = LocalBundle.current[HomeKey.DeviceListError]
+    FullScreenText(primary = primary, modifier = modifier)
 }
 
 @Composable
 private fun NoDevices(modifier: Modifier = Modifier) {
-    FullScreenText(key = HomeKey.EmptyDeviceList, modifier = modifier)
+    val primary = LocalBundle.current[HomeKey.EmptyDeviceList]
+    FullScreenText(primary = primary, modifier = modifier)
 }

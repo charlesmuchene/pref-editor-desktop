@@ -18,10 +18,12 @@ package com.charlesmuchene.prefeditor.screens.bridge
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.ui.FullScreenText
 
 @Composable
 fun BridgeUnavailable(modifier: Modifier = Modifier) {
-    FullScreenText(key = HomeKey.BridgeUnavailable, modifier = modifier)
+    val primary = LocalBundle.current[HomeKey.BridgeUnavailable]
+    FullScreenText(primary = primary, modifier = modifier)
 }

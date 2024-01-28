@@ -56,7 +56,8 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
 
 @Composable
 private fun LoadingAppError(modifier: Modifier = Modifier) {
-    FullScreenText(key = DeviceKey.AppListingError, modifier = modifier)
+    val text = LocalBundle.current[DeviceKey.AppListingError]
+    FullScreenText(primary = text, modifier = modifier)
 }
 
 @Composable

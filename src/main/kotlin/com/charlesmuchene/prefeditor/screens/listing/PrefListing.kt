@@ -65,12 +65,14 @@ fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
 
 @Composable
 private fun PrefListingEmpty(modifier: Modifier = Modifier) {
-    FullScreenText(key = AppKey.PrefListingEmpty, modifier = modifier)
+    val primary = LocalBundle.current[AppKey.PrefListingEmpty]
+    FullScreenText(primary = primary, modifier = modifier)
 }
 
 @Composable
 private fun PrefListingError(modifier: Modifier = Modifier) {
-    FullScreenText(key = AppKey.PrefListingError, modifier = modifier)
+    val primary = LocalBundle.current[AppKey.PrefListingError]
+    FullScreenText(primary = primary, modifier = modifier)
 }
 
 @Composable
