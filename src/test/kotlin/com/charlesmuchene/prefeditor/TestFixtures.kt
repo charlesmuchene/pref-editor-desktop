@@ -39,6 +39,7 @@ object TestFixtures {
             BooleanEntry(name = "boolean", value = "false"),
             StringEntry(name = "string", value = "string"),
             IntEntry(name = "another-integer", value = "0"),
+            StringEntry(name = "empty-string", value = ""),
             IntEntry(name = "integer", value = "-1"),
             FloatEntry(name = "float", value = "0.0"),
             SetEntry(name = "string-set", entries = listOf("strings", "one", "two", "three")),
@@ -46,13 +47,14 @@ object TestFixtures {
         )
     )
 
-    val preferenceFile = """<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+    const val PREFERENCES = """<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
                 <map>
                     <boolean name="boolean" value="false" />
                     <string name="string">string</string>
-                    <int name="another-integer" value="0" />
                     <int name="integer" value="-1" />
+                    <int name="another-integer" value="0" />
                     <float name="float" value="0.0" />
+                    <string name="empty-string"></string>
                     <set name="string-set">
                         <string>strings</string>
                         <string>one</string>

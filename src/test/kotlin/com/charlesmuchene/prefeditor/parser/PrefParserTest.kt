@@ -19,89 +19,65 @@ class PrefParserTest {
     }
 
     @Test
-    fun `parse boolean entry`() {
-        TestFixtures.preferenceFile.buffered {
-            val result = parser.parse(this)
+    fun `parse all preferences`() {
+        TestFixtures.PREFERENCES.buffered {
+            val entries = parser.parse(this).entries
+            assertEquals(expected = 8, actual = entries.size)
 
-            val entries = result.entries
-            val entry = entries.first()
-            assertTrue(entry is BooleanEntry)
-            assertFalse(entry.value.toBooleanStrict())
-            assertEquals(expected = "boolean", actual = entry.name)
+            `parse set entry`(entries[6])
+            `parse long entry`(entries[7])
+            `parse float entry`(entries[4])
+            `parse boolean entry`(entries[0])
+            `parse string entries`(entries[1], entries[5])
+            `parse int entries`(entries[2], entries[3])
         }
     }
 
-    @Test
-    fun `parse string entry`() {
-        TestFixtures.preferenceFile.buffered {
-            val result = parser.parse(this)
-
-            val entries = result.entries
-            val entry = entries[1]
-            assertTrue(entry is StringEntry)
-            assertEquals(expected = "string", actual = entry.name)
-            assertEquals(expected = "string", actual = entry.value)
-        }
+    private fun `parse boolean entry`(entry: Entry) {
+        assertTrue(entry is BooleanEntry)
+        assertFalse(entry.value.toBooleanStrict())
+        assertEquals(expected = "boolean", actual = entry.name)
     }
 
-    @Test
-    fun `parse int entry`() {
-        TestFixtures.preferenceFile.buffered {
-            val result = parser.parse(this)
-
-            val entries = result.entries
-            val entryOne = entries[2]
-            val entryTwo = entries[3]
-            assertTrue(entryOne is IntEntry)
-            assertTrue(entryTwo is IntEntry)
-            assertEquals(expected = 0, actual = entryOne.value.toInt())
-            assertEquals(expected = "another-integer", actual = entryOne.name)
-            assertEquals(expected = -1, actual = entryTwo.value.toInt())
-            assertEquals(expected = "integer", actual = entryTwo.name)
-        }
+    private fun `parse string entries`(entry: Entry, another: Entry) {
+        assertTrue(entry is StringEntry)
+        assertEquals(expected = "string", actual = entry.name)
+        assertEquals(expected = "string", actual = entry.value)
+        assertTrue(another is StringEntry)
+        assertEquals(expected = "", actual = another.value)
+        assertEquals(expected = "empty-string", actual = another.name)
     }
 
-    @Test
-    fun `parse float entry`() {
-        TestFixtures.preferenceFile.buffered {
-            val result = parser.parse(this)
+    private fun `parse int entries`(entry: Entry, another: Entry) {
+        assertTrue(entry is IntEntry)
+        assertEquals(expected = -1, actual = entry.value.toInt())
+        assertEquals(expected = "integer", actual = entry.name)
 
-            val entries = result.entries
-            val entry = entries[4]
-            assertTrue(entry is FloatEntry)
-            assertEquals(expected = 0.0f, actual = entry.value.toFloat())
-            assertEquals(expected = "float", actual = entry.name)
-        }
+        assertTrue(another is IntEntry)
+        assertEquals(expected = 0, actual = another.value.toInt())
+        assertEquals(expected = "another-integer", actual = another.name)
     }
 
-    @Test
-    fun `parse long entry`() {
-        TestFixtures.preferenceFile.buffered {
-            val result = parser.parse(this)
-
-            val entries = result.entries
-            val entry = entries[6]
-            assertTrue(entry is LongEntry)
-            assertEquals(expected = 100L, actual = entry.value.toLong())
-            assertEquals(expected = "long", actual = entry.name)
-        }
+    private fun `parse float entry`(entry: Entry) {
+        assertTrue(entry is FloatEntry)
+        assertEquals(expected = "float", actual = entry.name)
+        assertEquals(expected = 0.0f, actual = entry.value.toFloat())
     }
 
-    @Test
-    fun `parse set entry`() {
-        TestFixtures.preferenceFile.buffered {
-            val result = parser.parse(this)
+    private fun `parse long entry`(entry: Entry) {
+        assertTrue(entry is LongEntry)
+        assertEquals(expected = 100L, actual = entry.value.toLong())
+        assertEquals(expected = "long", actual = entry.name)
+    }
 
-            val entries = result.entries
-            val entry = entries[5]
-            assertTrue(entry is SetEntry)
-            assertEquals(expected = "string-set", actual = entry.name)
-            val subEntries = entry.entries
-            assertEquals(expected = 4, actual = subEntries.size)
-            assertEquals(expected = "strings", actual = subEntries.first())
-            assertEquals(expected = "one", actual = subEntries[1])
-            assertEquals(expected = "two", actual = subEntries[2])
-            assertEquals(expected = "three", actual = subEntries[3])
-        }
+    private fun `parse set entry`(entry: Entry) {
+        assertTrue(entry is SetEntry)
+        assertEquals(expected = "string-set", actual = entry.name)
+        val subEntries = entry.entries
+        assertEquals(expected = 4, actual = subEntries.size)
+        assertEquals(expected = "strings", actual = subEntries.first())
+        assertEquals(expected = "one", actual = subEntries[1])
+        assertEquals(expected = "two", actual = subEntries[2])
+        assertEquals(expected = "three", actual = subEntries[3])
     }
 }

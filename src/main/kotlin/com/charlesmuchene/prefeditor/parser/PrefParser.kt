@@ -77,11 +77,15 @@ class PrefParser : Parser<Preferences> {
     }
 
     @Throws(XmlPullParserException::class)
-    private fun parseString(parser: XmlPullParser): StringEntry = parser.gobbleTag(tag = STRING) {
-        expect(parser.attributeCount == 1)
-        val name = parser.getAttributeValue(0)
-        expect(parser.next() == XmlPullParser.TEXT)
-        StringEntry(name = name, value = parser.text)
+    private fun parseString(parser: XmlPullParser): StringEntry = with(parser) {
+        require(XmlPullParser.START_TAG, null, STRING)
+        expect(attributeCount == 1)
+        val name = getAttributeValue(0)
+        val next = next()
+        val value = if (next == XmlPullParser.TEXT) text else ""
+        if (next != XmlPullParser.END_TAG) nextTag()
+        require(XmlPullParser.END_TAG, null, STRING)
+        StringEntry(name = name, value = value)
     }
 
     @Throws(XmlPullParserException::class)
