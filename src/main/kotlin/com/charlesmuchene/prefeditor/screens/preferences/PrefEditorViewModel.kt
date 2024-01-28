@@ -22,11 +22,15 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preferences
+import com.charlesmuchene.prefeditor.extensions.eval
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+
+private val logger = KotlinLogging.logger {}
 
 class PrefEditorViewModel(
     private val app: App,
@@ -44,18 +48,18 @@ class PrefEditorViewModel(
     }
 
     private suspend fun fetchPreferences(): UIState {
-        val result = bridge.execute(command = ReadPref(app = app, device = device, prefFile = prefFile))
+        val result = bridge.execute(command = ReadPref(app = app, device = device, prefFile = prefFile)).eval(logger)
         return when {
             result.isSuccess -> result.getOrNull()?.let { pref ->
                 UIState.Success(preferences = pref)
-            } ?: UIState.Error
+            } ?: UIState.Error()
 
-            else -> UIState.Error
+            else -> UIState.Error(result.exceptionOrNull()?.message)
         }
     }
 
     sealed interface UIState {
-        data object Error : UIState
+        data class Error(val message: String? = null) : UIState
         data object Loading : UIState
         data class Success(val preferences: Preferences) : UIState
     }

@@ -128,7 +128,7 @@ class PrefParser : Parser<Preferences> {
     }
 
     private fun expect(toBeTrue: Boolean) {
-        if (!toBeTrue) throw XmlPullParserException("Failed xml format check")
+        if (!toBeTrue) throw XmlPullParserException("Unexpected xml format")
     }
 
     private fun <R> XmlPullParser.gobbleTag(tag: String, block: XmlPullParser.() -> R): R {

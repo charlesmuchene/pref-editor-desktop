@@ -27,7 +27,7 @@ import com.charlesmuchene.prefeditor.resources.PrefKey
 import com.charlesmuchene.prefeditor.screens.preferences.PrefEditorViewModel.UIState
 import com.charlesmuchene.prefeditor.screens.preferences.editor.Editor
 import com.charlesmuchene.prefeditor.ui.Loading
-import com.charlesmuchene.prefeditor.ui.SingleText
+import com.charlesmuchene.prefeditor.ui.FullScreenText
 
 @Composable
 fun PrefEditor(prefFile: PrefFile, app: App, device: Device, modifier: Modifier = Modifier) {
@@ -39,7 +39,7 @@ fun PrefEditor(prefFile: PrefFile, app: App, device: Device, modifier: Modifier 
     val state by viewModel.uiState.collectAsState()
 
     when (state) {
-        UIState.Error -> PrefError(modifier = modifier)
+        is UIState.Error -> PrefError(modifier = modifier, message = (state as UIState.Error).message)
         UIState.Loading -> PrefLoading(modifier = modifier)
         is UIState.Success -> Editor(
             app = app,
@@ -57,6 +57,6 @@ private fun PrefLoading(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PrefError(modifier: Modifier = Modifier) {
-    SingleText(key = PrefKey.PrefError, modifier = modifier)
+private fun PrefError(message: String?, modifier: Modifier = Modifier) {
+    FullScreenText(key = PrefKey.PrefError, secondary = message, modifier = modifier)
 }

@@ -32,7 +32,7 @@ import com.charlesmuchene.prefeditor.screens.apps.AppsScreenViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.Listing
 import com.charlesmuchene.prefeditor.ui.ListingRow
 import com.charlesmuchene.prefeditor.ui.Loading
-import com.charlesmuchene.prefeditor.ui.SingleText
+import com.charlesmuchene.prefeditor.ui.FullScreenText
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
@@ -56,7 +56,7 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
 
 @Composable
 private fun LoadingAppError(modifier: Modifier = Modifier) {
-    SingleText(key = DeviceKey.AppListingError, modifier = modifier)
+    FullScreenText(key = DeviceKey.AppListingError, modifier = modifier)
 }
 
 @Composable

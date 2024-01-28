@@ -37,7 +37,7 @@ import com.charlesmuchene.prefeditor.screens.listing.PrefListingViewModel.UIStat
 import com.charlesmuchene.prefeditor.ui.Listing
 import com.charlesmuchene.prefeditor.ui.ListingRow
 import com.charlesmuchene.prefeditor.ui.Loading
-import com.charlesmuchene.prefeditor.ui.SingleText
+import com.charlesmuchene.prefeditor.ui.FullScreenText
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
@@ -65,12 +65,12 @@ fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
 
 @Composable
 private fun PrefListingEmpty(modifier: Modifier = Modifier) {
-    SingleText(key = AppKey.PrefListingEmpty, modifier = modifier)
+    FullScreenText(key = AppKey.PrefListingEmpty, modifier = modifier)
 }
 
 @Composable
 private fun PrefListingError(modifier: Modifier = Modifier) {
-    SingleText(key = AppKey.PrefListingError, modifier = modifier)
+    FullScreenText(key = AppKey.PrefListingError, modifier = modifier)
 }
 
 @Composable

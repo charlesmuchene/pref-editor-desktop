@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.logging)
     implementation(libs.kxml2)
     implementation(libs.okio)
+    runtimeOnly(libs.sl4j)
 
     testImplementation(libs.turbine)
     testImplementation(libs.kotlin.test)

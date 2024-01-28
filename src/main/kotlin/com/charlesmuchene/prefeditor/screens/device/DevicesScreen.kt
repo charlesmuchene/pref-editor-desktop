@@ -97,10 +97,10 @@ private fun DeviceRow(device: Device, viewModel: DevicesViewModel, modifier: Mod
 
 @Composable
 private fun DeviceListError(modifier: Modifier = Modifier) {
-    SingleText(key = HomeKey.DeviceListError, modifier = modifier)
+    FullScreenText(key = HomeKey.DeviceListError, modifier = modifier)
 }
 
 @Composable
 private fun NoDevices(modifier: Modifier = Modifier) {
-    SingleText(key = HomeKey.EmptyDeviceList, modifier = modifier)
+    FullScreenText(key = HomeKey.EmptyDeviceList, modifier = modifier)
 }

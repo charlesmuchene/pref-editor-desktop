@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.screens.bridge
+package com.charlesmuchene.prefeditor.extensions
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.charlesmuchene.prefeditor.resources.HomeKey
-import com.charlesmuchene.prefeditor.ui.FullScreenText
+import io.github.oshai.kotlinlogging.KLogger
 
-@Composable
-fun BridgeUnavailable(modifier: Modifier = Modifier) {
-    FullScreenText(key = HomeKey.BridgeUnavailable, modifier = modifier)
+fun <T> Result<T>.eval(logger: KLogger): Result<T> {
+    onFailure { throwable -> logger.error(throwable) { "kotlin.Result.eval" } }
+    return this
 }

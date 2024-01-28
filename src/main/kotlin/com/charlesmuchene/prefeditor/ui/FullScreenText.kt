@@ -16,21 +16,32 @@
 
 package com.charlesmuchene.prefeditor.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
+import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.TextKey
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun SingleText(key: TextKey, modifier: Modifier = Modifier) {
+fun FullScreenText(key: TextKey, modifier: Modifier = Modifier, secondary: String? = null) {
     val text = LocalBundle.current[key]
 
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(text = text, style = Typography.heading)
+        secondary?.let {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = secondary, color = Color.Gray, fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))
+        }
     }
 }
