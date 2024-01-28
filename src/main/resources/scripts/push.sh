@@ -15,12 +15,10 @@
 # limitations under the License.
 #
 
-replaced="$2"
 adb -s "$1" exec-out \
 run-as "$2" \
 sed -Ei.backup-"$3" \
--e '1s#.*$#@@#g' \
--e '#^@@#!d' \
--e "s#$4#${!replaced}#" \
--e '1d' \
-"/data/data/$5/shared_prefs/$6"
+-e "1s/.*/@@/g" \
+-e "#^@@#!d" \
+-e "s#@@#${PREF_EDIT_CONTENT}#" \
+"/data/data/$2/shared_prefs/$4"

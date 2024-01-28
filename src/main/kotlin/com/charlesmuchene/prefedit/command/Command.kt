@@ -25,3 +25,9 @@ interface Command<T> {
 
     fun execute(source: BufferedSource): T = parser.parse(source)
 }
+
+interface WriteCommand<T> {
+    val command: String
+    val content: String
+    fun execute(source: BufferedSource): T
+}

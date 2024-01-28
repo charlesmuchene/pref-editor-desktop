@@ -24,31 +24,28 @@ import com.charlesmuchene.prefedit.data.Tags.LONG
 import com.charlesmuchene.prefedit.data.Tags.ROOT
 import com.charlesmuchene.prefedit.data.Tags.SET
 import com.charlesmuchene.prefedit.data.Tags.STRING
-import com.charlesmuchene.prefedit.parser.NoOpParser
-import com.charlesmuchene.prefedit.parser.Parser
+import com.charlesmuchene.prefedit.files.PrefEditFiles
+import okio.Buffer
+import okio.BufferedSource
 import org.xmlpull.v1.XmlPullParserFactory
 import org.xmlpull.v1.XmlSerializer
-import java.io.ByteArrayOutputStream
-import java.io.OutputStream
 
 data class WritePref(
     private val app: App,
     private val device: Device,
     private val prefFile: PrefFile,
     private val preferences: Preferences,
-) : Command<Unit> {
-    override val parser: Parser<Unit> = NoOpParser
-    override val command: String by lazy {
-        buildString {
-            append("-s ", device.serial, " exec-out run-as ", app.packageName, " sed -Ei.backup ")
-            append("-e '1s", SEP, ".*", SEP, PATTERN, SEP, "g'")
-            append("-e '", SEP, "^", PATTERN, SEP, "!d'")
-            append("-e '", SEP, PATTERN, SEP, content(), SEP, "g")
-            append(" '/data/data/${app.packageName}/shared_prefs/", prefFile.name, "'")
-        }
+) : WriteCommand<Boolean> {
+
+    init {
+        PrefEditFiles.copyPushScript()
     }
 
-    private fun content(): String = buildString {
+    override val command: String by lazy {
+        "sh push.sh ${device.serial} ${app.packageName} ${System.currentTimeMillis()} ${prefFile.name}"
+    }
+
+    override val content: String by lazy {
         buildContent {
             preferences.entries.forEach { entry ->
                 when (entry) {
@@ -70,8 +67,10 @@ data class WritePref(
                     }
                 }
             }
-        }.also { append(it.toString()) }
+        }
     }
+
+    override fun execute(source: BufferedSource): Boolean = source.readUtf8().isBlank()
 
     private fun XmlSerializer.attribute(name: String, value: String) {
         attribute(null, NAME, name)
@@ -84,23 +83,23 @@ data class WritePref(
         endTag(null, tag)
     }
 
-    private fun buildContent(block: XmlSerializer.() -> Unit): OutputStream = ByteArrayOutputStream().also {
+    private fun buildContent(block: XmlSerializer.() -> Unit): String {
+        val buffer = Buffer()
         with(XmlPullParserFactory.newInstance().newSerializer()) {
-            setOutput(it, ENCODING)
+            setOutput(buffer.outputStream(), ENCODING)
             setFeature(INDENTATION_FEATURE, true)
             startDocument(ENCODING, true)
             startTag(null, ROOT)
             block()
             endDocument()
         }
+        return buffer.readUtf8()
     }
 
     companion object {
         const val INDENTATION_FEATURE = "http://xmlpull.org/v1/doc/features.html#indent-output"
         const val ENCODING = "utf-8"
-        const val PATTERN = "***"
         const val VALUE = "value"
         const val NAME = "name"
-        const val SEP = "_"
     }
 }

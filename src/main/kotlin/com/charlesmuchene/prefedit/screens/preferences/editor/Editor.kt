@@ -68,7 +68,7 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
         Row(modifier = Modifier.padding(end = padding)) {
             Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
             Spacer(modifier = Modifier.weight(1f))
-            DefaultButton(onClick = {}) {
+            DefaultButton(onClick = viewModel::save) {
                 Text(text = "Save")
             }
         }

@@ -19,6 +19,8 @@ package com.charlesmuchene.prefedit.bridge
 import com.charlesmuchene.prefedit.bridge.BridgeStatus.Available
 import com.charlesmuchene.prefedit.bridge.BridgeStatus.Unavailable
 import com.charlesmuchene.prefedit.command.Command
+import com.charlesmuchene.prefedit.command.WriteCommand
+import com.charlesmuchene.prefedit.files.PrefEditFiles.appPath
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,6 +29,7 @@ import okio.buffer
 import okio.source
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
+import kotlin.io.path.pathString
 
 class Bridge(private val context: CoroutineContext = Dispatchers.IO + CoroutineName(name = "Bridge")) {
 
@@ -38,21 +41,37 @@ class Bridge(private val context: CoroutineContext = Dispatchers.IO + CoroutineN
      */
     suspend fun <T> execute(command: Command<T>): Result<T> = withContext(context) {
         val tokens = command.command.split(DELIMITER)
-        val processBuilder = ProcessBuilder(tokens).apply {
+        with(ProcessBuilder(tokens)) {
             redirectErrorStream(true)
+            execute(command::execute)
         }
+    }
+
+    suspend fun <T> execute(command: WriteCommand<T>): Result<T> = withContext(context) {
+        val tokens = command.command.split(DELIMITER)
+        println(command.command)
+        println(command.content)
+        with(ProcessBuilder(tokens)) {
+            environment()[PATH] += ":${appPath().pathString}"
+            environment()[CONTENT] = command.content
+            redirectErrorStream(true)
+            execute(command::execute)
+        }
+    }
+
+    private fun <T> ProcessBuilder.execute(block: (BufferedSource) -> T): Result<T> {
         val process = try {
-            processBuilder.start()
+            start()
         } catch (t: Throwable) {
-            return@withContext Result.failure(t)
+            return Result.failure(t)
         }
-        process
+        return process
             .inputStream
             .source()
             .buffer()
             .use { source ->
                 try {
-                    Result.success(command.execute(source))
+                    Result.success(block(source))
                 } catch (t: Throwable) {
                     Result.failure(t)
                 }
@@ -61,7 +80,9 @@ class Bridge(private val context: CoroutineContext = Dispatchers.IO + CoroutineN
 
     companion object {
         private const val ADB = "adb"
+        private const val PATH = "PATH"
         private const val DELIMITER = " "
+        private const val CONTENT = "PREF_EDIT_CONTENT"
 
         suspend fun checkBridge(context: CoroutineContext = Dispatchers.IO): BridgeStatus = withContext(context) {
             val builder = ProcessBuilder()

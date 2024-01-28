@@ -17,13 +17,15 @@
 package com.charlesmuchene.prefedit.screens.preferences.editor
 
 import com.charlesmuchene.prefedit.bridge.Bridge
+import com.charlesmuchene.prefedit.command.WritePref
 import com.charlesmuchene.prefedit.data.*
 import com.charlesmuchene.prefedit.screens.preferences.editor.entries.SetSubEntry
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.jetbrains.jewel.ui.Outline
 
 class EditorViewModel(
-    preferences: Preferences,
+    private val preferences: Preferences,
     private val app: App,
     private val device: Device,
     private val bridge: Bridge,
@@ -71,4 +73,11 @@ class EditorViewModel(
         return if (initialValue == result) Outline.None else Outline.Warning
     }
 
+    fun save() {
+        launch {
+            val command = WritePref(app = app, device = device, prefFile = prefFile, preferences = preferences)
+            val result = bridge.execute(command).getOrNull() ?: false
+            if (!result) println("Error writing preferences")
+        }
+    }
 }
