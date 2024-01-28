@@ -39,9 +39,7 @@ import com.charlesmuchene.prefedit.screens.preferences.editor.entries.rows.SetEn
 import com.charlesmuchene.prefedit.ui.padding
 import com.charlesmuchene.prefedit.ui.theme.Typography
 import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.DefaultButton
-import org.jetbrains.jewel.ui.component.Divider
-import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.*
 
 @Composable
 fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Device, modifier: Modifier = Modifier) {
@@ -66,14 +64,7 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
     val state = rememberLazyListState()
 
     Column(modifier = modifier.fillMaxSize()) {
-        Row(modifier = Modifier.padding(end = padding)) {
-            Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
-            Spacer(modifier = Modifier.weight(1f))
-            val enabled by viewModel.enableSave.collectAsState()
-            DefaultButton(onClick = viewModel::save, enabled = enabled) {
-                Text(text = "Save")
-            }
-        }
+        EditorTopBar(viewModel = viewModel)
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxSize()) {
             Column {
@@ -86,6 +77,26 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
                 adapter = rememberScrollbarAdapter(scrollState = state),
                 modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
             )
+        }
+    }
+}
+
+@Composable
+private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+    Row(modifier = modifier.padding(end = padding)) {
+        Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
+        Spacer(modifier = Modifier.weight(1f))
+        var checked by remember { mutableStateOf(false) }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CheckboxRow(text = "Backup original file", checked = checked, onCheckedChange = {
+                viewModel.backup(it)
+                checked = it
+            })
+            Spacer(modifier = Modifier.width(12.dp))
+            val enabled by viewModel.enableSave.collectAsState()
+            DefaultButton(onClick = viewModel::save, enabled = enabled) {
+                Text(text = "Save")
+            }
         }
     }
 }

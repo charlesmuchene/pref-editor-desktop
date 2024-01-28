@@ -34,6 +34,7 @@ data class WritePref(
     private val app: App,
     private val device: Device,
     private val prefFile: PrefFile,
+    private val enableBackup: Boolean,
     private val preferences: Preferences,
 ) : WriteCommand<Boolean> {
 

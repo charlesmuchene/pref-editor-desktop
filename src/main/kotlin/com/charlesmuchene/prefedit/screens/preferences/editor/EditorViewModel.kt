@@ -39,6 +39,7 @@ class EditorViewModel(
     private val validator: PreferenceValidator = PreferenceValidator(original = preferences.entries),
 ) : CoroutineScope by scope {
 
+    private var enableBackup = false
     private val changes = MutableSharedFlow<CharSequence>()
     private val edits = preferences.entries.associate(Entry::toPair).toMutableMap()
     val prefs = preferences.entries.partition { it is SetEntry }
@@ -80,6 +81,10 @@ class EditorViewModel(
         }
     }
 
+    fun backup(backup: Boolean) {
+        enableBackup = backup
+    }
+
     private fun invalidEdits() {
         // TODO Indicate invalid prefs
         println("Invalid preferences")
@@ -87,7 +92,13 @@ class EditorViewModel(
 
     private suspend fun pushPrefs() {
         val preferences = validator.editsToPreferences(edits = edits)
-        val command = WritePref(app = app, device = device, prefFile = prefFile, preferences = preferences)
+        val command = WritePref(
+            app = app,
+            device = device,
+            prefFile = prefFile,
+            preferences = preferences,
+            enableBackup = enableBackup,
+        )
         val result = bridge.execute(command).getOrNull() ?: false
         if (!result) println("Error writing preferences")
 
