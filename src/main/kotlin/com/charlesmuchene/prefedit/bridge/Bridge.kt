@@ -31,6 +31,13 @@ import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 import kotlin.io.path.pathString
 
+/**
+ * Interface to the debug bridge
+ *
+ * Current implementation expects the bridge to be on the system `PATH`
+ *
+ * @param context [CoroutineContext] for all bridge operations
+ */
 class Bridge(private val context: CoroutineContext = Dispatchers.IO + CoroutineName(name = "Bridge")) {
 
     /**

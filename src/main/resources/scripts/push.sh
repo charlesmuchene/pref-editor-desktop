@@ -19,6 +19,6 @@ adb -s "$1" exec-out \
 run-as "$2" \
 sed -E"$3" \
 -e "1s/.*/@@/g" \
--e "#^@@#!d" \
--e "s#@@#${PREF_EDIT_CONTENT}#" \
+-e "/^@@/!d" \
+-e "s_@@_${PREF_EDIT_CONTENT}_" \
 "/data/data/$2/shared_prefs/$4"
