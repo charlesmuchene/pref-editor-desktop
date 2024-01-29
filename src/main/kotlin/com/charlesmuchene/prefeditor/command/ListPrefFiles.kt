@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.command
 
+import com.charlesmuchene.prefeditor.command.ListPrefFiles.PrefFilesResult
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFiles
@@ -25,9 +26,16 @@ import com.charlesmuchene.prefeditor.parser.PrefFilesParser
 data class ListPrefFiles(
     val app: App,
     val device: Device,
-    override val parser: Parser<PrefFiles> = PrefFilesParser()
-) : ReadCommand<PrefFiles> {
+    override val parser: Parser<PrefFilesResult> = PrefFilesParser(),
+) : ReadCommand<PrefFilesResult> {
 
     // TODO Add listing files for data store api
     override val command: String = "adb -s ${device.serial} shell run-as ${app.packageName} ls shared_prefs"
+
+    sealed interface PrefFilesResult {
+        data object EmptyFiles : PrefFilesResult
+        data object EmptyPrefs : PrefFilesResult
+        data object NonDebuggable : PrefFilesResult
+        data class Files(val files: PrefFiles) : PrefFilesResult
+    }
 }

@@ -16,28 +16,37 @@
 
 package com.charlesmuchene.prefeditor.parser
 
+import com.charlesmuchene.prefeditor.command.ListPrefFiles.PrefFilesResult
 import com.charlesmuchene.prefeditor.data.PrefFile
-import com.charlesmuchene.prefeditor.data.PrefFiles
 import okio.BufferedSource
 
-class PrefFilesParser : Parser<PrefFiles> {
+class PrefFilesParser : Parser<PrefFilesResult> {
 
-    override fun parse(source: BufferedSource): PrefFiles = buildList {
-        while (true) {
-            val line = source.readUtf8Line() ?: break
-            parseFile(line)?.let(::add)
+    // FIXME: Hard to read, refactor
+    override fun parse(source: BufferedSource): PrefFilesResult {
+        val line = source.readUtf8Line() ?: return PrefFilesResult.EmptyPrefs
+        when {
+            line.isBlank() -> Unit
+            line == EMPTY_FILES -> return PrefFilesResult.EmptyFiles
+            line == EMPTY_PREFS -> return PrefFilesResult.EmptyPrefs
+            line.startsWith(NON_DEBUGGABLE) -> return PrefFilesResult.NonDebuggable
+            else -> {
+                val files = buildList {
+                    add(PrefFile(name = line, type = PrefFile.Type.KEY_VALUE))
+                    while (true) {
+                        val name = source.readUtf8Line() ?: break
+                        add(PrefFile(name = name, type = PrefFile.Type.KEY_VALUE))
+                    }
+                }
+                return PrefFilesResult.Files(files)
+            }
         }
-    }
-
-    private fun parseFile(line: String): PrefFile? {
-        if (line.isBlank()) return null
-        if (line == NO_PREFS || line == NO_FILES || line.startsWith(NON_DEBUGGABLE)) return null
-        return PrefFile(name = line, type = PrefFile.Type.KEY_VALUE)
+        return PrefFilesResult.EmptyPrefs
     }
 
     private companion object {
-        private const val NO_PREFS = "ls: shared_prefs: No such file or directory"
-        private const val NO_FILES = "ls: files: No such file or directory"
+        private const val EMPTY_PREFS = "ls: shared_prefs: No such file or directory"
+        private const val EMPTY_FILES = "ls: files: No such file or directory"
         private const val NON_DEBUGGABLE = "run-as: package not debuggable:"
     }
 }

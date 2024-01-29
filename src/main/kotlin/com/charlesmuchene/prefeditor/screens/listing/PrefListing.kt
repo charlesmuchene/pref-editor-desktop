@@ -34,10 +34,10 @@ import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.AppKey
 import com.charlesmuchene.prefeditor.screens.listing.PrefListingViewModel.UIState
+import com.charlesmuchene.prefeditor.ui.FullScreenText
 import com.charlesmuchene.prefeditor.ui.Listing
 import com.charlesmuchene.prefeditor.ui.ListingRow
 import com.charlesmuchene.prefeditor.ui.Loading
-import com.charlesmuchene.prefeditor.ui.FullScreenText
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
@@ -53,7 +53,7 @@ fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
 
     when (state) {
         UIState.Empty -> PrefListingEmpty(modifier = modifier)
-        UIState.Error -> PrefListingError(modifier = modifier)
+        is UIState.Error -> PrefListingError(modifier = modifier, message = (state as UIState.Error).message)
         UIState.Loading -> PrefListingLoading(modifier = modifier)
         is UIState.Files -> PrefListingSuccess(
             modifier = modifier,
@@ -70,9 +70,9 @@ private fun PrefListingEmpty(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PrefListingError(modifier: Modifier = Modifier) {
+private fun PrefListingError(modifier: Modifier = Modifier, message: String? = null) {
     val primary = LocalBundle.current[AppKey.PrefListingError]
-    FullScreenText(primary = primary, modifier = modifier)
+    FullScreenText(primary = primary, secondary = message, modifier = modifier)
 }
 
 @Composable
@@ -84,7 +84,12 @@ private fun PrefListingLoading(modifier: Modifier = Modifier) {
 @Composable
 private fun PrefListingSuccess(prefFiles: PrefFiles, modifier: Modifier = Modifier, viewModel: PrefListingViewModel) {
     val header = LocalBundle.current[AppKey.PrefListingTitle]
-    Listing(header = header, filterPlaceholder = "Filter preferences", modifier = modifier, onFilter = viewModel::filter) {
+    Listing(
+        header = header,
+        filterPlaceholder = "Filter preferences",
+        modifier = modifier,
+        onFilter = viewModel::filter
+    ) {
         if (prefFiles.isEmpty()) item { Text(text = "No preferences matching filter", style = Typography.primary) }
         items(items = prefFiles, key = PrefFile::name) { prefFile ->
             PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected)

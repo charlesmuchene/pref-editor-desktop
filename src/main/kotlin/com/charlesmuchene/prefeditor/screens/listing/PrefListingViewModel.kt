@@ -18,6 +18,7 @@ package com.charlesmuchene.prefeditor.screens.listing
 
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.command.ListPrefFiles
+import com.charlesmuchene.prefeditor.command.ListPrefFiles.PrefFilesResult
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
@@ -49,14 +50,8 @@ class PrefListingViewModel(
     private suspend fun getPrefFiles(): UIState {
         val result = bridge.execute(command = ListPrefFiles(app = app, device = device))
         return when {
-            result.isSuccess -> result.getOrNull()?.let { prefFiles ->
-                if (prefFiles.isEmpty()) UIState.Empty
-                else UIState.Files(prefFiles).also {
-                    this.files.addAll(it.files)
-                }
-            } ?: UIState.Error
-
-            else -> UIState.Error
+            result.isSuccess -> result.getOrNull()?.let(::map) ?: UIState.Error()
+            else -> UIState.Error()
         }
     }
 
@@ -70,10 +65,19 @@ class PrefListingViewModel(
         launch { _uiState.emit(UIState.Files(files.filter { it.name.contains(input, ignoreCase = true) })) }
     }
 
+    private fun map(result: PrefFilesResult): UIState = when (result) {
+        PrefFilesResult.EmptyFiles,
+        PrefFilesResult.EmptyPrefs,
+        -> UIState.Empty
+
+        is PrefFilesResult.Files -> UIState.Files(result.files)
+        PrefFilesResult.NonDebuggable -> UIState.Error(message = "Selected app is non-debuggable")
+    }
+
     sealed interface UIState {
-        data object Error : UIState
         data object Empty : UIState
         data object Loading : UIState
         data class Files(val files: PrefFiles) : UIState
+        data class Error(val message: String? = null) : UIState
     }
 }
