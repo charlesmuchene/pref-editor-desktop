@@ -18,9 +18,10 @@ package com.charlesmuchene.prefeditor.screens.device
 
 import androidx.compose.ui.graphics.Color
 import com.charlesmuchene.prefeditor.bridge.Bridge
-import com.charlesmuchene.prefeditor.command.ListDevices
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Device.Type
+import com.charlesmuchene.prefeditor.data.Devices
+import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.resources.HomeKey
@@ -35,9 +36,10 @@ class DevicesViewModel(
     private val bundle: TextBundle,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
+    private val favoriteDeviceUseCase: FavoriteDeviceUseCase = FavoriteDeviceUseCase(),
+    private val listDeviceUseCase: ListDeviceUseCase = ListDeviceUseCase(bridge = bridge),
 ) : CoroutineScope by scope {
 
-    private val devices = mutableListOf<Device>()
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
     private val _message = MutableSharedFlow<String?>()
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
@@ -50,13 +52,10 @@ class DevicesViewModel(
     }
 
     private suspend fun determineState(): UIState {
-        val result = bridge.execute(command = ListDevices())
+        val result = listDeviceUseCase.list()
         return when {
             result.isSuccess -> result.getOrNull()?.let { devices ->
-                if (devices.isEmpty()) UIState.NoDevices
-                else UIState.Devices(devices).also {
-                    this.devices.addAll(it.devices)
-                }
+                if (devices.isEmpty()) UIState.NoDevices else UIState.Devices(mapDevices(devices))
             } ?: UIState.Error
 
             else -> UIState.Error
@@ -85,19 +84,24 @@ class DevicesViewModel(
 
     fun filter(input: String) {
         launch {
-            _uiState.emit(UIState.Devices(devices.filter {
-                it.serial.contains(
+            _uiState.emit(UIState.Devices(mapDevices(listDeviceUseCase.devices.filter { device ->
+                device.serial.contains(
                     input,
                     ignoreCase = true
                 )
-            })) // TODO Include meta-date in filter
+            }))) // TODO Include meta-date in filter
         }
+    }
+
+    private fun mapDevices(devices: Devices): List<UIDevice> = devices.map { device ->
+        val isFavorite = favoriteDeviceUseCase.isFavorite(device)
+        UIDevice(device = device, isFavorite = isFavorite)
     }
 
     sealed interface UIState {
         data object Error : UIState
         data object NoDevices : UIState
-        data class Devices(val devices: List<Device>) : UIState
+        data class Devices(val devices: List<UIDevice>) : UIState
     }
 
 }

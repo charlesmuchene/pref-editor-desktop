@@ -24,15 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.data.Devices
+import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.screens.device.DevicesViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.*
-import com.charlesmuchene.prefeditor.ui.theme.Typography
 import com.charlesmuchene.prefeditor.ui.theme.Typography.primary
 import com.charlesmuchene.prefeditor.ui.theme.Typography.secondary
 import org.jetbrains.jewel.ui.component.Text
@@ -65,31 +63,36 @@ fun DevicesScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun DeviceList(devices: Devices, viewModel: DevicesViewModel, modifier: Modifier = Modifier) {
+private fun DeviceList(devices: List<UIDevice>, viewModel: DevicesViewModel, modifier: Modifier = Modifier) {
     val header = LocalBundle.current[HomeKey.ConnectedDevices]
 
     Listing(header = header, filterPlaceholder = "Filter devices", modifier = modifier, onFilter = viewModel::filter) {
-        if (devices.isEmpty()) item { Text(text = "No devices matching filter", style = Typography.primary) }
-        else items(items = devices, key = Device::serial) { device ->
+        if (devices.isEmpty()) item { Text(text = "No devices matching filter", style = primary) }
+        else items(items = devices, key = { it.device.serial }) { device ->
             DeviceRow(device = device, viewModel = viewModel)
         }
     }
 }
 
 @Composable
-private fun DeviceRow(device: Device, viewModel: DevicesViewModel, modifier: Modifier = Modifier) {
-    val statusColor = viewModel.statusColor(device = device)
+private fun DeviceRow(device: UIDevice, viewModel: DevicesViewModel, modifier: Modifier = Modifier) {
+    val statusColor = viewModel.statusColor(device = device.device)
     val radius = with(LocalDensity.current) { 12.dp.toPx() }
 
-    ListingRow(item = device, dividerIndentation = padding, modifier = modifier, onClick = viewModel::deviceSelected) {
+    ListingRow(
+        item = device.device,
+        dividerIndentation = padding,
+        modifier = modifier,
+        onClick = viewModel::deviceSelected
+    ) {
         Canvas(modifier = Modifier.size(12.dp).weight(0.1f)) {
             drawCircle(color = statusColor, radius = radius)
         }
         Spacer(modifier = Modifier.width(4.dp))
         Column(modifier = Modifier.weight(0.9f)) {
-            Text(text = device.serial, style = primary)
+            Text(text = device.device.serial, style = primary)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = viewModel.formatDeviceAttributes(device), style = secondary, color = Color.DarkGray)
+            Text(text = viewModel.formatDeviceAttributes(device.device), style = secondary, color = Color.DarkGray)
             Spacer(modifier = Modifier.height(4.dp))
         }
     }
