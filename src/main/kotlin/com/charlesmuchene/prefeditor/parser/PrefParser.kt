@@ -24,60 +24,55 @@ import com.charlesmuchene.prefeditor.data.Tags.LONG
 import com.charlesmuchene.prefeditor.data.Tags.ROOT
 import com.charlesmuchene.prefeditor.data.Tags.SET
 import com.charlesmuchene.prefeditor.data.Tags.STRING
+import com.charlesmuchene.prefeditor.preferences.PreferenceManager
+import com.charlesmuchene.prefeditor.preferences.PreferenceReader
+import com.charlesmuchene.prefeditor.preferences.PreferenceReader.Reader.skip
 import okio.BufferedSource
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
-import org.xmlpull.v1.XmlPullParserFactory
 
-class PrefParser : Parser<Preferences> {
+class PrefParser(private val reader: PreferenceReader = PreferenceManager()) : Parser<Preferences> {
+
     override fun parse(source: BufferedSource): Preferences {
-        val parser = XmlPullParserFactory.newInstance().newPullParser().apply {
-            setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-            setInput(source.inputStream(), null)
-            nextTag()
-        }
-        return Preferences(entries = parse(parser))
-    }
-
-    private fun parse(parser: XmlPullParser): List<Entry> = buildList {
-        parser.require(XmlPullParser.START_TAG, null, ROOT)
-        while (parser.nextTag() != XmlPullParser.END_TAG) {
-            if (parser.eventType != XmlPullParser.START_TAG) continue
-            when (parser.name) {
-                BOOLEAN -> add(parseBoolean(parser))
-                STRING -> add(parseString(parser))
-                FLOAT -> add(parseFloat(parser))
-                LONG -> add(parseLong(parser))
-                INT -> add(parseInt(parser))
-                SET -> add(parseSet(parser))
-                else -> skip(parser)
+        val entries = buildList {
+            reader.read(source.inputStream()) {
+                when (name) {
+                    BOOLEAN -> add(parseBoolean())
+                    STRING -> add(parseString())
+                    FLOAT -> add(parseFloat())
+                    LONG -> add(parseLong())
+                    INT -> add(parseInt())
+                    SET -> add(parseSet())
+                    else -> skip()
+                }
             }
         }
+        return Preferences(entries = entries)
     }
 
     @Throws(XmlPullParserException::class)
-    private fun parseBoolean(parser: XmlPullParser): BooleanEntry =
-        parse(tag = BOOLEAN, parser = parser) { name, value ->
+    private fun XmlPullParser.parseBoolean(): BooleanEntry =
+        parse(tag = BOOLEAN) { name, value ->
             BooleanEntry(name = name, value = value)
         }
 
     @Throws(XmlPullParserException::class)
-    private fun parseInt(parser: XmlPullParser): IntEntry = parse(tag = INT, parser = parser) { name, value ->
+    private fun XmlPullParser.parseInt(): IntEntry = parse(tag = INT) { name, value ->
         IntEntry(name = name, value = value)
     }
 
     @Throws(XmlPullParserException::class)
-    private fun parseFloat(parser: XmlPullParser): FloatEntry = parse(tag = FLOAT, parser = parser) { name, value ->
+    private fun XmlPullParser.parseFloat(): FloatEntry = parse(tag = FLOAT) { name, value ->
         FloatEntry(name = name, value = value)
     }
 
     @Throws(XmlPullParserException::class)
-    private fun parseLong(parser: XmlPullParser): LongEntry = parse(tag = LONG, parser = parser) { name, value ->
+    private fun XmlPullParser.parseLong(): LongEntry = parse(tag = LONG) { name, value ->
         LongEntry(name = name, value = value)
     }
 
     @Throws(XmlPullParserException::class)
-    private fun parseString(parser: XmlPullParser): StringEntry = with(parser) {
+    private fun XmlPullParser.parseString(): StringEntry {
         require(XmlPullParser.START_TAG, null, STRING)
         expect(attributeCount == 1)
         val name = getAttributeValue(0)
@@ -85,51 +80,39 @@ class PrefParser : Parser<Preferences> {
         val value = if (next == XmlPullParser.TEXT) text else ""
         if (next != XmlPullParser.END_TAG) nextTag()
         require(XmlPullParser.END_TAG, null, STRING)
-        StringEntry(name = name, value = value)
+        return StringEntry(name = name, value = value)
     }
 
     @Throws(XmlPullParserException::class)
-    private fun parseSet(parser: XmlPullParser): SetEntry {
-        parser.require(XmlPullParser.START_TAG, null, SET)
-        expect(parser.attributeCount == 1)
-        val name = parser.getAttributeValue(0)
+    private fun XmlPullParser.parseSet(): SetEntry {
+        require(XmlPullParser.START_TAG, null, SET)
+        expect(attributeCount == 1)
+        val name = getAttributeValue(0)
         val entries = buildList {
-            while (parser.nextTag() != XmlPullParser.END_TAG) {
-                add(parseNamelessString(parser))
+            while (nextTag() != XmlPullParser.END_TAG) {
+                add(parseNamelessString())
             }
         }
         val entry = SetEntry(name = name, entries = entries)
-        parser.require(XmlPullParser.END_TAG, null, SET)
+        require(XmlPullParser.END_TAG, null, SET)
         return entry
     }
 
     @Throws(XmlPullParserException::class)
-    private fun parseNamelessString(parser: XmlPullParser): String = parser.gobbleTag(tag = STRING) {
-        expect(parser.attributeCount == 0)
-        expect(parser.next() == XmlPullParser.TEXT)
-        parser.text
+    private fun XmlPullParser.parseNamelessString(): String = gobbleTag(tag = STRING) {
+        expect(attributeCount == 0)
+        expect(next() == XmlPullParser.TEXT)
+        text
     }
 
     @Throws(XmlPullParserException::class)
-    private fun <R : Entry> parse(tag: String, parser: XmlPullParser, block: (String, String) -> R): R =
-        parser.gobbleTag(tag) {
-            expect(parser.attributeCount == 2)
-            val name = parser.getAttributeValue(0)
-            val value = parser.getAttributeValue(1)
+    private fun <R : Entry> XmlPullParser.parse(tag: String, block: (String, String) -> R): R =
+        gobbleTag(tag) {
+            expect(attributeCount == 2)
+            val name = getAttributeValue(0)
+            val value = getAttributeValue(1)
             block(name, value)
         }
-
-    @Throws(XmlPullParserException::class)
-    private fun skip(parser: XmlPullParser) {
-        expect(parser.eventType == XmlPullParser.START_TAG)
-        var depth = 1
-        while (depth != 0) {
-            when (parser.next()) {
-                XmlPullParser.END_TAG -> depth--
-                XmlPullParser.START_TAG -> depth++
-            }
-        }
-    }
 
     private fun expect(toBeTrue: Boolean) {
         if (!toBeTrue) throw XmlPullParserException("Unexpected xml format")

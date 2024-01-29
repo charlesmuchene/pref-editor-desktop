@@ -21,15 +21,15 @@ import com.charlesmuchene.prefeditor.data.Tags.BOOLEAN
 import com.charlesmuchene.prefeditor.data.Tags.FLOAT
 import com.charlesmuchene.prefeditor.data.Tags.INT
 import com.charlesmuchene.prefeditor.data.Tags.LONG
-import com.charlesmuchene.prefeditor.data.Tags.ROOT
 import com.charlesmuchene.prefeditor.data.Tags.SET
 import com.charlesmuchene.prefeditor.data.Tags.STRING
 import com.charlesmuchene.prefeditor.files.PrefEditorFiles
+import com.charlesmuchene.prefeditor.preferences.PreferenceManager
+import com.charlesmuchene.prefeditor.preferences.PreferenceWriter
+import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.tag
 import com.charlesmuchene.prefeditor.providers.TimeStampProviderImpl
 import com.charlesmuchene.prefeditor.providers.TimestampProvider
-import okio.Buffer
 import okio.BufferedSource
-import org.xmlpull.v1.XmlPullParserFactory
 import org.xmlpull.v1.XmlSerializer
 
 data class WritePref(
@@ -38,6 +38,7 @@ data class WritePref(
     private val prefFile: PrefFile,
     private val enableBackup: Boolean,
     private val preferences: Preferences,
+    private val writer: PreferenceWriter = PreferenceManager(),
     private val timestampProvider: TimestampProvider = TimeStampProviderImpl(),
 ) : WriteCommand<Boolean> {
 
@@ -52,7 +53,7 @@ data class WritePref(
     }
 
     override val content: String by lazy {
-        buildContent {
+        writer.write {
             preferences.entries.forEach { entry ->
                 when (entry) {
                     is BooleanEntry -> tag(BOOLEAN) { attribute(name = entry.name, value = entry.value) }
@@ -83,28 +84,7 @@ data class WritePref(
         attribute(null, VALUE, value)
     }
 
-    private fun XmlSerializer.tag(tag: String, block: XmlSerializer.() -> Unit) {
-        startTag(null, tag)
-        block()
-        endTag(null, tag)
-    }
-
-    private fun buildContent(block: XmlSerializer.() -> Unit): String {
-        val buffer = Buffer()
-        with(XmlPullParserFactory.newInstance().newSerializer()) {
-            setOutput(buffer.outputStream(), ENCODING)
-            setFeature(INDENTATION_FEATURE, true)
-            startDocument(ENCODING, true)
-            startTag(null, ROOT)
-            block()
-            endDocument()
-        }
-        return buffer.readUtf8()
-    }
-
     companion object {
-        const val INDENTATION_FEATURE = "http://xmlpull.org/v1/doc/features.html#indent-output"
-        const val ENCODING = "utf-8"
         const val VALUE = "value"
         const val NAME = "name"
     }
