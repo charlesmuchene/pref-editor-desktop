@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.files
 
+import com.charlesmuchene.prefeditor.preferences.PreferenceManager
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -27,6 +28,12 @@ object PrefEditorFiles {
     private const val PUSH_FILE = "push.sh"
     private const val HOME_DIR = "user.home"
     private const val SCRIPTS_DIR = "scripts"
+    private const val PREFERENCES = "preferences.xml"
+
+    private fun writeEmptyPreferences(path: Path) {
+        val content = PreferenceManager().write {}
+        Files.writeString(path, content)
+    }
 
     fun appPath(): Path = Paths.get(System.getProperty(HOME_DIR), DIR).apply {
         if (!exists()) Files.createDirectory(this)
@@ -39,6 +46,12 @@ object PrefEditorFiles {
                 Files.copy(it, path)
             }
         }
+    }
+
+    fun preferencePath(): Path {
+        val path = appPath().resolve(PREFERENCES)
+        if (!path.exists()) writeEmptyPreferences(path)
+        return path
     }
 
 }
