@@ -31,7 +31,7 @@ object PrefEditorFiles {
     private const val PREFERENCES = "preferences.xml"
 
     private fun writeEmptyPreferences(path: Path) {
-        val content = PreferenceManager().write {}
+        val content = PreferenceManager().writeEmpty()
         Files.writeString(path, content)
     }
 

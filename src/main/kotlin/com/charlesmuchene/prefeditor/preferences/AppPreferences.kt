@@ -16,22 +16,23 @@
 
 package com.charlesmuchene.prefeditor.preferences
 
-import org.xmlpull.v1.XmlSerializer
+import com.charlesmuchene.prefeditor.files.PrefEditorFiles
+import com.charlesmuchene.prefeditor.preferences.favorites.Favorite
+import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager
+import kotlin.io.path.inputStream
 
-interface PreferenceWriter {
+class AppPreferences(
+    private val manager: PreferenceManager = PreferenceManager(),
+    private val favoriteManager: FavoriteManager = FavoriteManager(),
+) {
 
-    fun write(block: XmlSerializer.() -> Unit): String
-    fun writeEmpty(): String
-
-    companion object Writer {
-        fun XmlSerializer.tag(tag: String, block: XmlSerializer.() -> Unit) {
-            startTag(null, tag)
-            block()
-            endTag(null, tag)
-        }
-
-        fun XmlSerializer.attribute(name: String, value: String) {
-            attribute(null, name, value)
+    fun readFavorites(): List<Favorite> {
+        val path = PrefEditorFiles.preferencePath()
+        return buildList {
+            manager.read(path.inputStream()) {
+                favoriteManager.read(parser = this, favorites = this@buildList)
+            }
         }
     }
+
 }

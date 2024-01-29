@@ -24,6 +24,7 @@ interface PreferenceReader {
     fun read(inputStream: InputStream, block: XmlPullParser.() -> Unit)
 
     companion object Reader {
+
         fun XmlPullParser.skip() {
             require(eventType == XmlPullParser.START_TAG)
             var depth = 1
@@ -33,6 +34,14 @@ interface PreferenceReader {
                     XmlPullParser.START_TAG -> depth++
                 }
             }
+        }
+
+        fun <R> XmlPullParser.gobbleTag(tag: String, block: XmlPullParser.() -> R): R {
+            require(XmlPullParser.START_TAG, null, tag)
+            val result = block()
+            nextTag()
+            require(XmlPullParser.END_TAG, null, tag)
+            return result
         }
     }
 }

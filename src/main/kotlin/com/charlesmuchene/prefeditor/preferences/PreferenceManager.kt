@@ -51,6 +51,8 @@ class PreferenceManager : PreferenceReader, PreferenceWriter {
         return buffer.readUtf8()
     }
 
+    override fun writeEmpty(): String = write { endTag(null, Tags.ROOT) }
+
     companion object Manager {
         const val INDENTATION_FEATURE = "http://xmlpull.org/v1/doc/features.html#indent-output"
         const val ENCODING = "utf-8"

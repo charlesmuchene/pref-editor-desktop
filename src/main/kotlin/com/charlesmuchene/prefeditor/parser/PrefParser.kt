@@ -26,6 +26,7 @@ import com.charlesmuchene.prefeditor.data.Tags.SET
 import com.charlesmuchene.prefeditor.data.Tags.STRING
 import com.charlesmuchene.prefeditor.preferences.PreferenceManager
 import com.charlesmuchene.prefeditor.preferences.PreferenceReader
+import com.charlesmuchene.prefeditor.preferences.PreferenceReader.Reader.gobbleTag
 import com.charlesmuchene.prefeditor.preferences.PreferenceReader.Reader.skip
 import okio.BufferedSource
 import org.xmlpull.v1.XmlPullParser
@@ -116,13 +117,5 @@ class PrefParser(private val reader: PreferenceReader = PreferenceManager()) : P
 
     private fun expect(toBeTrue: Boolean) {
         if (!toBeTrue) throw XmlPullParserException("Unexpected xml format")
-    }
-
-    private fun <R> XmlPullParser.gobbleTag(tag: String, block: XmlPullParser.() -> R): R {
-        require(XmlPullParser.START_TAG, null, tag)
-        val result = block()
-        nextTag()
-        require(XmlPullParser.END_TAG, null, tag)
-        return result
     }
 }

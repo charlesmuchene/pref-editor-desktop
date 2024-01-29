@@ -17,11 +17,14 @@
 package com.charlesmuchene.prefeditor.screens.device
 
 import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.preferences.AppPreferences
+import com.charlesmuchene.prefeditor.preferences.favorites.Favorite
 
-class FavoriteDeviceUseCase {
+class FavoriteDeviceUseCase(private val appPreferences: AppPreferences = AppPreferences()) {
 
-    fun isFavorite(device: Device): Boolean {
-        return false
-    }
+    private val favorites by lazy { appPreferences.readFavorites() }
+
+    fun isFavorite(device: Device): Boolean =
+        favorites.filterIsInstance<Favorite.Device>().map(Favorite.Device::serial).contains(device.serial)
 
 }
