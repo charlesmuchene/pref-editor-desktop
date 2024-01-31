@@ -18,11 +18,14 @@ package com.charlesmuchene.prefeditor.preferences.favorites
 
 import com.charlesmuchene.prefeditor.preferences.PreferenceReader.Reader.gobbleTag
 import com.charlesmuchene.prefeditor.preferences.PreferenceReader.Reader.skip
+import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.attrib
+import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.tag
 import com.charlesmuchene.prefeditor.preferences.favorites.Favorite.*
 import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager.Tags.APP
 import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager.Tags.DEVICE
 import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager.Tags.FILE
 import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlSerializer
 
 class FavoriteManager {
 
@@ -32,6 +35,26 @@ class FavoriteManager {
             FILE -> favorites.add(parser.parseFile())
             APP -> favorites.add(parser.parseApp())
             else -> parser.skip()
+        }
+    }
+
+    fun write(serializer: XmlSerializer, favorites: List<Favorite>) {
+        with(serializer) {
+            favorites.forEach { favorite ->
+                when (favorite) {
+                    is Device -> tag(DEVICE) { text(favorite.serial) }
+                    is File -> tag(FILE) {
+                        attrib(name = DEVICE, value = favorite.device.serial)
+                        attrib(name = APP, value = favorite.app.packageName)
+                        text(favorite.name)
+                    }
+
+                    is App -> tag(APP) {
+                        attrib(name = DEVICE, value = favorite.device.serial)
+                        text(favorite.packageName)
+                    }
+                }
+            }
         }
     }
 

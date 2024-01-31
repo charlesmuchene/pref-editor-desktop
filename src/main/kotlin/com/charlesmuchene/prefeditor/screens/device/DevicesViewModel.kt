@@ -24,6 +24,7 @@ import com.charlesmuchene.prefeditor.data.Devices
 import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
 import com.charlesmuchene.prefeditor.navigation.Navigation
+import com.charlesmuchene.prefeditor.preferences.favorites.Favorite
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
 import com.charlesmuchene.prefeditor.ui.theme.green
@@ -36,7 +37,7 @@ class DevicesViewModel(
     private val bundle: TextBundle,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
-    private val favoriteDeviceUseCase: FavoriteDeviceUseCase = FavoriteDeviceUseCase(),
+    private val favoritesUseCase: FavoritesUseCase = FavoritesUseCase(),
     private val listDeviceUseCase: ListDeviceUseCase = ListDeviceUseCase(bridge = bridge),
 ) : CoroutineScope by scope {
 
@@ -48,6 +49,7 @@ class DevicesViewModel(
     init {
         launch {
             _uiState.emit(determineState())
+            favoritesUseCase.writeFavorites(listOf(Favorite.Device("1235"), Favorite.App(Favorite.Device("321"), "packagename"), Favorite.File(Favorite.Device("1234"), Favorite.App(Favorite.Device("sdf"), "package"), "filename")))
         }
     }
 
@@ -94,7 +96,7 @@ class DevicesViewModel(
     }
 
     private fun mapDevices(devices: Devices): List<UIDevice> = devices.map { device ->
-        val isFavorite = favoriteDeviceUseCase.isFavorite(device)
+        val isFavorite = favoritesUseCase.isFavorite(device)
         UIDevice(device = device, isFavorite = isFavorite)
     }
 

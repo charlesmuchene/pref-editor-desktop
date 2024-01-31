@@ -19,6 +19,8 @@ package com.charlesmuchene.prefeditor.preferences.favorites
 /**
  * A developer favorite
  *
+ * Example representation in the preference file:
+ *
  * ```
  * <?xml version='1.0' encoding='utf-8' standalone='yes' ?>
  * <map>
@@ -30,7 +32,28 @@ package com.charlesmuchene.prefeditor.preferences.favorites
  * ```
  */
 interface Favorite {
+
+    /**
+     * A favorite device
+     *
+     * @param serial Ids the device
+     */
     data class Device(val serial: String) : Favorite
+
+    /**
+     * A favorite app
+     *
+     * @param device Favorite [Device]
+     * @param packageName Ids the app on the [device]
+     */
     data class App(val device: Device, val packageName: String) : Favorite
+
+    /**
+     * A favorite preference file
+     *
+     * @param device Favorite [Device]
+     * @param app Favorite [App]
+     * @param name Ids the file for the [app] in the [device]
+     */
     data class File(val device: Device, val app: App, val name: String) : Favorite
 }

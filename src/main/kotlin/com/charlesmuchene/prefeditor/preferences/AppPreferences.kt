@@ -29,6 +29,11 @@ class AppPreferences(
     private val favoriteManager: FavoriteManager = FavoriteManager(),
 ) {
 
+    /**
+     * Read a developer's favorites
+     *
+     * @return A [List] of [Favorite]s
+     */
     fun readFavorites(): List<Favorite> {
         val path = PrefEditorFiles.preferencePath()
         return buildList {
@@ -36,6 +41,15 @@ class AppPreferences(
                 favoriteManager.read(parser = this, favorites = this@buildList)
             }
         }
+    }
+
+    /**
+     * Write the developer's favorites
+     *
+     * @param favorites A [List] of [Favorite]s
+     */
+    fun writeFavorites(favorites: List<Favorite>) {
+        manager.write { favoriteManager.write(serializer = this, favorites = favorites) }
     }
 
 }

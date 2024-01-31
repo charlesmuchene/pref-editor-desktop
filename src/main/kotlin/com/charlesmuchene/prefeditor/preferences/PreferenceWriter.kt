@@ -66,7 +66,7 @@ interface PreferenceWriter {
          * @param value Attribute value
          * @receiver [XmlSerializer] instance
          */
-        fun XmlSerializer.attribute(name: String, value: String) {
+        fun XmlSerializer.attrib(name: String, value: String) {
             attribute(null, name, value)
         }
     }

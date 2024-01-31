@@ -1,6 +1,6 @@
 package com.charlesmuchene.prefeditor.preferences
 
-import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.attribute
+import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.attrib
 import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.tag
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,14 +23,14 @@ class PreferenceManagerTest {
 
     @Test
     fun `write single tag`() {
-        val output = manager.writeContent { tag("tag") { attribute("name", "value") } }
+        val output = manager.writeContent { tag("tag") { attrib("name", "value") } }
         assertEquals(expected = "<tag name=\"value\" />", actual = output)
     }
 
     @Test
     fun `write xml content`() {
         val output = manager.writeContent {
-            tag("tag") { attribute("name", "value") }
+            tag("tag") { attrib("name", "value") }
             tag("stuff") { text("content") }
         }
         assertEquals(expected = "<tag name=\"value\" />\r\n<stuff>content</stuff>", actual = output.trim())
