@@ -29,4 +29,8 @@ class FavoritesUseCase(private val preferences: AppPreferences) {
     suspend fun writeFavorites(favorites: List<Favorite>) {
         preferences.writeFavorites(favorites = favorites)
     }
+
+    suspend fun removeFavorites(favorites: List<Favorite>) {
+        preferences.removeFavorites(favorites = favorites)
+    }
 }

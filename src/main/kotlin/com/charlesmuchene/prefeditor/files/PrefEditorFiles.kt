@@ -31,7 +31,7 @@ object PrefEditorFiles {
 
     private const val DIR = ".pref-editor"
     private const val PUSH_FILE = "push.sh"
-    private const val EDIT_FILE = "edit.sh"
+    private const val EDIT_FILE = "add.sh"
     private const val HOME_DIR = "user.home"
     private const val SCRIPTS_DIR = "scripts"
     private const val PREFERENCES = "preferences.xml"

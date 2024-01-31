@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.okio)
     runtimeOnly(libs.sl4j)
 
+    testImplementation(libs.mockk)
     testImplementation(libs.turbine)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.coroutines.test)

@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.favorites
 
+import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.favorites.Favorite.*
 import com.charlesmuchene.prefeditor.favorites.FavoritesCodec.Tags.APP
 import com.charlesmuchene.prefeditor.favorites.FavoritesCodec.Tags.DEVICE
@@ -30,14 +31,15 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlSerializer
 import java.nio.file.Path
 import kotlin.io.path.inputStream
+import kotlin.reflect.KClass
 
 class FavoritesCodec(private val codec: PreferenceCodec) {
 
-    fun encode(favorites: List<Favorite>): List<String> = favorites.map { favorite ->
+    fun encode(favorites: List<Favorite>, block: (String) -> Edit): List<Edit> = favorites.map { favorite ->
         when (favorite) {
-            is Device -> codec.encode { serializeDevice(favorite) }
-            is File -> codec.encode { serializeFile(favorite) }
-            is App -> codec.encode { serializeApp(favorite) }
+            is Device -> block(codec.encode { serializeDevice(favorite) })
+            is File -> block(codec.encode { serializeFile(favorite) })
+            is App -> block(codec.encode { serializeApp(favorite) })
         }
     }
 

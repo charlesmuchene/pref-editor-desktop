@@ -23,13 +23,13 @@ class PreferenceCodecTest {
 
     @Test
     fun `write single tag`() {
-        val output = manager.writeContent { tag("tag") { attrib("name", "value") } }
+        val output = manager.encode { tag("tag") { attrib("name", "value") } }
         assertEquals(expected = "<tag name=\"value\" />", actual = output)
     }
 
     @Test
     fun `write xml content`() {
-        val output = manager.writeContent {
+        val output = manager.encode {
             tag("tag") { attrib("name", "value") }
             tag("stuff") { text("content") }
         }

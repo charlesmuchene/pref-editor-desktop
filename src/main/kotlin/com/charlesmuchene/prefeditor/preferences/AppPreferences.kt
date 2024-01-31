@@ -47,7 +47,7 @@ class AppPreferences(
      * @param favorites A [List] of [Favorite]s to add
      */
     suspend fun writeFavorites(favorites: List<Favorite>) {
-        val content = favoritesCodec.encode(favorites = favorites).map(Edit::Add)
+        val content = favoritesCodec.encode(favorites = favorites, block = Edit::Add)
         val path = PrefEditorFiles.preferencePath()
         editor.edit(edits = content, path = path)
     }
@@ -58,7 +58,9 @@ class AppPreferences(
      * @param favorites A [List] of [Favorite]s to remove
      */
     suspend fun removeFavorites(favorites: List<Favorite>) {
-        // TODO Impl
+        val content = favoritesCodec.encode(favorites = favorites, block = Edit::Delete)
+        val path = PrefEditorFiles.preferencePath()
+        editor.edit(edits = content, path = path)
     }
 
 }

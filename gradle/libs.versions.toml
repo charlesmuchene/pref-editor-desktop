@@ -6,10 +6,12 @@ kxml2 = "2.3.0"
 turbine = "1.0.0"
 logging = "5.0.1"
 sl4j = "2.0.3"
+mockk = "1.13.5"
 coroutines-test = "1.7.2"
 compose-desktop = "1.6.0-dev1385"
 
 [libraries]
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 kxml2 = { module = "net.sf.kxml:kxml2", version.ref = "kxml2" }
 sl4j = { module = "org.slf4j:slf4j-simple", version.ref = "sl4j" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }

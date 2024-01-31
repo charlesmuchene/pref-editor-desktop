@@ -61,10 +61,13 @@ class PreferenceEditor(
      */
     suspend fun edit(edits: List<Edit>, path: Path): String = withContext(context) {
         val adds = edits.filterIsInstance<Edit.Add>()
-        batchAdd(adds, path)
+        add(adds = adds, path = path)
+
+        val deletes = edits.filterIsInstance<Edit.Delete>()
+        delete(edits = deletes, path = path, processor = processor)
     }
 
-    private suspend fun PreferenceEditor.batchAdd(adds: List<Edit.Add>, path: Path): String {
+    private suspend fun PreferenceEditor.add(adds: List<Edit.Add>, path: Path): String {
         val content = buildString {
             adds.forEach { add ->
                 append(add.content)
@@ -79,20 +82,38 @@ class PreferenceEditor(
     }
 
     private suspend fun add(content: String, path: Path, processor: Processor): String {
-        val escaped = "\\"
-        val command = "sh edit.sh <$escaped/${Tags.ROOT}> $path".split(" ")
+        val tag = "</${Tags.ROOT}>".escaped()
+        val command = "sh add.sh $tag $path".split(DELIMITER)
         return processor.run(command) { environment()[CONTENT] = content }
     }
 
     private suspend fun delete(edit: Edit.Delete, path: Path, processor: Processor): String {
-        return "TODO - delete"
+        return delete(content = edit.content, path = path, processor = processor)
+    }
+
+    private suspend fun delete(edits: List<Edit.Delete>, path: Path, processor: Processor): String {
+        return buildString {
+            edits.forEach { edit -> append(delete(edit = edit, path = path, processor = processor)) }
+        }
+    }
+
+    private suspend fun delete(content: String, path: Path, processor: Processor): String {
+        val command = "sh delete.sh ${content.escaped()} $path".split(DELIMITER)
+        return processor.run(command)
     }
 
     private suspend fun change(edit: Edit.Change, path: Path, processor: Processor): String {
-        return "TODO - change"
+        val oldContent = edit.oldContent.escaped()
+        val newContent = edit.newContent.escaped()
+        val command = "sh change.sh $oldContent $newContent $path".split(DELIMITER)
+        return processor.run(command)
     }
 
+    fun String.escaped(): String = replace(oldValue = "/", newValue = "\\/")
+        .replace(oldValue = "\"", newValue = "\\\"")
+
     companion object {
+        private const val DELIMITER = " "
         private const val CONTENT = "PREF_EDITOR_CONTENT"
     }
 }
