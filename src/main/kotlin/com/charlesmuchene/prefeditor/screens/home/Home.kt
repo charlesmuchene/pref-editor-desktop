@@ -20,6 +20,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.bridge.BridgeStatus.*
+import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.screens.device.DevicesScreen
 import com.charlesmuchene.prefeditor.screens.bridge.BridgeLoading
 import com.charlesmuchene.prefeditor.screens.bridge.BridgeUnavailable
@@ -28,7 +29,8 @@ import com.charlesmuchene.prefeditor.screens.bridge.BridgeUnavailable
 @Composable
 fun Home(modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
-    val viewModel = remember { HomeViewModel(scope = scope) }
+    val bridge = LocalBridge.current
+    val viewModel = remember { HomeViewModel(scope = scope, bridge = bridge) }
     val bridgeStatus by viewModel.bridgeStatus.collectAsState()
 
     when (bridgeStatus) {

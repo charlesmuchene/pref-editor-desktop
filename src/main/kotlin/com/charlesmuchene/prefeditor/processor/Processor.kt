@@ -50,6 +50,7 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
                         yield()
                         val line = source.readUtf8Line() ?: break
                         buffer.writeUtf8(line)
+                        buffer.writeUtf8(System.lineSeparator())
                     }
                     buffer.readUtf8()
                 }

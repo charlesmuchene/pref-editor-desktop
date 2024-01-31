@@ -25,12 +25,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel(private val scope: CoroutineScope) : CoroutineScope by scope {
+class HomeViewModel(private val bridge: Bridge, private val scope: CoroutineScope) : CoroutineScope by scope {
 
     private val _bridgeStatus = MutableStateFlow<BridgeStatus>(Unknown)
     val bridgeStatus: StateFlow<BridgeStatus> = _bridgeStatus.asStateFlow()
 
     init {
-        launch { _bridgeStatus.emit(Bridge.checkBridge()) }
+        launch { _bridgeStatus.emit(bridge.checkBridge()) }
     }
 }

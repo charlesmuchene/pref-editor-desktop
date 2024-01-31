@@ -21,16 +21,14 @@ import com.charlesmuchene.prefeditor.bridge.BridgeStatus.Unavailable
 import com.charlesmuchene.prefeditor.command.Command
 import com.charlesmuchene.prefeditor.command.ReadCommand
 import com.charlesmuchene.prefeditor.command.WriteCommand
-import com.charlesmuchene.prefeditor.files.PrefEditorFiles.appPath
+import com.charlesmuchene.prefeditor.processor.Processor
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okio.BufferedSource
 import okio.buffer
 import okio.source
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
-import kotlin.io.path.pathString
 
 /**
  * Interface to the debug bridge
@@ -39,7 +37,10 @@ import kotlin.io.path.pathString
  *
  * @param context [CoroutineContext] for all bridge operations
  */
-class Bridge(private val context: CoroutineContext = Dispatchers.IO + CoroutineName(name = "Bridge")) {
+class Bridge(
+    private val processor: Processor = Processor(),
+    private val context: CoroutineContext = Dispatchers.IO + CoroutineName(name = "Bridge"),
+) {
 
     /**
      * Execute the given read command
@@ -61,51 +62,29 @@ class Bridge(private val context: CoroutineContext = Dispatchers.IO + CoroutineN
         createProcess(command) { environment()[CONTENT] = command.content }
     }
 
-    private fun <T> createProcess(command: Command<T>, config: ProcessBuilder.() -> Unit = {}): Result<T> =
-        with(ProcessBuilder(command.command.split(DELIMITER))) {
-            environment()[PATH] += ":${appPath().pathString}"
-            redirectErrorStream(true)
-            config()
-            execute(command::execute)
+    private suspend fun <T> createProcess(command: Command<T>, config: ProcessBuilder.() -> Unit = {}): Result<T> =
+        try {
+            val result = processor.run(command.command.split(DELIMITER), config)
+            println(result)
+            Result.success(command.execute(result.byteInputStream().source().buffer()))
+        } catch (t: Throwable) {
+            Result.failure(t)
         }
 
-    private fun <T> ProcessBuilder.execute(block: (BufferedSource) -> T): Result<T> {
-        val process = try {
-            start()
-        } catch (t: Throwable) {
-            return Result.failure(t)
-        }
-        return process
-            .inputStream
-            .source()
-            .buffer()
-            .use { source ->
-                try {
-                    Result.success(block(source))
-                } catch (t: Throwable) {
-                    Result.failure(t)
-                }
+    suspend fun checkBridge(): BridgeStatus = withContext(context) {
+        try {
+            processor.run(listOf("adb")) {
+                redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                redirectError(ProcessBuilder.Redirect.DISCARD)
             }
+            Available
+        } catch (_: IOException) {
+            Unavailable
+        }
     }
 
     companion object {
-        private const val ADB = "adb"
-        private const val PATH = "PATH"
         private const val DELIMITER = " "
         private const val CONTENT = "PREF_EDITOR_CONTENT"
-
-        suspend fun checkBridge(context: CoroutineContext = Dispatchers.IO): BridgeStatus = withContext(context) {
-            val builder = ProcessBuilder()
-                .command(ADB)
-                .redirectOutput(ProcessBuilder.Redirect.DISCARD)
-                .redirectError(ProcessBuilder.Redirect.DISCARD)
-
-            try {
-                builder.start()
-                Available
-            } catch (_: IOException) {
-                Unavailable
-            }
-        }
     }
 }
