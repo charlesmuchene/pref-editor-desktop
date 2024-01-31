@@ -16,10 +16,8 @@
 
 package com.charlesmuchene.prefeditor.data
 
-interface Edit {
+sealed interface Edit {
     data class Delete(val name: String) : Edit
-    data class Add(val name: String, val attributes: List<Attribute>, val value: String? = null) : Edit
-    data class Change(val name: String, val attributes: List<Attribute> = emptyList(), val value: String? = null) : Edit
-
-    data class Attribute(val name: String, val value: String)
+    data class Add(val content: String) : Edit
+    data class Change(val name: String, val content: String) : Edit
 }

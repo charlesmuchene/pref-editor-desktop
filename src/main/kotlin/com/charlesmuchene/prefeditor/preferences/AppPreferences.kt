@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.preferences
 
+import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.favorites.Favorite
 import com.charlesmuchene.prefeditor.favorites.FavoriteManager
 import com.charlesmuchene.prefeditor.files.PrefEditorFiles
@@ -26,8 +27,8 @@ import kotlin.io.path.inputStream
  */
 class AppPreferences(
     private val codec: PreferenceCodec = PreferenceCodec(),
-    private val favoriteManager: FavoriteManager = FavoriteManager(),
-    private val editor: PreferenceEditor = PreferenceEditor(encoder = codec),
+    private val editor: PreferenceEditor = PreferenceEditor(),
+    private val favoriteManager: FavoriteManager = FavoriteManager(codec),
 ) {
 
     /**
@@ -39,18 +40,27 @@ class AppPreferences(
         val path = PrefEditorFiles.preferencePath()
         // TODO Convert to IO op
         codec.decode(path.inputStream()) {
-            addAll(favoriteManager.read(parser = this))
+            addAll(favoriteManager.decode(parser = this))
         }
     }
 
     /**
      * Write the developer's favorites
      *
-     * @param favorites A [List] of [Favorite]s
+     * @param favorites A [List] of [Favorite]s to add
      */
     suspend fun writeFavorites(favorites: List<Favorite>) {
         val path = PrefEditorFiles.preferencePath()
-        favoriteManager.toEdits(favorites = favorites).forEach { editor.edit(it, path) }
+        favoriteManager.encode(favorites = favorites).forEach { editor.edit(Edit.Add(content = it), path) }
+    }
+
+    /**
+     * Remove the developer's favorites
+     *
+     * @param favorites A [List] of [Favorite]s to remove
+     */
+    suspend fun removeFavorites(favorites: List<Favorite>) {
+        // TODO Impl
     }
 
 }

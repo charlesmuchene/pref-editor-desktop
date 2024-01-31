@@ -18,8 +18,6 @@ package com.charlesmuchene.prefeditor.preferences
 
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.data.Tags
-import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
-import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import com.charlesmuchene.prefeditor.processor.Processor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,7 +25,6 @@ import java.nio.file.Path
 import kotlin.coroutines.CoroutineContext
 
 class PreferenceEditor(
-    private val encoder: PreferenceEncoder,
     private val context: CoroutineContext = Dispatchers.IO,
     private val processor: Processor = Processor(),
 ) {
@@ -35,20 +32,23 @@ class PreferenceEditor(
     suspend fun edit(edit: Edit, path: Path): String = withContext(context) {
         when (edit) {
             is Edit.Add -> add(edit = edit, path = path, processor = processor)
+            is Edit.Change -> change(edit = edit, path = path, processor = processor)
+            is Edit.Delete -> delete(edit = edit, path = path, processor = processor)
         }
-        "string-result"
     }
 
     private suspend fun add(edit: Edit.Add, path: Path, processor: Processor): String {
-        val output = encoder.encode {
-            tag(edit.name) {
-                edit.attributes.forEach { attrib(name = it.name, value = it.value) }
-                edit.value?.let(::text)
-            }
-        }
         val escaped = "\\"
         val command = "sh edit.sh <$escaped/${Tags.ROOT}> $path".split(" ")
-        return processor.run(command) { environment()[CONTENT] = output }
+        return processor.run(command) { environment()[CONTENT] = edit.content }
+    }
+
+    private suspend fun delete(edit: Edit.Delete, path: Path, processor: Processor): String {
+        return "TODO - delete"
+    }
+
+    private suspend fun change(edit: Edit.Change, path: Path, processor: Processor): String {
+        return "TODO - change"
     }
 
     companion object {

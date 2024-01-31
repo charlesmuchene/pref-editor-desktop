@@ -16,38 +16,48 @@
 
 package com.charlesmuchene.prefeditor.favorites
 
-import com.charlesmuchene.prefeditor.data.Edit
-import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobbleTag
-import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
 import com.charlesmuchene.prefeditor.favorites.Favorite.*
 import com.charlesmuchene.prefeditor.favorites.FavoriteManager.Tags.APP
 import com.charlesmuchene.prefeditor.favorites.FavoriteManager.Tags.DEVICE
 import com.charlesmuchene.prefeditor.favorites.FavoriteManager.Tags.FILE
+import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobbleTag
+import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
+import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder
+import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
+import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlSerializer
 
-class FavoriteManager {
+class FavoriteManager(private val encoder: PreferenceEncoder) {
 
-    fun toEdits(favorites: List<Favorite>): List<Edit.Add> = favorites.map { favorite ->
+    fun encode(favorites: List<Favorite>): List<String> = favorites.map { favorite ->
         when (favorite) {
-            is Device -> Edit.Add(name = DEVICE, value = favorite.serial, attributes = emptyList())
-            is File -> Edit.Add(
-                value = favorite.name,
-                name = FILE,
-                attributes = listOf(
-                    Edit.Attribute(name = DEVICE, value = favorite.device.serial),
-                    Edit.Attribute(name = APP, value = favorite.app.packageName),
-                ),
-            )
-
-            is App -> Edit.Add(
-                name = APP,
-                attributes = listOf(Edit.Attribute(name = DEVICE, value = favorite.device.serial)),
-                value = favorite.packageName,
-            )
+            is Device -> encoder.encode { serializeDevice(favorite) }
+            is File -> encoder.encode { serializeFile(favorite) }
+            is App -> encoder.encode { serializeApp(favorite) }
         }
     }
 
-    fun read(parser: XmlPullParser) = buildList {
+    private fun XmlSerializer.serializeDevice(favorite: Device) {
+        tag(DEVICE) { text(favorite.serial) }
+    }
+
+    private fun XmlSerializer.serializeApp(favorite: App) {
+        tag(APP) {
+            attrib(name = DEVICE, value = favorite.device.serial)
+            text(favorite.packageName)
+        }
+    }
+
+    private fun XmlSerializer.serializeFile(favorite: File) {
+        tag(FILE) {
+            attrib(name = DEVICE, value = favorite.device.serial)
+            attrib(name = APP, value = favorite.app.packageName)
+            text(favorite.name)
+        }
+    }
+
+    fun decode(parser: XmlPullParser) = buildList {
         when (parser.name) {
             DEVICE -> add(parser.parseDevice())
             FILE -> add(parser.parseFile())
