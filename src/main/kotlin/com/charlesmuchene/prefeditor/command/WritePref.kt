@@ -23,7 +23,6 @@ import com.charlesmuchene.prefeditor.data.Tags.INT
 import com.charlesmuchene.prefeditor.data.Tags.LONG
 import com.charlesmuchene.prefeditor.data.Tags.SET
 import com.charlesmuchene.prefeditor.data.Tags.STRING
-import com.charlesmuchene.prefeditor.files.PrefEditorFiles
 import com.charlesmuchene.prefeditor.preferences.PreferenceManager
 import com.charlesmuchene.prefeditor.preferences.PreferenceWriter
 import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.tag
@@ -41,10 +40,6 @@ data class WritePref(
     private val writer: PreferenceWriter = PreferenceManager(),
     private val timestampProvider: TimestampProvider = TimeStampProviderImpl(),
 ) : WriteCommand<Boolean> {
-
-    init {
-        PrefEditorFiles.copyPushScript()
-    }
 
     private val backupInput = if (enableBackup) "i.backup_${timestampProvider()}" else "i"
 

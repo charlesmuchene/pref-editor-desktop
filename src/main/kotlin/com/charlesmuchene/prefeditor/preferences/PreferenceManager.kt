@@ -36,6 +36,7 @@ class PreferenceManager : PreferenceReader, PreferenceWriter {
             nextTag()
             require(XmlPullParser.START_TAG, null, Tags.ROOT)
             while (nextTag() != XmlPullParser.END_TAG) {
+                // TODO Yield
                 if (eventType != XmlPullParser.START_TAG) continue
                 block()
             }

@@ -17,20 +17,31 @@
 package com.charlesmuchene.prefeditor.files
 
 import com.charlesmuchene.prefeditor.preferences.PreferenceManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.coroutines.CoroutineContext
 import kotlin.io.path.exists
 
 object PrefEditorFiles {
 
+    private val context: CoroutineContext = Dispatchers.IO
+
     private const val DIR = ".pref-editor"
     private const val PUSH_FILE = "push.sh"
+    private const val EDIT_FILE = "edit.sh"
     private const val HOME_DIR = "user.home"
     private const val SCRIPTS_DIR = "scripts"
     private const val PREFERENCES = "preferences.xml"
 
-    //TODO Move this to app start in a coroutine
+    suspend fun initialize() = withContext(context) {
+        preferencePath()
+        copyEditScript()
+        copyPushScript()
+    }
+
     private fun writeEmptyPreferences(path: Path) {
         val content = PreferenceManager().writeDocument()
         Files.writeString(path, content)
@@ -40,8 +51,12 @@ object PrefEditorFiles {
         if (!exists()) Files.createDirectory(this)
     }
 
-    fun copyPushScript() {
-        val path = appPath().resolve(PUSH_FILE)
+    private fun scriptsPath(): Path = appPath().resolve(SCRIPTS_DIR).apply {
+        if (!exists()) Files.createDirectory(this)
+    }
+
+    private fun copyPushScript() {
+        val path = scriptsPath().resolve(PUSH_FILE)
         if (!path.exists()) {
             javaClass.classLoader.getResourceAsStream("$SCRIPTS_DIR/$PUSH_FILE")?.let {
                 Files.copy(it, path)
@@ -49,6 +64,14 @@ object PrefEditorFiles {
         }
     }
 
+    private suspend fun copyEditScript() = withContext(context) {
+        val path = scriptsPath().resolve(EDIT_FILE)
+        if (!path.exists()) javaClass.classLoader.getResourceAsStream("$SCRIPTS_DIR/$EDIT_FILE")?.let {
+            Files.copy(it, path)
+        }
+    }
+
+    // TODO Move to IO
     fun preferencePath(): Path {
         val path = appPath().resolve(PREFERENCES)
         if (!path.exists()) writeEmptyPreferences(path)

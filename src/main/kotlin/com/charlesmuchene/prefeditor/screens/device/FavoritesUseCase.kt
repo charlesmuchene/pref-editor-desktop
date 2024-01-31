@@ -22,12 +22,12 @@ import com.charlesmuchene.prefeditor.preferences.favorites.Favorite
 
 class FavoritesUseCase(private val appPreferences: AppPreferences = AppPreferences()) {
 
-    private val favorites by lazy { appPreferences.readFavorites() }
+    private val favorites by lazy { appPreferences.readFavorites().also(::println) }
 
     fun isFavorite(device: Device): Boolean =
         favorites.filterIsInstance<Favorite.Device>().map(Favorite.Device::serial).contains(device.serial)
 
-    fun writeFavorites(favorites: List<Favorite>) {
+    suspend fun writeFavorites(favorites: List<Favorite>) {
         appPreferences.writeFavorites(favorites = favorites)
     }
 }

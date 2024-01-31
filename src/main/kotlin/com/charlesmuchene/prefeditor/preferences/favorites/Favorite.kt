@@ -31,7 +31,7 @@ package com.charlesmuchene.prefeditor.preferences.favorites
  * </map>
  * ```
  */
-interface Favorite {
+sealed interface Favorite {
 
     /**
      * A favorite device

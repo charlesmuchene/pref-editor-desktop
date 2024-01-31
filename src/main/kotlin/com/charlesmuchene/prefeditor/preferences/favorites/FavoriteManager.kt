@@ -16,16 +16,14 @@
 
 package com.charlesmuchene.prefeditor.preferences.favorites
 
+import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.preferences.PreferenceReader.Reader.gobbleTag
 import com.charlesmuchene.prefeditor.preferences.PreferenceReader.Reader.skip
-import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.attrib
-import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.tag
 import com.charlesmuchene.prefeditor.preferences.favorites.Favorite.*
 import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager.Tags.APP
 import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager.Tags.DEVICE
 import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager.Tags.FILE
 import org.xmlpull.v1.XmlPullParser
-import org.xmlpull.v1.XmlSerializer
 
 class FavoriteManager {
 
@@ -38,27 +36,28 @@ class FavoriteManager {
         }
     }
 
-    fun write(serializer: XmlSerializer, favorites: List<Favorite>) {
-        with(serializer) {
-            favorites.forEach { favorite ->
-                when (favorite) {
-                    is Device -> tag(DEVICE) { text(favorite.serial) }
-                    is File -> tag(FILE) {
-                        attrib(name = DEVICE, value = favorite.device.serial)
-                        attrib(name = APP, value = favorite.app.packageName)
-                        text(favorite.name)
-                    }
+    fun edits(favorites: List<Favorite>): List<Edit.Add> = favorites.map { favorite ->
+        when (favorite) {
+            is Device -> Edit.Add(name = DEVICE, value = favorite.serial, attributes = emptyList())
+            is File -> Edit.Add(
+                value = favorite.name,
+                name = FILE,
+                attributes = listOf(
+                    Edit.Attribute(name = DEVICE, value = favorite.device.serial),
+                    Edit.Attribute(name = APP, value = favorite.app.packageName),
+                ),
+            )
 
-                    is App -> tag(APP) {
-                        attrib(name = DEVICE, value = favorite.device.serial)
-                        text(favorite.packageName)
-                    }
-                }
-            }
+            is App -> Edit.Add(
+                name = APP,
+                attributes = listOf(Edit.Attribute(name = DEVICE, value = favorite.device.serial)),
+                value = favorite.packageName,
+            )
         }
     }
 
     private fun XmlPullParser.parseDevice(): Device = gobbleTag(DEVICE) {
+        next()
         Device(serial = text)
     }
 

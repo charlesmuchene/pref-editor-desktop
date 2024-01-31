@@ -19,10 +19,7 @@ package com.charlesmuchene.prefeditor.app
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -31,6 +28,7 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
+import com.charlesmuchene.prefeditor.files.PrefEditorFiles
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
@@ -85,6 +83,9 @@ fun ApplicationScope.scaffold(content: @Composable ColumnScope.(Modifier) -> Uni
 
 @Composable
 private fun provideAppState(content: @Composable () -> Unit) {
+    LaunchedEffect(Unit) {
+        PrefEditorFiles.initialize()
+    }
     CompositionLocalProvider(
         LocalBridge provides Bridge(),
         LocalBundle provides TextBundle(),
