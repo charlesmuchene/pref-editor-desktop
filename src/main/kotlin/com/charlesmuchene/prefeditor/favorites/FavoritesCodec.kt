@@ -17,9 +17,10 @@
 package com.charlesmuchene.prefeditor.favorites
 
 import com.charlesmuchene.prefeditor.favorites.Favorite.*
-import com.charlesmuchene.prefeditor.favorites.FavoriteManager.Tags.APP
-import com.charlesmuchene.prefeditor.favorites.FavoriteManager.Tags.DEVICE
-import com.charlesmuchene.prefeditor.favorites.FavoriteManager.Tags.FILE
+import com.charlesmuchene.prefeditor.favorites.FavoritesCodec.Tags.APP
+import com.charlesmuchene.prefeditor.favorites.FavoritesCodec.Tags.DEVICE
+import com.charlesmuchene.prefeditor.favorites.FavoritesCodec.Tags.FILE
+import com.charlesmuchene.prefeditor.preferences.PreferenceCodec
 import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobbleTag
 import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder
@@ -27,14 +28,16 @@ import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attri
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlSerializer
+import java.nio.file.Path
+import kotlin.io.path.inputStream
 
-class FavoriteManager(private val encoder: PreferenceEncoder) {
+class FavoritesCodec(private val codec: PreferenceCodec) {
 
     fun encode(favorites: List<Favorite>): List<String> = favorites.map { favorite ->
         when (favorite) {
-            is Device -> encoder.encode { serializeDevice(favorite) }
-            is File -> encoder.encode { serializeFile(favorite) }
-            is App -> encoder.encode { serializeApp(favorite) }
+            is Device -> codec.encode { serializeDevice(favorite) }
+            is File -> codec.encode { serializeFile(favorite) }
+            is App -> codec.encode { serializeApp(favorite) }
         }
     }
 
@@ -57,12 +60,14 @@ class FavoriteManager(private val encoder: PreferenceEncoder) {
         }
     }
 
-    fun decode(parser: XmlPullParser) = buildList {
-        when (parser.name) {
-            DEVICE -> add(parser.parseDevice())
-            FILE -> add(parser.parseFile())
-            APP -> add(parser.parseApp())
-            else -> parser.skip()
+    fun decode(path: Path) = buildList {
+        codec.decode(path.inputStream()) {
+            when (name) {
+                DEVICE -> add(parseDevice())
+                FILE -> add(parseFile())
+                APP -> add(parseApp())
+                else -> skip()
+            }
         }
     }
 
