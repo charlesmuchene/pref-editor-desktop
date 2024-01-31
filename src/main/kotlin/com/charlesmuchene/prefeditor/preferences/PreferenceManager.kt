@@ -22,6 +22,7 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import org.xmlpull.v1.XmlSerializer
 import java.io.InputStream
+import java.io.OutputStream
 
 /**
  * Manages reading and writing preferences
@@ -42,13 +43,17 @@ class PreferenceManager : PreferenceReader, PreferenceWriter {
     }
 
     override fun write(block: XmlSerializer.() -> Unit): String = Buffer().run {
+        write(outputStream = outputStream(), block = block)
+        readUtf8().trim()
+    }
+
+    override fun write(outputStream: OutputStream, block: XmlSerializer.() -> Unit) {
         with(XmlPullParserFactory.newInstance().newSerializer()) {
             setFeature(INDENTATION_FEATURE, true)
-            setOutput(buffer.outputStream(), ENCODING)
+            setOutput(outputStream, ENCODING)
             block()
             flush()
         }
-        readUtf8().trim()
     }
 
     override fun writeDocument(block: XmlSerializer.() -> Unit): String = write {

@@ -17,11 +17,22 @@
 package com.charlesmuchene.prefeditor.preferences
 
 import org.xmlpull.v1.XmlSerializer
+import java.io.OutputStream
 
 /**
  * Contract for writing preferences in xml format
  */
 interface PreferenceWriter {
+
+    /**
+     * Writes content without the xml declaration to the given output stream.
+     *
+     * NOTE: It is your responsibility to close this stream.
+     *
+     * @param outputStream [OutputStream] to write to
+     * @param block Block used to add content
+     */
+    fun write(outputStream: OutputStream, block: XmlSerializer.() -> Unit)
 
     /**
      * Writes content without the xml declaration

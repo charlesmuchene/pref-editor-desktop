@@ -20,6 +20,7 @@ import com.charlesmuchene.prefeditor.files.PrefEditorFiles
 import com.charlesmuchene.prefeditor.preferences.favorites.Favorite
 import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager
 import kotlin.io.path.inputStream
+import kotlin.io.path.outputStream
 
 /**
  * Application preferences
@@ -49,7 +50,10 @@ class AppPreferences(
      * @param favorites A [List] of [Favorite]s
      */
     fun writeFavorites(favorites: List<Favorite>) {
-        manager.write { favoriteManager.write(serializer = this, favorites = favorites) }
+        val path = PrefEditorFiles.preferencePath()
+        path.outputStream().use {
+            manager.write(it) { favoriteManager.write(serializer = this, favorites = favorites) }
+        }
     }
 
 }
