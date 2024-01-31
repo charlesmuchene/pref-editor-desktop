@@ -20,44 +20,44 @@ import org.xmlpull.v1.XmlSerializer
 import java.io.OutputStream
 
 /**
- * Contract for writing preferences in xml format
+ * Contract for encoding preferences in xml format
  */
-interface PreferenceWriter {
+interface PreferenceEncoder {
 
     /**
-     * Writes content without the xml declaration to the given output stream.
+     * Encodes content without the xml declaration to the given output stream.
      *
      * NOTE: It is your responsibility to close this stream.
      *
-     * @param outputStream [OutputStream] to write to
+     * @param outputStream [OutputStream] to encode to
      * @param block Block used to add content
      */
-    fun write(outputStream: OutputStream, block: XmlSerializer.() -> Unit)
+    fun encode(outputStream: OutputStream, block: XmlSerializer.() -> Unit)
 
     /**
-     * Writes content without the xml declaration
+     * Encodes content without the xml declaration
      *
      * Note: The library used employs \r\n as the new line character
      *
      * @param block Block used to add content
      * @return Xml output
      */
-    fun write(block: XmlSerializer.() -> Unit): String
+    fun encode(block: XmlSerializer.() -> Unit): String
 
     /**
-     * Write a xml document with the declaration
+     * Encode a xml document with the declaration
      *
      * Note: The library used employs \r\n as the new line character
      *
      * @param block Block to add content with [XmlSerializer] as the receiver
      * @return Xml output
      */
-    fun writeDocument(block: XmlSerializer.() -> Unit = {}): String
+    fun encodeDocument(block: XmlSerializer.() -> Unit = {}): String
 
-    companion object Writer {
+    companion object Encoder {
 
         /**
-         * Add a tag to the current write context.
+         * Add a tag to the current encoding context.
          * The tag will be self-closing if no content is added using the given block.
          *
          * @param tag Tag to add
@@ -71,7 +71,7 @@ interface PreferenceWriter {
         }
 
         /**
-         * Add an attribute to the current write context
+         * Add an attribute to the current encoding context
          *
          * @param name Attribute name
          * @param value Attribute value

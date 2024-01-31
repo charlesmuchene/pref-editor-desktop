@@ -65,7 +65,6 @@ class Bridge(
     private suspend fun <T> createProcess(command: Command<T>, config: ProcessBuilder.() -> Unit = {}): Result<T> =
         try {
             val result = processor.run(command.command.split(DELIMITER), config)
-            println(result)
             Result.success(command.execute(result.byteInputStream().source().buffer()))
         } catch (t: Throwable) {
             Result.failure(t)

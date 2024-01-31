@@ -16,7 +16,7 @@
 
 package com.charlesmuchene.prefeditor.files
 
-import com.charlesmuchene.prefeditor.preferences.PreferenceManager
+import com.charlesmuchene.prefeditor.preferences.PreferenceCodec
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.nio.file.Files
@@ -43,7 +43,7 @@ object PrefEditorFiles {
     }
 
     private fun writeEmptyPreferences(path: Path) {
-        val content = PreferenceManager().writeDocument()
+        val content = PreferenceCodec().encodeDocument()
         Files.writeString(path, content)
     }
 

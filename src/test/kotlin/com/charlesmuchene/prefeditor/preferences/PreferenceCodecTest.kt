@@ -1,23 +1,23 @@
 package com.charlesmuchene.prefeditor.preferences
 
-import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.attrib
-import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.tag
+import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
+import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class PreferenceManagerTest {
+class PreferenceCodecTest {
 
-    private lateinit var manager: PreferenceManager
+    private lateinit var manager: PreferenceCodec
 
     @BeforeEach
     fun setup() {
-        manager = PreferenceManager()
+        manager = PreferenceCodec()
     }
 
     @Test
     fun `write document creates an empty document`() {
-        val output = manager.writeDocument()
+        val output = manager.encodeDocument()
         assertEquals(expected = "<?xml version='1.0' encoding='utf-8' standalone='yes' ?>\r\n<map />", actual = output)
     }
 

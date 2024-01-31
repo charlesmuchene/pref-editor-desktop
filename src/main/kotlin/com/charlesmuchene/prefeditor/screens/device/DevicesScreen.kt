@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.models.UIDevice
+import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -40,10 +41,11 @@ fun DevicesScreen(modifier: Modifier = Modifier) {
 
     val bridge = LocalBridge.current
     val bundle = LocalBundle.current
+    val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
-        DevicesViewModel(scope = scope, bridge = bridge, navigation = navigation, bundle = bundle)
+        DevicesViewModel(scope = scope, bridge = bridge, navigation = navigation, bundle = bundle, appState = appState)
     }
     val state by viewModel.uiState.collectAsState()
 

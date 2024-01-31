@@ -18,6 +18,7 @@ package com.charlesmuchene.prefeditor.app
 
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.preferences.AppPreferences
 import com.charlesmuchene.prefeditor.ui.theme.PrefEditorTheme
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -31,6 +32,8 @@ class AppState {
 
     private val _toastMessage = MutableSharedFlow<String?>()
     val toastMessage: SharedFlow<String?> = _toastMessage
+
+    val preferences = AppPreferences()
 
     suspend fun showToast(message: String) {
         _toastMessage.emit(message)

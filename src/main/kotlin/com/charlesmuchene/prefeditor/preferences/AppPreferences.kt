@@ -16,18 +16,18 @@
 
 package com.charlesmuchene.prefeditor.preferences
 
+import com.charlesmuchene.prefeditor.favorites.Favorite
+import com.charlesmuchene.prefeditor.favorites.FavoriteManager
 import com.charlesmuchene.prefeditor.files.PrefEditorFiles
-import com.charlesmuchene.prefeditor.preferences.favorites.Favorite
-import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager
 import kotlin.io.path.inputStream
 
 /**
  * Application preferences
  */
 class AppPreferences(
-    private val editor: PreferenceEditor = PreferenceEditor(),
-    private val manager: PreferenceManager = PreferenceManager(),
+    private val codec: PreferenceCodec = PreferenceCodec(),
     private val favoriteManager: FavoriteManager = FavoriteManager(),
+    private val editor: PreferenceEditor = PreferenceEditor(encoder = codec),
 ) {
 
     /**
@@ -38,8 +38,8 @@ class AppPreferences(
     fun readFavorites(): List<Favorite> = buildList {
         val path = PrefEditorFiles.preferencePath()
         // TODO Convert to IO op
-        manager.read(path.inputStream()) {
-            favoriteManager.read(parser = this, favorites = this@buildList)
+        codec.decode(path.inputStream()) {
+            addAll(favoriteManager.read(parser = this))
         }
     }
 
@@ -50,7 +50,7 @@ class AppPreferences(
      */
     suspend fun writeFavorites(favorites: List<Favorite>) {
         val path = PrefEditorFiles.preferencePath()
-        favoriteManager.edits(favorites = favorites).forEach { editor.edit(it, path) }
+        favoriteManager.toEdits(favorites = favorites).forEach { editor.edit(it, path) }
     }
 
 }

@@ -21,22 +21,21 @@ import com.charlesmuchene.prefeditor.data.Tags.BOOLEAN
 import com.charlesmuchene.prefeditor.data.Tags.FLOAT
 import com.charlesmuchene.prefeditor.data.Tags.INT
 import com.charlesmuchene.prefeditor.data.Tags.LONG
-import com.charlesmuchene.prefeditor.data.Tags.ROOT
 import com.charlesmuchene.prefeditor.data.Tags.SET
 import com.charlesmuchene.prefeditor.data.Tags.STRING
-import com.charlesmuchene.prefeditor.preferences.PreferenceManager
-import com.charlesmuchene.prefeditor.preferences.PreferenceReader
-import com.charlesmuchene.prefeditor.preferences.PreferenceReader.Reader.gobbleTag
-import com.charlesmuchene.prefeditor.preferences.PreferenceReader.Reader.skip
+import com.charlesmuchene.prefeditor.preferences.PreferenceCodec
+import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder
+import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobbleTag
+import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
 import okio.BufferedSource
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 
-class PrefParser(private val reader: PreferenceReader = PreferenceManager()) : Parser<Preferences> {
+class PrefParser(private val reader: PreferenceDecoder = PreferenceCodec()) : Parser<Preferences> {
 
     override fun parse(source: BufferedSource): Preferences {
         val entries = buildList {
-            reader.read(source.inputStream()) {
+            reader.decode(source.inputStream()) {
                 when (name) {
                     BOOLEAN -> add(parseBoolean())
                     STRING -> add(parseString())

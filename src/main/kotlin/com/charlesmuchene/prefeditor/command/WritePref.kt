@@ -23,9 +23,9 @@ import com.charlesmuchene.prefeditor.data.Tags.INT
 import com.charlesmuchene.prefeditor.data.Tags.LONG
 import com.charlesmuchene.prefeditor.data.Tags.SET
 import com.charlesmuchene.prefeditor.data.Tags.STRING
-import com.charlesmuchene.prefeditor.preferences.PreferenceManager
-import com.charlesmuchene.prefeditor.preferences.PreferenceWriter
-import com.charlesmuchene.prefeditor.preferences.PreferenceWriter.Writer.tag
+import com.charlesmuchene.prefeditor.preferences.PreferenceCodec
+import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder
+import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import com.charlesmuchene.prefeditor.providers.TimeStampProviderImpl
 import com.charlesmuchene.prefeditor.providers.TimestampProvider
 import okio.BufferedSource
@@ -37,7 +37,7 @@ data class WritePref(
     private val prefFile: PrefFile,
     private val enableBackup: Boolean,
     private val preferences: Preferences,
-    private val writer: PreferenceWriter = PreferenceManager(),
+    private val writer: PreferenceEncoder = PreferenceCodec(),
     private val timestampProvider: TimestampProvider = TimeStampProviderImpl(),
 ) : WriteCommand<Boolean> {
 
@@ -48,7 +48,7 @@ data class WritePref(
     }
 
     override val content: String by lazy {
-        writer.writeDocument {
+        writer.encodeDocument {
             preferences.entries.forEach { entry ->
                 when (entry) {
                     is BooleanEntry -> tag(BOOLEAN) { attribute(name = entry.name, value = entry.value) }

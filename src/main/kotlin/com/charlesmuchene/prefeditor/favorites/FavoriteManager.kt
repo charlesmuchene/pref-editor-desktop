@@ -14,29 +14,20 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.preferences.favorites
+package com.charlesmuchene.prefeditor.favorites
 
 import com.charlesmuchene.prefeditor.data.Edit
-import com.charlesmuchene.prefeditor.preferences.PreferenceReader.Reader.gobbleTag
-import com.charlesmuchene.prefeditor.preferences.PreferenceReader.Reader.skip
-import com.charlesmuchene.prefeditor.preferences.favorites.Favorite.*
-import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager.Tags.APP
-import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager.Tags.DEVICE
-import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager.Tags.FILE
+import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobbleTag
+import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
+import com.charlesmuchene.prefeditor.favorites.Favorite.*
+import com.charlesmuchene.prefeditor.favorites.FavoriteManager.Tags.APP
+import com.charlesmuchene.prefeditor.favorites.FavoriteManager.Tags.DEVICE
+import com.charlesmuchene.prefeditor.favorites.FavoriteManager.Tags.FILE
 import org.xmlpull.v1.XmlPullParser
 
 class FavoriteManager {
 
-    fun read(parser: XmlPullParser, favorites: MutableList<Favorite>) {
-        when (parser.name) {
-            DEVICE -> favorites.add(parser.parseDevice())
-            FILE -> favorites.add(parser.parseFile())
-            APP -> favorites.add(parser.parseApp())
-            else -> parser.skip()
-        }
-    }
-
-    fun edits(favorites: List<Favorite>): List<Edit.Add> = favorites.map { favorite ->
+    fun toEdits(favorites: List<Favorite>): List<Edit.Add> = favorites.map { favorite ->
         when (favorite) {
             is Device -> Edit.Add(name = DEVICE, value = favorite.serial, attributes = emptyList())
             is File -> Edit.Add(
@@ -53,6 +44,15 @@ class FavoriteManager {
                 attributes = listOf(Edit.Attribute(name = DEVICE, value = favorite.device.serial)),
                 value = favorite.packageName,
             )
+        }
+    }
+
+    fun read(parser: XmlPullParser) = buildList {
+        when (parser.name) {
+            DEVICE -> add(parser.parseDevice())
+            FILE -> add(parser.parseFile())
+            APP -> add(parser.parseApp())
+            else -> parser.skip()
         }
     }
 

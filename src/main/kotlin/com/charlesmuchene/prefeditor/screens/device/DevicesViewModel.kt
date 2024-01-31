@@ -17,10 +17,12 @@
 package com.charlesmuchene.prefeditor.screens.device
 
 import androidx.compose.ui.graphics.Color
+import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Device.Type
 import com.charlesmuchene.prefeditor.data.Devices
+import com.charlesmuchene.prefeditor.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
 import com.charlesmuchene.prefeditor.navigation.Navigation
@@ -34,10 +36,11 @@ import kotlinx.coroutines.launch
 class DevicesViewModel(
     private val bridge: Bridge,
     private val bundle: TextBundle,
+    private val appState: AppState,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
-    private val favoritesUseCase: FavoritesUseCase = FavoritesUseCase(),
     private val listDeviceUseCase: ListDeviceUseCase = ListDeviceUseCase(bridge = bridge),
+    private val favoritesUseCase: FavoritesUseCase = FavoritesUseCase(preferences = appState.preferences),
 ) : CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))

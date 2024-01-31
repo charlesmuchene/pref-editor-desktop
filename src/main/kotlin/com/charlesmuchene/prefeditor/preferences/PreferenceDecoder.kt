@@ -20,22 +20,22 @@ import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 
 /**
- * Contract to read preferences in xml format
+ * Contract to decode preferences in xml format
  */
-interface PreferenceReader {
+interface PreferenceDecoder {
 
     /**
      * Read content from the given stream
      *
-     * @param inputStream [InputStream] to read from
+     * @param inputStream [InputStream] to decode from
      * @param block Block to extract tags from -- has a [XmlPullParser] as the receiver
      */
-    fun read(inputStream: InputStream, block: XmlPullParser.() -> Unit)
+    fun decode(inputStream: InputStream, block: XmlPullParser.() -> Unit)
 
     companion object Reader {
 
         /**
-         * Skip the next tag in the reading context
+         * Skip the next tag in the decoding context
          *
          * @receiver [XmlPullParser] instance
          */
@@ -51,7 +51,7 @@ interface PreferenceReader {
         }
 
         /**
-         * Consume the given tag. This must be the next tag in the reading context.
+         * Consume the given tag. This must be the next tag in the decodeing context.
          *
          * @param tag The next tag to consume
          * @param block Block to consume content with [XmlPullParser] as the receiver

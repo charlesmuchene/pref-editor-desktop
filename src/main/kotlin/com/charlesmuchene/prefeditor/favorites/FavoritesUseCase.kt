@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.screens.device
+package com.charlesmuchene.prefeditor.favorites
 
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.preferences.AppPreferences
-import com.charlesmuchene.prefeditor.preferences.favorites.Favorite
 
-class FavoritesUseCase(private val appPreferences: AppPreferences = AppPreferences()) {
+class FavoritesUseCase(private val preferences: AppPreferences) {
 
-    private val favorites by lazy { appPreferences.readFavorites().also(::println) }
+    private val favorites by lazy { preferences.readFavorites() }
 
     fun isFavorite(device: Device): Boolean =
         favorites.filterIsInstance<Favorite.Device>().map(Favorite.Device::serial).contains(device.serial)
 
     suspend fun writeFavorites(favorites: List<Favorite>) {
-        appPreferences.writeFavorites(favorites = favorites)
+        preferences.writeFavorites(favorites = favorites)
     }
 }

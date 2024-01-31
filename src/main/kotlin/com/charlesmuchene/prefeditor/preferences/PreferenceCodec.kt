@@ -25,11 +25,11 @@ import java.io.InputStream
 import java.io.OutputStream
 
 /**
- * Manages reading and writing preferences
+ * Manages encoding and decoding preferences
  */
-class PreferenceManager : PreferenceReader, PreferenceWriter {
+class PreferenceCodec : PreferenceDecoder, PreferenceEncoder {
 
-    override fun read(inputStream: InputStream, block: XmlPullParser.() -> Unit) {
+    override fun decode(inputStream: InputStream, block: XmlPullParser.() -> Unit) {
         with(XmlPullParserFactory.newInstance().newPullParser()) {
             setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
             setInput(inputStream, null)
@@ -43,12 +43,12 @@ class PreferenceManager : PreferenceReader, PreferenceWriter {
         }
     }
 
-    override fun write(block: XmlSerializer.() -> Unit): String = Buffer().run {
-        write(outputStream = outputStream(), block = block)
+    override fun encode(block: XmlSerializer.() -> Unit): String = Buffer().run {
+        encode(outputStream = outputStream(), block = block)
         readUtf8().trim()
     }
 
-    override fun write(outputStream: OutputStream, block: XmlSerializer.() -> Unit) {
+    override fun encode(outputStream: OutputStream, block: XmlSerializer.() -> Unit) {
         with(XmlPullParserFactory.newInstance().newSerializer()) {
             setFeature(INDENTATION_FEATURE, true)
             setOutput(outputStream, ENCODING)
@@ -57,7 +57,7 @@ class PreferenceManager : PreferenceReader, PreferenceWriter {
         }
     }
 
-    override fun writeDocument(block: XmlSerializer.() -> Unit): String = write {
+    override fun encodeDocument(block: XmlSerializer.() -> Unit): String = encode {
         startDocument(ENCODING, true)
         startTag(null, Tags.ROOT)
         block()
