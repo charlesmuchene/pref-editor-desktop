@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -34,10 +35,15 @@ fun FullScreenText(primary: String, modifier: Modifier = Modifier, secondary: St
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = primary, style = Typography.heading)
+        Text(text = primary, style = Typography.heading, textAlign = TextAlign.Center)
         secondary?.let {
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = secondary, color = Color.Gray, fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))
+            Text(
+                text = secondary,
+                color = Color.Gray,
+                fontSize = TextUnit(value = 16f, type = TextUnitType.Sp),
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
