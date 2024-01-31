@@ -18,18 +18,54 @@ package com.charlesmuchene.prefeditor.preferences
 
 import org.xmlpull.v1.XmlSerializer
 
+/**
+ * Contract for writing preferences in xml format
+ */
 interface PreferenceWriter {
 
+    /**
+     * Writes content without the xml declaration
+     *
+     * Note: The library used employs \r\n as the new line character
+     *
+     * @param block Block used to add content
+     * @return Xml output
+     */
     fun write(block: XmlSerializer.() -> Unit): String
-    fun writeEmpty(): String
+
+    /**
+     * Write a xml document with the declaration
+     *
+     * Note: The library used employs \r\n as the new line character
+     *
+     * @param block Block to add content with [XmlSerializer] as the receiver
+     * @return Xml output
+     */
+    fun writeDocument(block: XmlSerializer.() -> Unit = {}): String
 
     companion object Writer {
+
+        /**
+         * Add a tag to the current write context.
+         * The tag will be self-closing if no content is added using the given block.
+         *
+         * @param tag Tag to add
+         * @param block Block to add tag content with [XmlSerializer] as the receiver
+         * @receiver [XmlSerializer] instance
+         */
         fun XmlSerializer.tag(tag: String, block: XmlSerializer.() -> Unit) {
             startTag(null, tag)
             block()
             endTag(null, tag)
         }
 
+        /**
+         * Add an attribute to the current write context
+         *
+         * @param name Attribute name
+         * @param value Attribute value
+         * @receiver [XmlSerializer] instance
+         */
         fun XmlSerializer.attribute(name: String, value: String) {
             attribute(null, name, value)
         }

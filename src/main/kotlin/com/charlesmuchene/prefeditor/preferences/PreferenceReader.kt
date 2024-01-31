@@ -19,12 +19,26 @@ package com.charlesmuchene.prefeditor.preferences
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStream
 
+/**
+ * Contract to read preferences in xml format
+ */
 interface PreferenceReader {
 
+    /**
+     * Read content from the given stream
+     *
+     * @param inputStream [InputStream] to read from
+     * @param block Block to extract tags from -- has a [XmlPullParser] as the receiver
+     */
     fun read(inputStream: InputStream, block: XmlPullParser.() -> Unit)
 
     companion object Reader {
 
+        /**
+         * Skip the next tag in the reading context
+         *
+         * @receiver [XmlPullParser] instance
+         */
         fun XmlPullParser.skip() {
             require(eventType == XmlPullParser.START_TAG)
             var depth = 1
@@ -36,6 +50,14 @@ interface PreferenceReader {
             }
         }
 
+        /**
+         * Consume the given tag. This must be the next tag in the reading context.
+         *
+         * @param tag The next tag to consume
+         * @param block Block to consume content with [XmlPullParser] as the receiver
+         * @return [R] The type of the consumed content
+         * @receiver [XmlPullParser] instance
+         */
         fun <R> XmlPullParser.gobbleTag(tag: String, block: XmlPullParser.() -> R): R {
             require(XmlPullParser.START_TAG, null, tag)
             val result = block()

@@ -23,6 +23,9 @@ import org.xmlpull.v1.XmlPullParserFactory
 import org.xmlpull.v1.XmlSerializer
 import java.io.InputStream
 
+/**
+ * Manages reading and writing preferences
+ */
 class PreferenceManager : PreferenceReader, PreferenceWriter {
 
     override fun read(inputStream: InputStream, block: XmlPullParser.() -> Unit) {
@@ -38,20 +41,23 @@ class PreferenceManager : PreferenceReader, PreferenceWriter {
         }
     }
 
-    override fun write(block: XmlSerializer.() -> Unit): String {
-        val buffer = Buffer()
+    override fun write(block: XmlSerializer.() -> Unit): String = Buffer().run {
         with(XmlPullParserFactory.newInstance().newSerializer()) {
-            setOutput(buffer.outputStream(), ENCODING)
             setFeature(INDENTATION_FEATURE, true)
-            startDocument(ENCODING, true)
-            startTag(null, Tags.ROOT)
+            setOutput(buffer.outputStream(), ENCODING)
             block()
-            endDocument()
+            flush()
         }
-        return buffer.readUtf8()
+        readUtf8().trim()
     }
 
-    override fun writeEmpty(): String = write { endTag(null, Tags.ROOT) }
+    override fun writeDocument(block: XmlSerializer.() -> Unit): String = write {
+        startDocument(ENCODING, true)
+        startTag(null, Tags.ROOT)
+        block()
+        if (depth == 1) endTag(null, Tags.ROOT)
+        endDocument()
+    }
 
     companion object Manager {
         const val INDENTATION_FEATURE = "http://xmlpull.org/v1/doc/features.html#indent-output"

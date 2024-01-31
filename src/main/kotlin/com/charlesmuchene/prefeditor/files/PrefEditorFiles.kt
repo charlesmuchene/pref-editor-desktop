@@ -30,8 +30,9 @@ object PrefEditorFiles {
     private const val SCRIPTS_DIR = "scripts"
     private const val PREFERENCES = "preferences.xml"
 
+    //TODO Move this to app start in a coroutine
     private fun writeEmptyPreferences(path: Path) {
-        val content = PreferenceManager().writeEmpty()
+        val content = PreferenceManager().writeDocument()
         Files.writeString(path, content)
     }
 

@@ -21,6 +21,9 @@ import com.charlesmuchene.prefeditor.preferences.favorites.Favorite
 import com.charlesmuchene.prefeditor.preferences.favorites.FavoriteManager
 import kotlin.io.path.inputStream
 
+/**
+ * Application preferences
+ */
 class AppPreferences(
     private val manager: PreferenceManager = PreferenceManager(),
     private val favoriteManager: FavoriteManager = FavoriteManager(),

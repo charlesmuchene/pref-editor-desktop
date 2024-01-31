@@ -53,7 +53,7 @@ data class WritePref(
     }
 
     override val content: String by lazy {
-        writer.write {
+        writer.writeDocument {
             preferences.entries.forEach { entry ->
                 when (entry) {
                     is BooleanEntry -> tag(BOOLEAN) { attribute(name = entry.name, value = entry.value) }
