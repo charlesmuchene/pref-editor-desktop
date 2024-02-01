@@ -28,5 +28,5 @@ interface Parser<T> {
      *
      * @return Instance of [T]
      */
-    fun parse(source: BufferedSource): T
+    suspend fun parse(source: BufferedSource): T
 }

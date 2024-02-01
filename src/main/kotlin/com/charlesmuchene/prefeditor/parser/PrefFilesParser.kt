@@ -18,12 +18,13 @@ package com.charlesmuchene.prefeditor.parser
 
 import com.charlesmuchene.prefeditor.command.ListPrefFiles.PrefFilesResult
 import com.charlesmuchene.prefeditor.data.PrefFile
+import kotlinx.coroutines.yield
 import okio.BufferedSource
 
 class PrefFilesParser : Parser<PrefFilesResult> {
 
     // FIXME: Hard to read, refactor
-    override fun parse(source: BufferedSource): PrefFilesResult {
+    override suspend fun parse(source: BufferedSource): PrefFilesResult {
         val line = source.readUtf8Line() ?: return PrefFilesResult.EmptyPrefs
         when {
             line.isBlank() -> Unit
@@ -34,6 +35,7 @@ class PrefFilesParser : Parser<PrefFilesResult> {
                 val files = buildList {
                     add(PrefFile(name = line, type = PrefFile.Type.KEY_VALUE))
                     while (true) {
+                        yield()
                         val name = source.readUtf8Line() ?: break
                         add(PrefFile(name = name, type = PrefFile.Type.KEY_VALUE))
                     }

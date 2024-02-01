@@ -19,7 +19,7 @@ package com.charlesmuchene.prefeditor.parser
 import okio.BufferedSource
 
 object NoOpParser : Parser<Unit> {
-    override fun parse(source: BufferedSource) {
+    override suspend fun parse(source: BufferedSource) {
         // no-op
     }
 }

@@ -19,14 +19,16 @@ package com.charlesmuchene.prefeditor.parser
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Device.Type
 import com.charlesmuchene.prefeditor.data.Devices
+import kotlinx.coroutines.yield
 import okio.BufferedSource
 
 class DeviceListParser : Parser<Devices> {
 
     // TODO parse wifi-connected device
-    override fun parse(source: BufferedSource): Devices = buildList {
+    override suspend fun parse(source: BufferedSource): Devices = buildList {
         source.readUtf8Line() // discard header
         while (true) {
+            yield()
             val line = source.readUtf8Line() ?: break
             if (line.isNotBlank()) add(parseDevice(line = line))
         }

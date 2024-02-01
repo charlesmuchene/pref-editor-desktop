@@ -18,13 +18,15 @@ package com.charlesmuchene.prefeditor.parser
 
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Apps
+import kotlinx.coroutines.yield
 import okio.BufferedSource
 
 class AppListParser(private val sorted: Boolean = true) : Parser<Apps> {
 
-    override fun parse(source: BufferedSource): Apps {
+    override suspend fun parse(source: BufferedSource): Apps {
         val listing = buildList {
             while (true) {
+                yield()
                 val line = source.readUtf8Line() ?: break
                 add(parseApp(line = line))
             }

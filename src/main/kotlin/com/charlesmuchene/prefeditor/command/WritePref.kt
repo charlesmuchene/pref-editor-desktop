@@ -72,7 +72,7 @@ data class WritePref(
         }
     }
 
-    override fun execute(source: BufferedSource): Boolean = source.readUtf8().isBlank()
+    override suspend fun execute(source: BufferedSource): Boolean = source.readUtf8().isBlank()
 
     private fun XmlSerializer.attribute(name: String, value: String) {
         attribute(null, NAME, name)

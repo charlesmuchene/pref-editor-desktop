@@ -17,6 +17,7 @@
 package com.charlesmuchene.prefeditor.preferences
 
 import com.charlesmuchene.prefeditor.data.Tags
+import kotlinx.coroutines.yield
 import okio.Buffer
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
@@ -29,14 +30,14 @@ import java.io.OutputStream
  */
 class PreferenceCodec : PreferenceDecoder, PreferenceEncoder {
 
-    override fun decode(inputStream: InputStream, block: XmlPullParser.() -> Unit) {
+    override suspend fun decode(inputStream: InputStream, block: XmlPullParser.() -> Unit) {
         with(XmlPullParserFactory.newInstance().newPullParser()) {
             setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
             setInput(inputStream, null)
             nextTag()
             require(XmlPullParser.START_TAG, null, Tags.ROOT)
             while (nextTag() != XmlPullParser.END_TAG) {
-                // TODO Yield
+                yield()
                 if (eventType != XmlPullParser.START_TAG) continue
                 block()
             }

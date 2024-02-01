@@ -21,12 +21,12 @@ import okio.BufferedSource
 
 interface Command<T> {
     val command: String
-    fun execute(source: BufferedSource): T
+    suspend fun execute(source: BufferedSource): T
 }
 
 interface ReadCommand<T> : Command<T> {
     val parser: Parser<T>
-    override fun execute(source: BufferedSource): T = parser.parse(source)
+    override suspend fun execute(source: BufferedSource): T = parser.parse(source)
 }
 
 interface WriteCommand<T> : Command<T> {

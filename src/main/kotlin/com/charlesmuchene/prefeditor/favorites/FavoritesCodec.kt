@@ -62,7 +62,7 @@ class FavoritesCodec(private val codec: PreferenceCodec) {
         }
     }
 
-    fun decode(path: Path) = buildList {
+    suspend fun decode(path: Path) = buildList {
         codec.decode(path.inputStream()) {
             when (name) {
                 DEVICE -> add(parseDevice())

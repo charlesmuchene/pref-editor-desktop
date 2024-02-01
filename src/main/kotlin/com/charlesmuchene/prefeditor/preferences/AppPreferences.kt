@@ -35,7 +35,7 @@ class AppPreferences(
      *
      * @return A [List] of [Favorite]s
      */
-    fun readFavorites(): List<Favorite> = buildList {
+    suspend fun readFavorites(): List<Favorite> = buildList {
         // TODO Convert to IO op
         val path = PrefEditorFiles.preferencePath()
         addAll(favoritesCodec.decode(path = path))

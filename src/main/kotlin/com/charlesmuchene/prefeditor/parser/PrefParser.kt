@@ -33,7 +33,7 @@ import org.xmlpull.v1.XmlPullParserException
 
 class PrefParser(private val reader: PreferenceDecoder = PreferenceCodec()) : Parser<Preferences> {
 
-    override fun parse(source: BufferedSource): Preferences {
+    override suspend fun parse(source: BufferedSource): Preferences {
         val entries = buildList {
             reader.decode(source.inputStream()) {
                 when (name) {

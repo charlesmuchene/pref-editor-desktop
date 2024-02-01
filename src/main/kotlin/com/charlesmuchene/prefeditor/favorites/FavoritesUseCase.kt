@@ -18,10 +18,21 @@ package com.charlesmuchene.prefeditor.favorites
 
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.preferences.AppPreferences
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-class FavoritesUseCase(private val preferences: AppPreferences) {
+class FavoritesUseCase(
+    private val preferences: AppPreferences,
+    private val context: CoroutineContext = Dispatchers.Default,
+) : CoroutineScope by CoroutineScope(context) {
 
-    private val favorites by lazy { preferences.readFavorites() }
+    private lateinit var favorites: List<Favorite>
+    
+    init {
+        launch { favorites = preferences.readFavorites() }
+    }
 
     fun isFavorite(device: Device): Boolean =
         favorites.filterIsInstance<Favorite.Device>().map(Favorite.Device::serial).contains(device.serial)

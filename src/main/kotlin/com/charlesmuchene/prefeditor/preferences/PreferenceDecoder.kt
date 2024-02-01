@@ -30,7 +30,7 @@ interface PreferenceDecoder {
      * @param inputStream [InputStream] to decode from
      * @param block Block to extract tags from -- has a [XmlPullParser] as the receiver
      */
-    fun decode(inputStream: InputStream, block: XmlPullParser.() -> Unit)
+    suspend fun decode(inputStream: InputStream, block: XmlPullParser.() -> Unit)
 
     companion object Reader {
 
