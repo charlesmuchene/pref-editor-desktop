@@ -16,4 +16,4 @@
 # limitations under the License.
 #
 
-sed -i '' "/$1/ d\\" "$2"
+sed -i '' "/$1/ d" "$2"

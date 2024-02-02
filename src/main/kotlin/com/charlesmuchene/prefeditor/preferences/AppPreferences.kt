@@ -60,7 +60,8 @@ class AppPreferences(
     suspend fun removeFavorites(favorites: List<Favorite>) {
         val content = favoritesCodec.encode(favorites = favorites, block = Edit::Delete)
         val path = PrefEditorFiles.preferencePath()
-        editor.edit(edits = content, path = path)
+        val output = editor.edit(edits = content, path = path)
+        println(output)
     }
 
 }

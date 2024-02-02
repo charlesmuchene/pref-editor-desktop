@@ -29,7 +29,7 @@ class FavoritesUseCase(
 ) : CoroutineScope by CoroutineScope(context) {
 
     private lateinit var favorites: List<Favorite>
-    
+
     init {
         launch { favorites = preferences.readFavorites() }
     }

@@ -31,15 +31,15 @@ object PrefEditorFiles {
 
     private const val DIR = ".pref-editor"
     private const val PUSH_FILE = "push.sh"
-    private const val EDIT_FILE = "add.sh"
+    private const val ADD_FILE = "add.sh"
+    private const val DELETE_FILE = "delete.sh"
     private const val HOME_DIR = "user.home"
     private const val SCRIPTS_DIR = "scripts"
     private const val PREFERENCES = "preferences.xml"
 
     suspend fun initialize() = withContext(context) {
         preferencePath()
-        copyEditScript()
-        copyPushScript()
+        copyScripts()
     }
 
     private fun writeEmptyPreferences(path: Path) {
@@ -51,22 +51,19 @@ object PrefEditorFiles {
         if (!exists()) Files.createDirectory(this)
     }
 
-    private fun scriptsPath(): Path = appPath().resolve(SCRIPTS_DIR).apply {
+    private fun scriptsPath(): Path = appPath().apply {
         if (!exists()) Files.createDirectory(this)
     }
 
-    private fun copyPushScript() {
-        val path = scriptsPath().resolve(PUSH_FILE)
-        if (!path.exists()) {
-            javaClass.classLoader.getResourceAsStream("$SCRIPTS_DIR/$PUSH_FILE")?.let {
-                Files.copy(it, path)
-            }
+    private suspend fun copyScripts() = withContext(context) {
+        val path = scriptsPath()
+        listOf(ADD_FILE, PUSH_FILE, DELETE_FILE).forEach { name ->
+            copyScript(name = name, path = path.resolve(name))
         }
     }
 
-    private suspend fun copyEditScript() = withContext(context) {
-        val path = scriptsPath().resolve(EDIT_FILE)
-        if (!path.exists()) javaClass.classLoader.getResourceAsStream("$SCRIPTS_DIR/$EDIT_FILE")?.let {
+    private fun copyScript(name: String, path: Path) {
+        if (!path.exists()) javaClass.classLoader.getResourceAsStream("$SCRIPTS_DIR/$name")?.let {
             Files.copy(it, path)
         }
     }
