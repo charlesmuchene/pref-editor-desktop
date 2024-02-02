@@ -18,6 +18,7 @@ package com.charlesmuchene.prefeditor.favorites
 
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.preferences.AppPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,11 +33,21 @@ class FavoritesUseCase(
     private lateinit var favorites: List<Favorite>
 
     init {
-        launch { favorites = preferences.readFavorites() }
+        launch { refresh() }
     }
+
+    suspend fun refresh() {
+        favorites = preferences.readFavorites()
+    }
+
+    fun isFavorite(app: App): Boolean =
+        favorites.filterIsInstance<Favorite.App>().map(Favorite.App::packageName).contains(app.packageName)
 
     fun isFavorite(device: Device): Boolean =
         favorites.filterIsInstance<Favorite.Device>().map(Favorite.Device::serial).contains(device.serial)
+
+    fun isFavorite(file: PrefFile): Boolean =
+        favorites.filterIsInstance<Favorite.File>().map(Favorite.File::name).contains(file.name)
 
     suspend fun writeFavorites(favorites: List<Favorite>) {
         preferences.writeFavorites(favorites = favorites)
@@ -53,15 +64,24 @@ class FavoritesUseCase(
     suspend fun favoriteApp(app: App, device: Device) {
         preferences.writeFavorites(
             favorites = listOf(
-                Favorite.App(
-                    device = Favorite.Device(device.serial),
-                    app.packageName
-                )
+                Favorite.App(device = device.serial, packageName = app.packageName)
             )
         )
     }
 
     suspend fun favoriteDevice(device: Device) {
         preferences.writeFavorites(favorites = listOf(Favorite.Device(device.serial)))
+    }
+
+    suspend fun unfavoriteDevice(device: Device) {
+        preferences.removeFavorites(favorites = listOf(Favorite.Device(device.serial)))
+    }
+
+    suspend fun favoritePrefFile(file: PrefFile, app: App, device: Device) {
+        preferences.writeFavorites(
+            favorites = listOf(
+                Favorite.File(device = device.serial, app = app.packageName, file.name)
+            )
+        )
     }
 }

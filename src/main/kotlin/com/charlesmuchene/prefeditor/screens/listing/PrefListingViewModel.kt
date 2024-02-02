@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.screens.listing
 
+import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.command.ListPrefFiles
 import com.charlesmuchene.prefeditor.command.ListPrefFiles.PrefFilesResult
@@ -23,6 +24,8 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.PrefFiles
+import com.charlesmuchene.prefeditor.favorites.FavoritesUseCase
+import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefEditScreen
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +40,8 @@ class PrefListingViewModel(
     private val bridge: Bridge,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
+    private val appState: AppState,
+    private val favorites: FavoritesUseCase = FavoritesUseCase(preferences = appState.preferences),
 ) : CoroutineScope by scope {
 
     private val files = mutableListOf<PrefFile>()
@@ -55,18 +60,18 @@ class PrefListingViewModel(
         }
     }
 
-    fun fileSelected(prefFile: PrefFile) {
+    fun fileSelected(prefFile: UIPrefFile) {
         launch {
-            navigation.navigate(screen = PrefEditScreen(prefFile = prefFile, app = app, device = device))
+            navigation.navigate(screen = PrefEditScreen(prefFile = prefFile.file, app = app, device = device))
         }
     }
 
     fun filter(input: String) {
-        launch { _uiState.emit(UIState.Files(files.filter { it.name.contains(input, ignoreCase = true) })) }
+        launch { _uiState.emit(UIState.Files(map(files.filter { it.name.contains(input, ignoreCase = true) }))) }
     }
 
-    fun favorite(prefFile: PrefFile, favorited: Boolean) {
-
+    fun favorite(prefFile: UIPrefFile) {
+        launch { favorites.favoritePrefFile(file = prefFile.file, app = app, device = device) }
     }
 
     private fun map(result: PrefFilesResult): UIState = when (result) {
@@ -74,14 +79,17 @@ class PrefListingViewModel(
         PrefFilesResult.EmptyPrefs,
         -> UIState.Empty
 
-        is PrefFilesResult.Files -> UIState.Files(result.files)
+        is PrefFilesResult.Files -> UIState.Files(map(result.files))
         PrefFilesResult.NonDebuggable -> UIState.Error(message = "Selected app is non-debuggable")
     }
+
+    private fun map(files: PrefFiles): List<UIPrefFile> =
+        files.map { file -> UIPrefFile(file = file, isFavorite = favorites.isFavorite(file)) }
 
     sealed interface UIState {
         data object Empty : UIState
         data object Loading : UIState
-        data class Files(val files: PrefFiles) : UIState
+        data class Files(val files: List<UIPrefFile>) : UIState
         data class Error(val message: String? = null) : UIState
     }
 }

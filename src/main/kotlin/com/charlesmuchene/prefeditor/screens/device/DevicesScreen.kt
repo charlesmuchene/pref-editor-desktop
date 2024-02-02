@@ -82,7 +82,7 @@ private fun DeviceRow(device: UIDevice, viewModel: DevicesViewModel, modifier: M
     val radius = with(LocalDensity.current) { 12.dp.toPx() }
 
     ListingRow(
-        item = device.device,
+        item = device,
         dividerIndentation = padding,
         modifier = modifier,
         onClick = viewModel::deviceSelected,

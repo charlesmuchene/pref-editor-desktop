@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.navigation
+package com.charlesmuchene.prefeditor.models
 
-import com.charlesmuchene.prefeditor.data.App
-import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.data.PrefFile
-import com.charlesmuchene.prefeditor.models.UIPrefFile
-
-interface Screen
-
-data object HomeScreen : Screen
-data class AppsScreen(val device: Device) : Screen
-data class PrefListScreen(val app: App, val device: Device) : Screen
-data class PrefEditScreen(val prefFile: PrefFile, val app: App, val device: Device) : Screen
+interface Favoritable {
+    var isFavorite: Boolean
+}

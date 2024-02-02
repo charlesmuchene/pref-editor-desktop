@@ -20,9 +20,11 @@ import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.command.ListApps
 import com.charlesmuchene.prefeditor.data.App
+import com.charlesmuchene.prefeditor.data.Apps
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.favorites.Favorite
 import com.charlesmuchene.prefeditor.favorites.FavoritesUseCase
+import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefListScreen
 import kotlinx.coroutines.CoroutineScope
@@ -53,8 +55,8 @@ class AppsScreenViewModel(
         return when {
             result.isSuccess -> result.getOrNull()?.let { apps ->
                 if (apps.isEmpty()) UIState.Error
-                else UIState.Apps(apps).also {
-                    this.apps.addAll(it.apps)
+                else UIState.Apps(mapApps(apps)).also {
+                    this.apps.addAll(it.apps.map(UIApp::app))
                 }
             } ?: UIState.Error
 
@@ -62,23 +64,32 @@ class AppsScreenViewModel(
         }
     }
 
-    fun appSelected(app: App) {
+    private fun mapApps(apps: Apps): List<UIApp> = apps.map { app ->
+        val isFavorite = favorites.isFavorite(app)
+        UIApp(app = app, isFavorite = isFavorite)
+    }
+
+    fun appSelected(app: UIApp) {
         launch {
-            navigation.navigate(screen = PrefListScreen(app = app, device = device))
+            navigation.navigate(screen = PrefListScreen(app = app.app, device = device))
         }
     }
 
     fun filter(input: String) {
-        launch { _uiState.emit(UIState.Apps(apps.filter { it.packageName.contains(input, ignoreCase = true) })) }
+        launch {
+            _uiState.emit(UIState.Apps(mapApps(apps.filter { app ->
+                app.packageName.contains(other = input, ignoreCase = true)
+            })))
+        }
     }
 
-    fun onFavorite(app: App, favorited: Boolean) {
-        launch { favorites.favoriteApp(app, device) }
+    fun onFavorite(app: UIApp) {
+        launch { favorites.favoriteApp(app.app, device) }
     }
 
     sealed interface UIState {
         data object Error : UIState
         data object Loading : UIState
-        data class Apps(val apps: List<App>) : UIState
+        data class Apps(val apps: List<UIApp>) : UIState
     }
 }

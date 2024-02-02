@@ -65,6 +65,11 @@ class DevicesViewModel(
         }
     }
 
+    private fun mapDevices(devices: Devices): List<UIDevice> = devices.map { device ->
+        val isFavorite = favorites.isFavorite(device)
+        UIDevice(device = device, isFavorite = isFavorite)
+    }
+
     fun formatDeviceAttributes(device: Device): String = device.attributes.joinToString(
         separator = " ",
         transform = { attribute ->
@@ -75,10 +80,10 @@ class DevicesViewModel(
     fun statusColor(device: Device): Color = if (device.type == Type.Device) green
     else Color.Red
 
-    fun deviceSelected(device: Device) {
+    fun deviceSelected(device: UIDevice) {
         launch {
-            when (device.type) {
-                Type.Device -> navigation.navigate(screen = AppsScreen(device = device))
+            when (device.device.type) {
+                Type.Device -> navigation.navigate(screen = AppsScreen(device = device.device))
                 Type.Unknown -> _message.emit(bundle[HomeKey.UnknownDevice])
                 Type.Unauthorized -> _message.emit(bundle[HomeKey.UnauthorizedDevice])
             }
@@ -88,21 +93,18 @@ class DevicesViewModel(
     fun filter(input: String) {
         launch {
             _uiState.emit(UIState.Devices(mapDevices(listDeviceUseCase.devices.filter { device ->
-                device.serial.contains(
-                    input,
-                    ignoreCase = true
-                )
+                device.serial.contains(other = input, ignoreCase = true)
             }))) // TODO Include meta-date in filter
         }
     }
 
-    fun favorite(device: Device, favorited: Boolean) {
-        launch { favorites.favoriteDevice(device) }
-    }
-
-    private fun mapDevices(devices: Devices): List<UIDevice> = devices.map { device ->
-        val isFavorite = favorites.isFavorite(device)
-        UIDevice(device = device, isFavorite = isFavorite)
+    fun favorite(device: UIDevice) {
+        launch {
+            if (device.isFavorite) favorites.unfavoriteDevice(device = device.device)
+            else favorites.favoriteDevice(device = device.device)
+            favorites.refresh() // TODO Make reactive
+            _uiState.emit(UIState.Devices(mapDevices(listDeviceUseCase.devices)))
+        }
     }
 
     sealed interface UIState {

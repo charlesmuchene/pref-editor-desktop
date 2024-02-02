@@ -30,6 +30,8 @@ import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.PrefFiles
 import com.charlesmuchene.prefeditor.extensions.OnFavorite
+import com.charlesmuchene.prefeditor.models.UIPrefFile
+import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -45,10 +47,18 @@ import org.jetbrains.jewel.ui.component.Text
 @Composable
 fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
     val bridge = LocalBridge.current
+    val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
-        PrefListingViewModel(app = app, device = device, bridge = bridge, scope = scope, navigation = navigation)
+        PrefListingViewModel(
+            app = app,
+            device = device,
+            bridge = bridge,
+            scope = scope,
+            appState = appState,
+            navigation = navigation,
+        )
     }
     val state by viewModel.uiState.collectAsState()
 
@@ -83,7 +93,7 @@ private fun PrefListingLoading(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PrefListingSuccess(prefFiles: PrefFiles, modifier: Modifier = Modifier, viewModel: PrefListingViewModel) {
+private fun PrefListingSuccess(prefFiles: List<UIPrefFile>, modifier: Modifier = Modifier, viewModel: PrefListingViewModel) {
     val header = LocalBundle.current[AppKey.PrefListingTitle]
     Listing(
         header = header,
@@ -92,7 +102,7 @@ private fun PrefListingSuccess(prefFiles: PrefFiles, modifier: Modifier = Modifi
         onFilter = viewModel::filter
     ) {
         if (prefFiles.isEmpty()) item { Text(text = "No preferences matching filter", style = Typography.primary) }
-        items(items = prefFiles, key = PrefFile::name) { prefFile ->
+        items(items = prefFiles, key = { it.file.name}) { prefFile ->
             PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected, onFavorite = viewModel::favorite)
         }
     }
@@ -100,16 +110,16 @@ private fun PrefListingSuccess(prefFiles: PrefFiles, modifier: Modifier = Modifi
 
 @Composable
 private fun PrefListingRow(
-    prefFile: PrefFile,
+    prefFile: UIPrefFile,
     modifier: Modifier = Modifier,
-    onClick: (PrefFile) -> Unit,
-    onFavorite: OnFavorite<PrefFile>,
+    onClick: (UIPrefFile) -> Unit,
+    onFavorite: OnFavorite<UIPrefFile>,
 ) {
     ListingRow(item = prefFile, onClick = onClick, onFavorite = onFavorite) {
         Column(modifier = modifier.padding(4.dp)) {
-            Text(text = prefFile.name, style = Typography.primary)
+            Text(text = prefFile.file.name, style = Typography.primary)
             Spacer(modifier = Modifier.height(2.dp))
-            Text(text = prefFile.type.text, style = Typography.secondary, color = Color.DarkGray)
+            Text(text = prefFile.file.type.text, style = Typography.secondary, color = Color.DarkGray)
             Spacer(modifier = Modifier.height(2.dp))
         }
     }

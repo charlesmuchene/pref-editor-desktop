@@ -20,19 +20,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.ui.theme.orange
 import org.jetbrains.jewel.ui.component.Icon
 
 @Composable
-fun FavoriteButton(selected: Boolean, modifier: Modifier = Modifier, onFavorite: (Boolean) -> Unit) {
+fun FavoriteButton(selected: Boolean, modifier: Modifier = Modifier, onFavorite: () -> Unit) {
     val icon = if (selected) "favorite-solid" else "favorite-outline"
     val painter by rememberIconPainter(icon)
     Icon(
         tint = orange,
         painter = painter,
         contentDescription = "Favorite item",
-        modifier = modifier.clickable { onFavorite(!selected) },
+        modifier = modifier.clickable(onClick = onFavorite),
     )
 }

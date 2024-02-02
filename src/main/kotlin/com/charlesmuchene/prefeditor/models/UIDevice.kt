@@ -18,4 +18,4 @@ package com.charlesmuchene.prefeditor.models
 
 import com.charlesmuchene.prefeditor.data.Device
 
-data class UIDevice(val device: Device, val isFavorite: Boolean)
+data class UIDevice(val device: Device, override var isFavorite: Boolean) : Favoritable

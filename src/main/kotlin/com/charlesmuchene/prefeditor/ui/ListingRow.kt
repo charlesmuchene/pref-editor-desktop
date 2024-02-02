@@ -34,12 +34,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
+import com.charlesmuchene.prefeditor.models.Favoritable
 import com.charlesmuchene.prefeditor.ui.theme.green
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.Divider
 
 @Composable
-fun <T> ListingRow(
+fun <T : Favoritable> ListingRow(
     item: T,
     modifier: Modifier = Modifier,
     dividerIndentation: Dp = Dp.Hairline,
@@ -66,9 +67,9 @@ fun <T> ListingRow(
             )
             Spacer(modifier = Modifier.width(24.dp))
             FavoriteButton(
-                selected = true,
+                selected = item.isFavorite,
                 modifier = Modifier.weight(.1f).fillMaxHeight(),
-                onFavorite = { onFavorite(item, it) })
+                onFavorite = { onFavorite(item) })
         }
         Divider(
             orientation = Orientation.Horizontal,

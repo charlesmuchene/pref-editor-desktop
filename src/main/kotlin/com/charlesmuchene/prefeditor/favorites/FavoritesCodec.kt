@@ -24,14 +24,12 @@ import com.charlesmuchene.prefeditor.favorites.FavoritesCodec.Tags.FILE
 import com.charlesmuchene.prefeditor.preferences.PreferenceCodec
 import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobbleTag
 import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
-import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlSerializer
 import java.nio.file.Path
 import kotlin.io.path.inputStream
-import kotlin.reflect.KClass
 
 class FavoritesCodec(private val codec: PreferenceCodec) {
 
@@ -49,15 +47,15 @@ class FavoritesCodec(private val codec: PreferenceCodec) {
 
     private fun XmlSerializer.serializeApp(favorite: App) {
         tag(APP) {
-            attrib(name = DEVICE, value = favorite.device.serial)
+            attrib(name = DEVICE, value = favorite.device)
             text(favorite.packageName)
         }
     }
 
     private fun XmlSerializer.serializeFile(favorite: File) {
         tag(FILE) {
-            attrib(name = DEVICE, value = favorite.device.serial)
-            attrib(name = APP, value = favorite.app.packageName)
+            attrib(name = DEVICE, value = favorite.device)
+            attrib(name = APP, value = favorite.app)
             text(favorite.name)
         }
     }
@@ -81,15 +79,14 @@ class FavoritesCodec(private val codec: PreferenceCodec) {
     private fun XmlPullParser.parseApp(): App = gobbleTag(APP) {
         val serial = getAttributeValue(0)
         next()
-        App(Device(serial), text)
+        App(device = serial, packageName = text)
     }
 
     private fun XmlPullParser.parseFile(): File = gobbleTag(FILE) {
         val serial = getAttributeValue(0)
         val packageName = getAttributeValue(1)
         next()
-        val device = Device(serial)
-        File(device = device, app = App(device = device, packageName = packageName), name = text)
+        File(device = serial, app = packageName, name = text)
     }
 
     private object Tags {

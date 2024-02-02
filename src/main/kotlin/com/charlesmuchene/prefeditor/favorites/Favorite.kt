@@ -43,17 +43,17 @@ sealed interface Favorite {
     /**
      * A favorite app
      *
-     * @param device Favorite [Device]
+     * @param device Favorite [Device]'s serial
      * @param packageName Ids the app on the [device]
      */
-    data class App(val device: Device, val packageName: String) : Favorite
+    data class App(val device: String, val packageName: String) : Favorite
 
     /**
      * A favorite preference file
      *
-     * @param device Favorite [Device]
-     * @param app Favorite [App]
+     * @param device Favorite [Device]'s serial
+     * @param app Favorite [App]'s package name
      * @param name Ids the file for the [app] in the [device]
      */
-    data class File(val device: Device, val app: App, val name: String) : Favorite
+    data class File(val device: String, val app: String, val name: String) : Favorite
 }

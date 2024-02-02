@@ -16,5 +16,7 @@
 
 package com.charlesmuchene.prefeditor.extensions
 
+import com.charlesmuchene.prefeditor.models.Favoritable
+
 typealias OnClick = () -> Unit
-typealias OnFavorite<T> = (T, Boolean) -> Unit
+typealias OnFavorite<T> = (T) -> Unit

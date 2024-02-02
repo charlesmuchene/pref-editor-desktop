@@ -25,6 +25,7 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Apps
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.extensions.OnFavorite
+import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
@@ -76,19 +77,19 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AppListing(apps: Apps, modifier: Modifier = Modifier, viewModel: AppsScreenViewModel) {
+private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppsScreenViewModel) {
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
     Listing(header = header, filterPlaceholder = "Filter apps", modifier = modifier, onFilter = viewModel::filter) {
         if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }
-        items(items = apps, key = App::packageName) { app ->
+        items(items = apps, key = {it.app.packageName }) { app ->
             AppRow(app = app, onClick = viewModel::appSelected, onFavorite = viewModel::onFavorite)
         }
     }
 }
 
 @Composable
-private fun AppRow(app: App, modifier: Modifier = Modifier, onClick: (App) -> Unit, onFavorite: OnFavorite<App>) {
+private fun AppRow(app: UIApp, modifier: Modifier = Modifier, onClick: (UIApp) -> Unit, onFavorite: OnFavorite<UIApp>) {
     ListingRow(item = app, modifier = modifier, onClick = onClick, onFavorite = onFavorite) {
-        Text(text = app.packageName, style = Typography.primary, modifier = Modifier.padding(4.dp))
+        Text(text = app.app.packageName, style = Typography.primary, modifier = Modifier.padding(4.dp))
     }
 }
