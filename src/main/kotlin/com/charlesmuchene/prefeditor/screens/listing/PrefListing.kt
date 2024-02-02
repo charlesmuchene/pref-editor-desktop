@@ -29,6 +29,7 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.PrefFiles
+import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -92,14 +93,19 @@ private fun PrefListingSuccess(prefFiles: PrefFiles, modifier: Modifier = Modifi
     ) {
         if (prefFiles.isEmpty()) item { Text(text = "No preferences matching filter", style = Typography.primary) }
         items(items = prefFiles, key = PrefFile::name) { prefFile ->
-            PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected)
+            PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected, onFavorite = viewModel::favorite)
         }
     }
 }
 
 @Composable
-private fun PrefListingRow(prefFile: PrefFile, modifier: Modifier = Modifier, onClick: (PrefFile) -> Unit) {
-    ListingRow(item = prefFile, onClick = onClick) {
+private fun PrefListingRow(
+    prefFile: PrefFile,
+    modifier: Modifier = Modifier,
+    onClick: (PrefFile) -> Unit,
+    onFavorite: OnFavorite<PrefFile>,
+) {
+    ListingRow(item = prefFile, onClick = onClick, onFavorite = onFavorite) {
         Column(modifier = modifier.padding(4.dp)) {
             Text(text = prefFile.name, style = Typography.primary)
             Spacer(modifier = Modifier.height(2.dp))

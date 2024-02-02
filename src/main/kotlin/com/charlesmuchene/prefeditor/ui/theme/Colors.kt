@@ -20,3 +20,5 @@ import androidx.compose.ui.graphics.Color
 
 val teal = Color(red = 0, green = 50, blue = 50)
 val green = Color(color = 0xFF08A045)
+val mustard = Color(color = 0xFFFFDB58)
+val orange = Color(color = 0xFFEE7600)

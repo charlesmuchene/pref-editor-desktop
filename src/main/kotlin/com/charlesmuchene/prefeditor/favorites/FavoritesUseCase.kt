@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.favorites
 
+import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.preferences.AppPreferences
 import kotlinx.coroutines.CoroutineScope
@@ -41,7 +42,26 @@ class FavoritesUseCase(
         preferences.writeFavorites(favorites = favorites)
     }
 
+    suspend fun writeFavorite(favorite: Favorite) {
+        writeFavorites(favorites = listOf(favorite))
+    }
+
     suspend fun removeFavorites(favorites: List<Favorite>) {
         preferences.removeFavorites(favorites = favorites)
+    }
+
+    suspend fun favoriteApp(app: App, device: Device) {
+        preferences.writeFavorites(
+            favorites = listOf(
+                Favorite.App(
+                    device = Favorite.Device(device.serial),
+                    app.packageName
+                )
+            )
+        )
+    }
+
+    suspend fun favoriteDevice(device: Device) {
+        preferences.writeFavorites(favorites = listOf(Favorite.Device(device.serial)))
     }
 }

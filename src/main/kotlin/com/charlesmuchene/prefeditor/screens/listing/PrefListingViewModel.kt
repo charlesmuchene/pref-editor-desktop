@@ -65,6 +65,10 @@ class PrefListingViewModel(
         launch { _uiState.emit(UIState.Files(files.filter { it.name.contains(input, ignoreCase = true) })) }
     }
 
+    fun favorite(prefFile: PrefFile, favorited: Boolean) {
+
+    }
+
     private fun map(result: PrefFilesResult): UIState = when (result) {
         PrefFilesResult.EmptyFiles,
         PrefFilesResult.EmptyPrefs,

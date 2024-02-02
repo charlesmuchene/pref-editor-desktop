@@ -17,3 +17,4 @@
 package com.charlesmuchene.prefeditor.extensions
 
 typealias OnClick = () -> Unit
+typealias OnFavorite<T> = (T, Boolean) -> Unit

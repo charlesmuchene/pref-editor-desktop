@@ -40,7 +40,7 @@ class DevicesViewModel(
     private val scope: CoroutineScope,
     private val navigation: Navigation,
     private val listDeviceUseCase: ListDeviceUseCase = ListDeviceUseCase(bridge = bridge),
-    private val favoritesUseCase: FavoritesUseCase = FavoritesUseCase(preferences = appState.preferences),
+    private val favorites: FavoritesUseCase = FavoritesUseCase(preferences = appState.preferences),
 ) : CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
@@ -96,8 +96,12 @@ class DevicesViewModel(
         }
     }
 
+    fun favorite(device: Device, favorited: Boolean) {
+        launch { favorites.favoriteDevice(device) }
+    }
+
     private fun mapDevices(devices: Devices): List<UIDevice> = devices.map { device ->
-        val isFavorite = favoritesUseCase.isFavorite(device)
+        val isFavorite = favorites.isFavorite(device)
         UIDevice(device = device, isFavorite = isFavorite)
     }
 

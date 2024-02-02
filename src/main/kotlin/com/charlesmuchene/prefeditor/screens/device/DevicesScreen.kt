@@ -85,7 +85,8 @@ private fun DeviceRow(device: UIDevice, viewModel: DevicesViewModel, modifier: M
         item = device.device,
         dividerIndentation = padding,
         modifier = modifier,
-        onClick = viewModel::deviceSelected
+        onClick = viewModel::deviceSelected,
+        onFavorite = viewModel::favorite
     ) {
         Canvas(modifier = Modifier.size(12.dp).weight(0.1f)) {
             drawCircle(color = statusColor, radius = radius)

@@ -16,10 +16,13 @@
 
 package com.charlesmuchene.prefeditor.screens.apps
 
+import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.command.ListApps
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.favorites.Favorite
+import com.charlesmuchene.prefeditor.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefListScreen
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +36,8 @@ class AppsScreenViewModel(
     private val bridge: Bridge,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
+    private val appState: AppState,
+    private val favorites: FavoritesUseCase = FavoritesUseCase(appState.preferences),
 ) : CoroutineScope by scope {
 
     private val apps = mutableListOf<App>()
@@ -65,6 +70,10 @@ class AppsScreenViewModel(
 
     fun filter(input: String) {
         launch { _uiState.emit(UIState.Apps(apps.filter { it.packageName.contains(input, ignoreCase = true) })) }
+    }
+
+    fun onFavorite(app: App, favorited: Boolean) {
+        launch { favorites.favoriteApp(app, device) }
     }
 
     sealed interface UIState {

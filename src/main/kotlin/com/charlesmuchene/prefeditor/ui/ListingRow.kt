@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.ui.theme.green
 import org.jetbrains.jewel.ui.Orientation
@@ -40,29 +41,35 @@ import org.jetbrains.jewel.ui.component.Divider
 @Composable
 fun <T> ListingRow(
     item: T,
-    onClick: (T) -> Unit = {},
-    dividerIndentation: Dp = Dp.Hairline,
     modifier: Modifier = Modifier,
+    dividerIndentation: Dp = Dp.Hairline,
+    onClick: (T) -> Unit,
+    onFavorite: OnFavorite<T>,
     content: @Composable RowScope.() -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
 
     Column(modifier = modifier) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            content = content,
-            modifier = Modifier
-                .clickable { onClick(item) }
-                .fillMaxWidth()
-                .pointerOnHover()
-                .hoverable(interactionSource)
-                .drawBehind {
-                    if (isHovered)
-                        drawRoundRect(green, cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(width = 2f))
-                }
-                .padding(vertical = 12.dp),
-        )
+        Row(modifier = Modifier.fillMaxWidth().clickable { onClick(item) }
+            .pointerOnHover()
+            .hoverable(interactionSource)
+            .drawBehind {
+                if (isHovered)
+                    drawRoundRect(green, cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(width = 2f))
+            }
+            .padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(.9f),
+                content = content,
+            )
+            Spacer(modifier = Modifier.width(24.dp))
+            FavoriteButton(
+                selected = true,
+                modifier = Modifier.weight(.1f).fillMaxHeight(),
+                onFavorite = { onFavorite(item, it) })
+        }
         Divider(
             orientation = Orientation.Horizontal,
             startIndent = dividerIndentation,

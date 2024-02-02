@@ -24,15 +24,17 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Apps
 import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.extensions.OnFavorite
+import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.DeviceKey
 import com.charlesmuchene.prefeditor.screens.apps.AppsScreenViewModel.UIState
+import com.charlesmuchene.prefeditor.ui.FullScreenText
 import com.charlesmuchene.prefeditor.ui.Listing
 import com.charlesmuchene.prefeditor.ui.ListingRow
 import com.charlesmuchene.prefeditor.ui.Loading
-import com.charlesmuchene.prefeditor.ui.FullScreenText
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
@@ -41,9 +43,16 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
     val bridge = LocalBridge.current
+    val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val viewModel = remember {
-        AppsScreenViewModel(bridge = bridge, scope = scope, device = device, navigation = navigation)
+        AppsScreenViewModel(
+            bridge = bridge,
+            scope = scope,
+            device = device,
+            navigation = navigation,
+            appState = appState
+        )
     }
     val state by viewModel.uiState.collectAsState()
 
@@ -72,14 +81,14 @@ private fun AppListing(apps: Apps, modifier: Modifier = Modifier, viewModel: App
     Listing(header = header, filterPlaceholder = "Filter apps", modifier = modifier, onFilter = viewModel::filter) {
         if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }
         items(items = apps, key = App::packageName) { app ->
-            AppRow(app = app, onClick = viewModel::appSelected)
+            AppRow(app = app, onClick = viewModel::appSelected, onFavorite = viewModel::onFavorite)
         }
     }
 }
 
 @Composable
-private fun AppRow(app: App, modifier: Modifier = Modifier, onClick: (App) -> Unit) {
-    ListingRow(item = app, modifier = modifier, onClick = onClick) {
+private fun AppRow(app: App, modifier: Modifier = Modifier, onClick: (App) -> Unit, onFavorite: OnFavorite<App>) {
+    ListingRow(item = app, modifier = modifier, onClick = onClick, onFavorite = onFavorite) {
         Text(text = app.packageName, style = Typography.primary, modifier = Modifier.padding(4.dp))
     }
 }
