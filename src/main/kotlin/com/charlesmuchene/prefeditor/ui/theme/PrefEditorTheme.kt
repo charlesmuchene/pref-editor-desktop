@@ -24,6 +24,12 @@ enum class PrefEditorTheme {
 
     fun isDark(): Boolean = (if (this == System) fromSystemTheme(currentSystemTheme) else this) == Dark
 
+    fun switchTheme(): PrefEditorTheme = when (this) {
+        Light -> Dark
+        Dark -> System
+        System -> Light
+    }
+
     companion object {
         fun fromSystemTheme(systemThem: SystemTheme) = if (systemThem == SystemTheme.LIGHT) Light else Dark
     }

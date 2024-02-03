@@ -43,10 +43,6 @@ class AppState {
     }
 
     fun switchTheme() {
-        theme = when (theme) {
-            Light -> Dark
-            Dark -> System
-            System -> Light
-        }
+        theme = theme.switchTheme()
     }
 }
