@@ -16,19 +16,25 @@
 
 package com.charlesmuchene.prefeditor.app
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.ResourceLoader
+import androidx.compose.ui.res.loadSvgPainter
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import com.charlesmuchene.prefeditor.bridge.Bridge
-import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
-import com.charlesmuchene.prefeditor.files.PrefEditorFiles
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
@@ -37,7 +43,7 @@ import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.ApplicationKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
 import com.charlesmuchene.prefeditor.ui.padding
-import com.charlesmuchene.prefeditor.ui.theme.teal
+import org.jetbrains.jewel.foundation.modifier.trackActivation
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.foundation.theme.ThemeDefinition
 import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
@@ -47,35 +53,30 @@ import org.jetbrains.jewel.intui.window.decoratedWindow
 import org.jetbrains.jewel.intui.window.styling.dark
 import org.jetbrains.jewel.intui.window.styling.light
 import org.jetbrains.jewel.ui.ComponentStyling
-import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.window.DecoratedWindow
-import org.jetbrains.jewel.window.TitleBar
-import org.jetbrains.jewel.window.newFullscreenControls
 import org.jetbrains.jewel.window.styling.DecoratedWindowStyle
 import org.jetbrains.jewel.window.styling.TitleBarStyle
 
 @Composable
-fun ApplicationScope.scaffold(content: @Composable ColumnScope.(Modifier) -> Unit) {
+fun ApplicationScope.scaffold(icon: Painter, content: @Composable ColumnScope.(Modifier) -> Unit) {
     provideAppState {
         val (width, height) = LocalAppState.current.windowSize
         val position = WindowPosition.Aligned(alignment = Alignment.Center)
         val state = rememberWindowState(position = position, width = width, height = height)
-        val painter by rememberIconPainter(name = "app")
         val title = LocalBundle.current[ApplicationKey.Title]
         DecoratedWindow(
             state = state,
-            icon = painter,
+            icon = icon,
             title = title,
             onCloseRequest = ::exitApplication,
         ) {
-            TitleBar(
-                gradientStartColor = teal,
-                modifier = Modifier.newFullscreenControls()
-            ) { Text(text = title) }
+            TitleBarView()
             Column(
-                modifier = Modifier.padding(start = padding, end = padding, top = 12.dp, bottom = padding)
+                modifier = Modifier
+                    .background(JewelTheme.globalColors.paneBackground)
+                    .padding(start = padding, end = padding, top = 12.dp, bottom = padding)
             ) {
-                content(Modifier.padding(top = 12.dp))
+                content(Modifier.trackActivation().padding(top = 12.dp))
             }
         }
     }
@@ -83,9 +84,6 @@ fun ApplicationScope.scaffold(content: @Composable ColumnScope.(Modifier) -> Uni
 
 @Composable
 private fun provideAppState(content: @Composable () -> Unit) {
-    LaunchedEffect(Unit) {
-        PrefEditorFiles.initialize()
-    }
     CompositionLocalProvider(
         LocalBridge provides Bridge(),
         LocalBundle provides TextBundle(),
@@ -116,3 +114,11 @@ private fun windowStyle(isDark: Boolean): DecoratedWindowStyle =
 
 @Composable
 private fun titleBarStyle(isDark: Boolean): TitleBarStyle = if (isDark) TitleBarStyle.dark() else TitleBarStyle.light()
+
+@OptIn(ExperimentalComposeUiApi::class)
+fun svgResource(
+    resourcePath: String,
+    loader: ResourceLoader = ResourceLoader.Default,
+): Painter = loader.load(resourcePath).use { stream ->
+    loadSvgPainter(inputStream = stream, density = Density(density = 1f))
+}

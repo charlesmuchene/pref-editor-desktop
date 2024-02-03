@@ -34,6 +34,7 @@ import com.charlesmuchene.prefeditor.screens.device.DevicesViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.*
 import com.charlesmuchene.prefeditor.ui.theme.Typography.primary
 import com.charlesmuchene.prefeditor.ui.theme.Typography.secondary
+import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -95,7 +96,7 @@ private fun DeviceRow(device: UIDevice, viewModel: DevicesViewModel, modifier: M
         Column(modifier = Modifier.weight(0.9f)) {
             Text(text = device.device.serial, style = primary)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = viewModel.formatDeviceAttributes(device.device), style = secondary, color = Color.DarkGray)
+            Text(text = viewModel.formatDeviceAttributes(device.device), style = secondary, color = JewelTheme.contentColor)
             Spacer(modifier = Modifier.height(4.dp))
         }
     }

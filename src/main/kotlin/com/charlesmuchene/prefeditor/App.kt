@@ -18,10 +18,14 @@
 
 package com.charlesmuchene.prefeditor
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.application
 import com.charlesmuchene.prefeditor.app.scaffold
+import com.charlesmuchene.prefeditor.app.svgResource
+import com.charlesmuchene.prefeditor.files.PrefEditorFiles
 import com.charlesmuchene.prefeditor.navigation.*
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -31,10 +35,15 @@ import com.charlesmuchene.prefeditor.screens.listing.PrefListing
 import com.charlesmuchene.prefeditor.screens.preferences.PrefEditor
 import com.charlesmuchene.prefeditor.ui.Toast
 
+@OptIn(ExperimentalComposeUiApi::class)
 fun main() {
+    val icon = svgResource(resourcePath = "icons/app.svg")
+
     application {
-        scaffold { modifier ->
-            // TODO Theme this: see sample apps
+        LaunchedEffect(Unit) {
+            PrefEditorFiles.initialize()
+        }
+        scaffold(icon = icon) { modifier ->
             // TODO Animate screen by sliding-left
 
             val screen by LocalNavigation.current.current.collectAsState()

@@ -17,7 +17,6 @@
 package com.charlesmuchene.prefeditor.navigation
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,23 +25,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.Chip
-import org.jetbrains.jewel.ui.component.Divider
-import org.jetbrains.jewel.ui.component.Text
-import org.jetbrains.jewel.ui.component.Typography
+import org.jetbrains.jewel.ui.component.*
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
 
     val screens = LocalNavigation.current.screens
 
     Column(modifier = modifier.fillMaxWidth()) {
-        LazyRow(
+        FlowRow(
             modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(items = screens, key = { it::class.java }) { screen ->
-                item(screen = screen, selected = current == screen)
+            screens.forEach { screen ->
+                page(screen = screen, selected = current == screen)
             }
         }
         Spacer(modifier.height(12.dp))
@@ -51,7 +48,7 @@ fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun item(screen: Screen, selected: Boolean, modifier: Modifier = Modifier) {
+private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifier) {
     val navigation = LocalNavigation.current
 
     val text = when (screen) {
@@ -66,7 +63,7 @@ private fun item(screen: Screen, selected: Boolean, modifier: Modifier = Modifie
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Chip(selected = selected, onClick = { navigation.navigate(screen = screen) }) { Text(text = text) }
+        RadioButtonChip(selected = selected, onClick = { navigation.navigate(screen = screen) }) { Text(text = text) }
         if (!selected) Text(text = ">", style = Typography.h2TextStyle())
     }
 }

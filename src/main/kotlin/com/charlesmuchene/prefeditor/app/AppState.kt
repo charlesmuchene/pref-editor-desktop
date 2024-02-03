@@ -16,17 +16,20 @@
 
 package com.charlesmuchene.prefeditor.app
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.preferences.AppPreferences
 import com.charlesmuchene.prefeditor.ui.theme.PrefEditorTheme
+import com.charlesmuchene.prefeditor.ui.theme.PrefEditorTheme.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 class AppState {
 
-    // TODO Theme components dark
-    val theme: PrefEditorTheme = PrefEditorTheme.Light
+    var theme: PrefEditorTheme by mutableStateOf(System)
 
     val windowSize = DpSize(width = 1020.dp, height = 800.dp)
 
@@ -37,5 +40,13 @@ class AppState {
 
     suspend fun showToast(message: String) {
         _toastMessage.emit(message)
+    }
+
+    fun switchTheme() {
+        theme = when (theme) {
+            Light -> Dark
+            Dark -> System
+            System -> Light
+        }
     }
 }

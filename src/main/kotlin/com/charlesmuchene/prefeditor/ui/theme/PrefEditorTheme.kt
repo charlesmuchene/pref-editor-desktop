@@ -22,8 +22,6 @@ import org.jetbrains.skiko.currentSystemTheme
 enum class PrefEditorTheme {
     Light, Dark, System;
 
-    // TODO Resolve 'UnsatisfiedLinkError' when theme is 'PrefEditorTheme.System'
-    //  Fix should be in: https://github.com/JetBrains/skiko/pull/464
     fun isDark(): Boolean = (if (this == System) fromSystemTheme(currentSystemTheme) else this) == Dark
 
     companion object {

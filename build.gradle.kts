@@ -8,27 +8,23 @@ plugins {
 }
 
 group = "com.charlesmuchene.prefeditor"
-version = "1.0.0"
+version = "1.0.0-SNAPSHOT"
 
 kotlin {
     jvmToolchain {
-        languageVersion = JavaLanguageVersion.of(17)
         vendor = JvmVendorSpec.JETBRAINS
+        languageVersion = 17
     }
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
         vendor = JvmVendorSpec.JETBRAINS
+        languageVersion = 17
     }
 }
 
 dependencies {
-    // Note, if you develop a library, you should use compose.desktop.common.
-    // compose.desktop.currentOs should be used in launcher-sourceSet
-    // (in a separate module for demo project and in testMain).
-    // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs) {
         exclude(group = "org.jetbrains.compose.material") // we're jeweling up! :D
     }
@@ -59,8 +55,9 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Preferences Editor"
             packageVersion = "1.0.0"
-            description = "Edit preferences"
+            description = "View/Edit preferences"
             vendor = "Charles Muchene"
+            licenseFile = rootProject.file("LICENSE")
 
             macOS {
                 dockName = "Preferences Editor"
@@ -69,16 +66,17 @@ compose.desktop {
             }
         }
     }
+}
 
-    tasks {
-        withType<JavaExec> {
-            afterEvaluate {
-                javaLauncher = project.javaToolchains.launcherFor {
-                    languageVersion = JavaLanguageVersion.of(17)
-                    vendor = JvmVendorSpec.JETBRAINS
-                }
-                setExecutable(javaLauncher.map { it.executablePath.asFile.absoluteFile }.get())
-            }
+tasks.withType<JavaExec> {
+    afterEvaluate {
+        javaLauncher = project.javaToolchains.launcherFor {
+            vendor = JvmVendorSpec.JETBRAINS
+            languageVersion = 17
         }
+        setExecutable(javaLauncher.map { it.executablePath.asFile.absoluteFile }.get())
     }
 }
+
+@Suppress("unused")
+fun Property<JavaLanguageVersion>.assign(version: Int) = set(JavaLanguageVersion.of(version))

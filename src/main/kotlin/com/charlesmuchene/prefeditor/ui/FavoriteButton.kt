@@ -26,7 +26,7 @@ import org.jetbrains.jewel.ui.component.Icon
 
 @Composable
 fun FavoriteButton(selected: Boolean, modifier: Modifier = Modifier, onFavorite: () -> Unit) {
-    val icon = if (selected) "favorite-solid" else "favorite-outline"
+    val icon = if (selected) "favorite-solid@36x36" else "favorite-outline@36x36"
     val painter by rememberIconPainter(icon)
     Icon(
         tint = orange,
