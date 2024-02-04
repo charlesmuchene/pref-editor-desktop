@@ -35,7 +35,7 @@ fun main() {
         var appState by remember { mutableStateOf<AppState?>(value = null) }
 
         LaunchedEffect(Unit) {
-            joinAll(launch { appState = appSetup() }, launch { delay(timeMillis = 2_000) })
+            joinAll(launch { appState = appSetup() }, launch { delay(timeMillis = 1_500) })
             isSettingUp = false
         }
 
