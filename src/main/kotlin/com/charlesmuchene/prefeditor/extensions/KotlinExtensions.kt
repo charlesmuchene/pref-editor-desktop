@@ -17,8 +17,14 @@
 package com.charlesmuchene.prefeditor.extensions
 
 import io.github.oshai.kotlinlogging.KLogger
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.onEach
 
 fun <T> Result<T>.eval(logger: KLogger): Result<T> {
     onFailure { throwable -> logger.error(throwable) { "kotlin.Result.eval" } }
     return this
 }
+
+fun <T> Flow<T>.throttleLatest(delayMillis: Long): Flow<T> = conflate().onEach { delay(delayMillis) }
