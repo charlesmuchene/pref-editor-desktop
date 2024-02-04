@@ -77,19 +77,19 @@ fun DecoratedWindowScope.TitleBarView() {
                 ) {
                     when (appState.theme) {
                         Light -> Icon(
-                            resource = "icons/lightTheme@20x20.svg",
+                            resource = "icons/light-theme@20x20.svg",
                             contentDescription = "Themes",
                             iconClass = AppState::class.java,
                         )
 
                         Dark -> Icon(
-                            resource = "icons/darkTheme@20x20.svg",
+                            resource = "icons/dark-theme@20x20.svg",
                             contentDescription = "Themes",
                             iconClass = AppState::class.java,
                         )
 
                         System -> Icon(
-                            resource = "icons/systemTheme@20x20.svg",
+                            resource = "icons/system-theme@20x20.svg",
                             contentDescription = "Themes",
                             iconClass = AppState::class.java,
                         )
