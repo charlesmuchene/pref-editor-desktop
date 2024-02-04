@@ -16,7 +16,6 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.editor
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.IconButton
 
 @Composable
 fun EntryAction(uiEntry: UIEntry, modifier: Modifier = Modifier, onEntryAction: (EntryAction) -> Unit) {
@@ -38,27 +38,32 @@ fun EntryAction(uiEntry: UIEntry, modifier: Modifier = Modifier, onEntryAction: 
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
-        val reset by rememberIconPainter(name = "reset@24x24")
-        val delete by rememberIconPainter(name = "trash@24x24")
-        // TODO Icon button??
-        Icon(
-            painter = reset,
-            contentDescription = "Reset",
-            tint = if (isResettable) Color.Black else Color.LightGray,
-            modifier = Modifier
-                .pointerOnHover()
-                .size(20.dp)
-                .clickable { onEntryAction(EntryAction.Action.Reset(uiEntry.entry)) }
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Icon(
-            painter = delete,
-            contentDescription = "Delete",
-            tint = if (isDeletable) Color.Black else Color.LightGray,
-            modifier = Modifier
-                .pointerOnHover()
-                .size(20.dp)
-                .clickable { onEntryAction(EntryAction.Action.Delete(uiEntry.entry)) }
-        )
+        val resetPainter by rememberIconPainter(name = "reset@24x24")
+        val deletePainter by rememberIconPainter(name = "trash@24x24")
+        IconButton(
+            enabled = isResettable,
+            modifier = Modifier.weight(.5f),
+            onClick = { onEntryAction(EntryAction.Action.Reset(uiEntry.entry)) }
+        ) { state ->
+            Icon(
+                painter = resetPainter,
+                contentDescription = "Reset",
+                tint = if (state.isEnabled) Color.Black else Color.LightGray,
+                modifier = Modifier.pointerOnHover().size(24.dp).padding(4.dp),
+            )
+        }
+        Spacer(modifier = Modifier.width(4.dp))
+        IconButton(
+            enabled = isDeletable,
+            modifier = Modifier.weight(.5f),
+            onClick = { onEntryAction(EntryAction.Action.Delete(uiEntry.entry)) }
+        ) { state ->
+            Icon(
+                painter = deletePainter,
+                contentDescription = "Delete",
+                tint = if (state.isEnabled) Color.Black else Color.LightGray,
+                modifier = Modifier.pointerOnHover().size(24.dp).padding(4.dp),
+            )
+        }
     }
 }
