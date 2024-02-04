@@ -108,13 +108,13 @@ class PreferenceEditor(
     }
 
     private suspend fun change(edit: Edit.Change, path: Path, processor: Processor): String {
-        val oldContent = edit.matcher.escaped()
-        val newContent = edit.content.escaped()
+        val matcher = edit.matcher.escaped()
+        val content = edit.content.escaped()
         val command = buildList {
             add("sh")
             add("change.sh")
-            add(oldContent)
-            add(newContent)
+            add(matcher)
+            add(content)
             add(path.toString())
         }
         return processor.run(command)

@@ -28,7 +28,7 @@ import kotlin.io.path.inputStream
 class ThemeCodec(private val codec: PreferencesCodec) {
 
     fun encode(theme: EditorTheme): Edit = Edit.Change(
-        matcher = "^<$THEME>.*$",
+        matcher = "<$THEME>.*$",
         content = codec.encode { tag(THEME) { text(theme.ordinal.toString()) } }
     )
 
@@ -45,10 +45,10 @@ class ThemeCodec(private val codec: PreferencesCodec) {
 
     private fun XmlPullParser.parseTheme(): EditorTheme = gobbleTag(THEME) {
         next()
-        EditorTheme.valueOf(text)
+        EditorTheme.entries[text.toInt()]
     }
 
-    private companion object Tags {
+    companion object Tags {
         const val THEME = "theme"
     }
 }

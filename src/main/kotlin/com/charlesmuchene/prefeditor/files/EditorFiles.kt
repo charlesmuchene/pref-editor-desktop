@@ -18,6 +18,7 @@ package com.charlesmuchene.prefeditor.files
 
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.usecases.theme.ThemeCodec
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -54,7 +55,10 @@ object EditorFiles {
 
     private fun createAppPreferences(path: Path, codec: PreferencesCodec) {
         if (path.exists()) return
-        val content = codec.encodeDocument { tag("version") { text("1.0") } }
+        val content = codec.encodeDocument {
+            tag("version") { text("1.0") }
+            tag(ThemeCodec.THEME) { text("2") }
+        }
         Files.writeString(path, content.trim())
     }
 

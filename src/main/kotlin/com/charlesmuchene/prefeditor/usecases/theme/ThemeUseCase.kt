@@ -18,11 +18,17 @@ package com.charlesmuchene.prefeditor.usecases.theme
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.files.EditorFiles
 import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
 import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.*
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import java.nio.file.Path
+import kotlin.coroutines.CoroutineContext
 
 private val logger = KotlinLogging.logger {}
 
@@ -30,10 +36,17 @@ class ThemeUseCase(
     private val codec: ThemeCodec,
     private val editor: PreferenceEditor,
     private val path: Path = EditorFiles.preferencesPath(),
-) {
+    private val context: CoroutineContext = Dispatchers.Default,
+) : CoroutineScope by CoroutineScope(context) {
 
     private val _theme = mutableStateOf(System)
     var theme: State<EditorTheme> = _theme
+
+    private val saveFlow = MutableSharedFlow<EditorTheme>()
+
+    init {
+        launch { saveFlow.throttleLatest(delayMillis = 2_000).collect(::saveTheme) }
+    }
 
     fun switchTheme() {
         _theme.value = when (_theme.value) {
@@ -41,6 +54,7 @@ class ThemeUseCase(
             Dark -> System
             System -> Light
         }
+        launch { saveFlow.emit(_theme.value) }
     }
 
     suspend fun loadTheme() {
@@ -49,9 +63,10 @@ class ThemeUseCase(
         logger.debug { "Load Theme: $decoded" }
     }
 
-    suspend fun saveTheme() {
-        val edit = codec.encode(theme = _theme.value)
+    private suspend fun saveTheme(theme: EditorTheme) {
+        val edit = codec.encode(theme = theme)
         val output = editor.edit(edit = edit, path = path)
-        logger.debug { "Save Theme: $theme -> $output" }
+        if (output.isNotBlank())
+            logger.debug { "Save Theme: $theme -> $output" }
     }
 }
