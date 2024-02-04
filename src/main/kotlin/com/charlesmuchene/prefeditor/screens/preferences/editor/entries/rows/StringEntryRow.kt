@@ -47,7 +47,10 @@ fun StringEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modif
         var value by remember { mutableStateOf(entry.value) }
         TextArea(
             value = value,
-            onValueChange = { value = it; viewModel.edited(entry = entry, change = it) },
+            onValueChange = { changed ->
+                value = changed
+                viewModel.entryAction(EntryAction.Change(entry = entry, change = changed))
+            },
             placeholder = { Text(text = entry.value) },
             modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT),
             keyboardOptions = KeyboardOptions(autoCorrect = false),

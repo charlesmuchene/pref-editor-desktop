@@ -41,12 +41,9 @@ sealed interface EntryState {
 data class UIEntry(val entry: Entry, val state: EntryState = EntryState.None)
 
 sealed interface EntryAction {
-    data class Changed(val entry: Entry, val content: String) : EntryAction
-    sealed interface Action : EntryAction {
-        data class Reset(val entry: Entry) : Action
-        data class Change(val entry: Entry) : Action
-        data class Delete(val entry: Entry) : Action
-    }
+    data class Reset(val entry: Entry) : EntryAction
+    data class Delete(val entry: Entry) : EntryAction
+    data class Change(val entry: Entry, val change: String) : EntryAction
 }
 
 class EditorViewModel(
@@ -86,14 +83,6 @@ class EditorViewModel(
     private fun numberOutline(entry: Entry, value: String): Outline {
         if (entry.value == value) return Outline.None
         return if (validator.isValid(entry, value)) Outline.Warning else Outline.Error
-    }
-
-    fun edited(entry: Entry, change: String) {
-        launch { changes.emit(change) }
-        if (entry !is SetEntry) {
-            val value = edits[entry.name] ?: return
-            edits[entry.name] = value.copy(second = change)
-        }
     }
 
     fun save() {
@@ -138,6 +127,26 @@ class EditorViewModel(
     }
 
     fun entryAction(action: EntryAction) {
+        when (action) {
+            is EntryAction.Change -> entryChanged(action.entry, action.change)
+            is EntryAction.Delete -> entryDeleted(action.entry)
+            is EntryAction.Reset -> entryReset(action.entry)
+        }
+    }
 
+    private fun entryReset(entry: Entry) {
+
+    }
+
+    private fun entryDeleted(entry: Entry) {
+
+    }
+
+    private fun entryChanged(entry: Entry, change: String) {
+        launch { changes.emit(change) }
+        if (entry !is SetEntry) {
+            val value = edits[entry.name] ?: return
+            edits[entry.name] = value.copy(second = change)
+        }
     }
 }

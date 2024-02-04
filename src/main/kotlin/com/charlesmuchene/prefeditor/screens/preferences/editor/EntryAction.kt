@@ -43,7 +43,7 @@ fun EntryAction(uiEntry: UIEntry, modifier: Modifier = Modifier, onEntryAction: 
         IconButton(
             enabled = isResettable,
             modifier = Modifier.weight(.5f),
-            onClick = { onEntryAction(EntryAction.Action.Reset(uiEntry.entry)) }
+            onClick = { onEntryAction(EntryAction.Reset(uiEntry.entry)) }
         ) { state ->
             Icon(
                 painter = resetPainter,
@@ -56,7 +56,7 @@ fun EntryAction(uiEntry: UIEntry, modifier: Modifier = Modifier, onEntryAction: 
         IconButton(
             enabled = isDeletable,
             modifier = Modifier.weight(.5f),
-            onClick = { onEntryAction(EntryAction.Action.Delete(uiEntry.entry)) }
+            onClick = { onEntryAction(EntryAction.Delete(uiEntry.entry)) }
         ) { state ->
             Icon(
                 painter = deletePainter,
