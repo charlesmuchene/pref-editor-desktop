@@ -43,14 +43,18 @@ class FavoritesUseCase(
         favorites = codec.decode(path = path)
     }
 
-    fun isFavorite(app: App): Boolean =
-        favorites.filterIsInstance<Favorite.App>().map(Favorite.App::packageName).contains(app.packageName)
+    fun isFavorite(app: App, device: Device): Boolean =
+        favorites.filterIsInstance<Favorite.App>().any {
+            it.device == device.serial && it.packageName == app.packageName
+        }
 
     fun isFavorite(device: Device): Boolean =
-        favorites.filterIsInstance<Favorite.Device>().map(Favorite.Device::serial).contains(device.serial)
+        favorites.filterIsInstance<Favorite.Device>().any { it.serial == device.serial }
 
-    fun isFavorite(file: PrefFile): Boolean =
-        favorites.filterIsInstance<Favorite.File>().map(Favorite.File::name).contains(file.name)
+    fun isFavorite(file: PrefFile, app: App, device: Device): Boolean =
+        favorites.filterIsInstance<Favorite.File>().any {
+            it.device == device.serial && it.app == app.packageName && it.name == file.name
+        }
 
     private suspend fun writeFavorite(favorite: Favorite) {
         writeFavorites(favorites = listOf(favorite))

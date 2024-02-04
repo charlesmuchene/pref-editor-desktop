@@ -90,7 +90,7 @@ class PrefListingViewModel(
     }
 
     private fun map(files: PrefFiles): List<UIPrefFile> =
-        files.map { file -> UIPrefFile(file = file, isFavorite = favorites.isFavorite(file)) }
+        files.map { file -> UIPrefFile(file = file, isFavorite = favorites.isFavorite(file, app, device)) }
 
     sealed interface UIState {
         data object Empty : UIState

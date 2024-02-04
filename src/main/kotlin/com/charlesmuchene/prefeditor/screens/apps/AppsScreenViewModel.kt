@@ -62,7 +62,7 @@ class AppsScreenViewModel(
     }
 
     private fun mapApps(apps: Apps): List<UIApp> = apps.map { app ->
-        val isFavorite = favorites.isFavorite(app)
+        val isFavorite = favorites.isFavorite(app = app, device = device)
         UIApp(app = app, isFavorite = isFavorite)
     }
 
