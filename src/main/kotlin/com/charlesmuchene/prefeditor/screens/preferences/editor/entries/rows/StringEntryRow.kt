@@ -24,9 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.data.StringEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
+import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
+import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryActionState
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.nameComponentWeight
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.valueComponentWeight
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextArea
@@ -38,15 +41,21 @@ fun StringEntryRow(entry: StringEntry, viewModel: EditorViewModel, modifier: Mod
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(componentSpacing),
     ) {
-        Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(nameComponentWeight))
+        Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(NAME_COMPONENT_WEIGHT))
         var value by remember { mutableStateOf(entry.value) }
         TextArea(
             value = value,
             onValueChange = { value = it; viewModel.edited(entry = entry, change = it) },
             placeholder = { Text(text = entry.value) },
-            modifier = Modifier.weight(valueComponentWeight),
+            modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT),
             keyboardOptions = KeyboardOptions(autoCorrect = false),
             outline = viewModel.outline(entry = entry, value = value),
+        )
+        EntryAction(
+            actionState = EntryActionState(enableReset = true, enableDelete = true),
+            modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
+            onDelete = {},
+            onReset = {},
         )
     }
 }

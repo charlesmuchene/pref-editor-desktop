@@ -24,9 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.BooleanEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
+import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
+import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryActionState
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.nameComponentWeight
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.valueComponentWeight
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.RadioButtonRow
 import org.jetbrains.jewel.ui.component.Text
@@ -38,8 +41,8 @@ fun BooleanEntryRow(entry: BooleanEntry, viewModel: EditorViewModel, modifier: M
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(componentSpacing)
     ) {
-        Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(nameComponentWeight))
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.weight(valueComponentWeight)) {
+        Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(NAME_COMPONENT_WEIGHT))
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT)) {
             var isTrue by remember { mutableStateOf(entry.value) }
             val trueString = true.toString()
             val falseString = false.toString()
@@ -64,5 +67,11 @@ fun BooleanEntryRow(entry: BooleanEntry, viewModel: EditorViewModel, modifier: M
                 Text(text = "False")
             }
         }
+        EntryAction(
+            actionState = EntryActionState(enableReset = true, enableDelete = true),
+            modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
+            onDelete = {},
+            onReset = {},
+        )
     }
 }

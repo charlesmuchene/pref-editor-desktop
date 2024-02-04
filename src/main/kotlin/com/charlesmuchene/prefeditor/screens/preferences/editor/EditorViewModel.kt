@@ -32,6 +32,8 @@ import org.jetbrains.jewel.ui.Outline
 
 private val logger = KotlinLogging.logger {}
 
+data class EntryActionState(val enableReset: Boolean, val enableDelete: Boolean)
+
 class EditorViewModel(
     private val app: App,
     private val device: Device,

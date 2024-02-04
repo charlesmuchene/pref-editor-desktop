@@ -24,8 +24,9 @@ import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows.*
 
 val componentSpacing = 8.dp
-const val valueComponentWeight = 0.7f
-const val nameComponentWeight = 0.3f
+const val VALUE_COMPONENT_WEIGHT = 0.65f
+const val NAME_COMPONENT_WEIGHT = 0.3f
+const val ACTION_COMPONENT_WEIGHT = 0.05f
 
 @Composable
 fun PrimitiveEntry(entry: Entry, modifier: Modifier = Modifier, viewModel: EditorViewModel) {
