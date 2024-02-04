@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
@@ -59,7 +60,7 @@ private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifie
         else -> "Unknown"
     }
     Row(
-        modifier = modifier.padding(horizontal = 2.dp),
+        modifier = modifier.padding(horizontal = 2.dp).pointerOnHover(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
