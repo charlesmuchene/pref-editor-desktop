@@ -16,12 +16,6 @@
 
 package com.charlesmuchene.prefeditor.preferences
 
-import com.charlesmuchene.prefeditor.data.Edit
-import com.charlesmuchene.prefeditor.favorites.Favorite
-import com.charlesmuchene.prefeditor.favorites.FavoritesCodec
-import com.charlesmuchene.prefeditor.files.EditorFiles
-import com.charlesmuchene.prefeditor.theme.EditorTheme
-import com.charlesmuchene.prefeditor.theme.ThemeCodec
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -30,55 +24,6 @@ private val logger = KotlinLogging.logger {}
  * Application preferences
  */
 class AppPreferences(
-    private val codec: PreferenceCodec = PreferenceCodec(),
+    private val codec: PreferencesCodec = PreferencesCodec(),
     private val editor: PreferenceEditor = PreferenceEditor(),
-    private val themeCodec: ThemeCodec = ThemeCodec(codec),
-    private val favoritesCodec: FavoritesCodec = FavoritesCodec(codec),
-) {
-
-    /**
-     * Read a developer's favorites
-     *
-     * @return A [List] of [Favorite]s
-     */
-    suspend fun readFavorites(): List<Favorite> = buildList {
-        val path = EditorFiles.preferencePath()
-        addAll(favoritesCodec.decode(path = path))
-    }
-
-    /**
-     * Write the developer's favorites
-     *
-     * @param favorites A [List] of [Favorite]s to add
-     */
-    suspend fun writeFavorites(favorites: List<Favorite>) {
-        val content = favoritesCodec.encode(favorites = favorites, block = Edit::Add)
-        val path = EditorFiles.preferencePath()
-        editor.edit(edits = content, path = path)
-    }
-
-    /**
-     * Remove the developer's favorites
-     *
-     * @param favorites A [List] of [Favorite]s to remove
-     */
-    suspend fun removeFavorites(favorites: List<Favorite>) {
-        val content = favoritesCodec.encode(favorites = favorites, block = Edit::Delete)
-        val path = EditorFiles.preferencePath()
-        val output = editor.edit(edits = content, path = path)
-        logger.debug { "Remove favorites: $output" }
-    }
-
-    suspend fun loadTheme(): EditorTheme? {
-        val path = EditorFiles.preferencePath()
-        return themeCodec.decode(path = path)
-    }
-
-    suspend fun saveTheme(theme: EditorTheme) {
-        val path = EditorFiles.preferencePath()
-        val edit = themeCodec.encode(theme = theme)
-        val output = editor.edit(edit, path)
-        logger.debug { "Save Theme: $output" }
-    }
-
-}
+)

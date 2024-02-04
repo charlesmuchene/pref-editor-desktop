@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.screens.device
+package com.charlesmuchene.prefeditor.usecases.theme
 
-import com.charlesmuchene.prefeditor.bridge.Bridge
-import com.charlesmuchene.prefeditor.command.ListDevices
-import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.data.Devices
+import org.jetbrains.skiko.SystemTheme
+import org.jetbrains.skiko.currentSystemTheme
 
-class ListDeviceUseCase(private val bridge: Bridge) {
+enum class EditorTheme {
+    Light, Dark, System;
 
-    val devices = mutableListOf<Device>()
+    fun isDark(): Boolean = (if (this == System) fromSystemTheme(currentSystemTheme) else this) == Dark
 
-    suspend fun list(): Result<Devices> = bridge.execute(command = ListDevices()).also { result ->
-        result.onSuccess { devices ->
-            this@ListDeviceUseCase.devices.clear()
-            this.devices.addAll(devices)
-        }
+    fun switchTheme(): EditorTheme = when (this) {
+        Light -> Dark
+        Dark -> System
+        System -> Light
+    }
+
+    companion object {
+        fun fromSystemTheme(systemThem: SystemTheme) = if (systemThem == SystemTheme.LIGHT) Light else Dark
     }
 }

@@ -27,11 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.data.PrefFile
-import com.charlesmuchene.prefeditor.data.PrefFiles
 import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.models.UIPrefFile
-import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -47,7 +44,6 @@ import org.jetbrains.jewel.ui.component.Text
 @Composable
 fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
     val bridge = LocalBridge.current
-    val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
@@ -56,7 +52,6 @@ fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
             device = device,
             bridge = bridge,
             scope = scope,
-            appState = appState,
             navigation = navigation,
         )
     }
@@ -93,7 +88,11 @@ private fun PrefListingLoading(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PrefListingSuccess(prefFiles: List<UIPrefFile>, modifier: Modifier = Modifier, viewModel: PrefListingViewModel) {
+private fun PrefListingSuccess(
+    prefFiles: List<UIPrefFile>,
+    modifier: Modifier = Modifier,
+    viewModel: PrefListingViewModel,
+) {
     val header = LocalBundle.current[AppKey.PrefListingTitle]
     Listing(
         header = header,
@@ -102,7 +101,7 @@ private fun PrefListingSuccess(prefFiles: List<UIPrefFile>, modifier: Modifier =
         onFilter = viewModel::filter
     ) {
         if (prefFiles.isEmpty()) item { Text(text = "No preferences matching filter", style = Typography.primary) }
-        items(items = prefFiles, key = { it.file.name}) { prefFile ->
+        items(items = prefFiles, key = { it.file.name }) { prefFile ->
             PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected, onFavorite = viewModel::favorite)
         }
     }

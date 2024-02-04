@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.favorites
+package com.charlesmuchene.prefeditor.usecases.favorites
 
 /**
  * A developer favorite

@@ -16,7 +16,6 @@
 
 package com.charlesmuchene.prefeditor.screens.listing
 
-import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.command.ListPrefFiles
 import com.charlesmuchene.prefeditor.command.ListPrefFiles.PrefFilesResult
@@ -24,10 +23,10 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.PrefFiles
-import com.charlesmuchene.prefeditor.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefEditScreen
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,8 +39,7 @@ class PrefListingViewModel(
     private val bridge: Bridge,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
-    private val appState: AppState,
-    private val favorites: FavoritesUseCase = FavoritesUseCase(preferences = appState.preferences),
+    private val favorites: FavoritesUseCase = FavoritesUseCase(),
 ) : CoroutineScope by scope {
 
     private val files = mutableListOf<PrefFile>()

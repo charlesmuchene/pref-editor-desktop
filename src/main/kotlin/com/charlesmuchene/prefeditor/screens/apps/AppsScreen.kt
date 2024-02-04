@@ -21,12 +21,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.App
-import com.charlesmuchene.prefeditor.data.Apps
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.models.UIApp
-import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -44,7 +41,6 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
     val bridge = LocalBridge.current
-    val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val viewModel = remember {
         AppsScreenViewModel(
@@ -52,7 +48,6 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
             scope = scope,
             device = device,
             navigation = navigation,
-            appState = appState
         )
     }
     val state by viewModel.uiState.collectAsState()
@@ -81,7 +76,7 @@ private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewMod
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
     Listing(header = header, filterPlaceholder = "Filter apps", modifier = modifier, onFilter = viewModel::filter) {
         if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }
-        items(items = apps, key = {it.app.packageName }) { app ->
+        items(items = apps, key = { it.app.packageName }) { app ->
             AppRow(app = app, onClick = viewModel::appSelected, onFavorite = viewModel::onFavorite)
         }
     }

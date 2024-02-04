@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.favorites
+package com.charlesmuchene.prefeditor.usecases.favorites
 
 import com.charlesmuchene.prefeditor.data.Edit
-import com.charlesmuchene.prefeditor.favorites.Favorite.*
-import com.charlesmuchene.prefeditor.favorites.FavoritesCodec.Tags.APP
-import com.charlesmuchene.prefeditor.favorites.FavoritesCodec.Tags.DEVICE
-import com.charlesmuchene.prefeditor.favorites.FavoritesCodec.Tags.FILE
-import com.charlesmuchene.prefeditor.preferences.PreferenceCodec
+import com.charlesmuchene.prefeditor.usecases.favorites.Favorite.*
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.APP
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.DEVICE
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.FILE
+import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobbleTag
 import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
@@ -31,7 +31,7 @@ import org.xmlpull.v1.XmlSerializer
 import java.nio.file.Path
 import kotlin.io.path.inputStream
 
-class FavoritesCodec(private val codec: PreferenceCodec) {
+class FavoritesCodec(private val codec: PreferencesCodec) {
 
     fun encode(favorites: List<Favorite>, block: (String) -> Edit): List<Edit> = favorites.map { favorite ->
         when (favorite) {

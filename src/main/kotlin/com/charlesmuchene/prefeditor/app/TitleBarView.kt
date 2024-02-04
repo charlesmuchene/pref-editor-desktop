@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.ApplicationKey.Title
-import com.charlesmuchene.prefeditor.theme.EditorTheme.*
+import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.*
 import com.charlesmuchene.prefeditor.ui.theme.teal
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.IconButton

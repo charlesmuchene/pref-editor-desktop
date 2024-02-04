@@ -6,13 +6,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class PreferenceCodecTest {
+class PreferencesCodecTest {
 
-    private lateinit var manager: PreferenceCodec
+    private lateinit var manager: PreferencesCodec
 
     @BeforeEach
     fun setup() {
-        manager = PreferenceCodec()
+        manager = PreferencesCodec()
     }
 
     @Test

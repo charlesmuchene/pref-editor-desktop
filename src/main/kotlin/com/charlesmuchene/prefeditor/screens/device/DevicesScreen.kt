@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.models.UIDevice
@@ -42,11 +41,10 @@ fun DevicesScreen(modifier: Modifier = Modifier) {
 
     val bridge = LocalBridge.current
     val bundle = LocalBundle.current
-    val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
-        DevicesViewModel(scope = scope, bridge = bridge, navigation = navigation, bundle = bundle, appState = appState)
+        DevicesViewModel(scope = scope, bridge = bridge, navigation = navigation, bundle = bundle)
     }
     val state by viewModel.uiState.collectAsState()
 
@@ -96,7 +94,11 @@ private fun DeviceRow(device: UIDevice, viewModel: DevicesViewModel, modifier: M
         Column(modifier = Modifier.weight(0.9f)) {
             Text(text = device.device.serial, style = primary)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = viewModel.formatDeviceAttributes(device.device), style = secondary, color = JewelTheme.contentColor)
+            Text(
+                text = viewModel.formatDeviceAttributes(device.device),
+                style = secondary,
+                color = JewelTheme.contentColor
+            )
             Spacer(modifier = Modifier.height(4.dp))
         }
     }

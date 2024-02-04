@@ -17,18 +17,17 @@
 package com.charlesmuchene.prefeditor.screens.device
 
 import androidx.compose.ui.graphics.Color
-import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Device.Type
 import com.charlesmuchene.prefeditor.data.Devices
-import com.charlesmuchene.prefeditor.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
 import com.charlesmuchene.prefeditor.ui.theme.green
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -36,11 +35,10 @@ import kotlinx.coroutines.launch
 class DevicesViewModel(
     private val bridge: Bridge,
     private val bundle: TextBundle,
-    private val appState: AppState,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
-    private val listDeviceUseCase: ListDeviceUseCase = ListDeviceUseCase(bridge = bridge),
-    private val favorites: FavoritesUseCase = FavoritesUseCase(preferences = appState.preferences),
+    private val listDevices: ListDevicesUseCase = ListDevicesUseCase(bridge = bridge),
+    private val favorites: FavoritesUseCase = FavoritesUseCase(),
 ) : CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
@@ -55,7 +53,7 @@ class DevicesViewModel(
     }
 
     private suspend fun determineState(): UIState {
-        val result = listDeviceUseCase.list()
+        val result = listDevices.list()
         return when {
             result.isSuccess -> result.getOrNull()?.let { devices ->
                 if (devices.isEmpty()) UIState.NoDevices else UIState.Devices(mapDevices(devices))
@@ -92,7 +90,7 @@ class DevicesViewModel(
 
     fun filter(input: String) {
         launch {
-            _uiState.emit(UIState.Devices(mapDevices(listDeviceUseCase.devices.filter { device ->
+            _uiState.emit(UIState.Devices(mapDevices(listDevices.devices.filter { device ->
                 device.serial.contains(other = input, ignoreCase = true)
             }))) // TODO Include meta-date in filter
         }
@@ -102,8 +100,7 @@ class DevicesViewModel(
         launch {
             if (device.isFavorite) favorites.unfavoriteDevice(device = device.device)
             else favorites.favoriteDevice(device = device.device)
-            favorites.refresh() // TODO Make reactive
-            _uiState.emit(UIState.Devices(mapDevices(listDeviceUseCase.devices)))
+            _uiState.emit(UIState.Devices(mapDevices(listDevices.devices)))
         }
     }
 

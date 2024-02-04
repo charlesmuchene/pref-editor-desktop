@@ -16,7 +16,7 @@
 
 package com.charlesmuchene.prefeditor.files
 
-import com.charlesmuchene.prefeditor.preferences.PreferenceCodec
+import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.nio.file.Files
@@ -38,13 +38,15 @@ object EditorFiles {
     private const val SCRIPTS_DIR = "scripts"
     private const val PREFERENCES = "preferences.xml"
 
+    fun preferencesPath(): Path = appPath().resolve(PREFERENCES)
+
     suspend fun initialize() = withContext(context) {
-        preferencePath()
+        preferencesPath().run { if (!exists()) writeEmptyPreferences(this) }
         copyScripts()
     }
 
-    private fun writeEmptyPreferences(path: Path) {
-        val content = PreferenceCodec().encodeDocument()
+    private suspend fun writeEmptyPreferences(path: Path) = withContext(context) {
+        val content = PreferencesCodec().encodeDocument()
         Files.writeString(path, content)
     }
 
@@ -58,7 +60,7 @@ object EditorFiles {
 
     private suspend fun copyScripts() = withContext(context) {
         val path = scriptsPath()
-        listOf(ADD_FILE, PUSH_FILE, DELETE_FILE, CHANGE_FILE).forEach { name ->
+        listOf(PUSH_FILE, ADD_FILE, DELETE_FILE, CHANGE_FILE).forEach { name ->
             copyScript(name = name, path = path.resolve(name))
         }
     }
@@ -66,12 +68,6 @@ object EditorFiles {
     private fun copyScript(name: String, path: Path) {
         if (!path.exists()) javaClass.classLoader.getResourceAsStream("$SCRIPTS_DIR/$name")?.let {
             Files.copy(it, path)
-        }
-    }
-
-    suspend fun preferencePath(): Path = withContext(context) {
-        appPath().resolve(PREFERENCES).also {
-            if (!it.exists()) writeEmptyPreferences(it)
         }
     }
 

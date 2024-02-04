@@ -28,7 +28,7 @@ import java.io.OutputStream
 /**
  * Manages encoding and decoding preferences
  */
-class PreferenceCodec : PreferenceDecoder, PreferenceEncoder {
+class PreferencesCodec : PreferenceDecoder, PreferenceEncoder {
 
     override suspend fun decode(inputStream: InputStream, block: XmlPullParser.() -> Unit) {
         with(XmlPullParserFactory.newInstance().newPullParser()) {

@@ -88,7 +88,7 @@ class PreferenceEditor(
     }
 
     private suspend fun delete(edit: Edit.Delete, path: Path, processor: Processor): String {
-        return delete(content = edit.content, path = path, processor = processor)
+        return delete(content = edit.matcher, path = path, processor = processor)
     }
 
     private suspend fun delete(edits: List<Edit.Delete>, path: Path, processor: Processor): String {
