@@ -71,17 +71,18 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
 
 
     Column(modifier = modifier.fillMaxSize()) {
-        EditorTopBar(viewModel = viewModel)
+        val endPadding = padding * 0.5f
+        EditorTopBar(viewModel = viewModel, modifier = Modifier.padding(end = endPadding))
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxSize()) {
             val state = rememberLazyListState()
-            LazyColumn(modifier = Modifier.padding(end = padding * 0.5f), state = state) {
+            LazyColumn(modifier = Modifier.padding(end = endPadding), state = state) {
                 primitives(primitiveEntries = primitiveEntries, viewModel = viewModel)
                 sets(setEntries = setEntries, viewModel = viewModel)
             }
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(scrollState = state),
-                modifier = Modifier.align(Alignment.CenterEnd).offset(x = padding * 0.5f).fillMaxHeight(),
+                modifier = Modifier.align(Alignment.CenterEnd).offset(x = endPadding).fillMaxHeight(),
             )
         }
     }
@@ -92,7 +93,7 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
 
 @Composable
 private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifier) {
-    Row(modifier = modifier.padding(end = padding)) {
+    Row(modifier = modifier) {
         Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
         Spacer(modifier = Modifier.weight(1f))
         var checked by remember { mutableStateOf(false) }

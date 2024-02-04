@@ -144,9 +144,7 @@ class EditorViewModel(
 
     private fun entryChanged(entry: Entry, change: String) {
         launch { changes.emit(change) }
-        if (entry !is SetEntry) {
-            val value = edits[entry.name] ?: return
-            edits[entry.name] = value.copy(second = change)
-        }
+        val value = edits[entry.name] ?: return
+        edits[entry.name] = value.copy(second = change)
     }
 }
