@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.BooleanEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
-import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryActionState
+import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
@@ -35,7 +35,9 @@ import org.jetbrains.jewel.ui.component.RadioButtonRow
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun BooleanEntryRow(entry: BooleanEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+fun BooleanEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+    val entry = uiEntry.entry as? BooleanEntry ?: return
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -68,10 +70,9 @@ fun BooleanEntryRow(entry: BooleanEntry, viewModel: EditorViewModel, modifier: M
             }
         }
         EntryAction(
-            actionState = EntryActionState(enableReset = true, enableDelete = true),
             modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
-            onDelete = {},
-            onReset = {},
+            onEntryAction = viewModel::entryAction,
+            uiEntry = uiEntry,
         )
     }
 }

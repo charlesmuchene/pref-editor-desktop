@@ -69,12 +69,12 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
 
     val (setEntries, primitiveEntries) = viewModel.prefs
 
-    val state = rememberLazyListState()
 
     Column(modifier = modifier.fillMaxSize()) {
         EditorTopBar(viewModel = viewModel)
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxSize()) {
+            val state = rememberLazyListState()
             LazyColumn(modifier = Modifier.padding(end = padding * 0.5f), state = state) {
                 primitives(primitiveEntries = primitiveEntries, viewModel = viewModel)
                 sets(setEntries = setEntries, viewModel = viewModel)
@@ -112,7 +112,7 @@ private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifi
 
 @OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.sets(
-    setEntries: List<Entry>,
+    setEntries: List<UIEntry>,
     viewModel: EditorViewModel,
 ) {
     if (setEntries.isEmpty()) return
@@ -140,9 +140,9 @@ private fun LazyListScope.sets(
         }
     }
 
-    items(items = setEntries /* FIXME Define stable keys */) { entry ->
+    items(items = setEntries.mapNotNull { it.entry as? SetEntry }, key = SetEntry::name) { entry ->
         SetEntryRow(
-            entry as SetEntry,
+            entry = entry,
             viewModel = viewModel,
             modifier = Modifier.padding(end = 18.dp).fillMaxWidth().height((64 * entry.entries.size).dp),
         )
@@ -150,10 +150,10 @@ private fun LazyListScope.sets(
 }
 
 private fun LazyListScope.primitives(
-    primitiveEntries: List<Entry>,
+    primitiveEntries: List<UIEntry>,
     viewModel: EditorViewModel,
 ) {
-    items(items = primitiveEntries /* FIXME Define stable keys */) { entry ->
+    items(items = primitiveEntries, key = { it.entry.name }) { entry ->
         val entryModifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
         PrimitiveEntry(entry = entry, modifier = entryModifier, viewModel = viewModel)
     }

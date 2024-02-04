@@ -26,7 +26,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.charlesmuchene.prefeditor.data.FloatEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
-import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryActionState
+import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryState
+import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
@@ -37,7 +38,9 @@ import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 
 @Composable
-fun FloatEntryRow(entry: FloatEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+fun FloatEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+    val entry = uiEntry.entry as? FloatEntry ?: return
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -59,10 +62,10 @@ fun FloatEntryRow(entry: FloatEntry, viewModel: EditorViewModel, modifier: Modif
             keyboardOptions = KeyboardOptions(autoCorrect = false, keyboardType = KeyboardType.Decimal),
         )
         EntryAction(
-            actionState = EntryActionState(enableReset = true, enableDelete = true),
             modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
-            onDelete = {},
-            onReset = {},
+            onEntryAction = viewModel::entryAction,
+            uiEntry = uiEntry,
         )
+
     }
 }

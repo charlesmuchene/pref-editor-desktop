@@ -32,7 +32,22 @@ import org.jetbrains.jewel.ui.Outline
 
 private val logger = KotlinLogging.logger {}
 
-data class EntryActionState(val enableReset: Boolean, val enableDelete: Boolean)
+sealed interface EntryState {
+    data object Changed : EntryState
+    data object Deleted : EntryState
+    data object None : EntryState
+}
+
+data class UIEntry(val entry: Entry, val state: EntryState = EntryState.None)
+
+sealed interface EntryAction {
+    data class Changed(val entry: Entry, val content: String) : EntryAction
+    sealed interface Action : EntryAction {
+        data class Reset(val entry: Entry) : Action
+        data class Change(val entry: Entry) : Action
+        data class Delete(val entry: Entry) : Action
+    }
+}
 
 class EditorViewModel(
     private val app: App,
@@ -50,7 +65,7 @@ class EditorViewModel(
     private val _message = MutableSharedFlow<String?>()
     private val changes = MutableSharedFlow<CharSequence>()
     private val edits = preferences.entries.associate(Entry::toPair).toMutableMap()
-    val prefs = preferences.entries.partition { it is SetEntry }
+    val prefs = preferences.entries.map(::UIEntry).partition { it.entry is SetEntry }
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     val enableSave: StateFlow<Boolean> = changes
@@ -120,5 +135,9 @@ class EditorViewModel(
                 logger.error(result.exceptionOrNull()) { message }
             }
         }
+    }
+
+    fun entryAction(action: EntryAction) {
+
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.*
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
+import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows.*
 
 val componentSpacing = 8.dp
@@ -29,14 +30,14 @@ const val NAME_COMPONENT_WEIGHT = 0.3f
 const val ACTION_COMPONENT_WEIGHT = 0.05f
 
 @Composable
-fun PrimitiveEntry(entry: Entry, modifier: Modifier = Modifier, viewModel: EditorViewModel) {
+fun PrimitiveEntry(entry: UIEntry, modifier: Modifier = Modifier, viewModel: EditorViewModel) {
     // TODO Wrap name to 2 lines, overflow -- clip?
-    when (entry) {
-        is BooleanEntry -> BooleanEntryRow(modifier = modifier, entry = entry, viewModel = viewModel)
-        is FloatEntry -> FloatEntryRow(modifier = modifier, entry = entry, viewModel = viewModel)
-        is IntEntry -> IntEntryRow(modifier = modifier, entry = entry, viewModel = viewModel)
-        is LongEntry -> LongEntryRow(modifier = modifier, entry = entry, viewModel = viewModel)
-        is StringEntry -> StringEntryRow(modifier = modifier, entry = entry, viewModel = viewModel)
+    when (entry.entry) {
+        is BooleanEntry -> BooleanEntryRow(modifier = modifier, uiEntry = entry, viewModel = viewModel)
+        is FloatEntry -> FloatEntryRow(modifier = modifier, uiEntry = entry, viewModel = viewModel)
+        is IntEntry -> IntEntryRow(modifier = modifier, uiEntry = entry, viewModel = viewModel)
+        is LongEntry -> LongEntryRow(modifier = modifier, uiEntry = entry, viewModel = viewModel)
+        is StringEntry -> StringEntryRow(modifier = modifier, uiEntry = entry, viewModel = viewModel)
         else -> Unit
     }
 }

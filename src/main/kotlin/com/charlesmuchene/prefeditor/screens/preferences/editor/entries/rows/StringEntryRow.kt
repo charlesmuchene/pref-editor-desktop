@@ -25,17 +25,19 @@ import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.data.StringEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
-import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryActionState
+import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextArea
 
 @Composable
-fun StringEntryRow(entry: StringEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+fun StringEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+    val entry = uiEntry.entry as? StringEntry ?: return
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -52,10 +54,9 @@ fun StringEntryRow(entry: StringEntry, viewModel: EditorViewModel, modifier: Mod
             outline = viewModel.outline(entry = entry, value = value),
         )
         EntryAction(
-            actionState = EntryActionState(enableReset = true, enableDelete = true),
             modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
-            onDelete = {},
-            onReset = {},
+            onEntryAction = viewModel::entryAction,
+            uiEntry = uiEntry,
         )
     }
 }

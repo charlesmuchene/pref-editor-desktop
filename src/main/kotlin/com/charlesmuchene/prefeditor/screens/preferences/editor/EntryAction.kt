@@ -24,13 +24,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.extensions.OnClick
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import org.jetbrains.jewel.ui.component.Icon
 
 @Composable
-fun EntryAction(actionState: EntryActionState, modifier: Modifier = Modifier, onReset: OnClick, onDelete: OnClick) {
+fun EntryAction(uiEntry: UIEntry, modifier: Modifier = Modifier, onEntryAction: (EntryAction) -> Unit) {
+    val isDeletable = uiEntry.state !is EntryState.Deleted
+    val isResettable = uiEntry.state !is EntryState.None
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -38,18 +40,25 @@ fun EntryAction(actionState: EntryActionState, modifier: Modifier = Modifier, on
     ) {
         val reset by rememberIconPainter(name = "reset@24x24")
         val delete by rememberIconPainter(name = "trash@24x24")
+        // TODO Icon button??
         Icon(
             painter = reset,
             contentDescription = "Reset",
-            tint = if (actionState.enableReset) Color.Black else Color.LightGray,
-            modifier = Modifier.pointerOnHover().size(20.dp).clickable(onClick = onReset)
+            tint = if (isResettable) Color.Black else Color.LightGray,
+            modifier = Modifier
+                .pointerOnHover()
+                .size(20.dp)
+                .clickable { onEntryAction(EntryAction.Action.Reset(uiEntry.entry)) }
         )
         Spacer(modifier = Modifier.width(8.dp))
         Icon(
             painter = delete,
             contentDescription = "Delete",
-            tint = if (actionState.enableDelete) Color.Black else Color.LightGray,
-            modifier = Modifier.pointerOnHover().size(20.dp).clickable(onClick = onDelete)
+            tint = if (isDeletable) Color.Black else Color.LightGray,
+            modifier = Modifier
+                .pointerOnHover()
+                .size(20.dp)
+                .clickable { onEntryAction(EntryAction.Action.Delete(uiEntry.entry)) }
         )
     }
 }
