@@ -58,8 +58,8 @@ import org.jetbrains.jewel.window.styling.DecoratedWindowStyle
 import org.jetbrains.jewel.window.styling.TitleBarStyle
 
 @Composable
-fun ApplicationScope.scaffold(icon: Painter, content: @Composable ColumnScope.(Modifier) -> Unit) {
-    provideAppState {
+fun ApplicationScope.scaffold(icon: Painter, appState: AppState, content: @Composable ColumnScope.(Modifier) -> Unit) {
+    provideAppState(appState = appState) {
         val (width, height) = LocalAppState.current.windowSize
         val position = WindowPosition.Aligned(alignment = Alignment.Center)
         val state = rememberWindowState(position = position, width = width, height = height)
@@ -83,11 +83,11 @@ fun ApplicationScope.scaffold(icon: Painter, content: @Composable ColumnScope.(M
 }
 
 @Composable
-private fun provideAppState(content: @Composable () -> Unit) {
+private fun provideAppState(appState: AppState, content: @Composable () -> Unit) {
     CompositionLocalProvider(
+        LocalAppState provides appState,
         LocalBridge provides Bridge(),
         LocalBundle provides TextBundle(),
-        LocalAppState provides AppState(),
         LocalNavigation provides Navigation(rememberCoroutineScope()),
     ) {
         val viewModel = LocalAppState.current
@@ -117,8 +117,8 @@ private fun titleBarStyle(isDark: Boolean): TitleBarStyle = if (isDark) TitleBar
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun svgResource(
-    resourcePath: String,
+    resource: String,
     loader: ResourceLoader = ResourceLoader.Default,
-): Painter = loader.load(resourcePath).use { stream ->
+): Painter = loader.load(resourcePath = "icons/$resource.svg").use { stream ->
     loadSvgPainter(inputStream = stream, density = Density(density = 1f))
 }

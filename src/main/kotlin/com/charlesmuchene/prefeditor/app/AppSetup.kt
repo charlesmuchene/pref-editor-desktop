@@ -16,9 +16,13 @@
 
 package com.charlesmuchene.prefeditor.app
 
-import androidx.compose.runtime.Composable
+import com.charlesmuchene.prefeditor.files.EditorFiles
+import com.charlesmuchene.prefeditor.preferences.AppPreferences
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-@Composable
-fun AppSetup() {
-
+suspend fun appSetup(): AppState = withContext(Dispatchers.IO) {
+    EditorFiles.initialize()
+    val preferences = AppPreferences().apply { initialize() }
+    AppState(preferences = preferences)
 }

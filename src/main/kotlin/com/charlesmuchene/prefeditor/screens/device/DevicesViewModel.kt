@@ -37,8 +37,8 @@ class DevicesViewModel(
     private val bundle: TextBundle,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
+    private val favorites: FavoritesUseCase,
     private val listDevices: ListDevicesUseCase = ListDevicesUseCase(bridge = bridge),
-    private val favorites: FavoritesUseCase = FavoritesUseCase(),
 ) : CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))

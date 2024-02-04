@@ -29,6 +29,7 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.models.UIPrefFile
+import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -44,15 +45,17 @@ import org.jetbrains.jewel.ui.component.Text
 @Composable
 fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
     val bridge = LocalBridge.current
+    val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
         PrefListingViewModel(
             app = app,
+            scope = scope,
             device = device,
             bridge = bridge,
-            scope = scope,
             navigation = navigation,
+            favorites = appState.favorites,
         )
     }
     val state by viewModel.uiState.collectAsState()

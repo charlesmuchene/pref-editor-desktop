@@ -16,28 +16,42 @@
 
 package com.charlesmuchene.prefeditor.usecases.theme
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.charlesmuchene.prefeditor.files.EditorFiles
-import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
-import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.System
+import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.*
 import io.github.oshai.kotlinlogging.KotlinLogging
+import java.nio.file.Path
 
 private val logger = KotlinLogging.logger {}
 
 class ThemeUseCase(
-    private val codec: ThemeCodec = ThemeCodec(PreferencesCodec()),
-    private val editor: PreferenceEditor = PreferenceEditor(),
+    private val codec: ThemeCodec,
+    private val editor: PreferenceEditor,
+    private val path: Path = EditorFiles.preferencesPath(),
 ) {
 
-    suspend fun loadTheme(): EditorTheme {
-        val path = EditorFiles.preferencesPath()
-        return codec.decode(path = path) ?: System
+    var theme: EditorTheme by mutableStateOf(System)
+
+    fun switchTheme() {
+        theme = when (theme) {
+            Light -> Dark
+            Dark -> System
+            System -> Light
+        }
     }
 
-    suspend fun saveTheme(theme: EditorTheme) {
-        val path = EditorFiles.preferencesPath()
+    suspend fun loadTheme() {
+        val decoded = codec.decode(path = path)
+        theme = decoded ?: System
+        logger.debug { "Load Theme: $decoded" }
+    }
+
+    suspend fun saveTheme() {
         val edit = codec.encode(theme = theme)
-        val output = editor.edit(edit, path)
-        logger.debug { "Save Theme: $output" }
+        val output = editor.edit(edit = edit, path = path)
+        logger.debug { "Save Theme: $theme -> $output" }
     }
 }

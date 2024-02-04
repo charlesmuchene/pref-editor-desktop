@@ -16,33 +16,27 @@
 
 package com.charlesmuchene.prefeditor.app
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.preferences.AppPreferences
 import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme
-import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
-class AppState {
+class AppState(val preferences: AppPreferences) {
 
-    var theme: EditorTheme by mutableStateOf(System)
-
+    val favorites = preferences.favorites
+    val theme: EditorTheme = preferences.theme.theme
     val windowSize = DpSize(width = 1020.dp, height = 800.dp)
 
     private val _toastMessage = MutableSharedFlow<String?>()
     val toastMessage: SharedFlow<String?> = _toastMessage
-
-    val preferences = AppPreferences()
 
     suspend fun showToast(message: String) {
         _toastMessage.emit(message)
     }
 
     fun switchTheme() {
-        theme = theme.switchTheme()
+        preferences.theme.switchTheme()
     }
 }

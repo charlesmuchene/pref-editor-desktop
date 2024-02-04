@@ -41,10 +41,17 @@ fun DevicesScreen(modifier: Modifier = Modifier) {
 
     val bridge = LocalBridge.current
     val bundle = LocalBundle.current
+    val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
-        DevicesViewModel(scope = scope, bridge = bridge, navigation = navigation, bundle = bundle)
+        DevicesViewModel(
+            scope = scope,
+            bridge = bridge,
+            bundle = bundle,
+            navigation = navigation,
+            favorites = appState.favorites,
+        )
     }
     val state by viewModel.uiState.collectAsState()
 

@@ -18,33 +18,28 @@
 
 package com.charlesmuchene.prefeditor
 
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.application
-import com.charlesmuchene.prefeditor.app.AppWindow
-import com.charlesmuchene.prefeditor.app.scaffold
-import com.charlesmuchene.prefeditor.app.svgResource
-import com.charlesmuchene.prefeditor.files.EditorFiles
-import com.charlesmuchene.prefeditor.navigation.*
-import com.charlesmuchene.prefeditor.providers.LocalAppState
-import com.charlesmuchene.prefeditor.providers.LocalNavigation
-import com.charlesmuchene.prefeditor.screens.apps.AppsScreen
-import com.charlesmuchene.prefeditor.screens.home.Home
-import com.charlesmuchene.prefeditor.screens.listing.PrefListing
-import com.charlesmuchene.prefeditor.screens.preferences.PrefEditor
-import com.charlesmuchene.prefeditor.ui.Toast
+import com.charlesmuchene.prefeditor.app.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    val icon = svgResource(resourcePath = "icons/app.svg")
+    val icon = svgResource(resource = "app")
 
     application {
+        var isSettingUp by remember { mutableStateOf(value = true) }
+        var appState by remember { mutableStateOf<AppState?>(value = null) }
+
         LaunchedEffect(Unit) {
-            EditorFiles.initialize()
+            joinAll(launch { appState = appSetup() }, launch { delay(timeMillis = 2_000) })
+            isSettingUp = false
         }
 
-        AppWindow(icon)
+        if (isSettingUp) SetupWindow()
+        else appState?.let { AppWindow(icon = icon, appState = it) } ?: error("Unusable. No AppState found!")
     }
 }

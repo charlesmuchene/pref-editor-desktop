@@ -33,19 +33,15 @@ import kotlin.coroutines.CoroutineContext
 private val logger = KotlinLogging.logger {}
 
 class FavoritesUseCase(
+    private val codec: FavoritesCodec,
+    private val editor: PreferenceEditor,
     private val path: Path = EditorFiles.preferencesPath(),
-    private val editor: PreferenceEditor = PreferenceEditor(),
-    private val codec: FavoritesCodec = FavoritesCodec(PreferencesCodec()),
     private val context: CoroutineContext = Dispatchers.Default,
 ) : CoroutineScope by CoroutineScope(context) {
 
     private lateinit var favorites: List<Favorite>
 
-    init {
-        launch { refresh() }
-    }
-
-    private suspend fun refresh() {
+    suspend fun refresh() {
         favorites = codec.decode(path = path)
     }
 
@@ -74,8 +70,8 @@ class FavoritesUseCase(
 
     private suspend fun removeFavorites(favorites: List<Favorite>) {
         val content = codec.encode(favorites = favorites, block = Edit::Delete)
-        val path = EditorFiles.preferencesPath()
         val output = editor.edit(edits = content, path = path)
+        refresh()
         logger.debug { "Remove favorites: $output" }
     }
 
@@ -84,7 +80,7 @@ class FavoritesUseCase(
     }
 
     suspend fun unfavoriteApp(app: App, device: Device) {
-        writeFavorite(favorite = Favorite.App(device = device.serial, packageName = app.packageName))
+        removeFavorite(favorite = Favorite.App(device = device.serial, packageName = app.packageName))
     }
 
     suspend fun favoriteDevice(device: Device) {

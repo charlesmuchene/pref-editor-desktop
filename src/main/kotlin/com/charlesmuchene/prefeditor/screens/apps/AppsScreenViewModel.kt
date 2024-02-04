@@ -36,7 +36,7 @@ class AppsScreenViewModel(
     private val bridge: Bridge,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
-    private val favorites: FavoritesUseCase = FavoritesUseCase(),
+    private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
 
     private val apps = mutableListOf<App>()

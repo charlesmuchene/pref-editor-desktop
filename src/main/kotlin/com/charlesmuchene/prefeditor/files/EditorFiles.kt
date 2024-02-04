@@ -17,17 +17,15 @@
 package com.charlesmuchene.prefeditor.files
 
 import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.coroutines.CoroutineContext
 import kotlin.io.path.exists
 
+/**
+ * All operations in this class perform IO.
+ */
 object EditorFiles {
-
-    private val context: CoroutineContext = Dispatchers.IO
 
     private const val DIR = ".pref-editor"
     private const val PUSH_FILE = "push.sh"
@@ -38,27 +36,27 @@ object EditorFiles {
     private const val SCRIPTS_DIR = "scripts"
     private const val PREFERENCES = "preferences.xml"
 
-    fun preferencesPath(): Path = appPath().resolve(PREFERENCES)
+    val appPath: Path = Paths.get(System.getProperty(HOME_DIR), DIR)
 
-    suspend fun initialize() = withContext(context) {
+    fun preferencesPath(): Path = appPath.resolve(PREFERENCES)
+
+    fun initialize() {
+        appPath.run { if (!exists()) Files.createDirectory(this) }
         preferencesPath().run { if (!exists()) writeEmptyPreferences(this) }
         copyScripts()
     }
 
-    private suspend fun writeEmptyPreferences(path: Path) = withContext(context) {
+    private fun writeEmptyPreferences(path: Path) {
         val content = PreferencesCodec().encodeDocument()
         Files.writeString(path, content)
     }
 
-    fun appPath(): Path = Paths.get(System.getProperty(HOME_DIR), DIR).apply {
+    // TODO Move to scripts dir
+    private fun scriptsPath(): Path = appPath.apply {
         if (!exists()) Files.createDirectory(this)
     }
 
-    private fun scriptsPath(): Path = appPath().apply {
-        if (!exists()) Files.createDirectory(this)
-    }
-
-    private suspend fun copyScripts() = withContext(context) {
+    private fun copyScripts() {
         val path = scriptsPath()
         listOf(PUSH_FILE, ADD_FILE, DELETE_FILE, CHANGE_FILE).forEach { name ->
             copyScript(name = name, path = path.resolve(name))

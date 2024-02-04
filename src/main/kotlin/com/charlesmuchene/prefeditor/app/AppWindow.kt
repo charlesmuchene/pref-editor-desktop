@@ -31,8 +31,8 @@ import com.charlesmuchene.prefeditor.screens.preferences.PrefEditor
 import com.charlesmuchene.prefeditor.ui.Toast
 
 @Composable
-fun ApplicationScope.AppWindow(icon: Painter) {
-    scaffold(icon = icon) { modifier ->
+fun ApplicationScope.AppWindow(icon: Painter, appState: AppState) {
+    scaffold(icon = icon, appState = appState) { modifier ->
         // TODO Animate screen by sliding-left
 
         val screen by LocalNavigation.current.current.collectAsState()

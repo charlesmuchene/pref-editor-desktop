@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.models.UIApp
+import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -41,6 +42,7 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
     val bridge = LocalBridge.current
+    val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val viewModel = remember {
         AppsScreenViewModel(
@@ -48,6 +50,7 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
             scope = scope,
             device = device,
             navigation = navigation,
+            favorites = appState.favorites,
         )
     }
     val state by viewModel.uiState.collectAsState()

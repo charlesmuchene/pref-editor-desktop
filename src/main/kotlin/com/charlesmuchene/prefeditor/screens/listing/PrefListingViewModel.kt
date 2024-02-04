@@ -39,7 +39,7 @@ class PrefListingViewModel(
     private val bridge: Bridge,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
-    private val favorites: FavoritesUseCase = FavoritesUseCase(),
+    private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
 
     private val files = mutableListOf<PrefFile>()

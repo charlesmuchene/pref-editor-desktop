@@ -22,6 +22,7 @@ import okio.Buffer
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import org.xmlpull.v1.XmlSerializer
+import java.io.BufferedInputStream
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -33,7 +34,7 @@ class PreferencesCodec : PreferenceDecoder, PreferenceEncoder {
     override suspend fun decode(inputStream: InputStream, block: XmlPullParser.() -> Unit) {
         with(XmlPullParserFactory.newInstance().newPullParser()) {
             setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-            setInput(inputStream, null)
+            setInput(BufferedInputStream(inputStream), null)
             nextTag()
             require(XmlPullParser.START_TAG, null, Tags.ROOT)
             while (nextTag() != XmlPullParser.END_TAG) {

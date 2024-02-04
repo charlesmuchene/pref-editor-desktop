@@ -25,7 +25,9 @@ import java.io.InputStream
 interface PreferenceDecoder {
 
     /**
-     * Read content from the given stream
+     * Read content from the given stream.
+     *
+     * Note: The provided stream is buffered before decoding begins.
      *
      * @param inputStream [InputStream] to decode from
      * @param block Block to extract tags from -- has a [XmlPullParser] as the receiver

@@ -16,7 +16,14 @@
 
 package com.charlesmuchene.prefeditor.preferences
 
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesUseCase
+import com.charlesmuchene.prefeditor.usecases.theme.ThemeCodec
+import com.charlesmuchene.prefeditor.usecases.theme.ThemeUseCase
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 private val logger = KotlinLogging.logger {}
 
@@ -24,6 +31,13 @@ private val logger = KotlinLogging.logger {}
  * Application preferences
  */
 class AppPreferences(
-    private val codec: PreferencesCodec = PreferencesCodec(),
-    private val editor: PreferenceEditor = PreferenceEditor(),
-)
+    codec: PreferencesCodec = PreferencesCodec(),
+    editor: PreferenceEditor = PreferenceEditor(),
+) {
+    val favorites = FavoritesUseCase(editor = editor, codec = FavoritesCodec(codec))
+    val theme = ThemeUseCase(editor = editor, codec = ThemeCodec(codec))
+
+    suspend fun initialize() = coroutineScope {
+        awaitAll(async { favorites.refresh() }, async { theme.loadTheme() })
+    }
+}
