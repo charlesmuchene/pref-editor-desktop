@@ -98,7 +98,12 @@ class PreferenceEditor(
     }
 
     private suspend fun delete(content: String, path: Path, processor: Processor): String {
-        val command = "sh delete.sh ${content.escaped()} $path".split(DELIMITER)
+        val command = buildList {
+            add("sh")
+            add("delete.sh")
+            add(content.escaped())
+            add(path.toString())
+        }
         return processor.run(command)
     }
 
