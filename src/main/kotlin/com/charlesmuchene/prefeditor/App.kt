@@ -25,7 +25,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.application
 import com.charlesmuchene.prefeditor.app.scaffold
 import com.charlesmuchene.prefeditor.app.svgResource
-import com.charlesmuchene.prefeditor.files.PrefEditorFiles
+import com.charlesmuchene.prefeditor.files.EditorFiles
 import com.charlesmuchene.prefeditor.navigation.*
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -41,7 +41,7 @@ fun main() {
 
     application {
         LaunchedEffect(Unit) {
-            PrefEditorFiles.initialize()
+            EditorFiles.initialize()
         }
         scaffold(icon = icon) { modifier ->
             // TODO Animate screen by sliding-left

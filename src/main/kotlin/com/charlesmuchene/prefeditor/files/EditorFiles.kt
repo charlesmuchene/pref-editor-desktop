@@ -25,13 +25,14 @@ import java.nio.file.Paths
 import kotlin.coroutines.CoroutineContext
 import kotlin.io.path.exists
 
-object PrefEditorFiles {
+object EditorFiles {
 
     private val context: CoroutineContext = Dispatchers.IO
 
     private const val DIR = ".pref-editor"
     private const val PUSH_FILE = "push.sh"
     private const val ADD_FILE = "add.sh"
+    private const val CHANGE_FILE = "change.sh"
     private const val DELETE_FILE = "delete.sh"
     private const val HOME_DIR = "user.home"
     private const val SCRIPTS_DIR = "scripts"
@@ -57,7 +58,7 @@ object PrefEditorFiles {
 
     private suspend fun copyScripts() = withContext(context) {
         val path = scriptsPath()
-        listOf(ADD_FILE, PUSH_FILE, DELETE_FILE).forEach { name ->
+        listOf(ADD_FILE, PUSH_FILE, DELETE_FILE, CHANGE_FILE).forEach { name ->
             copyScript(name = name, path = path.resolve(name))
         }
     }
@@ -68,11 +69,10 @@ object PrefEditorFiles {
         }
     }
 
-    // TODO Move to IO
-    fun preferencePath(): Path {
-        val path = appPath().resolve(PREFERENCES)
-        if (!path.exists()) writeEmptyPreferences(path)
-        return path
+    suspend fun preferencePath(): Path = withContext(context) {
+        appPath().resolve(PREFERENCES).also {
+            if (!it.exists()) writeEmptyPreferences(it)
+        }
     }
 
 }

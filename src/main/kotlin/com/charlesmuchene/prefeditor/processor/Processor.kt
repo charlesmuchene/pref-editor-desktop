@@ -16,7 +16,7 @@
 
 package com.charlesmuchene.prefeditor.processor
 
-import com.charlesmuchene.prefeditor.files.PrefEditorFiles
+import com.charlesmuchene.prefeditor.files.EditorFiles
 import kotlinx.coroutines.*
 import okio.Buffer
 import okio.buffer
@@ -35,7 +35,7 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
 
     suspend fun run(command: List<String>, config: ProcessBuilder.() -> Unit = {}) = withContext(context) {
         val builder = ProcessBuilder(command).apply {
-            environment()[PATH] += ":${PrefEditorFiles.appPath().pathString}"
+            environment()[PATH] += ":${EditorFiles.appPath().pathString}"
             redirectErrorStream(true)
             config()
         }

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.ui.theme
+package com.charlesmuchene.prefeditor.theme
 
 import org.jetbrains.skiko.SystemTheme
 import org.jetbrains.skiko.currentSystemTheme
 
-enum class PrefEditorTheme {
+enum class EditorTheme {
     Light, Dark, System;
 
     fun isDark(): Boolean = (if (this == System) fromSystemTheme(currentSystemTheme) else this) == Dark
 
-    fun switchTheme(): PrefEditorTheme = when (this) {
+    fun switchTheme(): EditorTheme = when (this) {
         Light -> Dark
         Dark -> System
         System -> Light
