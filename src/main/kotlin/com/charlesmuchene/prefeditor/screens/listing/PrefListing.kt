@@ -43,6 +43,7 @@ import com.charlesmuchene.prefeditor.ui.Listing
 import com.charlesmuchene.prefeditor.ui.ListingRow
 import com.charlesmuchene.prefeditor.ui.Loading
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -122,7 +123,7 @@ private fun PrefListingRow(
         Column(modifier = modifier.padding(4.dp)) {
             Text(text = prefFile.file.name, style = Typography.primary)
             Spacer(modifier = Modifier.height(2.dp))
-            Text(text = prefFile.file.type.text, style = Typography.secondary, color = Color.DarkGray)
+            Text(text = prefFile.file.type.text, style = Typography.secondary, color = JewelTheme.contentColor)
             Spacer(modifier = Modifier.height(2.dp))
         }
     }

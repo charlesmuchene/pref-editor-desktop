@@ -40,6 +40,7 @@ import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows.Set
 import com.charlesmuchene.prefeditor.ui.Toast
 import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 
@@ -133,7 +134,7 @@ private fun LazyListScope.sets(
             Text(
                 text = "(editing not yet supported)",
                 style = Typography.secondary,
-                color = Color.DarkGray
+                color = JewelTheme.contentColor,
             )
         }
     }

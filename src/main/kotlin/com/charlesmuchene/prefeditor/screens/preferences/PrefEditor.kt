@@ -16,18 +16,21 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
+import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.PrefKey
 import com.charlesmuchene.prefeditor.screens.preferences.PrefEditorViewModel.UIState
 import com.charlesmuchene.prefeditor.screens.preferences.editor.Editor
-import com.charlesmuchene.prefeditor.ui.Loading
 import com.charlesmuchene.prefeditor.ui.FullScreenText
+import com.charlesmuchene.prefeditor.ui.Loading
 
 @Composable
 fun PrefEditor(prefFile: PrefFile, app: App, device: Device, modifier: Modifier = Modifier) {
@@ -36,18 +39,20 @@ fun PrefEditor(prefFile: PrefFile, app: App, device: Device, modifier: Modifier 
     val viewModel = remember {
         PrefEditorViewModel(prefFile = prefFile, app = app, device = device, scope = scope, bridge = bridge)
     }
-    val state by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
-    when (state) {
-        is UIState.Error -> PrefError(modifier = modifier, message = (state as UIState.Error).message)
-        UIState.Loading -> PrefLoading(modifier = modifier)
-        is UIState.Success -> Editor(
-            app = app,
-            device = device,
-            modifier = modifier,
-            prefFile = prefFile,
-            preferences = (state as UIState.Success).preferences,
-        )
+    updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
+        when (state) {
+            is UIState.Error -> PrefError(modifier = modifier, message = state.message)
+            UIState.Loading -> PrefLoading(modifier = modifier)
+            is UIState.Success -> Editor(
+                app = app,
+                device = device,
+                modifier = modifier,
+                prefFile = prefFile,
+                preferences = state.preferences,
+            )
+        }
     }
 }
 
