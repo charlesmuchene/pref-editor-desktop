@@ -16,7 +16,6 @@
 
 package com.charlesmuchene.prefeditor.app
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -38,7 +37,7 @@ class AppState(val preferences: AppPreferences) {
         _toastMessage.emit(message)
     }
 
-    fun switchTheme() {
-        preferences.theme.switchTheme()
+    fun changeTheme(theme: EditorTheme) {
+        preferences.theme.changeTheme(theme)
     }
 }

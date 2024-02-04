@@ -17,9 +17,7 @@
 package com.charlesmuchene.prefeditor.app
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,12 +25,10 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.ApplicationKey.Title
-import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.*
 import com.charlesmuchene.prefeditor.ui.theme.teal
-import org.jetbrains.jewel.ui.component.Icon
-import org.jetbrains.jewel.ui.component.IconButton
-import org.jetbrains.jewel.ui.component.Text
-import org.jetbrains.jewel.ui.component.Tooltip
+import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme
+import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.*
+import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.window.DecoratedWindowScope
 import org.jetbrains.jewel.window.TitleBar
 import org.jetbrains.jewel.window.newFullscreenControls
@@ -46,9 +42,9 @@ fun DecoratedWindowScope.TitleBarView() {
     val title = LocalBundle.current[Title]
     TitleBar(modifier = Modifier.newFullscreenControls(), gradientStartColor = teal) {
         Text(text = title)
-        Row(modifier = Modifier.align(Alignment.End)) {
+        Row(modifier = Modifier.align(Alignment.End), verticalAlignment = Alignment.CenterVertically) {
             Tooltip(tooltip = {
-                Text("Open Pref Editor Github repository")
+                Text(text = "Open App's Github repository")
             }) {
                 IconButton(
                     onClick = {
@@ -63,39 +59,37 @@ fun DecoratedWindowScope.TitleBarView() {
                     )
                 }
             }
-            Tooltip(tooltip = {
-                val text = when (appState.theme) {
-                    Light -> "Switch to dark theme"
-                    Dark -> "Switch to system theme"
-                    System -> "Switch to light theme"
-                }
-                Text(text = text)
-            }) {
-                IconButton(
-                    onClick = { appState.switchTheme() },
-                    modifier = Modifier.size(40.dp).padding(5.dp)
-                ) {
-                    when (appState.theme) {
-                        Light -> Icon(
-                            resource = "icons/light-theme@20x20.svg",
-                            contentDescription = "Themes",
-                            iconClass = AppState::class.java,
-                        )
-
-                        Dark -> Icon(
-                            resource = "icons/dark-theme@20x20.svg",
-                            contentDescription = "Themes",
-                            iconClass = AppState::class.java,
-                        )
-
-                        System -> Icon(
-                            resource = "icons/system-theme@20x20.svg",
-                            contentDescription = "Themes",
-                            iconClass = AppState::class.java,
-                        )
+            Dropdown(menuContent = {
+                EditorTheme.entries.forEach { theme ->
+                    selectableItem(selected = appState.theme == theme, onClick = { appState.changeTheme(theme) }) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            theme.icon()
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = "${theme.name} Theme")
+                        }
                     }
                 }
+            }) {
+                Tooltip(tooltip = { Text(text = "Change theme") }) { appState.theme.icon() }
             }
         }
     }
+}
+
+@Composable
+private fun EditorTheme.icon() {
+    when (this) {
+        Dark -> themeIcon(resource = "dark", contentDescription = "Dark Theme")
+        Light -> themeIcon(resource = "light", contentDescription = "Light Theme")
+        System -> themeIcon(resource = "system", contentDescription = "System Theme")
+    }
+}
+
+@Composable
+private fun themeIcon(resource: String, contentDescription: String) {
+    Icon(
+        resource = "icons/$resource-theme@20x20.svg",
+        contentDescription = contentDescription,
+        iconClass = AppState::class.java,
+    )
 }

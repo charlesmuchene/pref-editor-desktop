@@ -21,7 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.files.EditorFiles
 import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
-import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.*
+import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.System
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,13 +48,9 @@ class ThemeUseCase(
         launch { saveFlow.throttleLatest(delayMillis = 2_000).collect(::saveTheme) }
     }
 
-    fun switchTheme() {
-        _theme.value = when (_theme.value) {
-            Light -> Dark
-            Dark -> System
-            System -> Light
-        }
-        launch { saveFlow.emit(_theme.value) }
+    fun changeTheme(theme: EditorTheme) {
+        _theme.value = theme
+        launch { saveFlow.emit(theme) }
     }
 
     suspend fun loadTheme() {
