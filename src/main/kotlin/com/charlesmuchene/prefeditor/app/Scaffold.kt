@@ -74,7 +74,7 @@ fun ApplicationScope.scaffold(icon: Painter, appState: AppState, content: @Compo
             Column(
                 modifier = Modifier
                     .background(JewelTheme.globalColors.paneBackground)
-                    .padding(start = padding, end = padding, top = 12.dp, bottom = padding)
+                    .padding(horizontal = padding, vertical = padding * 0.5f)
             ) {
                 content(Modifier.trackActivation().padding(top = 12.dp))
             }

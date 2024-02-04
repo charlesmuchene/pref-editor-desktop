@@ -42,7 +42,10 @@ import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.*
+import org.jetbrains.jewel.ui.component.CheckboxRow
+import org.jetbrains.jewel.ui.component.DefaultButton
+import org.jetbrains.jewel.ui.component.Divider
+import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Device, modifier: Modifier = Modifier) {
@@ -72,15 +75,13 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
         EditorTopBar(viewModel = viewModel)
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.fillMaxSize()) {
-            Column {
-                LazyColumn(modifier = Modifier.padding(end = padding), state = state) {
-                    primitives(primitiveEntries = primitiveEntries, viewModel = viewModel)
-                    sets(setEntries = setEntries, viewModel = viewModel)
-                }
+            LazyColumn(modifier = Modifier.padding(end = padding * 0.5f), state = state) {
+                primitives(primitiveEntries = primitiveEntries, viewModel = viewModel)
+                sets(setEntries = setEntries, viewModel = viewModel)
             }
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(scrollState = state),
-                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                modifier = Modifier.align(Alignment.CenterEnd).offset(x = padding * 0.5f).fillMaxHeight(),
             )
         }
     }
