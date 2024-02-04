@@ -16,6 +16,8 @@
 
 package com.charlesmuchene.prefeditor.app
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.preferences.AppPreferences
@@ -26,7 +28,7 @@ import kotlinx.coroutines.flow.SharedFlow
 class AppState(val preferences: AppPreferences) {
 
     val favorites = preferences.favorites
-    val theme: EditorTheme = preferences.theme.theme
+    val theme: EditorTheme by preferences.theme.theme
     val windowSize = DpSize(width = 1020.dp, height = 800.dp)
 
     private val _toastMessage = MutableSharedFlow<String?>()

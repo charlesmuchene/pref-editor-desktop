@@ -16,9 +16,8 @@
 
 package com.charlesmuchene.prefeditor.usecases.theme
 
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.charlesmuchene.prefeditor.files.EditorFiles
 import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
 import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.*
@@ -33,10 +32,11 @@ class ThemeUseCase(
     private val path: Path = EditorFiles.preferencesPath(),
 ) {
 
-    var theme: EditorTheme by mutableStateOf(System)
+    private val _theme = mutableStateOf(System)
+    var theme: State<EditorTheme> = _theme
 
     fun switchTheme() {
-        theme = when (theme) {
+        _theme.value = when (_theme.value) {
             Light -> Dark
             Dark -> System
             System -> Light
@@ -45,12 +45,12 @@ class ThemeUseCase(
 
     suspend fun loadTheme() {
         val decoded = codec.decode(path = path)
-        theme = decoded ?: System
+        _theme.value = decoded ?: System
         logger.debug { "Load Theme: $decoded" }
     }
 
     suspend fun saveTheme() {
-        val edit = codec.encode(theme = theme)
+        val edit = codec.encode(theme = _theme.value)
         val output = editor.edit(edit = edit, path = path)
         logger.debug { "Save Theme: $theme -> $output" }
     }
