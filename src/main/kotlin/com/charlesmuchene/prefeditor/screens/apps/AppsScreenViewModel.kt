@@ -81,7 +81,11 @@ class AppsScreenViewModel(
     }
 
     fun onFavorite(app: UIApp) {
-        launch { favorites.favoriteApp(app.app, device) }
+        launch {
+            if (app.isFavorite) favorites.unfavoriteApp(app = app.app, device = device)
+            else favorites.favoriteApp(app = app.app, device = device)
+            _uiState.emit(UIState.Apps(mapApps(apps)))
+        }
     }
 
     sealed interface UIState {

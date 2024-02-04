@@ -21,12 +21,10 @@ import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.files.EditorFiles
-import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.nio.file.Path
 import kotlin.coroutines.CoroutineContext
 
@@ -71,8 +69,8 @@ class FavoritesUseCase(
     private suspend fun removeFavorites(favorites: List<Favorite>) {
         val content = codec.encode(favorites = favorites, block = Edit::Delete)
         val output = editor.edit(edits = content, path = path)
+        if (output.isNotBlank()) logger.debug { "Remove favorites: $output" }
         refresh()
-        logger.debug { "Remove favorites: $output" }
     }
 
     suspend fun favoriteApp(app: App, device: Device) {
@@ -91,11 +89,11 @@ class FavoritesUseCase(
         removeFavorite(favorite = Favorite.Device(device.serial))
     }
 
-    suspend fun favoritePrefFile(file: PrefFile, app: App, device: Device) {
+    suspend fun favoriteFile(file: PrefFile, app: App, device: Device) {
         writeFavorite(favorite = Favorite.File(device = device.serial, app = app.packageName, file.name))
     }
 
-    suspend fun unfavoritePrefFile(file: PrefFile, app: App, device: Device) {
+    suspend fun unfavoriteFile(file: PrefFile, app: App, device: Device) {
         removeFavorite(favorite = Favorite.File(device = device.serial, app = app.packageName, file.name))
     }
 }

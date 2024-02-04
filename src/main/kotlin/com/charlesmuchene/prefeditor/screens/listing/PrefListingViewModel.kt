@@ -69,7 +69,11 @@ class PrefListingViewModel(
     }
 
     fun favorite(prefFile: UIPrefFile) {
-        launch { favorites.favoritePrefFile(file = prefFile.file, app = app, device = device) }
+        launch {
+            if (prefFile.isFavorite) favorites.unfavoriteFile(file = prefFile.file, app = app, device = device)
+            else favorites.favoriteFile(file = prefFile.file, app = app, device = device)
+            _uiState.emit(UIState.Files(map(files)))
+        }
     }
 
     private fun map(result: PrefFilesResult): UIState = when (result) {
@@ -77,7 +81,11 @@ class PrefListingViewModel(
         PrefFilesResult.EmptyPrefs,
         -> UIState.Empty
 
-        is PrefFilesResult.Files -> UIState.Files(map(result.files))
+        is PrefFilesResult.Files -> {
+            this@PrefListingViewModel.files.addAll(result.files)
+            UIState.Files(map(result.files))
+        }
+
         PrefFilesResult.NonDebuggable -> UIState.Error(message = "Selected app is non-debuggable")
     }
 
