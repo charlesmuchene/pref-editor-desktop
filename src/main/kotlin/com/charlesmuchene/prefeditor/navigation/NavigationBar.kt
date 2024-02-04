@@ -17,8 +17,10 @@
 package com.charlesmuchene.prefeditor.navigation
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,18 +28,23 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.*
+import org.jetbrains.jewel.ui.component.Divider
+import org.jetbrains.jewel.ui.component.RadioButtonChip
+import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.Typography
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
 
-    val screens = LocalNavigation.current.screens
+    val navigation = LocalNavigation.current
+    val screens by remember(current) { mutableStateOf(navigation.screens) }
 
     Column(modifier = modifier.fillMaxWidth()) {
         FlowRow(
             modifier = Modifier,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             screens.forEach { screen ->
                 page(screen = screen, selected = current == screen)
