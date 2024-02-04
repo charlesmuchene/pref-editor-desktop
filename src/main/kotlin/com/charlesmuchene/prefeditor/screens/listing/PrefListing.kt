@@ -16,6 +16,8 @@
 
 package com.charlesmuchene.prefeditor.screens.listing
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -28,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.extensions.OnFavorite
+import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
@@ -58,17 +61,15 @@ fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
             favorites = appState.favorites,
         )
     }
-    val state by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
-    when (state) {
-        UIState.Empty -> PrefListingEmpty(modifier = modifier)
-        is UIState.Error -> PrefListingError(modifier = modifier, message = (state as UIState.Error).message)
-        UIState.Loading -> PrefListingLoading(modifier = modifier)
-        is UIState.Files -> PrefListingSuccess(
-            modifier = modifier,
-            viewModel = viewModel,
-            prefFiles = (state as UIState.Files).files,
-        )
+    updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
+        when (state) {
+            UIState.Empty -> PrefListingEmpty(modifier = modifier)
+            UIState.Loading -> PrefListingLoading(modifier = modifier)
+            is UIState.Error -> PrefListingError(modifier = modifier, message = state.message)
+            is UIState.Files -> PrefListingSuccess(modifier = modifier, viewModel = viewModel, prefFiles = state.files)
+        }
     }
 }
 

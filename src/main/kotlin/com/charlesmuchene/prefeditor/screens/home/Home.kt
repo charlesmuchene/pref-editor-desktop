@@ -22,6 +22,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.bridge.BridgeStatus.*
+import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.screens.bridge.BridgeLoading
 import com.charlesmuchene.prefeditor.screens.bridge.BridgeUnavailable
@@ -35,8 +36,8 @@ fun Home(modifier: Modifier = Modifier) {
     val viewModel = remember { HomeViewModel(scope = scope, bridge = bridge) }
     val bridgeStatus by viewModel.bridgeStatus.collectAsState()
 
-    updateTransition(bridgeStatus).AnimatedContent {
-        when (it) {
+    updateTransition(bridgeStatus).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { status ->
+        when (status) {
             Available -> DevicesScreen(modifier = modifier)
             Unknown -> BridgeLoading(modifier = modifier)
             Unavailable -> BridgeUnavailable(modifier = modifier)

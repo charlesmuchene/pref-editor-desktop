@@ -16,6 +16,8 @@
 
 package com.charlesmuchene.prefeditor.screens.device
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
@@ -23,6 +25,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
@@ -53,16 +56,17 @@ fun DevicesScreen(modifier: Modifier = Modifier) {
             favorites = appState.favorites,
         )
     }
-    val state by viewModel.uiState.collectAsState()
-
-    when (state) {
-        UIState.Error -> DeviceListError(modifier = modifier)
-        UIState.NoDevices -> NoDevices(modifier = modifier)
-        is UIState.Devices -> DeviceList(
-            devices = (state as UIState.Devices).devices,
-            modifier = modifier,
-            viewModel = viewModel
-        )
+    val uiState by viewModel.uiState.collectAsState()
+    updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
+        when (state) {
+            UIState.Error -> DeviceListError(modifier = modifier)
+            UIState.NoDevices -> NoDevices(modifier = modifier)
+            is UIState.Devices -> DeviceList(
+                devices = state.devices,
+                viewModel = viewModel,
+                modifier = modifier,
+            )
+        }
     }
 
     // TODO Collect similar values

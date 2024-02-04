@@ -16,6 +16,8 @@
 
 package com.charlesmuchene.prefeditor.screens.apps
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
@@ -23,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.extensions.OnFavorite
+import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBridge
@@ -53,12 +56,20 @@ fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
             favorites = appState.favorites,
         )
     }
-    val state by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
-    when (state) {
-        UIState.Loading -> LoadingApps(modifier = modifier)
-        UIState.Error -> LoadingAppError(modifier = modifier)
-        is UIState.Apps -> AppListing(apps = (state as UIState.Apps).apps, modifier = modifier, viewModel = viewModel)
+    updateTransition(uiState).AnimatedContent(
+        transitionSpec = { screenTransitionSpec() },
+    ) { state ->
+        when (state) {
+            UIState.Loading -> LoadingApps(modifier = modifier)
+            UIState.Error -> LoadingAppError(modifier = modifier)
+            is UIState.Apps -> AppListing(
+                apps = state.apps,
+                modifier = modifier,
+                viewModel = viewModel
+            )
+        }
     }
 }
 

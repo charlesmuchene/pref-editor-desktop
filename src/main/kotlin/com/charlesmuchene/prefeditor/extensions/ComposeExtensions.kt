@@ -16,6 +16,8 @@
 
 package com.charlesmuchene.prefeditor.extensions
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
@@ -37,3 +39,11 @@ fun rememberIconPainter(name: String, extension: IconExtension = SVG): State<Pai
 
 @Composable
 fun Modifier.pointerOnHover() = pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+
+fun screenTransitionSpec(): ContentTransform =
+    (fadeIn(animationSpec = tween(durationMillis = 220, delayMillis = 90)) +
+            scaleIn(initialScale = 0.92f, animationSpec = tween(durationMillis = 220, delayMillis = 90)))
+        .togetherWith(
+            fadeOut(animationSpec = tween(durationMillis = 300)) +
+                    scaleOut(targetScale = .92f, animationSpec = tween(durationMillis = 220))
+        )
