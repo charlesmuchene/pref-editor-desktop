@@ -35,7 +35,7 @@ import org.jetbrains.jewel.ui.component.Typography
 fun SetupWindow() {
     IntUiTheme(isDark = true) {
         val title = "Preference Editor"
-        DialogWindow(onCloseRequest = {}, title = title, undecorated = true) {
+        DialogWindow(onCloseRequest = {}, title = title, undecorated = true, resizable = false) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
