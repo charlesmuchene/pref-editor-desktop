@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.files
 
+import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import java.nio.file.Files
 import java.nio.file.Path
@@ -40,20 +41,26 @@ object EditorFiles {
 
     fun preferencesPath(): Path = appPath.resolve(PREFERENCES)
 
-    fun initialize() {
-        appPath.run { if (!exists()) Files.createDirectory(this) }
-        preferencesPath().run { if (!exists()) writeEmptyPreferences(this) }
+    fun initialize(codec: PreferencesCodec) {
+        ensurePathExists(path = appPath)
+        createAppPreferences(path = preferencesPath(), codec = codec)
         copyScripts()
     }
 
-    private fun writeEmptyPreferences(path: Path) {
-        val content = PreferencesCodec().encodeDocument()
-        Files.writeString(path, content)
+    private fun ensurePathExists(path: Path) {
+        if (path.exists()) return
+        Files.createDirectory(path)
+    }
+
+    private fun createAppPreferences(path: Path, codec: PreferencesCodec) {
+        if (path.exists()) return
+        val content = codec.encodeDocument { tag("version") { text("1.0") } }
+        Files.writeString(path, content.trim())
     }
 
     // TODO Move to scripts dir
     private fun scriptsPath(): Path = appPath.apply {
-        if (!exists()) Files.createDirectory(this)
+        ensurePathExists(this)
     }
 
     private fun copyScripts() {

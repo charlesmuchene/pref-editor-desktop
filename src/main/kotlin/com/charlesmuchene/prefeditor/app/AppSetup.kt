@@ -18,11 +18,15 @@ package com.charlesmuchene.prefeditor.app
 
 import com.charlesmuchene.prefeditor.files.EditorFiles
 import com.charlesmuchene.prefeditor.preferences.AppPreferences
+import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
+import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 suspend fun appSetup(): AppState = withContext(Dispatchers.IO) {
-    EditorFiles.initialize()
-    val preferences = AppPreferences().apply { initialize() }
+    val codec = PreferencesCodec()
+    val editor = PreferenceEditor()
+    EditorFiles.initialize(codec = codec)
+    val preferences = AppPreferences(codec = codec, editor = editor).apply { initialize() }
     AppState(preferences = preferences)
 }
