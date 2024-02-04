@@ -23,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.application
+import com.charlesmuchene.prefeditor.app.AppWindow
 import com.charlesmuchene.prefeditor.app.scaffold
 import com.charlesmuchene.prefeditor.app.svgResource
 import com.charlesmuchene.prefeditor.files.EditorFiles
@@ -43,31 +44,7 @@ fun main() {
         LaunchedEffect(Unit) {
             EditorFiles.initialize()
         }
-        scaffold(icon = icon) { modifier ->
-            // TODO Animate screen by sliding-left
 
-            val screen by LocalNavigation.current.current.collectAsState()
-            NavigationBar(screen)
-
-            val message by LocalAppState.current.toastMessage.collectAsState(initial = null)
-            message?.let { Toast(text = it) }
-
-            when (screen) {
-                HomeScreen -> Home(modifier = modifier)
-                is AppsScreen -> AppsScreen(modifier = modifier, device = (screen as AppsScreen).device)
-                is PrefListScreen -> PrefListing(
-                    modifier = modifier,
-                    device = (screen as PrefListScreen).device,
-                    app = (screen as PrefListScreen).app
-                )
-
-                is PrefEditScreen -> PrefEditor(
-                    app = (screen as PrefEditScreen).app,
-                    modifier = modifier,
-                    device = (screen as PrefEditScreen).device,
-                    prefFile = (screen as PrefEditScreen).prefFile,
-                )
-            }
-        }
+        AppWindow(icon)
     }
 }
