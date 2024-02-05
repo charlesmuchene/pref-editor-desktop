@@ -61,7 +61,7 @@ fun EntryAction(uiEntry: UIEntry, modifier: Modifier = Modifier, onEntryAction: 
             Icon(
                 painter = deletePainter,
                 contentDescription = "Delete",
-                tint = if (state.isEnabled) Color.Black else Color.LightGray,
+                tint = if (state.isEnabled) Color.Red else Color.LightGray,
                 modifier = Modifier.pointerOnHover().size(24.dp).padding(4.dp),
             )
         }
