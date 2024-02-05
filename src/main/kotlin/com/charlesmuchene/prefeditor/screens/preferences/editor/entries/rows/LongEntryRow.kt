@@ -16,55 +16,16 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import com.charlesmuchene.prefeditor.data.LongEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
-import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
 import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
-import com.charlesmuchene.prefeditor.ui.theme.Typography
-import org.jetbrains.jewel.ui.Outline
-import org.jetbrains.jewel.ui.component.Text
-import org.jetbrains.jewel.ui.component.TextField
 
 @Composable
 fun LongEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
-    val entry = uiEntry.entry as? LongEntry ?: return
+    if (uiEntry.entry !is LongEntry) return
 
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(componentSpacing),
-    ) {
-        Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(NAME_COMPONENT_WEIGHT))
-        var value by remember { mutableStateOf(entry.value) }
-        var outline by remember { mutableStateOf(Outline.None) }
-        TextField(
-            value = value,
-            outline = outline,
-            onValueChange = { changed ->
-                value = changed
-                outline = viewModel.outline(entry)
-                viewModel.entryAction(EntryAction.Change(entry = entry, change = changed))
-            },
-            placeholder = { Text(text = entry.value) },
-            modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT),
-            keyboardOptions = KeyboardOptions(autoCorrect = false, keyboardType = KeyboardType.Number),
-        )
-        EntryAction(
-            modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
-            onEntryAction = viewModel::entryAction,
-            uiEntry = uiEntry,
-        )
-
-    }
+    PrimitiveEntryRow(entry = uiEntry, viewModel = viewModel, keyboardType = KeyboardType.Number, modifier = modifier)
 }

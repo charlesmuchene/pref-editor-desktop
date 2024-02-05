@@ -16,54 +16,16 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import com.charlesmuchene.prefeditor.data.IntEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
-import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
 import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
-import com.charlesmuchene.prefeditor.ui.theme.Typography
-import org.jetbrains.jewel.ui.component.Text
-import org.jetbrains.jewel.ui.component.TextField
 
 @Composable
 fun IntEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
-    val entry = uiEntry.entry as? IntEntry ?: return
+    if (uiEntry.entry !is IntEntry) return
 
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(componentSpacing)
-    ) {
-        Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(NAME_COMPONENT_WEIGHT))
-        var localUIEntry by remember(uiEntry) { mutableStateOf(uiEntry) }
-        val outline by remember(localUIEntry) { mutableStateOf(viewModel.outline(entry = localUIEntry.entry)) }
-
-        TextField(
-            outline = outline,
-            value = localUIEntry.entry.value,
-            placeholder = { Text(text = entry.value) },
-            modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT),
-            keyboardOptions = KeyboardOptions(autoCorrect = false, keyboardType = KeyboardType.Number),
-            onValueChange = { changed ->
-                val change = EntryAction.Change(entry = localUIEntry.entry, change = changed)
-                localUIEntry = viewModel.entryAction(change)
-            },
-        )
-
-        EntryAction(
-            onEntryAction = { localUIEntry = viewModel.entryAction(it) },
-            modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
-            uiEntry = localUIEntry,
-        )
-    }
+    PrimitiveEntryRow(entry = uiEntry, viewModel = viewModel, keyboardType = KeyboardType.Number, modifier = modifier)
 }

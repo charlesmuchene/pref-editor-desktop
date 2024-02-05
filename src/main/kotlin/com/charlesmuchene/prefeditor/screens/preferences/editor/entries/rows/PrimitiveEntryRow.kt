@@ -18,11 +18,11 @@ package com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.BooleanEntry
+import androidx.compose.ui.text.input.KeyboardType
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
 import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
@@ -31,47 +31,37 @@ import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COM
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
 import com.charlesmuchene.prefeditor.ui.theme.Typography
-import org.jetbrains.jewel.ui.component.RadioButtonRow
 import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.TextField
 
 @Composable
-fun BooleanEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
-    val entry = uiEntry.entry as? BooleanEntry ?: return
+fun PrimitiveEntryRow(
+    entry: UIEntry,
+    viewModel: EditorViewModel,
+    keyboardType: KeyboardType,
+    modifier: Modifier = Modifier,
+) {
 
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(componentSpacing)
     ) {
-        Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(NAME_COMPONENT_WEIGHT))
+        Text(text = entry.entry.name, style = Typography.secondary, modifier = Modifier.weight(NAME_COMPONENT_WEIGHT))
+        var localUIEntry by remember(entry) { mutableStateOf(entry) }
+        val outline by remember(localUIEntry) { mutableStateOf(viewModel.outline(entry = localUIEntry.entry)) }
 
-        var localUIEntry by remember(uiEntry) { mutableStateOf(uiEntry) }
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT)) {
-            val trueString by remember() { mutableStateOf(true.toString()) }
-            val falseString by remember() { mutableStateOf(false.toString()) }
-            val outline by remember(localUIEntry) { mutableStateOf(viewModel.outline(entry = localUIEntry.entry)) }
-            var isTrue by remember(localUIEntry) { mutableStateOf(localUIEntry.entry.value) }
-
-            RadioButtonRow(
-                selected = isTrue.toBooleanStrict(),
-                outline = outline,
-                onClick = {
-                    isTrue = trueString
-                    val change = EntryAction.Change(entry = localUIEntry.entry, change = trueString)
-                    localUIEntry = viewModel.entryAction(change)
-                },
-            ) { Text(text = "True") }
-
-            RadioButtonRow(
-                selected = !isTrue.toBooleanStrict(),
-                outline = outline,
-                onClick = {
-                    isTrue = falseString
-                    val change = EntryAction.Change(entry = localUIEntry.entry, change = falseString)
-                    localUIEntry = viewModel.entryAction(change)
-                },
-            ) { Text(text = "False") }
-        }
+        TextField(
+            outline = outline,
+            value = localUIEntry.entry.value,
+            placeholder = { Text(text = entry.entry.value) },
+            modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT),
+            keyboardOptions = KeyboardOptions(autoCorrect = false, keyboardType = keyboardType),
+            onValueChange = { changed ->
+                val change = EntryAction.Change(entry = localUIEntry.entry, change = changed)
+                localUIEntry = viewModel.entryAction(change)
+            },
+        )
 
         EntryAction(
             onEntryAction = { localUIEntry = viewModel.entryAction(it) },
