@@ -16,6 +16,8 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.editor
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.command.WritePref
@@ -62,7 +64,11 @@ class EditorViewModel(
     private val _message = MutableSharedFlow<String?>()
     private val changes = MutableSharedFlow<CharSequence>()
     private val edits = preferences.entries.associate(Entry::toPair).toMutableMap()
-    val prefs = preferences.entries.map(::UIEntry).partition { it.entry is SetEntry }
+
+    private val original = preferences.entries.associate { it.name to it.value }
+    private val edited = preferences.entries.map(::UIEntry).associateBy { it.entry.name }.toMutableMap()
+    private val _entries = mutableStateOf(edited.values.toList())
+    val entries: State<List<UIEntry>> = _entries
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     val enableSave: StateFlow<Boolean> = changes
@@ -143,8 +149,20 @@ class EditorViewModel(
     }
 
     private fun entryChanged(entry: Entry, change: String) {
+        val value = edited[entry.name] ?: return
         launch { changes.emit(change) }
-        val value = edits[entry.name] ?: return
-        edits[entry.name] = value.copy(second = change)
+
+        val newEntry = when (val oldEntry = value.entry) {
+            is BooleanEntry -> oldEntry.copy(value = change)
+            is FloatEntry -> oldEntry.copy(value = change)
+            is IntEntry -> oldEntry.copy(value = change)
+            is LongEntry -> oldEntry.copy(value = change)
+            is StringEntry -> oldEntry.copy(value = change)
+            else -> error("Changing $oldEntry is not supported")
+        }
+
+        val state = if (original[entry.name] == newEntry.value) EntryState.None else EntryState.Changed
+        edited[entry.name] = UIEntry(entry = newEntry, state = state)
+        _entries.value = edited.values.toList()
     }
 }

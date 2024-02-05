@@ -67,8 +67,8 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
         )
     }
 
-    val (setEntries, primitiveEntries) = viewModel.prefs
-
+    val entries by viewModel.entries
+    val (setEntries, primitiveEntries) = entries.partition { it.entry is SetEntry }
 
     Column(modifier = modifier.fillMaxSize()) {
         val endPadding = padding * 0.5f
@@ -150,10 +150,7 @@ private fun LazyListScope.sets(
     }
 }
 
-private fun LazyListScope.primitives(
-    primitiveEntries: List<UIEntry>,
-    viewModel: EditorViewModel,
-) {
+private fun LazyListScope.primitives(primitiveEntries: List<UIEntry>, viewModel: EditorViewModel) {
     items(items = primitiveEntries, key = { it.entry.name }) { entry ->
         val entryModifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
         PrimitiveEntry(entry = entry, modifier = entryModifier, viewModel = viewModel)
