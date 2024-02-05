@@ -91,9 +91,10 @@ class PreferenceEditor(
         return delete(content = edit.matcher, path = path, processor = processor)
     }
 
-    private suspend fun delete(edits: List<Edit.Delete>, path: Path, processor: Processor): String {
-        return buildString {
-            edits.forEach { edit -> append(delete(edit = edit, path = path, processor = processor)) }
+    private suspend fun delete(edits: List<Edit.Delete>, path: Path, processor: Processor): String = buildString {
+        edits.forEach { edit ->
+            append(delete(edit = edit, path = path, processor = processor))
+            append(System.lineSeparator())
         }
     }
 
