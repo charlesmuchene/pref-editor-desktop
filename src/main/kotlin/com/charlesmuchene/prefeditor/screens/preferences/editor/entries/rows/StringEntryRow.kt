@@ -54,7 +54,7 @@ fun StringEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modif
             placeholder = { Text(text = entry.value) },
             modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT),
             keyboardOptions = KeyboardOptions(autoCorrect = false),
-            outline = viewModel.outline(entry = entry, value = value),
+            outline = viewModel.outline(entry = entry),
         )
         EntryAction(
             modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),

@@ -54,7 +54,7 @@ fun BooleanEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modi
                     isTrue = trueString
                     viewModel.entryAction(EntryAction.Change(entry = entry, change = trueString))
                 },
-                outline = viewModel.outline(entry = entry, value = trueString)
+                outline = viewModel.outline(entry = entry)
             ) {
                 Text(text = "True")
             }
@@ -64,7 +64,7 @@ fun BooleanEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modi
                     isTrue = falseString
                     viewModel.entryAction(EntryAction.Change(entry = entry, change = falseString))
                 },
-                outline = viewModel.outline(entry = entry, value = falseString)
+                outline = viewModel.outline(entry = entry)
             ) {
                 Text(text = "False")
             }

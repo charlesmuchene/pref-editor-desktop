@@ -66,6 +66,8 @@ class EditorViewModel(
     private val edits = preferences.entries.associate(Entry::toPair).toMutableMap()
 
     private val original = preferences.entries.associate { it.name to it.value }
+
+    // TODO Rename to edits
     private val edited = preferences.entries.map(::UIEntry).associateBy { it.entry.name }.toMutableMap()
     private val _entries = mutableStateOf(edited.values.toList())
     val entries: State<List<UIEntry>> = _entries
@@ -78,17 +80,21 @@ class EditorViewModel(
     fun createSetSubEntries(entry: SetEntry): Pair<SetSubEntry.Header, List<SetSubEntry.Entry>> =
         Pair(SetSubEntry.Header(entry.name), entry.entries.map(SetSubEntry::Entry))
 
-    fun outline(entry: Entry, value: String): Outline = when (entry) {
-        is FloatEntry, is IntEntry, is LongEntry -> numberOutline(entry = entry, value = value)
-
-        is BooleanEntry, is StringEntry -> if (entry.value == value) Outline.None else Outline.Warning
-
+    /**
+     * Determine entry outline
+     *
+     * @param entry Edited [Entry]
+     * @return UI [Outline] to apply
+     */
+    fun outline(entry: Entry): Outline = when (entry) {
+        is FloatEntry, is IntEntry, is LongEntry -> numberOutline(entry = entry)
+        is BooleanEntry, is StringEntry -> if (original[entry.name] == entry.value) Outline.None else Outline.Warning
         else -> Outline.None
     }
 
-    private fun numberOutline(entry: Entry, value: String): Outline {
-        if (entry.value == value) return Outline.None
-        return if (validator.isValid(entry, value)) Outline.Warning else Outline.Error
+    private fun numberOutline(entry: Entry): Outline {
+        if (original[entry.name] == entry.value) return Outline.None
+        return if (validator.isValid(entry = entry)) Outline.Warning else Outline.Error
     }
 
     fun save() {
@@ -132,37 +138,41 @@ class EditorViewModel(
         }
     }
 
-    fun entryAction(action: EntryAction) {
-        when (action) {
-            is EntryAction.Change -> entryChanged(action.entry, action.change)
-            is EntryAction.Delete -> entryDeleted(action.entry)
-            is EntryAction.Reset -> entryReset(action.entry)
-        }
+    fun entryAction(action: EntryAction): UIEntry = when (action) {
+        is EntryAction.Change -> entryChanged(action.entry, action.change)
+        is EntryAction.Delete -> entryDeleted(action.entry)
+        is EntryAction.Reset -> entryReset(action.entry)
     }
 
-    private fun entryReset(entry: Entry) {
-
+    private fun entryReset(entry: Entry): UIEntry {
+        val value = original[entry.name] ?: error("Missing entry value ${entry.name}")
+        return UIEntry(createEntry(oldEntry = entry, value = value)).also { edited[entry.name] = it }
     }
 
-    private fun entryDeleted(entry: Entry) {
-
+    private fun entryDeleted(entry: Entry): UIEntry {
+        return UIEntry(entry = entry, state = EntryState.Deleted)
     }
 
-    private fun entryChanged(entry: Entry, change: String) {
-        val value = edited[entry.name] ?: return
+    private fun entryChanged(entry: Entry, change: String): UIEntry {
         launch { changes.emit(change) }
 
-        val newEntry = when (val oldEntry = value.entry) {
-            is BooleanEntry -> oldEntry.copy(value = change)
-            is FloatEntry -> oldEntry.copy(value = change)
-            is IntEntry -> oldEntry.copy(value = change)
-            is LongEntry -> oldEntry.copy(value = change)
-            is StringEntry -> oldEntry.copy(value = change)
-            else -> error("Changing $oldEntry is not supported")
-        }
-
+        val newEntry = createEntry(oldEntry = entry, value = change)
         val state = if (original[entry.name] == newEntry.value) EntryState.None else EntryState.Changed
-        edited[entry.name] = UIEntry(entry = newEntry, state = state)
-        _entries.value = edited.values.toList()
+        return UIEntry(entry = newEntry, state = state).also { edited[entry.name] = it }
+    }
+
+    /**
+     * Create an entry
+     *
+     * @param oldEntry Existing [Entry] to evaluate type
+     * @param value Entry value
+     */
+    private fun createEntry(oldEntry: Entry, value: String) = when (oldEntry) {
+        is BooleanEntry -> BooleanEntry(oldEntry.name, value = value)
+        is FloatEntry -> FloatEntry(oldEntry.name, value = value)
+        is IntEntry -> IntEntry(oldEntry.name, value = value)
+        is LongEntry -> LongEntry(oldEntry.name, value = value)
+        is StringEntry -> StringEntry(oldEntry.name, value = value)
+        else -> error("Changing $oldEntry is not supported")
     }
 }

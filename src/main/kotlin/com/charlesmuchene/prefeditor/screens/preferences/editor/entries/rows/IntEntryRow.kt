@@ -26,14 +26,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.charlesmuchene.prefeditor.data.IntEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
-import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryState
 import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
 import com.charlesmuchene.prefeditor.ui.theme.Typography
-import org.jetbrains.jewel.ui.Outline
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 
@@ -47,24 +45,25 @@ fun IntEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifier
         horizontalArrangement = Arrangement.spacedBy(componentSpacing)
     ) {
         Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(NAME_COMPONENT_WEIGHT))
-        var value by remember { mutableStateOf(entry.value) }
-        var outline by remember { mutableStateOf(Outline.None) }
+        var localUIEntry by remember(uiEntry) { mutableStateOf(uiEntry) }
+        val outline by remember(localUIEntry) { mutableStateOf(viewModel.outline(entry = localUIEntry.entry)) }
+
         TextField(
-            value = value,
             outline = outline,
-            onValueChange = { changed ->
-                value = changed
-                outline = viewModel.outline(entry, value)
-                viewModel.entryAction(EntryAction.Change(entry = entry, change = changed))
-            },
+            value = localUIEntry.entry.value,
             placeholder = { Text(text = entry.value) },
             modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT),
             keyboardOptions = KeyboardOptions(autoCorrect = false, keyboardType = KeyboardType.Number),
+            onValueChange = { changed ->
+                val change = EntryAction.Change(entry = localUIEntry.entry, change = changed)
+                localUIEntry = viewModel.entryAction(change)
+            },
         )
+
         EntryAction(
+            onEntryAction = { localUIEntry = viewModel.entryAction(it) },
             modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
-            onEntryAction = viewModel::entryAction,
-            uiEntry = uiEntry,
+            uiEntry = localUIEntry,
         )
     }
 }

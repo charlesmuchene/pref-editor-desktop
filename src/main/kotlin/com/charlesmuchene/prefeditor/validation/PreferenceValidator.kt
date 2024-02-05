@@ -46,7 +46,7 @@ class PreferenceValidator(private val original: List<Entry>) {
         else -> error("Unsupported entry: $klass")
     }
 
-    fun isValid(entry: Entry, value: String): Boolean = isValid(entry::class to value)
+    fun isValid(entry: Entry): Boolean = isValid(entry::class to entry.value)
 
     fun isValid(edits: Map<String, Pair<KClass<out Entry>, String>>): Boolean =
         edits.entries.fold(true) { accumulator, entry ->

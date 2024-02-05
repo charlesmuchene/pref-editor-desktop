@@ -53,7 +53,7 @@ fun LongEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifie
             outline = outline,
             onValueChange = { changed ->
                 value = changed
-                outline = viewModel.outline(entry, value)
+                outline = viewModel.outline(entry)
                 viewModel.entryAction(EntryAction.Change(entry = entry, change = changed))
             },
             placeholder = { Text(text = entry.value) },

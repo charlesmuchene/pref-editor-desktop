@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.charlesmuchene.prefeditor.data.FloatEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
-import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryState
 import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
@@ -54,7 +53,7 @@ fun FloatEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifi
             value = value,
             onValueChange = { changed ->
                 value = changed
-                outline = viewModel.outline(entry, value)
+                outline = viewModel.outline(entry)
                 viewModel.entryAction(EntryAction.Change(entry = entry, change = changed))
             },
             placeholder = { Text(text = entry.value) },
