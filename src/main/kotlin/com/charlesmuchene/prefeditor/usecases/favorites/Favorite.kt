@@ -17,7 +17,7 @@
 package com.charlesmuchene.prefeditor.usecases.favorites
 
 /**
- * A developer favorite
+ * A developer's favorite
  *
  * Example representation in the preference file:
  *

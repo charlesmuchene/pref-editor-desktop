@@ -23,9 +23,10 @@ import com.charlesmuchene.prefeditor.data.Devices
 
 class ListDevicesUseCase(private val bridge: Bridge) {
 
+    private val command = ListDevices()
     val devices = mutableListOf<Device>()
 
-    suspend fun list(): Result<Devices> = bridge.execute(command = ListDevices()).also { result ->
+    suspend fun list(): Result<Devices> = bridge.execute(command = command).also { result ->
         result.onSuccess { devices ->
             this@ListDevicesUseCase.devices.clear()
             this.devices.addAll(devices)

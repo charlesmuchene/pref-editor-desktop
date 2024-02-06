@@ -19,6 +19,11 @@ package com.charlesmuchene.prefeditor.validation
 import com.charlesmuchene.prefeditor.data.*
 import kotlin.reflect.KClass
 
+/**
+ * Validates edited preference entries
+ *
+ * @param original Preferences read from disk/device
+ */
 class PreferenceValidator(private val original: List<Entry>) {
 
     fun validEdits(edits: Map<String, Pair<KClass<out Entry>, String>>): Boolean =
@@ -46,10 +51,36 @@ class PreferenceValidator(private val original: List<Entry>) {
         else -> error("Unsupported entry: $klass")
     }
 
-    fun isValid(entry: Entry): Boolean = isValid(entry::class to entry.value)
+    /**
+     * Determine the validity of the edited entries
+     *
+     * @param edits A developer's edits
+     * @return `true` if all edits are valid, `false` otherwise
+     */
+    fun valid(edits: List<Entry>): Boolean = edits.all(::isValid)
 
+    /**
+     * Determine the validity of the edited entry
+     *
+     * @param entry Edited [Entry]
+     * @return `true` if valid, `false` otherwise
+     */
+    fun isValid(entry: Entry): Boolean = when (entry) {
+        is SetEntry, is StringEntry -> true
+        is IntEntry -> entry.value.toIntOrNull() != null
+        is LongEntry -> entry.value.toLongOrNull() != null
+        is FloatEntry -> entry.value.toFloatOrNull() != null
+        is BooleanEntry -> entry.value.toBooleanStrictOrNull() != null
+    }
+
+    /**
+     * Determine the validity of edits
+     *
+     * @param edits A mapping of developer edits
+     * @return `true` if all edits are valid, `false` otherwise
+     */
     fun isValid(edits: Map<String, Pair<KClass<out Entry>, String>>): Boolean =
-        edits.entries.fold(true) { accumulator, entry ->
+        edits.entries.fold(initial = true) { accumulator, entry ->
             accumulator && isValid(pair = entry.value)
         }
 

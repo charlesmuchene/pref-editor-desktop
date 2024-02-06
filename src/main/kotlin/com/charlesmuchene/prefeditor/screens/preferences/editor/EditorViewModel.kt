@@ -28,9 +28,12 @@ import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.SetSubEn
 import com.charlesmuchene.prefeditor.validation.PreferenceValidator
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import org.jetbrains.jewel.ui.Outline
+import kotlin.coroutines.CoroutineContext
 
 private val logger = KotlinLogging.logger {}
 
@@ -60,8 +63,9 @@ class EditorViewModel(
     private val scope: CoroutineScope,
     private val navigation: Navigation,
     private val preferences: Preferences,
+    private val context: CoroutineContext = Dispatchers.Default,
     private val validator: PreferenceValidator = PreferenceValidator(original = preferences.entries),
-) : CoroutineScope by scope {
+) : CoroutineScope by scope + context {
 
     private var enableBackup = false
     private val _message = MutableSharedFlow<String?>()
@@ -78,7 +82,7 @@ class EditorViewModel(
 
     val enableSave: StateFlow<Boolean> = changes
         .map { validator.validEdits(edits) }
-        .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = false)
+        .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = true)
 
     /**
      * Create entries to display a string set
@@ -88,6 +92,60 @@ class EditorViewModel(
      */
     fun createSubEntries(entry: SetEntry): Pair<SetSubEntry.Header, List<SetSubEntry.Entry>> =
         Pair(SetSubEntry.Header(entry.name), entry.entries.map(SetSubEntry::Entry))
+
+    /**
+     * Save edits
+     */
+    fun save() {
+        launch {
+            val entries = edited.values.filter { it.state == EntryState.Changed }.map(UIEntry::entry)
+            val isValid = validator.valid(entries)
+            if (isValid) saveChanges() else showInvalidEdits()
+        }
+        logger.debug { "$edited" }
+    }
+
+    /**
+     * Notify the developer of invalid edits
+     */
+    private fun showInvalidEdits() {
+        val message = "Invalid edits"
+        launch { _message.emit(message) }
+        logger.info { "$message: $edits" }
+    }
+
+    private suspend fun saveChanges() {
+        val preferences = validator.editsToPreferences(edits = edits)
+        val command = WritePref(
+            app = app,
+            device = device,
+            prefFile = prefFile,
+            preferences = preferences,
+            enableBackup = enableBackup,
+        )
+        val result = bridge.execute(command)
+        when {
+            result.isSuccess -> {
+                appState.showToast("'${prefFile.name}' saved successfully!")
+                navigation.navigate(screen = PrefListScreen(app = app, device = device))
+            }
+
+            else -> {
+                val message = "Error saving preferences"
+                _message.emit(message)
+                logger.error(result.exceptionOrNull()) { message }
+            }
+        }
+    }
+
+    /**
+     * Enable or disable preference file backup
+     *
+     * @param backup `true` to back up file, `false` otherwise
+     */
+    fun backup(backup: Boolean) {
+        enableBackup = backup
+    }
 
     /**
      * Determine entry outline
@@ -110,52 +168,6 @@ class EditorViewModel(
     private fun numberOutline(entry: Entry): Outline {
         if (original[entry.name] == entry.value) return Outline.None
         return if (validator.isValid(entry = entry)) Outline.Warning else Outline.Error
-    }
-
-    fun save() {
-        launch {
-            val isValid = validator.isValid(edits = edits)
-            if (isValid) pushPrefs() else invalidEdits()
-        }
-    }
-
-    /**
-     * Enable or disable preference file backup
-     *
-     * @param backup `true` to back up file, `false` otherwise
-     */
-    fun backup(backup: Boolean) {
-        enableBackup = backup
-    }
-
-    private fun invalidEdits() {
-        val message = "Invalid edits"
-        launch { _message.emit(message) }
-        logger.info { "$message: $edits" }
-    }
-
-    private suspend fun pushPrefs() {
-        val preferences = validator.editsToPreferences(edits = edits)
-        val command = WritePref(
-            app = app,
-            device = device,
-            prefFile = prefFile,
-            preferences = preferences,
-            enableBackup = enableBackup,
-        )
-        val result = bridge.execute(command)
-        when {
-            result.isSuccess -> {
-                appState.showToast("'${prefFile.name}' saved successfully!")
-                navigation.navigate(screen = PrefListScreen(app = app, device = device))
-            }
-
-            else -> {
-                val message = "Error saving preferences"
-                _message.emit(message)
-                logger.error(result.exceptionOrNull()) { message }
-            }
-        }
     }
 
     /**
@@ -188,7 +200,7 @@ class EditorViewModel(
      * @return [UIEntry] with [EntryState.Deleted] state
      */
     private fun entryDeleted(entry: Entry): UIEntry {
-        return UIEntry(entry = entry, state = EntryState.Deleted)
+        return UIEntry(entry = entry, state = EntryState.Deleted).also { edited[entry.name] = it }
     }
 
     /**
@@ -200,7 +212,7 @@ class EditorViewModel(
      * [EntryState.None] otherwise
      */
     private fun entryChanged(entry: Entry, change: String): UIEntry {
-        launch { changes.emit(change) }
+//        launch { changes.emit(change) }
 
         val newEntry = createEntry(oldEntry = entry, value = change)
         val state = if (original[entry.name] == newEntry.value) EntryState.None else EntryState.Changed
