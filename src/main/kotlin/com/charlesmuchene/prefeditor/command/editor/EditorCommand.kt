@@ -27,9 +27,9 @@ interface EditorCommand {
         }
     }
 
-    fun delete(edit: Edit.Delete): List<String>
-    fun change(edit: Edit.Change): List<String>
-    fun add(edit: Edit.Add): List<String>
+    fun MutableList<String>.delete(edit: Edit.Delete)
+    fun MutableList<String>.change(edit: Edit.Change)
+    fun MutableList<String>.add(edit: Edit.Add)
 
     fun String.escaped(): String = replace(oldValue = "/", newValue = "\\/")
         .replace(oldValue = "\"", newValue = "\\\"")

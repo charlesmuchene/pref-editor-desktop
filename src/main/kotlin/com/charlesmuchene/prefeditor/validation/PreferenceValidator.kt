@@ -24,31 +24,31 @@ import kotlin.reflect.KClass
  *
  * @param original Preferences read from disk/device
  */
-class PreferenceValidator(private val original: List<Entry>) {
+class PreferenceValidator(private val original: List<Preference>) {
 
-    fun validEdits(edits: Map<String, Pair<KClass<out Entry>, String>>): Boolean =
-        original.fold(initial = false) { accumulator, entry ->
-            accumulator || if (entry is SetEntry) false
-            else (edits[entry.name]?.second != entry.value && edits[entry.name]?.let(::isValid) ?: false)
+    fun validEdits(edits: Map<String, Pair<KClass<out Preference>, String>>): Boolean =
+        original.fold(initial = false) { accumulator, preference ->
+            accumulator || if (preference is SetPreference) false
+            else (edits[preference.name]?.second != preference.value && edits[preference.name]?.let(::isValid) ?: false)
         }
 
-    fun editsToPreferences(edits: Map<String, Pair<KClass<out Entry>, String>>): Preferences =
-        Preferences(entries = buildList<Entry> {
-            val setEntries = original.filterIsInstance<SetEntry>()
-            val setEntryNames = setEntries.map(SetEntry::name).toSet()
-            edits.entries.filter { it.key !in setEntryNames }.forEach { entry ->
-                add(toEntry(klass = entry.value.first, name = entry.key, value = entry.value.second))
+    fun editsToPreferences(edits: Map<String, Pair<KClass<out Preference>, String>>): Preferences =
+        Preferences(preferences = buildList {
+            val setPreferences = original.filterIsInstance<SetPreference>()
+            val setPrefsNames = setPreferences.map(SetPreference::name).toSet()
+            edits.entries.filter { it.key !in setPrefsNames }.forEach { pref ->
+                add(toPreference(klass = pref.value.first, name = pref.key, value = pref.value.second))
             }
-            setEntries.forEach(::add)
+            setPreferences.forEach(::add)
         })
 
-    private fun toEntry(klass: KClass<out Entry>, name: String, value: String): Entry = when (klass) {
-        IntEntry::class -> IntEntry(name = name, value = value)
-        LongEntry::class -> LongEntry(name = name, value = value)
-        FloatEntry::class -> FloatEntry(name = name, value = value)
-        BooleanEntry::class -> BooleanEntry(name = name, value = value)
-        StringEntry::class -> StringEntry(name = name, value = value)
-        else -> error("Unsupported entry: $klass")
+    private fun toPreference(klass: KClass<out Preference>, name: String, value: String): Preference = when (klass) {
+        IntPreference::class -> IntPreference(name = name, value = value)
+        LongPreference::class -> LongPreference(name = name, value = value)
+        FloatPreference::class -> FloatPreference(name = name, value = value)
+        BooleanPreference::class -> BooleanPreference(name = name, value = value)
+        StringPreference::class -> StringPreference(name = name, value = value)
+        else -> error("Unsupported preference: $klass")
     }
 
     /**
@@ -57,20 +57,20 @@ class PreferenceValidator(private val original: List<Entry>) {
      * @param edits A developer's edits
      * @return `true` if all edits are valid, `false` otherwise
      */
-    fun valid(edits: List<Entry>): Boolean = edits.all(::isValid)
+    fun valid(edits: List<Preference>): Boolean = edits.all(::isValid)
 
     /**
-     * Determine the validity of the edited entry
+     * Determine the validity of the edited preference
      *
-     * @param entry Edited [Entry]
+     * @param preference Edited [Preference]
      * @return `true` if valid, `false` otherwise
      */
-    fun isValid(entry: Entry): Boolean = when (entry) {
-        is SetEntry, is StringEntry -> true
-        is IntEntry -> entry.value.toIntOrNull() != null
-        is LongEntry -> entry.value.toLongOrNull() != null
-        is FloatEntry -> entry.value.toFloatOrNull() != null
-        is BooleanEntry -> entry.value.toBooleanStrictOrNull() != null
+    fun isValid(preference: Preference): Boolean = when (preference) {
+        is SetPreference, is StringPreference -> true
+        is IntPreference -> preference.value.toIntOrNull() != null
+        is LongPreference -> preference.value.toLongOrNull() != null
+        is FloatPreference -> preference.value.toFloatOrNull() != null
+        is BooleanPreference -> preference.value.toBooleanStrictOrNull() != null
     }
 
     /**
@@ -79,17 +79,17 @@ class PreferenceValidator(private val original: List<Entry>) {
      * @param edits A mapping of developer edits
      * @return `true` if all edits are valid, `false` otherwise
      */
-    fun isValid(edits: Map<String, Pair<KClass<out Entry>, String>>): Boolean =
-        edits.entries.fold(initial = true) { accumulator, entry ->
-            accumulator && isValid(pair = entry.value)
+    fun isValid(edits: Map<String, Pair<KClass<out Preference>, String>>): Boolean =
+        edits.entries.fold(initial = true) { accumulator, preference ->
+            accumulator && isValid(pair = preference.value)
         }
 
-    private fun isValid(pair: Pair<KClass<out Entry>, String>): Boolean = when (pair.first) {
-        SetEntry::class, StringEntry::class -> true
-        IntEntry::class -> pair.second.toIntOrNull() != null
-        LongEntry::class -> pair.second.toLongOrNull() != null
-        FloatEntry::class -> pair.second.toFloatOrNull() != null
-        BooleanEntry::class -> pair.second.toBooleanStrictOrNull() != null
+    private fun isValid(pair: Pair<KClass<out Preference>, String>): Boolean = when (pair.first) {
+        SetPreference::class, StringPreference::class -> true
+        IntPreference::class -> pair.second.toIntOrNull() != null
+        LongPreference::class -> pair.second.toLongOrNull() != null
+        FloatPreference::class -> pair.second.toFloatOrNull() != null
+        BooleanPreference::class -> pair.second.toBooleanStrictOrNull() != null
         else -> false
     }
 }

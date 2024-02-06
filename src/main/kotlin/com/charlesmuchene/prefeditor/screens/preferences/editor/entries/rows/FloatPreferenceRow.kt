@@ -19,13 +19,18 @@ package com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import com.charlesmuchene.prefeditor.data.FloatEntry
+import com.charlesmuchene.prefeditor.data.FloatPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
-import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
+import com.charlesmuchene.prefeditor.screens.preferences.editor.UIPreference
 
 @Composable
-fun FloatEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
-    if (uiEntry.entry !is FloatEntry) return
+fun FloatPreferenceRow(preference: UIPreference, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+    if (preference.preference !is FloatPreference) return
 
-    PrimitiveEntryRow(entry = uiEntry, viewModel = viewModel, keyboardType = KeyboardType.Decimal, modifier = modifier)
+    PrimitivePreferenceRow(
+        preference = preference,
+        viewModel = viewModel,
+        modifier = modifier,
+        keyboardType = KeyboardType.Decimal,
+    )
 }

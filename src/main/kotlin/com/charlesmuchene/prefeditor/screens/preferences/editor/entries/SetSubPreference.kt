@@ -16,7 +16,7 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.editor.entries
 
-interface SetSubEntry {
-    data class Header(val name: String) : SetSubEntry
-    data class Entry(val value: String) : SetSubEntry
+interface SetSubPreference {
+    data class Header(val name: String) : SetSubPreference
+    data class Preference(val value: String) : SetSubPreference
 }

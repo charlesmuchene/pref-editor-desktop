@@ -23,9 +23,9 @@ class DevicePreferencesUseCase(private val codec: DevicePreferencesCodec, privat
 
     private lateinit var preferences: Preferences
 
-    suspend fun writePreferences(entries: Collection<UIEntry>): String {
-        val edits = entries.filter { it.state !is EntryState.None }
-        val content = codec.encode(edits = edits, existing = preferences.entries)
+    suspend fun writePreferences(preferences: Collection<UIPreference>): String {
+        val edits = preferences.filter { it.state !is PreferenceState.None }
+        val content = codec.encode(edits = edits, existing = this.preferences.preferences)
         return editor.edit(content)
     }
 }

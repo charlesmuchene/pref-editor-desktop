@@ -24,8 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
-import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
-import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
+import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceAction
+import com.charlesmuchene.prefeditor.screens.preferences.editor.UIPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
@@ -35,8 +35,8 @@ import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 
 @Composable
-fun PrimitiveEntryRow(
-    entry: UIEntry,
+fun PrimitivePreferenceRow(
+    preference: UIPreference,
     viewModel: EditorViewModel,
     keyboardType: KeyboardType,
     modifier: Modifier = Modifier,
@@ -47,26 +47,32 @@ fun PrimitiveEntryRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(componentSpacing)
     ) {
-        Text(text = entry.entry.name, style = Typography.secondary, modifier = Modifier.weight(NAME_COMPONENT_WEIGHT))
-        var localUIEntry by remember(entry) { mutableStateOf(entry) }
-        val outline by remember(localUIEntry) { mutableStateOf(viewModel.outline(entry = localUIEntry.entry)) }
+        Text(
+            style = Typography.secondary,
+            text = preference.preference.name,
+            modifier = Modifier.weight(NAME_COMPONENT_WEIGHT)
+        )
+        var localPreference by remember(preference) { mutableStateOf(preference) }
+        val outline by remember(localPreference) {
+            mutableStateOf(viewModel.outline(preference = localPreference.preference))
+        }
 
         TextField(
             outline = outline,
-            value = localUIEntry.entry.value,
-            placeholder = { Text(text = entry.entry.value) },
+            value = localPreference.preference.value,
             modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT),
+            placeholder = { Text(text = preference.preference.value) },
             keyboardOptions = KeyboardOptions(autoCorrect = false, keyboardType = keyboardType),
             onValueChange = { changed ->
-                val change = EntryAction.Change(entry = localUIEntry.entry, change = changed)
-                localUIEntry = viewModel.entryAction(change)
+                val change = PreferenceAction.Change(preference = localPreference.preference, change = changed)
+                localPreference = viewModel.preferenceAction(change)
             },
         )
 
-        EntryAction(
-            onEntryAction = { localUIEntry = viewModel.entryAction(it) },
+        PreferenceAction(
+            onPreferenceAction = { localPreference = viewModel.preferenceAction(it) },
             modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
-            uiEntry = localUIEntry,
+            preference = localPreference,
         )
     }
 }

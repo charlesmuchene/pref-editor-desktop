@@ -25,13 +25,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
+import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceAction.Delete
+import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceAction.Reset
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.IconButton
 
 @Composable
-fun EntryAction(uiEntry: UIEntry, modifier: Modifier = Modifier, onEntryAction: (EntryAction) -> Unit) {
-    val isDeletable = uiEntry.state !is EntryState.Deleted
-    val isResettable = uiEntry.state !is EntryState.None
+fun PreferenceAction(
+    preference: UIPreference,
+    modifier: Modifier = Modifier,
+    onPreferenceAction: (PreferenceAction) -> Unit,
+) {
+    val isDeletable = preference.state !is PreferenceState.Deleted
+    val isResettable = preference.state !is PreferenceState.None
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -43,7 +49,7 @@ fun EntryAction(uiEntry: UIEntry, modifier: Modifier = Modifier, onEntryAction: 
         IconButton(
             enabled = isResettable,
             modifier = Modifier.weight(.5f),
-            onClick = { onEntryAction(EntryAction.Reset(uiEntry.entry)) }
+            onClick = { onPreferenceAction(Reset(preference.preference)) }
         ) { state ->
             Icon(
                 painter = resetPainter,
@@ -56,7 +62,7 @@ fun EntryAction(uiEntry: UIEntry, modifier: Modifier = Modifier, onEntryAction: 
         IconButton(
             enabled = isDeletable,
             modifier = Modifier.weight(.5f),
-            onClick = { onEntryAction(EntryAction.Delete(uiEntry.entry)) }
+            onClick = { onPreferenceAction(Delete(preference.preference)) }
         ) { state ->
             Icon(
                 painter = deletePainter,

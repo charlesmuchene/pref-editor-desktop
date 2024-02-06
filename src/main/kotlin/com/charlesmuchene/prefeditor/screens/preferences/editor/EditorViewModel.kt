@@ -27,7 +27,7 @@ import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefListScreen
 import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
 import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.SetSubEntry
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.SetSubPreference
 import com.charlesmuchene.prefeditor.validation.PreferenceValidator
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
@@ -40,18 +40,18 @@ import kotlin.coroutines.CoroutineContext
 
 private val logger = KotlinLogging.logger {}
 
-sealed interface EntryState {
-    data object Changed : EntryState
-    data object Deleted : EntryState
-    data object None : EntryState
+sealed interface PreferenceState {
+    data object Changed : PreferenceState
+    data object Deleted : PreferenceState
+    data object None : PreferenceState
 }
 
-data class UIEntry(val entry: Entry, val state: EntryState = EntryState.None)
+data class UIPreference(val preference: Preference, val state: PreferenceState = PreferenceState.None)
 
-sealed interface EntryAction {
-    data class Reset(val entry: Entry) : EntryAction
-    data class Delete(val entry: Entry) : EntryAction
-    data class Change(val entry: Entry, val change: String) : EntryAction
+sealed interface PreferenceAction {
+    data class Reset(val preference: Preference) : PreferenceAction
+    data class Delete(val preference: Preference) : PreferenceAction
+    data class Change(val preference: Preference, val change: String) : PreferenceAction
 }
 
 /**
@@ -67,7 +67,7 @@ class EditorViewModel(
     private val navigation: Navigation,
     private val preferences: Preferences,
     private val context: CoroutineContext = Dispatchers.Default,
-    private val validator: PreferenceValidator = PreferenceValidator(original = preferences.entries),
+    private val validator: PreferenceValidator = PreferenceValidator(original = preferences.preferences),
 ) : CoroutineScope by scope + context {
 
     private val codec = DevicePreferencesCodec(codec = PreferencesCodec())
@@ -78,14 +78,14 @@ class EditorViewModel(
     private var enableBackup = false
     private val _message = MutableSharedFlow<String?>()
     private val changes = MutableSharedFlow<CharSequence>()
-    private val edits = preferences.entries.associate(Entry::toPair).toMutableMap()
+    private val edits = preferences.preferences.associate(Preference::toPair).toMutableMap()
 
-    private val original = preferences.entries.associate { it.name to it.value }
+    private val original = preferences.preferences.associate { it.name to it.value }
 
     // TODO Rename to edits
-    private val edited = preferences.entries.map(::UIEntry).associateBy { it.entry.name }.toMutableMap()
-    private val _entries = mutableStateOf(edited.values.toList())
-    val entries: State<List<UIEntry>> = _entries
+    private val edited = preferences.preferences.map(::UIPreference).associateBy { it.preference.name }.toMutableMap()
+    private val _preferences = mutableStateOf(edited.values.toList())
+    val entries: State<List<UIPreference>> = _preferences
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     val enableSave: StateFlow<Boolean> = changes
@@ -93,21 +93,21 @@ class EditorViewModel(
         .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = true)
 
     /**
-     * Create entries to display a string set
+     * Create sub-preferences for a set preference
      *
-     * @param entry [SetEntry]
-     * @return [List] of [SetSubEntry.Entry]
+     * @param preference [SetPreference]
+     * @return [List] of [SetSubPreference.Preference]
      */
-    fun createSubEntries(entry: SetEntry): Pair<SetSubEntry.Header, List<SetSubEntry.Entry>> =
-        Pair(SetSubEntry.Header(entry.name), entry.entries.map(SetSubEntry::Entry))
+    fun createSubPreferences(preference: SetPreference): Pair<SetSubPreference.Header, List<SetSubPreference.Preference>> =
+        Pair(SetSubPreference.Header(preference.name), preference.entries.map(SetSubPreference::Preference))
 
     /**
      * Save edits
      */
     fun save() {
         launch {
-            val entries = edited.values.filter { it.state == EntryState.Changed }.map(UIEntry::entry)
-            val isValid = validator.valid(entries)
+            val prefs = edited.values.filter { it.state == PreferenceState.Changed }.map(UIPreference::preference)
+            val isValid = validator.valid(prefs)
             if (isValid) saveChangesNow() else showInvalidEdits()
         }
         logger.debug { "$edited" }
@@ -161,90 +161,94 @@ class EditorViewModel(
     }
 
     /**
-     * Determine entry outline
+     * Determine preference outline
      *
-     * @param entry Edited [Entry]
+     * @param preference Edited [Preference]
      * @return UI [Outline] to apply
      */
-    fun outline(entry: Entry): Outline = when (entry) {
-        is FloatEntry, is IntEntry, is LongEntry -> numberOutline(entry = entry)
-        is BooleanEntry, is StringEntry -> if (original[entry.name] == entry.value) Outline.None else Outline.Warning
+    fun outline(preference: Preference): Outline = when (preference) {
+        is FloatPreference, is IntPreference, is LongPreference -> numberOutline(preference = preference)
+        is BooleanPreference, is StringPreference -> if (original[preference.name] == preference.value) Outline.None else Outline.Warning
         else -> Outline.None
     }
 
     /**
-     * Determine outline for a number entry
+     * Determine outline for a number preference
      *
-     * @param entry Number [Entry]: Int, Long, Float
+     * @param preference Number [Preference]: Int, Long, Float
      * @return [Outline] instance
      */
-    private fun numberOutline(entry: Entry): Outline {
-        if (original[entry.name] == entry.value) return Outline.None
-        return if (validator.isValid(entry = entry)) Outline.Warning else Outline.Error
+    private fun numberOutline(preference: Preference): Outline {
+        if (original[preference.name] == preference.value) return Outline.None
+        return if (validator.isValid(preference = preference)) Outline.Warning else Outline.Error
     }
 
     /**
-     * Entry action
+     * Preference action
      *
-     * @param action Developer [EntryAction]
-     * @return Resulting [UIEntry] instance
+     * @param action Developer [PreferenceAction]
+     * @return Resulting [UIPreference] instance
      */
-    fun entryAction(action: EntryAction): UIEntry = when (action) {
-        is EntryAction.Change -> entryChanged(action.entry, action.change)
-        is EntryAction.Delete -> entryDeleted(action.entry)
-        is EntryAction.Reset -> entryReset(action.entry)
+    fun preferenceAction(action: PreferenceAction): UIPreference = when (action) {
+        is PreferenceAction.Change -> preferenceChanged(action.preference, action.change)
+        is PreferenceAction.Delete -> preferenceDeleted(action.preference)
+        is PreferenceAction.Reset -> preferenceReset(action.preference)
     }
 
     /**
-     * Entry reset
+     * Preference reset
      *
-     * @param entry Reset [Entry]
-     * @return Unedited [UIEntry]
+     * @param preference Reset [Preference]
+     * @return Unedited [UIPreference]
      */
-    private fun entryReset(entry: Entry): UIEntry {
-        val value = original[entry.name] ?: error("Missing entry value ${entry.name}")
-        return UIEntry(createEntry(oldEntry = entry, value = value)).also { edited[entry.name] = it }
+    private fun preferenceReset(preference: Preference): UIPreference {
+        val value = original[preference.name] ?: error("Missing preference value ${preference.name}")
+        return UIPreference(createPreference(preference = preference, value = value)).also {
+            edited[preference.name] = it
+        }
     }
 
     /**
-     * Entry deleted
+     * Preference deleted
      *
-     * @param entry Deleted [Entry]
-     * @return [UIEntry] with [EntryState.Deleted] state
+     * @param preference Deleted [Preference]
+     * @return [UIPreference] with [PreferenceState.Deleted] state
      */
-    private fun entryDeleted(entry: Entry): UIEntry {
-        return UIEntry(entry = entry, state = EntryState.Deleted).also { edited[entry.name] = it }
+    private fun preferenceDeleted(preference: Preference): UIPreference {
+        return UIPreference(preference = preference, state = PreferenceState.Deleted).also {
+            edited[preference.name] = it
+        }
     }
 
     /**
-     * Entry content changed
+     * Preference content changed
      *
-     * @param entry Displayed [Entry]
-     * @param change [Entry] content change
-     * @return [UIEntry] with the [EntryState.Changed] if [entry] differs from original,
-     * [EntryState.None] otherwise
+     * @param preference Displayed [Preference]
+     * @param change [Preference] content change
+     * @return [UIPreference] with the [PreferenceState.Changed] if [preference] differs from original,
+     * [PreferenceState.None] otherwise
      */
-    private fun entryChanged(entry: Entry, change: String): UIEntry {
+    private fun preferenceChanged(preference: Preference, change: String): UIPreference {
 //        launch { changes.emit(change) }
 
-        val newEntry = createEntry(oldEntry = entry, value = change)
-        val state = if (original[entry.name] == newEntry.value) EntryState.None else EntryState.Changed
-        return UIEntry(entry = newEntry, state = state).also { edited[entry.name] = it }
+        val newPref = createPreference(preference = preference, value = change)
+        val state = if (original[preference.name] == newPref.value) PreferenceState.None else PreferenceState.Changed
+        return UIPreference(preference = newPref, state = state).also { edited[preference.name] = it }
     }
 
     /**
-     * Create an entry during edits
+     * Create a preference during edits
      *
-     * @param oldEntry Existing [Entry] to evaluate type
-     * @param value Entry value
-     * @return The created [Entry]
+     * @param preference Existing [Preference] to evaluate type
+     * @param value Preference value
+     * @return The created [Preference]
      */
-    private fun createEntry(oldEntry: Entry, value: String) = when (oldEntry) {
-        is BooleanEntry -> BooleanEntry(oldEntry.name, value = value)
-        is FloatEntry -> FloatEntry(oldEntry.name, value = value)
-        is IntEntry -> IntEntry(oldEntry.name, value = value)
-        is LongEntry -> LongEntry(oldEntry.name, value = value)
-        is StringEntry -> StringEntry(oldEntry.name, value = value)
-        else -> error("Changing $oldEntry is not supported")
+    private fun createPreference(preference: Preference, value: String) = when (preference) {
+        is BooleanPreference -> BooleanPreference(preference.name, value = value)
+        is FloatPreference -> FloatPreference(preference.name, value = value)
+        is IntPreference -> IntPreference(preference.name, value = value)
+        is LongPreference -> LongPreference(preference.name, value = value)
+        is StringPreference -> StringPreference(preference.name, value = value)
+        else -> error("Changing $preference is not supported")
     }
 }

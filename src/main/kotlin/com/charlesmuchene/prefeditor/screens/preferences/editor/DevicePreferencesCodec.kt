@@ -26,6 +26,7 @@ import com.charlesmuchene.prefeditor.data.Tags.STRING
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceState.*
 import org.xmlpull.v1.XmlSerializer
 
 /**
@@ -35,65 +36,65 @@ import org.xmlpull.v1.XmlSerializer
  */
 class DevicePreferencesCodec(private val codec: PreferencesCodec) {
 
-    fun encode(edits: List<UIEntry>, existing: List<Entry>): List<Edit> = edits.map { entry ->
-        when (entry.state) {
-            EntryState.Changed -> encodeChange(
-                change = entry.entry,
-                existing = existing.find { it.name == entry.entry.name }
-                    ?: error("${entry.entry} missing from disk entries"),
+    fun encode(edits: List<UIPreference>, existing: List<Preference>): List<Edit> = edits.map { preference ->
+        when (preference.state) {
+            Changed -> encodeChange(
+                change = preference.preference,
+                existing = existing.find { it.name == preference.preference.name }
+                    ?: error("${preference.preference} missing from disk preferences"),
             )
 
-            EntryState.Deleted -> encodeDelete(entry = entry.entry)
-            EntryState.None -> error("Unnecessary encode: no change to $entry")
+            Deleted -> encodeDelete(preference = preference.preference)
+            None -> error("Unnecessary encode: no change to $preference")
         }
     }
 
     /**
-     * Encode an entry to be changed
+     * Encode a preference to be changed
      *
-     * @param change [Entry] to change
-     * @param existing [Entry] on disk
+     * @param change [Preference] to change
+     * @param existing [Preference] on disk
      * @return [Edit.Change] instance
      */
-    private fun encodeChange(change: Entry, existing: Entry): Edit.Change {
-        val content = codec.encode { serializeEntry(entry = change) }
-        val matcher = codec.encode { serializeEntry(entry = existing) }
+    private fun encodeChange(change: Preference, existing: Preference): Edit.Change {
+        val content = codec.encode { serializePreference(preference = change) }
+        val matcher = codec.encode { serializePreference(preference = existing) }
 
         return Edit.Change(content = content, matcher = matcher)
     }
 
     /**
-     * Encode an entry to be deleted
+     * Encode an preference to be deleted
      *
-     * @param entry [Entry] to delete
+     * @param preference [Preference] to delete
      * @return [Edit.Delete] instance
      */
-    private fun encodeDelete(entry: Entry): Edit.Delete {
-        val matcher = codec.encode { serializeEntry(entry = entry) }
+    private fun encodeDelete(preference: Preference): Edit.Delete {
+        val matcher = codec.encode { serializePreference(preference = preference) }
         return Edit.Delete(matcher = matcher)
     }
 
     /**
-     * Serialize an entry
+     * Serialize a preference
      *
-     * @param entry [Entry] to serialize
+     * @param preference [Preference] to serialize
      * @receiver [XmlSerializer] instance
      */
-    private fun XmlSerializer.serializeEntry(entry: Entry) {
-        when (entry) {
-            is BooleanEntry -> tag(BOOLEAN) { attribute(name = entry.name, value = entry.value) }
-            is FloatEntry -> tag(FLOAT) { attribute(name = entry.name, value = entry.value) }
-            is LongEntry -> tag(LONG) { attribute(name = entry.name, value = entry.value) }
-            is IntEntry -> tag(INT) { attribute(name = entry.name, value = entry.value) }
+    private fun XmlSerializer.serializePreference(preference: Preference) {
+        when (preference) {
+            is BooleanPreference -> tag(BOOLEAN) { attribute(name = preference.name, value = preference.value) }
+            is FloatPreference -> tag(FLOAT) { attribute(name = preference.name, value = preference.value) }
+            is LongPreference -> tag(LONG) { attribute(name = preference.name, value = preference.value) }
+            is IntPreference -> tag(INT) { attribute(name = preference.name, value = preference.value) }
 
-            is StringEntry -> tag(STRING) {
-                attrib(name = NAME, value = entry.name)
-                text(entry.value)
+            is StringPreference -> tag(STRING) {
+                attrib(name = NAME, value = preference.name)
+                text(preference.value)
             }
 
-            is SetEntry -> tag(SET) {
-                attrib(name = NAME, value = entry.name)
-                entry.entries.forEach { string ->
+            is SetPreference -> tag(SET) {
+                attrib(name = NAME, value = preference.name)
+                preference.entries.forEach { string ->
                     tag(STRING) { text(string) }
                 }
             }
@@ -103,7 +104,7 @@ class DevicePreferencesCodec(private val codec: PreferencesCodec) {
     /**
      * Create an attribute.
      *
-     * Most xml entries in android have a name and value attributes
+     * Most xml preferences in device have a name and value attributes
      * to host their content e.g. int, float etc. This serialization
      * adds the content as expected.
      *

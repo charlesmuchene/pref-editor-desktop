@@ -19,13 +19,18 @@ package com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import com.charlesmuchene.prefeditor.data.IntEntry
+import com.charlesmuchene.prefeditor.data.IntPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
-import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
+import com.charlesmuchene.prefeditor.screens.preferences.editor.UIPreference
 
 @Composable
-fun IntEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
-    if (uiEntry.entry !is IntEntry) return
+fun IntPreferenceRow(preference: UIPreference, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+    if (preference.preference !is IntPreference) return
 
-    PrimitiveEntryRow(entry = uiEntry, viewModel = viewModel, keyboardType = KeyboardType.Number, modifier = modifier)
+    PrimitivePreferenceRow(
+        preference = preference,
+        viewModel = viewModel,
+        modifier = modifier,
+        keyboardType = KeyboardType.Number,
+    )
 }

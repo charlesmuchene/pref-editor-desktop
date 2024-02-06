@@ -35,15 +35,15 @@ object TestFixtures {
     val prefFile = PrefFile(name = "preferences.xml", type = PrefFile.Type.KEY_VALUE)
 
     val prefs = Preferences(
-        entries = listOf(
-            BooleanEntry(name = "boolean", value = "false"),
-            StringEntry(name = "string", value = "string"),
-            IntEntry(name = "another-integer", value = "0"),
-            StringEntry(name = "empty-string", value = ""),
-            IntEntry(name = "integer", value = "-1"),
-            FloatEntry(name = "float", value = "0.0"),
-            SetEntry(name = "string-set", entries = listOf("strings", "one", "two", "three")),
-            LongEntry(name = "long", value = "0")
+        preferences = listOf(
+            BooleanPreference(name = "boolean", value = "false"),
+            StringPreference(name = "string", value = "string"),
+            IntPreference(name = "another-integer", value = "0"),
+            StringPreference(name = "empty-string", value = ""),
+            IntPreference(name = "integer", value = "-1"),
+            FloatPreference(name = "float", value = "0.0"),
+            SetPreference(name = "string-set", entries = listOf("strings", "one", "two", "three")),
+            LongPreference(name = "long", value = "0")
         )
     )
 

@@ -16,4 +16,4 @@
 
 package com.charlesmuchene.prefeditor.data
 
-data class Preferences(val entries: List<Entry>)
+data class Preferences(val preferences: List<Preference>)

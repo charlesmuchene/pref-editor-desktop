@@ -22,10 +22,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.BooleanEntry
+import com.charlesmuchene.prefeditor.data.BooleanPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
-import com.charlesmuchene.prefeditor.screens.preferences.editor.EntryAction
-import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
+import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceAction
+import com.charlesmuchene.prefeditor.screens.preferences.editor.UIPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
@@ -35,30 +35,30 @@ import org.jetbrains.jewel.ui.component.RadioButtonRow
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun BooleanEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
-    val entry = uiEntry.entry as? BooleanEntry ?: return
+fun BooleanPreferenceRow(uiPreference: UIPreference, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+    val preference = uiPreference.preference as? BooleanPreference ?: return
 
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(componentSpacing)
     ) {
-        Text(text = entry.name, style = Typography.secondary, modifier = Modifier.weight(NAME_COMPONENT_WEIGHT))
+        Text(text = preference.name, style = Typography.secondary, modifier = Modifier.weight(NAME_COMPONENT_WEIGHT))
 
-        var localUIEntry by remember(uiEntry) { mutableStateOf(uiEntry) }
+        var localPreference by remember(uiPreference) { mutableStateOf(uiPreference) }
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT)) {
             val trueString by remember() { mutableStateOf(true.toString()) }
             val falseString by remember() { mutableStateOf(false.toString()) }
-            val outline by remember(localUIEntry) { mutableStateOf(viewModel.outline(entry = localUIEntry.entry)) }
-            var isTrue by remember(localUIEntry) { mutableStateOf(localUIEntry.entry.value) }
+            val outline by remember(localPreference) { mutableStateOf(viewModel.outline(preference = localPreference.preference)) }
+            var isTrue by remember(localPreference) { mutableStateOf(localPreference.preference.value) }
 
             RadioButtonRow(
                 selected = isTrue.toBooleanStrict(),
                 outline = outline,
                 onClick = {
                     isTrue = trueString
-                    val change = EntryAction.Change(entry = localUIEntry.entry, change = trueString)
-                    localUIEntry = viewModel.entryAction(change)
+                    val change = PreferenceAction.Change(preference = localPreference.preference, change = trueString)
+                    localPreference = viewModel.preferenceAction(change)
                 },
             ) { Text(text = "True") }
 
@@ -67,16 +67,16 @@ fun BooleanEntryRow(uiEntry: UIEntry, viewModel: EditorViewModel, modifier: Modi
                 outline = outline,
                 onClick = {
                     isTrue = falseString
-                    val change = EntryAction.Change(entry = localUIEntry.entry, change = falseString)
-                    localUIEntry = viewModel.entryAction(change)
+                    val change = PreferenceAction.Change(preference = localPreference.preference, change = falseString)
+                    localPreference = viewModel.preferenceAction(change)
                 },
             ) { Text(text = "False") }
         }
 
-        EntryAction(
-            onEntryAction = { localUIEntry = viewModel.entryAction(it) },
+        PreferenceAction(
+            onPreferenceAction = { localPreference = viewModel.preferenceAction(it) },
             modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
-            uiEntry = localUIEntry,
+            preference = localPreference,
         )
     }
 }

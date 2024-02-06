@@ -24,12 +24,12 @@ class DeviceEditorCommand(
     private val file: PrefFile,
 ) : EditorCommand {
 
-    override fun delete(edit: Edit.Delete): List<String> = buildList {
+    override fun MutableList<String>.delete(edit: Edit.Delete) {
         baseCommands()
         add(edit.matcher.escaped())
     }
 
-    override fun change(edit: Edit.Change): List<String> = buildList {
+    override fun MutableList<String>.change(edit: Edit.Change) {
         baseCommands()
         val matcher = edit.matcher.escaped()
         val content = edit.content.escaped()
@@ -37,7 +37,7 @@ class DeviceEditorCommand(
         add(content)
     }
 
-    override fun add(edit: Edit.Add): List<String> = buildList {
+    override fun MutableList<String>.add(edit: Edit.Add) {
         baseCommands()
         val matcher = "</${Tags.ROOT}>".escaped()
         val content = edit.content.escaped()

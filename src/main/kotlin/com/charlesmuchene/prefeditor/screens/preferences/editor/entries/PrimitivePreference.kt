@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.*
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
-import com.charlesmuchene.prefeditor.screens.preferences.editor.UIEntry
+import com.charlesmuchene.prefeditor.screens.preferences.editor.UIPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows.*
 
 val componentSpacing = 8.dp
@@ -30,14 +30,19 @@ const val NAME_COMPONENT_WEIGHT = 0.3f
 const val ACTION_COMPONENT_WEIGHT = 0.05f
 
 @Composable
-fun PrimitiveEntry(entry: UIEntry, modifier: Modifier = Modifier, viewModel: EditorViewModel) {
+fun PrimitivePreference(preference: UIPreference, modifier: Modifier = Modifier, viewModel: EditorViewModel) {
     // TODO Wrap name to 2 lines, overflow -- clip?
-    when (entry.entry) {
-        is BooleanEntry -> BooleanEntryRow(modifier = modifier, uiEntry = entry, viewModel = viewModel)
-        is FloatEntry -> FloatEntryRow(modifier = modifier, uiEntry = entry, viewModel = viewModel)
-        is IntEntry -> IntEntryRow(modifier = modifier, uiEntry = entry, viewModel = viewModel)
-        is LongEntry -> LongEntryRow(modifier = modifier, uiEntry = entry, viewModel = viewModel)
-        is StringEntry -> StringEntryRow(modifier = modifier, uiEntry = entry, viewModel = viewModel)
+    when (preference.preference) {
+        is BooleanPreference -> BooleanPreferenceRow(
+            modifier = modifier,
+            uiPreference = preference,
+            viewModel = viewModel
+        )
+
+        is FloatPreference -> FloatPreferenceRow(modifier = modifier, preference = preference, viewModel = viewModel)
+        is IntPreference -> IntPreferenceRow(modifier = modifier, preference = preference, viewModel = viewModel)
+        is LongPreference -> LongPreferenceRow(modifier = modifier, uiPreference = preference, viewModel = viewModel)
+        is StringPreference -> StringPreferenceRow(modifier = modifier, uiPreference = preference, viewModel = viewModel)
         else -> Unit
     }
 }

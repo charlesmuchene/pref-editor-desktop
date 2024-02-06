@@ -3,6 +3,7 @@ package com.charlesmuchene.prefeditor.parser
 import com.charlesmuchene.prefeditor.TestFixtures
 import com.charlesmuchene.prefeditor.data.*
 import com.charlesmuchene.prefeditor.utils.buffered
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -19,65 +20,65 @@ class PrefParserTest {
     }
 
     @Test
-    fun `parse all preferences`() {
+    fun `parse all preferences`() = runTest {
         TestFixtures.PREFERENCES.buffered {
-            val entries = parser.parse(this).entries
-            assertEquals(expected = 8, actual = entries.size)
+            val preferences = parser.parse(this).preferences
+            assertEquals(expected = 8, actual = preferences.size)
 
-            `parse set entry`(entries[6])
-            `parse long entry`(entries[7])
-            `parse float entry`(entries[4])
-            `parse boolean entry`(entries[0])
-            `parse string entries`(entries[1], entries[5])
-            `parse int entries`(entries[2], entries[3])
+            `parse set preference`(preferences[6])
+            `parse long preference`(preferences[7])
+            `parse float preference`(preferences[4])
+            `parse boolean preference`(preferences[0])
+            `parse string preferences`(preferences[1], preferences[5])
+            `parse int preferences`(preferences[2], preferences[3])
         }
     }
 
-    private fun `parse boolean entry`(entry: Entry) {
-        assertTrue(entry is BooleanEntry)
-        assertFalse(entry.value.toBooleanStrict())
-        assertEquals(expected = "boolean", actual = entry.name)
+    private fun `parse boolean preference`(preference: Preference) {
+        assertTrue(preference is BooleanPreference)
+        assertFalse(preference.value.toBooleanStrict())
+        assertEquals(expected = "boolean", actual = preference.name)
     }
 
-    private fun `parse string entries`(entry: Entry, another: Entry) {
-        assertTrue(entry is StringEntry)
-        assertEquals(expected = "string", actual = entry.name)
-        assertEquals(expected = "string", actual = entry.value)
-        assertTrue(another is StringEntry)
+    private fun `parse string preferences`(preference: Preference, another: Preference) {
+        assertTrue(preference is StringPreference)
+        assertEquals(expected = "string", actual = preference.name)
+        assertEquals(expected = "string", actual = preference.value)
+        assertTrue(another is StringPreference)
         assertEquals(expected = "", actual = another.value)
         assertEquals(expected = "empty-string", actual = another.name)
     }
 
-    private fun `parse int entries`(entry: Entry, another: Entry) {
-        assertTrue(entry is IntEntry)
-        assertEquals(expected = -1, actual = entry.value.toInt())
-        assertEquals(expected = "integer", actual = entry.name)
+    private fun `parse int preferences`(preference: Preference, another: Preference) {
+        assertTrue(preference is IntPreference)
+        assertEquals(expected = -1, actual = preference.value.toInt())
+        assertEquals(expected = "integer", actual = preference.name)
 
-        assertTrue(another is IntEntry)
+        assertTrue(another is IntPreference)
         assertEquals(expected = 0, actual = another.value.toInt())
         assertEquals(expected = "another-integer", actual = another.name)
     }
 
-    private fun `parse float entry`(entry: Entry) {
-        assertTrue(entry is FloatEntry)
-        assertEquals(expected = "float", actual = entry.name)
-        assertEquals(expected = 0.0f, actual = entry.value.toFloat())
+    private fun `parse float preference`(preference: Preference) {
+        assertTrue(preference is FloatPreference)
+        assertEquals(expected = "float", actual = preference.name)
+        assertEquals(expected = 0.0f, actual = preference.value.toFloat())
     }
 
-    private fun `parse long entry`(entry: Entry) {
-        assertTrue(entry is LongEntry)
-        assertEquals(expected = 100L, actual = entry.value.toLong())
-        assertEquals(expected = "long", actual = entry.name)
+    private fun `parse long preference`(preference: Preference) {
+        assertTrue(preference is LongPreference)
+        assertEquals(expected = 100L, actual = preference.value.toLong())
+        assertEquals(expected = "long", actual = preference.name)
     }
 
-    private fun `parse set entry`(entry: Entry) {
-        assertTrue(entry is SetEntry)
-        assertEquals(expected = "string-set", actual = entry.name)
-        val subEntries = entry.entries
-        assertEquals(expected = 4, actual = subEntries.size)
-        assertEquals(expected = "strings", actual = subEntries.first())
-        assertEquals(expected = "one", actual = subEntries[1])
-        assertEquals(expected = "two", actual = subEntries[2])
-        assertEquals(expected = "three", actual = subEntries[3])
+    private fun `parse set preference`(preference: Preference) {
+        assertTrue(preference is SetPreference)
+        assertEquals(expected = "string-set", actual = preference.name)
+        val subPreferences = preference.entries
+        assertEquals(expected = 4, actual = subPreferences.size)
+        assertEquals(expected = "strings", actual = subPreferences.first())
+        assertEquals(expected = "one", actual = subPreferences[1])
+        assertEquals(expected = "two", actual = subPreferences[2])
+        assertEquals(expected = "three", actual = subPreferences[3])
     }
 }

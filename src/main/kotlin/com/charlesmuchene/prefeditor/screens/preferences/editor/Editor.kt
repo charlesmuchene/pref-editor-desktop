@@ -35,8 +35,8 @@ import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.PrefKey
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.PrimitiveEntry
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows.SetEntryRow
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.PrimitivePreference
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows.SetPreferenceRow
 import com.charlesmuchene.prefeditor.ui.Toast
 import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
@@ -67,8 +67,9 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
         )
     }
 
-    val entries by viewModel.entries
-    val (setEntries, primitiveEntries) = entries.partition { it.entry is SetEntry }
+    val prefs by viewModel.entries
+    val partition by remember(prefs) { mutableStateOf(prefs.partition { it.preference is SetPreference }) }
+    val (sets, primitives) = partition
 
     Column(modifier = modifier.fillMaxSize()) {
         val endPadding = padding * 0.5f
@@ -77,8 +78,8 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
         Box(modifier = Modifier.fillMaxSize()) {
             val state = rememberLazyListState()
             LazyColumn(modifier = Modifier.padding(end = endPadding), state = state) {
-                primitives(primitiveEntries = primitiveEntries, viewModel = viewModel)
-                sets(setEntries = setEntries, viewModel = viewModel)
+                primitives(preferences = primitives, viewModel = viewModel)
+                sets(setEntries = sets, viewModel = viewModel)
             }
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(scrollState = state),
@@ -113,7 +114,7 @@ private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifi
 
 @OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.sets(
-    setEntries: List<UIEntry>,
+    setEntries: List<UIPreference>,
     viewModel: EditorViewModel,
 ) {
     if (setEntries.isEmpty()) return
@@ -141,18 +142,18 @@ private fun LazyListScope.sets(
         }
     }
 
-    items(items = setEntries.mapNotNull { it.entry as? SetEntry }, key = SetEntry::name) { entry ->
-        SetEntryRow(
-            entry = entry,
+    items(items = setEntries.mapNotNull { it.preference as? SetPreference }, key = SetPreference::name) { preference ->
+        SetPreferenceRow(
+            preference = preference,
             viewModel = viewModel,
-            modifier = Modifier.padding(end = 18.dp).fillMaxWidth().height((64 * entry.entries.size).dp),
+            modifier = Modifier.padding(end = 18.dp).fillMaxWidth().height((64 * preference.entries.size).dp),
         )
     }
 }
 
-private fun LazyListScope.primitives(primitiveEntries: List<UIEntry>, viewModel: EditorViewModel) {
-    items(items = primitiveEntries, key = { it.entry.name }) { entry ->
-        val entryModifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
-        PrimitiveEntry(entry = entry, modifier = entryModifier, viewModel = viewModel)
+private fun LazyListScope.primitives(preferences: List<UIPreference>, viewModel: EditorViewModel) {
+    items(items = preferences, key = { it.preference.name }) { preference ->
+        val modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
+        PrimitivePreference(preference = preference, modifier = modifier, viewModel = viewModel)
     }
 }

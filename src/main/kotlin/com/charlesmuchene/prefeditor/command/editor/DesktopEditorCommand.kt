@@ -21,7 +21,7 @@ import com.charlesmuchene.prefeditor.data.Tags
 
 class DesktopEditorCommand(private val path: String) : EditorCommand {
 
-    override fun delete(edit: Edit.Delete): List<String> = buildList {
+    override fun MutableList<String>.delete(edit: Edit.Delete) {
         val matcher = edit.matcher.escaped()
         add(SHELL)
         add("delete.sh")
@@ -29,7 +29,7 @@ class DesktopEditorCommand(private val path: String) : EditorCommand {
         add(path)
     }
 
-    override fun change(edit: Edit.Change): List<String> = buildList {
+    override fun MutableList<String>.change(edit: Edit.Change) {
         val matcher = edit.matcher.escaped()
         val content = edit.content.escaped()
         add(SHELL)
@@ -39,7 +39,7 @@ class DesktopEditorCommand(private val path: String) : EditorCommand {
         add(path)
     }
 
-    override fun add(edit: Edit.Add): List<String> = buildList {
+    override fun MutableList<String>.add(edit: Edit.Add) {
         val matcher = "</${Tags.ROOT}>".escaped()
         val content = edit.content.escaped()
         add(SHELL)

@@ -19,9 +19,9 @@ package com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.charlesmuchene.prefeditor.data.SetEntry
+import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.SetSubEntry
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.SetSubPreference
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.lazy.tree.buildTree
@@ -32,42 +32,42 @@ import org.jetbrains.jewel.ui.component.TextField
 
 @OptIn(ExperimentalJewelApi::class)
 @Composable
-fun SetEntryRow(entry: SetEntry, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
-    val entries = viewModel.createSubEntries(entry)
+fun SetPreferenceRow(preference: SetPreference, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+    val subPrefs = viewModel.createSubPreferences(preference)
     val tree = remember {
         buildTree {
-            addNode(entries.first) {
-                entries.second.forEach(::addLeaf)
+            addNode(subPrefs.first) {
+                subPrefs.second.forEach(::addLeaf)
             }
         }
     }
 
-    // FIXME: Make an editable entry
+    // FIXME: Make an editable preference
     // TODO Remove selection highlighting
     LazyTree(
         tree = tree,
         modifier = modifier,
     ) { element ->
         when (val data = element.data) {
-            is SetSubEntry.Header -> SetSubEntryHeaderRow(data)
-            is SetSubEntry.Entry -> SetSubEntryRow(data)
+            is SetSubPreference.Header -> SetSubPreferenceHeaderRow(data)
+            is SetSubPreference.Preference -> SetSubPreferenceRow(data)
         }
     }
 }
 
 @Composable
-private fun SetSubEntryHeaderRow(header: SetSubEntry.Header, modifier: Modifier = Modifier) {
+private fun SetSubPreferenceHeaderRow(header: SetSubPreference.Header, modifier: Modifier = Modifier) {
     Text(text = header.name, style = Typography.secondary, modifier = modifier)
 }
 
 @Composable
-private fun SetSubEntryRow(entry: SetSubEntry.Entry, modifier: Modifier = Modifier) {
-    var value by remember { mutableStateOf(entry.value) }
+private fun SetSubPreferenceRow(preference: SetSubPreference.Preference, modifier: Modifier = Modifier) {
+    var value by remember { mutableStateOf(preference.value) }
     TextField(
         modifier = modifier,
         value = value,
         onValueChange = { value = it },
-        placeholder = { Text(text = entry.value) },
+        placeholder = { Text(text = preference.value) },
         keyboardOptions = KeyboardOptions(autoCorrect = false),
     )
 }

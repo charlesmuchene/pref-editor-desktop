@@ -49,21 +49,21 @@ data class WritePref(
 
     override val content: String by lazy {
         writer.encodeDocument {
-            preferences.entries.forEach { entry ->
-                when (entry) {
-                    is BooleanEntry -> tag(BOOLEAN) { attribute(name = entry.name, value = entry.value) }
-                    is FloatEntry -> tag(FLOAT) { attribute(name = entry.name, value = entry.value) }
-                    is LongEntry -> tag(LONG) { attribute(name = entry.name, value = entry.value) }
-                    is IntEntry -> tag(INT) { attribute(name = entry.name, value = entry.value) }
+            preferences.preferences.forEach { preference ->
+                when (preference) {
+                    is BooleanPreference -> tag(BOOLEAN) { attribute(name = preference.name, value = preference.value) }
+                    is FloatPreference -> tag(FLOAT) { attribute(name = preference.name, value = preference.value) }
+                    is LongPreference -> tag(LONG) { attribute(name = preference.name, value = preference.value) }
+                    is IntPreference -> tag(INT) { attribute(name = preference.name, value = preference.value) }
 
-                    is StringEntry -> tag(STRING) {
-                        attribute(null, NAME, entry.name)
-                        text(entry.value)
+                    is StringPreference -> tag(STRING) {
+                        attribute(null, NAME, preference.name)
+                        text(preference.value)
                     }
 
-                    is SetEntry -> tag(SET) {
-                        attribute(null, NAME, entry.name)
-                        entry.entries.forEach { string ->
+                    is SetPreference -> tag(SET) {
+                        attribute(null, NAME, preference.name)
+                        preference.entries.forEach { string ->
                             tag(STRING) { text(string) }
                         }
                     }
