@@ -61,7 +61,7 @@ class ThemeUseCase(
 
     private suspend fun saveTheme(theme: EditorTheme) {
         val edit = codec.encode(theme = theme)
-        val output = editor.edit(edit = edit, path = path)
+        val output = editor.edit(edit = edit)
         if (output.isNotBlank())
             logger.debug { "Save Theme: $theme -> $output" }
     }

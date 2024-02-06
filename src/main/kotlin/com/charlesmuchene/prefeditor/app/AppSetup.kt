@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.app
 
+import com.charlesmuchene.prefeditor.command.DesktopEditorCommand
 import com.charlesmuchene.prefeditor.files.EditorFiles
 import com.charlesmuchene.prefeditor.preferences.AppPreferences
 import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
@@ -23,10 +24,17 @@ import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/**
+ * Set app up
+ *
+ * TODO Add some DI framework if these get crazy!
+ */
 suspend fun appSetup(): AppState = withContext(Dispatchers.IO) {
     val codec = PreferencesCodec()
-    val editor = PreferenceEditor()
     EditorFiles.initialize(codec = codec)
+    val path = EditorFiles.preferencesPath().toString()
+    val command = DesktopEditorCommand(path = path)
+    val editor = PreferenceEditor(command = command)
     val preferences = AppPreferences(codec = codec, editor = editor).apply { initialize() }
     AppState(preferences = preferences)
 }

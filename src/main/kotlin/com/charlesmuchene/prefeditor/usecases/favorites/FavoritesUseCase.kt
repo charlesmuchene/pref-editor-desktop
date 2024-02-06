@@ -66,13 +66,13 @@ class FavoritesUseCase(
 
     private suspend fun writeFavorites(favorites: List<Favorite>) {
         val content = codec.encode(favorites = favorites, block = Edit::Add)
-        editor.edit(edits = content, path = path)
+        editor.edit(edits = content)
         refresh()
     }
 
     private suspend fun removeFavorites(favorites: List<Favorite>) {
         val content = codec.encode(favorites = favorites, block = Edit::Delete)
-        val output = editor.edit(edits = content, path = path)
+        val output = editor.edit(edits = content)
         if (output.isNotBlank()) logger.debug { "Remove favorites: $output" }
         refresh()
     }
