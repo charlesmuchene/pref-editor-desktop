@@ -48,6 +48,9 @@ sealed interface EntryAction {
     data class Change(val entry: Entry, val change: String) : EntryAction
 }
 
+/**
+ * Models data for the [Editor]
+ */
 class EditorViewModel(
     private val app: App,
     private val device: Device,
@@ -77,7 +80,13 @@ class EditorViewModel(
         .map { validator.validEdits(edits) }
         .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = false)
 
-    fun createSetSubEntries(entry: SetEntry): Pair<SetSubEntry.Header, List<SetSubEntry.Entry>> =
+    /**
+     * Create entries to display a string set
+     *
+     * @param entry [SetEntry]
+     * @return [List] of [SetSubEntry.Entry]
+     */
+    fun createSubEntries(entry: SetEntry): Pair<SetSubEntry.Header, List<SetSubEntry.Entry>> =
         Pair(SetSubEntry.Header(entry.name), entry.entries.map(SetSubEntry::Entry))
 
     /**
@@ -92,6 +101,12 @@ class EditorViewModel(
         else -> Outline.None
     }
 
+    /**
+     * Determine outline for a number entry
+     *
+     * @param entry Number [Entry]: Int, Long, Float
+     * @return [Outline] instance
+     */
     private fun numberOutline(entry: Entry): Outline {
         if (original[entry.name] == entry.value) return Outline.None
         return if (validator.isValid(entry = entry)) Outline.Warning else Outline.Error
@@ -104,6 +119,11 @@ class EditorViewModel(
         }
     }
 
+    /**
+     * Enable or disable preference file backup
+     *
+     * @param backup `true` to back up file, `false` otherwise
+     */
     fun backup(backup: Boolean) {
         enableBackup = backup
     }
@@ -138,21 +158,47 @@ class EditorViewModel(
         }
     }
 
+    /**
+     * Entry action
+     *
+     * @param action Developer [EntryAction]
+     * @return Resulting [UIEntry] instance
+     */
     fun entryAction(action: EntryAction): UIEntry = when (action) {
         is EntryAction.Change -> entryChanged(action.entry, action.change)
         is EntryAction.Delete -> entryDeleted(action.entry)
         is EntryAction.Reset -> entryReset(action.entry)
     }
 
+    /**
+     * Entry reset
+     *
+     * @param entry Reset [Entry]
+     * @return Unedited [UIEntry]
+     */
     private fun entryReset(entry: Entry): UIEntry {
         val value = original[entry.name] ?: error("Missing entry value ${entry.name}")
         return UIEntry(createEntry(oldEntry = entry, value = value)).also { edited[entry.name] = it }
     }
 
+    /**
+     * Entry deleted
+     *
+     * @param entry Deleted [Entry]
+     * @return [UIEntry] with [EntryState.Deleted] state
+     */
     private fun entryDeleted(entry: Entry): UIEntry {
         return UIEntry(entry = entry, state = EntryState.Deleted)
     }
 
+    /**
+     * Entry content changed
+     *
+     * @param entry Displayed [Entry]
+     * @param change [Entry] content change
+     * @return [UIEntry] with the [EntryState.Changed] if [entry] differs from original,
+     * [EntryState.None] otherwise
+     */
     private fun entryChanged(entry: Entry, change: String): UIEntry {
         launch { changes.emit(change) }
 
@@ -162,10 +208,11 @@ class EditorViewModel(
     }
 
     /**
-     * Create an entry
+     * Create an entry during edits
      *
      * @param oldEntry Existing [Entry] to evaluate type
      * @param value Entry value
+     * @return The created [Entry]
      */
     private fun createEntry(oldEntry: Entry, value: String) = when (oldEntry) {
         is BooleanEntry -> BooleanEntry(oldEntry.name, value = value)
