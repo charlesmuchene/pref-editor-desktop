@@ -16,7 +16,6 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.editor
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,7 +26,6 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.*
 import com.charlesmuchene.prefeditor.providers.LocalAppState
@@ -36,15 +34,12 @@ import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.PrefKey
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.PrimitivePreference
-import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.rows.SetPreferenceRow
+import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.setPreferenceSection
 import com.charlesmuchene.prefeditor.ui.Toast
 import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
-import org.jetbrains.jewel.foundation.theme.JewelTheme
-import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.CheckboxRow
 import org.jetbrains.jewel.ui.component.DefaultButton
-import org.jetbrains.jewel.ui.component.Divider
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -79,7 +74,7 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
             val state = rememberLazyListState()
             LazyColumn(modifier = Modifier.padding(end = endPadding), state = state) {
                 primitives(preferences = primitives, viewModel = viewModel)
-                sets(setEntries = sets, viewModel = viewModel)
+                sets(preferences = sets, viewModel = viewModel)
             }
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(scrollState = state),
@@ -112,43 +107,9 @@ private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifi
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-private fun LazyListScope.sets(
-    setEntries: List<UIPreference>,
-    viewModel: EditorViewModel,
-) {
-    if (setEntries.isEmpty()) return
-
-    item {
-        Divider(
-            orientation = Orientation.Horizontal,
-            color = Color.LightGray.copy(alpha = 0.5f),
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-    }
-
-    stickyHeader {
-        Row(
-            modifier = Modifier.padding(bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(text = "String sets", style = Typography.heading)
-            Text(
-                text = "(editing not yet supported)",
-                style = Typography.secondary,
-                color = JewelTheme.contentColor,
-            )
-        }
-    }
-
-    items(items = setEntries.mapNotNull { it.preference as? SetPreference }, key = SetPreference::name) { preference ->
-        SetPreferenceRow(
-            preference = preference,
-            viewModel = viewModel,
-            modifier = Modifier.padding(end = 18.dp).fillMaxWidth().height((64 * preference.entries.size).dp),
-        )
-    }
+private fun LazyListScope.sets(preferences: List<UIPreference>, viewModel: EditorViewModel) {
+    if (preferences.isEmpty()) return
+    setPreferenceSection(preferences = preferences, viewModel = viewModel)
 }
 
 private fun LazyListScope.primitives(preferences: List<UIPreference>, viewModel: EditorViewModel) {
