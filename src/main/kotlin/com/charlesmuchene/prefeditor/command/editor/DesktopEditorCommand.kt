@@ -14,54 +14,43 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.command
+package com.charlesmuchene.prefeditor.command.editor
 
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.data.Tags
 
-interface EditorCommand {
-    fun command(edit: Edit): List<String>
-
-    fun String.escaped(): String = replace(oldValue = "/", newValue = "\\/")
-        .replace(oldValue = "\"", newValue = "\\\"")
-}
-
 class DesktopEditorCommand(private val path: String) : EditorCommand {
 
-    override fun command(edit: Edit): List<String> = buildList {
-        when (edit) {
-            is Edit.Add -> add(edit = edit)
-            is Edit.Change -> change(edit = edit)
-            is Edit.Delete -> delete(edit = edit)
-        }
-    }
-
-    private fun delete(edit: Edit.Delete): List<String> = buildList {
+    override fun delete(edit: Edit.Delete): List<String> = buildList {
         val matcher = edit.matcher.escaped()
-        add("sh")
+        add(SHELL)
         add("delete.sh")
         add(matcher)
         add(path)
     }
 
-    private fun change(edit: Edit.Change): List<String> = buildList {
+    override fun change(edit: Edit.Change): List<String> = buildList {
         val matcher = edit.matcher.escaped()
         val content = edit.content.escaped()
-        add("sh")
+        add(SHELL)
         add("change.sh")
         add(matcher)
         add(content)
         add(path)
     }
 
-    private fun add(edit: Edit.Add): List<String> = buildList {
+    override fun add(edit: Edit.Add): List<String> = buildList {
         val matcher = "</${Tags.ROOT}>".escaped()
         val content = edit.content.escaped()
-        add("sh")
+        add(SHELL)
         add("add.sh")
         add(matcher)
         add(content)
         add(path)
+    }
+
+    companion object {
+        private const val SHELL = "sh"
     }
 
 }

@@ -29,11 +29,11 @@ import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import org.xmlpull.v1.XmlSerializer
 
 /**
- * Codec for preferences on Android
+ * Codec for preferences on device
  *
  * @param codec [PreferencesCodec] instance
  */
-class AndroidPreferencesCodec(private val codec: PreferencesCodec) {
+class DevicePreferencesCodec(private val codec: PreferencesCodec) {
 
     fun encode(edits: List<UIEntry>, existing: List<Entry>): List<Edit> = edits.map { entry ->
         when (entry.state) {

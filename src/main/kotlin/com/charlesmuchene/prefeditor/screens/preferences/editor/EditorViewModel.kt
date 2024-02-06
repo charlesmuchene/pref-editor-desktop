@@ -21,9 +21,12 @@ import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.command.WritePref
+import com.charlesmuchene.prefeditor.command.editor.DeviceEditorCommand
 import com.charlesmuchene.prefeditor.data.*
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefListScreen
+import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
+import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.SetSubEntry
 import com.charlesmuchene.prefeditor.validation.PreferenceValidator
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -67,6 +70,11 @@ class EditorViewModel(
     private val validator: PreferenceValidator = PreferenceValidator(original = preferences.entries),
 ) : CoroutineScope by scope + context {
 
+    private val codec = DevicePreferencesCodec(codec = PreferencesCodec())
+    private val editorCommand = DeviceEditorCommand(app = app, device = device, file = prefFile)
+    private val editor = PreferenceEditor(command = editorCommand)
+    private val useCase = DevicePreferencesUseCase(codec = codec, editor = editor)
+
     private var enableBackup = false
     private val _message = MutableSharedFlow<String?>()
     private val changes = MutableSharedFlow<CharSequence>()
@@ -100,7 +108,7 @@ class EditorViewModel(
         launch {
             val entries = edited.values.filter { it.state == EntryState.Changed }.map(UIEntry::entry)
             val isValid = validator.valid(entries)
-            if (isValid) saveChanges() else showInvalidEdits()
+            if (isValid) saveChangesNow() else showInvalidEdits()
         }
         logger.debug { "$edited" }
     }
@@ -112,6 +120,11 @@ class EditorViewModel(
         val message = "Invalid edits"
         launch { _message.emit(message) }
         logger.info { "$message: $edits" }
+    }
+
+    private suspend fun saveChangesNow() {
+        val output = useCase.writePreferences(edited.values)
+        logger.info { "Saved Changes: $output" }
     }
 
     private suspend fun saveChanges() {

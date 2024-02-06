@@ -19,12 +19,13 @@ package com.charlesmuchene.prefeditor.screens.preferences.editor
 import com.charlesmuchene.prefeditor.data.Preferences
 import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
 
-class AndroidPreferencesUseCase(private val codec: AndroidPreferencesCodec, private val editor: PreferenceEditor) {
+class DevicePreferencesUseCase(private val codec: DevicePreferencesCodec, private val editor: PreferenceEditor) {
 
     private lateinit var preferences: Preferences
 
-    fun writePreferences(entries: List<UIEntry>) {
+    suspend fun writePreferences(entries: Collection<UIEntry>): String {
         val edits = entries.filter { it.state !is EntryState.None }
         val content = codec.encode(edits = edits, existing = preferences.entries)
+        return editor.edit(content)
     }
 }
