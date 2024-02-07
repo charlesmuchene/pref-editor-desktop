@@ -16,32 +16,19 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences
 
-import com.charlesmuchene.prefeditor.bridge.Bridge
-import com.charlesmuchene.prefeditor.command.ReadPref
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preferences
-import com.charlesmuchene.prefeditor.extensions.eval
 import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.editor.DevicePreferencesUseCase
-import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-private val logger = KotlinLogging.logger {}
-
-class PrefEditorViewModel(
-    private val app: App,
-    private val device: Device,
-    private val bridge: Bridge,
-    private val prefFile: PrefFile,
-    private val scope: CoroutineScope,
-) : CoroutineScope by scope {
+class PrefEditorViewModel(app: App, device: Device, prefFile: PrefFile, private val scope: CoroutineScope) :
+    CoroutineScope by scope {
 
     private val processor = Processor()
     private val codec = PreferencesCodec()
@@ -52,25 +39,8 @@ class PrefEditorViewModel(
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     init {
-        launch {
-            val prefs = useCase.readPreferences(
-                prefFile,
-                app,
-                device
-            ) // TODO Usecase should already know about device, app and file
-            _uiState.emit(UIState.Success(prefs))
-        }
-    }
-
-    private suspend fun fetchPreferences(): UIState {
-        val result = bridge.execute(command = ReadPref(app = app, device = device, prefFile = prefFile)).eval(logger)
-        return when {
-            result.isSuccess -> result.getOrNull()?.let { pref ->
-                UIState.Success(preferences = pref)
-            } ?: UIState.Error()
-
-            else -> UIState.Error(result.exceptionOrNull()?.message)
-        }
+        useCase.preferences.onEach { _uiState.emit(UIState.Success(it)) }.launchIn(scope = scope)
+        launch { useCase.readPreferences() }
     }
 
     sealed interface UIState {

@@ -24,7 +24,6 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
-import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.PrefKey
 import com.charlesmuchene.prefeditor.screens.preferences.PrefEditorViewModel.UIState
@@ -34,10 +33,9 @@ import com.charlesmuchene.prefeditor.ui.Loading
 
 @Composable
 fun PrefEditor(prefFile: PrefFile, app: App, device: Device, modifier: Modifier = Modifier) {
-    val bridge = LocalBridge.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
-        PrefEditorViewModel(prefFile = prefFile, app = app, device = device, scope = scope, bridge = bridge)
+        PrefEditorViewModel(app = app, device = device, prefFile = prefFile, scope = scope)
     }
     val uiState by viewModel.uiState.collectAsState()
 

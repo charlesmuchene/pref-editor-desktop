@@ -117,7 +117,8 @@ class EditorViewModel(
 
     private suspend fun saveChangesNow() {
         val output = prefUseCase.writePreferences(edited.values)
-        logger.info { "Saved Changes: $output" }
+        if (output.isNotBlank()) logger.info { "Saved Changes: $output" }
+        appState.showToast("Changes saved to ${prefFile.name}")
     }
 
     private suspend fun saveChanges() {
