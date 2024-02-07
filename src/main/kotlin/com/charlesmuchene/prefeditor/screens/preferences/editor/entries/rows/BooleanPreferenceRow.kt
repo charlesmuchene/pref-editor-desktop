@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.BooleanPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceAction
+import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.editor.UIPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
@@ -51,9 +52,11 @@ fun BooleanPreferenceRow(uiPreference: UIPreference, viewModel: EditorViewModel,
             val falseString by remember() { mutableStateOf(false.toString()) }
             val outline by remember(localPreference) { mutableStateOf(viewModel.outline(preference = localPreference.preference)) }
             var isTrue by remember(localPreference) { mutableStateOf(localPreference.preference.value) }
+            val isEnabled by remember(localPreference) { mutableStateOf(localPreference.state !is PreferenceState.Deleted) }
 
             RadioButtonRow(
                 selected = isTrue.toBooleanStrict(),
+                enabled = isEnabled,
                 outline = outline,
                 onClick = {
                     isTrue = trueString
@@ -64,6 +67,7 @@ fun BooleanPreferenceRow(uiPreference: UIPreference, viewModel: EditorViewModel,
 
             RadioButtonRow(
                 selected = !isTrue.toBooleanStrict(),
+                enabled = isEnabled,
                 outline = outline,
                 onClick = {
                     isTrue = falseString

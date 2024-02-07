@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceAction
+import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.editor.UIPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
@@ -56,9 +57,11 @@ fun PrimitivePreferenceRow(
         val outline by remember(localPreference) {
             mutableStateOf(viewModel.outline(preference = localPreference.preference))
         }
+        val isEnabled by remember(localPreference) { mutableStateOf(localPreference.state !is PreferenceState.Deleted) }
 
         TextField(
             outline = outline,
+            enabled = isEnabled,
             value = localPreference.preference.value,
             modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT),
             placeholder = { Text(text = preference.preference.value) },
