@@ -50,6 +50,7 @@ fun PrefEditor(prefFile: PrefFile, app: App, device: Device, modifier: Modifier 
                 device = device,
                 modifier = modifier,
                 prefFile = prefFile,
+                prefUseCase = viewModel.useCase,
                 preferences = state.preferences,
             )
         }

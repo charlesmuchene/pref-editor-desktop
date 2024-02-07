@@ -21,12 +21,9 @@ import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.command.WritePref
-import com.charlesmuchene.prefeditor.command.editor.DeviceEditorCommand
 import com.charlesmuchene.prefeditor.data.*
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefListScreen
-import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
-import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.SetSubPreference
 import com.charlesmuchene.prefeditor.validation.PreferenceValidator
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -66,14 +63,10 @@ class EditorViewModel(
     private val scope: CoroutineScope,
     private val navigation: Navigation,
     private val preferences: Preferences,
+    private val prefUseCase: DevicePreferencesUseCase,
     private val context: CoroutineContext = Dispatchers.Default,
     private val validator: PreferenceValidator = PreferenceValidator(original = preferences.preferences),
 ) : CoroutineScope by scope + context {
-
-    private val codec = DevicePreferencesCodec(codec = PreferencesCodec())
-    private val editorCommand = DeviceEditorCommand(app = app, device = device, file = prefFile)
-    private val editor = PreferenceEditor(command = editorCommand)
-    private val useCase = DevicePreferencesUseCase(codec = codec, editor = editor)
 
     private var enableBackup = false
     private val _message = MutableSharedFlow<String?>()
@@ -123,7 +116,7 @@ class EditorViewModel(
     }
 
     private suspend fun saveChangesNow() {
-        val output = useCase.writePreferences(edited.values)
+        val output = prefUseCase.writePreferences(edited.values)
         logger.info { "Saved Changes: $output" }
     }
 

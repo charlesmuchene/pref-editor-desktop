@@ -43,7 +43,7 @@ import org.jetbrains.jewel.ui.component.DefaultButton
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Device, modifier: Modifier = Modifier) {
+fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Device, prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
     val bridge = LocalBridge.current
@@ -59,6 +59,7 @@ fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Devic
             appState = appState,
             navigation = navigation,
             preferences = preferences,
+            prefUseCase = prefUseCase,
         )
     }
 

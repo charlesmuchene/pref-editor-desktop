@@ -23,10 +23,14 @@ import com.charlesmuchene.prefeditor.data.Tags.INT
 import com.charlesmuchene.prefeditor.data.Tags.LONG
 import com.charlesmuchene.prefeditor.data.Tags.SET
 import com.charlesmuchene.prefeditor.data.Tags.STRING
+import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobbleTag
+import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceState.*
+import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlSerializer
 
 /**
@@ -36,6 +40,13 @@ import org.xmlpull.v1.XmlSerializer
  */
 class DevicePreferencesCodec(private val codec: PreferencesCodec) {
 
+    /**
+     * Encode edits
+     *
+     * @param edits A developer's edits
+     * @param existing Downstream preferences
+     * @return A [List] of [Edit]s
+     */
     fun encode(edits: List<UIPreference>, existing: List<Preference>): List<Edit> = edits.map { preference ->
         when (preference.state) {
             Changed -> encodeChange(
@@ -48,6 +59,32 @@ class DevicePreferencesCodec(private val codec: PreferencesCodec) {
             None -> error("Unnecessary encode: no change to $preference")
         }
     }
+
+    /**
+     * Decode content
+     *
+     * @param content Output from downstream
+     * @return [Preferences] instance
+     */
+    suspend fun decode(content: String): Preferences { // TODO Return Result?
+        val preferences = buildList {
+            // TODO Handle xml pull parser exception
+            codec.decode(content.byteInputStream()) {
+                when (name) {
+                    BOOLEAN -> add(parseBoolean())
+                    STRING -> add(parseString())
+                    FLOAT -> add(parseFloat())
+                    LONG -> add(parseLong())
+                    INT -> add(parseInt())
+                    SET -> add(parseSet())
+                    else -> skip()
+                }
+            }
+        }
+        return Preferences(preferences = preferences)
+    }
+
+    /* ----------------- Writer ------------------- */
 
     /**
      * Encode a preference to be changed
@@ -120,6 +157,76 @@ class DevicePreferencesCodec(private val codec: PreferencesCodec) {
     private fun XmlSerializer.attribute(name: String, value: String) {
         attribute(null, NAME, name)
         attribute(null, VALUE, value)
+    }
+
+    /* ----------------- Reader ------------------- */
+
+    @Throws(XmlPullParserException::class)
+    private fun XmlPullParser.parseBoolean(): BooleanPreference =
+        parse(tag = BOOLEAN) { name, value ->
+            BooleanPreference(name = name, value = value)
+        }
+
+    @Throws(XmlPullParserException::class)
+    private fun XmlPullParser.parseInt(): IntPreference = parse(tag = INT) { name, value ->
+        IntPreference(name = name, value = value)
+    }
+
+    @Throws(XmlPullParserException::class)
+    private fun XmlPullParser.parseFloat(): FloatPreference = parse(tag = FLOAT) { name, value ->
+        FloatPreference(name = name, value = value)
+    }
+
+    @Throws(XmlPullParserException::class)
+    private fun XmlPullParser.parseLong(): LongPreference = parse(tag = LONG) { name, value ->
+        LongPreference(name = name, value = value)
+    }
+
+    @Throws(XmlPullParserException::class)
+    private fun XmlPullParser.parseString(): StringPreference {
+        require(XmlPullParser.START_TAG, null, STRING)
+        expect(attributeCount == 1)
+        val name = getAttributeValue(0)
+        val next = next()
+        val value = if (next == XmlPullParser.TEXT) text else ""
+        if (next != XmlPullParser.END_TAG) nextTag()
+        require(XmlPullParser.END_TAG, null, STRING)
+        return StringPreference(name = name, value = value)
+    }
+
+    @Throws(XmlPullParserException::class)
+    private fun XmlPullParser.parseSet(): SetPreference {
+        require(XmlPullParser.START_TAG, null, SET)
+        expect(attributeCount == 1)
+        val name = getAttributeValue(0)
+        val entries = buildList {
+            while (nextTag() != XmlPullParser.END_TAG) {
+                add(parseNamelessString())
+            }
+        }
+        val preference = SetPreference(name = name, entries = entries)
+        require(XmlPullParser.END_TAG, null, SET)
+        return preference
+    }
+
+    @Throws(XmlPullParserException::class)
+    private fun XmlPullParser.parseNamelessString(): String = gobbleTag(tag = STRING) {
+        expect(attributeCount == 0)
+        expect(next() == XmlPullParser.TEXT)
+        text
+    }
+
+    @Throws(XmlPullParserException::class)
+    private fun <R : Preference> XmlPullParser.parse(tag: String, block: (String, String) -> R): R =
+        gobbleTag(tag) {
+            expect(attributeCount == 2)
+            val name = getAttributeValue(0)
+            val value = getAttributeValue(1)
+            block(name, value)
+        }
+
+    private fun expect(toBeTrue: Boolean) {
+        if (!toBeTrue) throw XmlPullParserException("Unexpected xml format")
     }
 
     companion object {

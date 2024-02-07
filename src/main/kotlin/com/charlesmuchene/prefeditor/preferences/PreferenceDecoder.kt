@@ -17,6 +17,7 @@
 package com.charlesmuchene.prefeditor.preferences
 
 import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlPullParserException
 import java.io.InputStream
 
 /**
@@ -31,6 +32,7 @@ interface PreferenceDecoder {
      *
      * @param inputStream [InputStream] to decode from
      * @param block Block to extract tags from -- has a [XmlPullParser] as the receiver
+     * @throws [XmlPullParserException]
      */
     suspend fun decode(inputStream: InputStream, block: XmlPullParser.() -> Unit)
 

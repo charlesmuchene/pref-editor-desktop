@@ -23,6 +23,9 @@ import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preferences
 import com.charlesmuchene.prefeditor.extensions.eval
+import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.screens.preferences.editor.DevicePreferencesUseCase
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,11 +43,23 @@ class PrefEditorViewModel(
     private val scope: CoroutineScope,
 ) : CoroutineScope by scope {
 
+    private val processor = Processor()
+    private val codec = PreferencesCodec()
+    val useCase =
+        DevicePreferencesUseCase(prefCodec = codec, app = app, device = device, file = prefFile, processor = processor)
+
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     init {
-        launch { _uiState.emit(fetchPreferences()) }
+        launch {
+            val prefs = useCase.readPreferences(
+                prefFile,
+                app,
+                device
+            ) // TODO Usecase should already know about device, app and file
+            _uiState.emit(UIState.Success(prefs))
+        }
     }
 
     private suspend fun fetchPreferences(): UIState {

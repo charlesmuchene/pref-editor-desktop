@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.command.editor
+package com.charlesmuchene.prefeditor.command.writer
 
 import com.charlesmuchene.prefeditor.data.Edit
 

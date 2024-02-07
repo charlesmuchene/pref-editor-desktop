@@ -16,16 +16,40 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.editor
 
+import com.charlesmuchene.prefeditor.command.reader.ReadPreferencesCommand
+import com.charlesmuchene.prefeditor.command.writer.DeviceEditorCommand
+import com.charlesmuchene.prefeditor.data.App
+import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preferences
-import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
+import com.charlesmuchene.prefeditor.preferences.PreferenceReader
+import com.charlesmuchene.prefeditor.preferences.PreferenceWriter
+import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.processor.Processor
 
-class DevicePreferencesUseCase(private val codec: DevicePreferencesCodec, private val editor: PreferenceEditor) {
+class DevicePreferencesUseCase(
+    app: App,
+    file: PrefFile,
+    device: Device,
+    processor: Processor,
+    prefCodec: PreferencesCodec,
+) {
+    private val codec = DevicePreferencesCodec(codec = prefCodec)
+    private val command = DeviceEditorCommand(app = app, device = device, file = file)
+    private val writer = PreferenceWriter(processor = processor, command = command)
+    private val reader = PreferenceReader(processor = processor)
 
     private lateinit var preferences: Preferences
+
+    suspend fun readPreferences(file: PrefFile, app: App, device: Device): Preferences {
+        val command = ReadPreferencesCommand(app = app, device = device, prefFile = file)
+        val content = reader.read(command)
+        return codec.decode(content = content).also { preferences = it }
+    }
 
     suspend fun writePreferences(preferences: Collection<UIPreference>): String {
         val edits = preferences.filter { it.state !is PreferenceState.None }
         val content = codec.encode(edits = edits, existing = this.preferences.preferences)
-        return editor.edit(content)
+        return writer.edit(content)
     }
 }

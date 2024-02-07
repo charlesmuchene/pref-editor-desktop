@@ -3,7 +3,6 @@ package com.charlesmuchene.prefeditor.preferences
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.processor.Processor
 import io.mockk.*
-import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runTest
@@ -12,19 +11,19 @@ import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import kotlin.test.assertEquals
 
-class PreferenceEditorTest {
+class PreferenceWriterTest {
 
     private val scheduler = TestCoroutineScheduler()
     private val dispatcher = StandardTestDispatcher(scheduler = scheduler)
 
-    private lateinit var editor: PreferenceEditor
+    private lateinit var editor: PreferenceWriter
 
     private lateinit var processor: Processor
 
     @BeforeEach
     fun setup() {
         processor = mockk(relaxed = true) { coEvery { run(command = any(), config = eq({})) } returns "" }
-        editor = PreferenceEditor(processor = processor, context = dispatcher)
+        editor = PreferenceWriter(processor = processor, context = dispatcher)
     }
 
     @Test

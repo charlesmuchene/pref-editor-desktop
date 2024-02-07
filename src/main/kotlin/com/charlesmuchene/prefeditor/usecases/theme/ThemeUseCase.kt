@@ -20,7 +20,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.files.EditorFiles
-import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
+import com.charlesmuchene.prefeditor.preferences.PreferenceWriter
 import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.System
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +34,7 @@ private val logger = KotlinLogging.logger {}
 
 class ThemeUseCase(
     private val codec: ThemeCodec,
-    private val editor: PreferenceEditor,
+    private val editor: PreferenceWriter,
     private val path: Path = EditorFiles.preferencesPath(),
     private val context: CoroutineContext = Dispatchers.Default,
 ) : CoroutineScope by CoroutineScope(context) {

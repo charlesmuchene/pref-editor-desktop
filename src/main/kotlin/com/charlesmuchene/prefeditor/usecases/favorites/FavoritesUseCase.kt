@@ -21,7 +21,7 @@ import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.files.EditorFiles
-import com.charlesmuchene.prefeditor.preferences.PreferenceEditor
+import com.charlesmuchene.prefeditor.preferences.PreferenceWriter
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +32,7 @@ private val logger = KotlinLogging.logger {}
 
 class FavoritesUseCase(
     private val codec: FavoritesCodec,
-    private val editor: PreferenceEditor,
+    private val editor: PreferenceWriter,
     private val path: Path = EditorFiles.preferencesPath(),
     private val context: CoroutineContext = Dispatchers.Default,
 ) : CoroutineScope by CoroutineScope(context) {

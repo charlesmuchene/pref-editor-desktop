@@ -30,7 +30,7 @@ private val logger = KotlinLogging.logger {}
 /**
  * Application preferences
  */
-class AppPreferences(codec: PreferencesCodec, editor: PreferenceEditor) {
+class AppPreferences(codec: PreferencesCodec, editor: PreferenceWriter) {
     val favorites = FavoritesUseCase(editor = editor, codec = FavoritesCodec(codec))
     val theme = ThemeUseCase(editor = editor, codec = ThemeCodec(codec))
 

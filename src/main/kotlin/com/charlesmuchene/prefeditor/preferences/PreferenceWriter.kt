@@ -16,7 +16,7 @@
 
 package com.charlesmuchene.prefeditor.preferences
 
-import com.charlesmuchene.prefeditor.command.editor.EditorCommand
+import com.charlesmuchene.prefeditor.command.writer.EditorCommand
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.processor.Processor
 
@@ -28,9 +28,9 @@ import com.charlesmuchene.prefeditor.processor.Processor
  *  - [Edit.Change]
  *  - [Edit.Delete]
  */
-class PreferenceEditor(
+class PreferenceWriter(
+    private val processor: Processor,
     private val command: EditorCommand,
-    private val processor: Processor = Processor(),
 ) {
 
     /**

@@ -14,48 +14,43 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.command.editor
+package com.charlesmuchene.prefeditor.command.writer
 
-import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.data.Edit
+import com.charlesmuchene.prefeditor.data.Tags
 
-class DeviceEditorCommand(
-    private val app: App,
-    private val device: Device,
-    private val file: PrefFile,
-) : EditorCommand {
+class DesktopEditorCommand(private val path: String) : EditorCommand {
 
     override fun MutableList<String>.delete(edit: Edit.Delete) {
-        baseCommands()
-        add(edit.matcher.escaped())
+        val matcher = edit.matcher.escaped()
+        add(SHELL)
+        add("delete.sh")
+        add(matcher)
+        add(path)
     }
 
     override fun MutableList<String>.change(edit: Edit.Change) {
-        baseCommands()
         val matcher = edit.matcher.escaped()
         val content = edit.content.escaped()
+        add(SHELL)
+        add("change.sh")
         add(matcher)
         add(content)
+        add(path)
     }
 
     override fun MutableList<String>.add(edit: Edit.Add) {
-        baseCommands()
         val matcher = "</${Tags.ROOT}>".escaped()
         val content = edit.content.escaped()
+        add(SHELL)
+        add("add.sh")
         add(matcher)
         add(content)
-    }
-
-    private fun MutableList<String>.baseCommands() {
-        add(SHELL)
-        add(SCRIPT)
-        add(device.serial)
-        add(app.packageName)
-        add("i")
-        add(file.name)
+        add(path)
     }
 
     companion object {
         private const val SHELL = "sh"
-        private const val SCRIPT = "push.sh"
     }
+
 }
