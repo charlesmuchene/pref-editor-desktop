@@ -16,14 +16,28 @@
 
 package com.charlesmuchene.prefeditor.screens.bridge
 
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.HomeKey
-import com.charlesmuchene.prefeditor.ui.Loading
+import com.charlesmuchene.prefeditor.ui.padding
+import com.charlesmuchene.prefeditor.ui.theme.Typography
+import org.jetbrains.jewel.ui.component.IndeterminateHorizontalProgressBar
+import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 fun BridgeLoading(modifier: Modifier = Modifier) {
     val text = LocalBundle.current[HomeKey.BridgeLoading]
-    Loading(text = text, modifier = modifier)
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = text, style = Typography.primary)
+        Spacer(modifier = Modifier.height(padding))
+        IndeterminateHorizontalProgressBar(modifier = Modifier.width(128.dp))
+    }
 }

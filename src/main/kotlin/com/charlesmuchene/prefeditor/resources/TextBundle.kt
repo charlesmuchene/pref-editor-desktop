@@ -49,6 +49,7 @@ enum class ApplicationKey(override val key: String) : TextKey {
 enum class HomeKey(override val key: String) : TextKey {
     BridgeLoading(key = "home.bridge.loading"),
     BridgeUnavailable(key = "home.bridge.unavailable"),
+    BridgeUnavailableSecondary(key = "home.bridge.unavailable.secondary"),
     EmptyDeviceList(key = "home.empty.device.list"),
     DeviceListError(key = "home.device.list.error"),
     ConnectedDevices(key = "home.connected.devices"),

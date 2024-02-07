@@ -25,5 +25,6 @@ import com.charlesmuchene.prefeditor.ui.FullScreenText
 @Composable
 fun BridgeUnavailable(modifier: Modifier = Modifier) {
     val primary = LocalBundle.current[HomeKey.BridgeUnavailable]
-    FullScreenText(primary = primary, modifier = modifier)
+    val secondary = LocalBundle.current[HomeKey.BridgeUnavailableSecondary]
+    FullScreenText(primary = primary, secondary = secondary, modifier = modifier)
 }
