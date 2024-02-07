@@ -16,6 +16,9 @@
 
 package com.charlesmuchene.prefeditor.command.writer
 
+import com.charlesmuchene.prefeditor.command.writer.EditorCommand.Companion.ADD
+import com.charlesmuchene.prefeditor.command.writer.EditorCommand.Companion.CHANGE
+import com.charlesmuchene.prefeditor.command.writer.EditorCommand.Companion.DELETE
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.data.Tags
 
@@ -24,7 +27,8 @@ class DesktopEditorCommand(private val path: String) : EditorCommand {
     override fun MutableList<String>.delete(edit: Edit.Delete) {
         val matcher = edit.matcher.escaped()
         add(SHELL)
-        add("delete.sh")
+        add(SCRIPT)
+        add(DELETE)
         add(matcher)
         add(path)
     }
@@ -33,7 +37,8 @@ class DesktopEditorCommand(private val path: String) : EditorCommand {
         val matcher = edit.matcher.escaped()
         val content = edit.content.escaped()
         add(SHELL)
-        add("change.sh")
+        add(SCRIPT)
+        add(CHANGE)
         add(matcher)
         add(content)
         add(path)
@@ -43,7 +48,8 @@ class DesktopEditorCommand(private val path: String) : EditorCommand {
         val matcher = "</${Tags.ROOT}>".escaped()
         val content = edit.content.escaped()
         add(SHELL)
-        add("add.sh")
+        add(SCRIPT)
+        add(ADD)
         add(matcher)
         add(content)
         add(path)
@@ -51,6 +57,7 @@ class DesktopEditorCommand(private val path: String) : EditorCommand {
 
     companion object {
         private const val SHELL = "sh"
+        private const val SCRIPT = "desktop.sh"
     }
 
 }

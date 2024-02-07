@@ -16,7 +16,7 @@
 #
 
 # Add edit
-# matcher, content, filename
+# matcher, content, file
 function add() {
   sed -i '' "/$1/ i\\
   $2
@@ -24,13 +24,13 @@ function add() {
 }
 
 # Delete edit
-# matcher, filename
+# matcher, file
 function delete() {
   sed -i '' "/$1/ d" "$2"
 }
 
 # Change edit
-# matcher, change, filename
+# matcher, change, file
 function change() {
   sed -i '' "s/$1/$2/" "$3"
 }
@@ -40,14 +40,14 @@ function change() {
 #####
 case $1 in
   add)
-    # matcher, content, filename
+    # matcher, content, file
     add "$2" "$3" "$4"
     ;;
   delete)
-    # matcher, filename
+    # matcher, file
     delete "$2" "$3"
     ;;
   change)
-    # matcher, change, filename
+    # matcher, change, file
     change "$2" "$3" "$4"
 esac

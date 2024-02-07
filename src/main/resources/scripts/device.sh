@@ -41,7 +41,7 @@ function delete() {
 function change() {
     adb -s "$1" exec-out \
     run-as "$2" \
-    sed -i"$3" \
+    sed -E"$3" \
     -e "s/$4/$5/" \
     "/data/data/$2/shared_prefs/$6"
 }

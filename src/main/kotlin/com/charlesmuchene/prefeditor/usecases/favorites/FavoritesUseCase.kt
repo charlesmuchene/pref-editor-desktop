@@ -43,13 +43,13 @@ class FavoritesUseCase(
         favorites = codec.decode(path = path)
     }
 
+    fun isFavorite(device: Device): Boolean =
+        favorites.filterIsInstance<Favorite.Device>().any { it.serial == device.serial }
+
     fun isFavorite(app: App, device: Device): Boolean =
         favorites.filterIsInstance<Favorite.App>().any {
             it.device == device.serial && it.packageName == app.packageName
         }
-
-    fun isFavorite(device: Device): Boolean =
-        favorites.filterIsInstance<Favorite.Device>().any { it.serial == device.serial }
 
     fun isFavorite(file: PrefFile, app: App, device: Device): Boolean =
         favorites.filterIsInstance<Favorite.File>().any {
@@ -57,22 +57,14 @@ class FavoritesUseCase(
         }
 
     private suspend fun writeFavorite(favorite: Favorite) {
-        writeFavorites(favorites = listOf(favorite))
-    }
-
-    private suspend fun removeFavorite(favorite: Favorite) {
-        removeFavorites(listOf(element = favorite))
-    }
-
-    private suspend fun writeFavorites(favorites: List<Favorite>) {
-        val content = codec.encode(favorites = favorites, block = Edit::Add)
-        editor.edit(edits = content)
+        val edit = codec.encode(favorite = favorite, block = Edit::Add)
+        editor.edit(edit = edit)
         refresh()
     }
 
-    private suspend fun removeFavorites(favorites: List<Favorite>) {
-        val content = codec.encode(favorites = favorites, block = Edit::Delete)
-        val output = editor.edit(edits = content)
+    private suspend fun removeFavorite(favorite: Favorite) {
+        val edit = codec.encode(favorite = favorite, block = Edit::Delete)
+        val output = editor.edit(edit = edit)
         if (output.isNotBlank()) logger.debug { "Remove favorites: $output" }
         refresh()
     }

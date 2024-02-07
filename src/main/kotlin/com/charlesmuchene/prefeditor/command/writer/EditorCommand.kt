@@ -33,4 +33,11 @@ interface EditorCommand {
 
     fun String.escaped(): String = replace(oldValue = "/", newValue = "\\/")
         .replace(oldValue = "\"", newValue = "\\\"")
+
+    companion object {
+        const val SHELL = "sh"
+        const val ADD = "add"
+        const val CHANGE = "change"
+        const val DELETE = "delete"
+    }
 }

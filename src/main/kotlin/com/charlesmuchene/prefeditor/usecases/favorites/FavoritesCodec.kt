@@ -17,15 +17,15 @@
 package com.charlesmuchene.prefeditor.usecases.favorites
 
 import com.charlesmuchene.prefeditor.data.Edit
-import com.charlesmuchene.prefeditor.usecases.favorites.Favorite.*
-import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.APP
-import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.DEVICE
-import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.FILE
-import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobbleTag
 import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
+import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.usecases.favorites.Favorite.*
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.APP
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.DEVICE
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.FILE
 import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.NAME
 import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.PACKAGE
 import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.SERIAL
@@ -36,12 +36,10 @@ import kotlin.io.path.inputStream
 
 class FavoritesCodec(private val codec: PreferencesCodec) {
 
-    fun encode(favorites: List<Favorite>, block: (String) -> Edit): List<Edit> = favorites.map { favorite ->
-        when (favorite) {
-            is Device -> block(codec.encode { serializeDevice(favorite) })
-            is File -> block(codec.encode { serializeFile(favorite) })
-            is App -> block(codec.encode { serializeApp(favorite) })
-        }
+    fun encode(favorite: Favorite, block: (String) -> Edit): Edit = when (favorite) {
+        is Device -> block(codec.encode { serializeDevice(favorite) })
+        is File -> block(codec.encode { serializeFile(favorite) })
+        is App -> block(codec.encode { serializeApp(favorite) })
     }
 
     private fun XmlSerializer.serializeDevice(favorite: Device) {
@@ -85,14 +83,14 @@ class FavoritesCodec(private val codec: PreferencesCodec) {
     private fun XmlPullParser.parseFile(): File = gobbleTag(FILE) {
         val serial = getAttributeValue(0)
         val packageName = getAttributeValue(1)
-        val name = getAttributeName(2)
+        val name = getAttributeValue(2)
         File(device = serial, app = packageName, name = name)
     }
 
     private object Tags {
         const val APP = "app"
         const val FILE = "file"
-        const val NAME = "NAME"
+        const val NAME = "name"
         const val DEVICE = "device"
         const val SERIAL = "serial"
         const val PACKAGE = "package"

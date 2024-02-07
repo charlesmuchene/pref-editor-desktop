@@ -16,6 +16,10 @@
 
 package com.charlesmuchene.prefeditor.command.writer
 
+import com.charlesmuchene.prefeditor.command.writer.EditorCommand.Companion.ADD
+import com.charlesmuchene.prefeditor.command.writer.EditorCommand.Companion.CHANGE
+import com.charlesmuchene.prefeditor.command.writer.EditorCommand.Companion.DELETE
+import com.charlesmuchene.prefeditor.command.writer.EditorCommand.Companion.SHELL
 import com.charlesmuchene.prefeditor.data.*
 
 class DeviceEditorCommand(
@@ -25,37 +29,39 @@ class DeviceEditorCommand(
 ) : EditorCommand {
 
     override fun MutableList<String>.delete(edit: Edit.Delete) {
-        baseCommands()
+        baseCommands(DELETE)
         add(edit.matcher.escaped())
+        add(file.name)
     }
 
     override fun MutableList<String>.change(edit: Edit.Change) {
-        baseCommands()
+        baseCommands(CHANGE)
         val matcher = edit.matcher.escaped()
         val content = edit.content.escaped()
         add(matcher)
         add(content)
+        add(file.name)
     }
 
     override fun MutableList<String>.add(edit: Edit.Add) {
-        baseCommands()
+        baseCommands(ADD)
         val matcher = "</${Tags.ROOT}>".escaped()
         val content = edit.content.escaped()
         add(matcher)
         add(content)
-    }
-
-    private fun MutableList<String>.baseCommands() {
-        add(SHELL)
-        add(SCRIPT)
-        add(device.serial)
-        add(app.packageName)
-        add("i")
         add(file.name)
     }
 
+    private fun MutableList<String>.baseCommands(edit: String) {
+        add(SHELL)
+        add(SCRIPT)
+        add(edit)
+        add(device.serial)
+        add(app.packageName)
+        add("i")
+    }
+
     companion object {
-        private const val SHELL = "sh"
-        private const val SCRIPT = "push.sh"
+        private const val SCRIPT = "device.sh"
     }
 }
