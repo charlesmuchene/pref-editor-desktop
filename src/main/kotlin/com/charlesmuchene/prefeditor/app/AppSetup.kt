@@ -16,7 +16,7 @@
 
 package com.charlesmuchene.prefeditor.app
 
-import com.charlesmuchene.prefeditor.command.writer.DesktopEditorCommand
+import com.charlesmuchene.prefeditor.command.writes.DesktopEditorCommand
 import com.charlesmuchene.prefeditor.files.EditorFiles
 import com.charlesmuchene.prefeditor.preferences.AppPreferences
 import com.charlesmuchene.prefeditor.preferences.PreferenceWriter

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.command.writer
+package com.charlesmuchene.prefeditor.command.writes
 
-import com.charlesmuchene.prefeditor.command.writer.EditorCommand.Companion.ADD
-import com.charlesmuchene.prefeditor.command.writer.EditorCommand.Companion.CHANGE
-import com.charlesmuchene.prefeditor.command.writer.EditorCommand.Companion.DELETE
-import com.charlesmuchene.prefeditor.command.writer.EditorCommand.Companion.SHELL
+import com.charlesmuchene.prefeditor.command.writes.EditorCommand.Companion.ADD
+import com.charlesmuchene.prefeditor.command.writes.EditorCommand.Companion.CHANGE
+import com.charlesmuchene.prefeditor.command.writes.EditorCommand.Companion.DELETE
+import com.charlesmuchene.prefeditor.command.writes.EditorCommand.Companion.SHELL
 import com.charlesmuchene.prefeditor.data.*
 
 class DeviceEditorCommand(

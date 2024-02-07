@@ -49,9 +49,8 @@ fun DevicesScreen(modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
     val viewModel = remember {
         DevicesViewModel(
-            scope = scope,
-            bridge = bridge,
             bundle = bundle,
+            scope = scope,
             navigation = navigation,
             favorites = appState.favorites,
         )

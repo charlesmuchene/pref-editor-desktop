@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.command.reader
+package com.charlesmuchene.prefeditor.command.reads
 
 interface ReaderCommand {
     fun command(): List<String>

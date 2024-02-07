@@ -16,20 +16,22 @@
 
 package com.charlesmuchene.prefeditor.screens.device
 
-import com.charlesmuchene.prefeditor.bridge.Bridge
-import com.charlesmuchene.prefeditor.command.ListDevices
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Devices
+import com.charlesmuchene.prefeditor.processor.Processor
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-class ListDevicesUseCase(private val bridge: Bridge) {
+class ListDevicesUseCase(private val processor: Processor, private val decoder: DeviceListDecoder) {
 
-    private val command = ListDevices()
-    val devices = mutableListOf<Device>()
+    private val command = ListDevicesCommand()
+    private val _devices = MutableStateFlow(emptyList<Device>())
+    val devices: StateFlow<Devices> = _devices.asStateFlow()
 
-    suspend fun list(): Result<Devices> = bridge.execute(command = command).also { result ->
-        result.onSuccess { devices ->
-            this@ListDevicesUseCase.devices.clear()
-            this.devices.addAll(devices)
-        }
+    suspend fun list(): Result<Devices> = processor.run(command.command()).map { content ->
+        val value = decoder.decode(content)
+        _devices.emit(value)
+        value
     }
 }

@@ -16,8 +16,8 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.editor
 
-import com.charlesmuchene.prefeditor.command.reader.ReadPreferencesCommand
-import com.charlesmuchene.prefeditor.command.writer.DeviceEditorCommand
+import com.charlesmuchene.prefeditor.command.reads.ReadPreferencesCommand
+import com.charlesmuchene.prefeditor.command.writes.DeviceEditorCommand
 import com.charlesmuchene.prefeditor.data.*
 import com.charlesmuchene.prefeditor.preferences.PreferenceReader
 import com.charlesmuchene.prefeditor.preferences.PreferenceWriter

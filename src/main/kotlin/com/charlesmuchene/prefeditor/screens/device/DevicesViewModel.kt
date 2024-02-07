@@ -17,13 +17,13 @@
 package com.charlesmuchene.prefeditor.screens.device
 
 import androidx.compose.ui.graphics.Color
-import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Device.Type
 import com.charlesmuchene.prefeditor.data.Devices
 import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
 import com.charlesmuchene.prefeditor.navigation.Navigation
+import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
 import com.charlesmuchene.prefeditor.ui.theme.green
@@ -33,14 +33,13 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class DevicesViewModel(
-    private val bridge: Bridge,
     private val bundle: TextBundle,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
     private val favorites: FavoritesUseCase,
-    private val listDevicesUseCase: ListDevicesUseCase = ListDevicesUseCase(bridge = bridge),
 ) : CoroutineScope by scope {
 
+    private val listDevicesUseCase = ListDevicesUseCase(processor = Processor(), decoder = DeviceListDecoder())
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
     private val _message = MutableSharedFlow<String?>()
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
@@ -48,19 +47,18 @@ class DevicesViewModel(
 
     init {
         launch {
-            _uiState.emit(determineState())
+            listDevicesUseCase.devices
+                .onEach { _uiState.emit(determineState(it)) }
+                .launchIn(scope = scope)
+        }
+
+        launch {
+            listDevicesUseCase.list()
         }
     }
 
-    private suspend fun determineState(): UIState {
-        val result = listDevicesUseCase.list()
-        return when {
-            result.isSuccess -> result.getOrNull()?.let { devices ->
-                if (devices.isEmpty()) UIState.NoDevices else UIState.Devices(mapDevices(devices))
-            } ?: UIState.Error
-
-            else -> UIState.Error
-        }
+    private fun determineState(devices: Devices): UIState {
+        return if (devices.isEmpty()) UIState.NoDevices else UIState.Devices(mapDevices(devices))
     }
 
     private fun mapDevices(devices: Devices): List<UIDevice> = devices.map { device ->
@@ -90,9 +88,9 @@ class DevicesViewModel(
 
     fun filter(input: String) {
         launch {
-            _uiState.emit(UIState.Devices(mapDevices(listDevicesUseCase.devices.filter { device ->
-                device.serial.contains(other = input, ignoreCase = true)
-            }))) // TODO Include meta-date in filter
+//            _uiState.emit(UIState.Devices(mapDevices(listDevicesUseCase.devices.filter { device ->
+//                device.serial.contains(other = input, ignoreCase = true)
+//            }))) // TODO Include meta-date in filter
         }
     }
 
@@ -100,7 +98,7 @@ class DevicesViewModel(
         launch {
             if (device.isFavorite) favorites.unfavoriteDevice(device = device.device)
             else favorites.favoriteDevice(device = device.device)
-            _uiState.emit(UIState.Devices(mapDevices(listDevicesUseCase.devices)))
+            _uiState.emit(UIState.Devices(mapDevices(listDevicesUseCase.devices.value)))
         }
     }
 

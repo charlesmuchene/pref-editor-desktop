@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.command.reader
+package com.charlesmuchene.prefeditor.screens.device
 
-import com.charlesmuchene.prefeditor.data.App
-import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.data.PrefFile
+import com.charlesmuchene.prefeditor.command.reads.ReaderCommand
 
-class ReadPreferencesCommand(
-    private val app: App,
-    private val device: Device,
-    private val prefFile: PrefFile,
-) : ReaderCommand {
-    override fun command(): List<String> {
-        return "adb -s ${device.serial} exec-out run-as ${app.packageName} cat /data/data/${app.packageName}/shared_prefs/${prefFile.name}"
-            .split(ReaderCommand.DELIMITER)
-    }
+class ListDevicesCommand : ReaderCommand {
+    override fun command(): List<String> = "adb devices -l".split(ReaderCommand.DELIMITER)
 }

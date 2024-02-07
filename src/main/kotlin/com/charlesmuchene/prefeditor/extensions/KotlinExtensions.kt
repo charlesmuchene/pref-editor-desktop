@@ -17,6 +17,7 @@
 package com.charlesmuchene.prefeditor.extensions
 
 import io.github.oshai.kotlinlogging.KLogger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
@@ -28,3 +29,5 @@ fun <T> Result<T>.eval(logger: KLogger): Result<T> {
 }
 
 fun <T> Flow<T>.throttleLatest(delayMillis: Long): Flow<T> = conflate().onEach { delay(delayMillis) }
+
+val editorLogger = KotlinLogging.logger(name = "General logger")

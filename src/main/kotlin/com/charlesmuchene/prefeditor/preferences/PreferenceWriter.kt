@@ -16,7 +16,7 @@
 
 package com.charlesmuchene.prefeditor.preferences
 
-import com.charlesmuchene.prefeditor.command.writer.EditorCommand
+import com.charlesmuchene.prefeditor.command.writes.EditorCommand
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.processor.Processor
 
