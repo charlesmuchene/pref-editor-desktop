@@ -26,6 +26,9 @@ import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobble
 import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.NAME
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.PACKAGE
+import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesCodec.Tags.SERIAL
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlSerializer
 import java.nio.file.Path
@@ -42,13 +45,13 @@ class FavoritesCodec(private val codec: PreferencesCodec) {
     }
 
     private fun XmlSerializer.serializeDevice(favorite: Device) {
-        tag(DEVICE) { text(favorite.serial) }
+        tag(DEVICE) { attrib(name = SERIAL, value = favorite.serial) }
     }
 
     private fun XmlSerializer.serializeApp(favorite: App) {
         tag(APP) {
             attrib(name = DEVICE, value = favorite.device)
-            text(favorite.packageName)
+            attrib(name = PACKAGE, value = favorite.packageName)
         }
     }
 
@@ -56,7 +59,7 @@ class FavoritesCodec(private val codec: PreferencesCodec) {
         tag(FILE) {
             attrib(name = DEVICE, value = favorite.device)
             attrib(name = APP, value = favorite.app)
-            text(favorite.name)
+            attrib(name = NAME, value = favorite.name)
         }
     }
 
@@ -71,27 +74,27 @@ class FavoritesCodec(private val codec: PreferencesCodec) {
         }
     }
 
-    private fun XmlPullParser.parseDevice(): Device = gobbleTag(DEVICE) {
-        next()
-        Device(serial = text)
-    }
+    private fun XmlPullParser.parseDevice(): Device = gobbleTag(DEVICE) { Device(serial = getAttributeValue(0)) }
 
     private fun XmlPullParser.parseApp(): App = gobbleTag(APP) {
         val serial = getAttributeValue(0)
-        next()
-        App(device = serial, packageName = text)
+        val packageName = getAttributeValue(1)
+        App(device = serial, packageName = packageName)
     }
 
     private fun XmlPullParser.parseFile(): File = gobbleTag(FILE) {
         val serial = getAttributeValue(0)
         val packageName = getAttributeValue(1)
-        next()
-        File(device = serial, app = packageName, name = text)
+        val name = getAttributeName(2)
+        File(device = serial, app = packageName, name = name)
     }
 
     private object Tags {
         const val APP = "app"
         const val FILE = "file"
+        const val NAME = "NAME"
         const val DEVICE = "device"
+        const val SERIAL = "serial"
+        const val PACKAGE = "package"
     }
 }
