@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,10 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.Divider
-import org.jetbrains.jewel.ui.component.RadioButtonChip
-import org.jetbrains.jewel.ui.component.Text
-import org.jetbrains.jewel.ui.component.Typography
+import org.jetbrains.jewel.ui.component.*
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -56,6 +54,7 @@ fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifier) {
     val navigation = LocalNavigation.current
 
@@ -66,12 +65,16 @@ private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifie
         is PrefEditScreen -> screen.prefFile.name
         else -> "Unknown"
     }
-    Row(
-        modifier = modifier.padding(horizontal = 2.dp).pointerOnHover(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        RadioButtonChip(selected = selected, onClick = { navigation.navigate(screen = screen) }) { Text(text = text) }
-        if (!selected) Text(text = ">", style = Typography.h2TextStyle())
+    Tooltip(tooltip = { Text(text = "Navigate to $text") }) {
+        Row(
+            modifier = modifier.padding(horizontal = 2.dp).pointerOnHover(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            RadioButtonChip(
+                selected = selected,
+                onClick = { navigation.navigate(screen = screen) }) { Text(text = text) }
+            if (!selected) Text(text = ">", style = Typography.h2TextStyle())
+        }
     }
 }

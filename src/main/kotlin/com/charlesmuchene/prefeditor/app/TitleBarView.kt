@@ -44,7 +44,7 @@ fun DecoratedWindowScope.TitleBarView() {
         Text(text = title)
         Row(modifier = Modifier.align(Alignment.End), verticalAlignment = Alignment.CenterVertically) {
             Tooltip(tooltip = {
-                Text(text = "Open App's Github repository")
+                Text(text = "View source repository")
             }) {
                 IconButton(
                     onClick = {
