@@ -52,16 +52,6 @@ class Bridge(
         createProcess(command = command)
     }
 
-    /**
-     * Execute the given write command
-     *
-     * @param command [WriteCommand] to execute
-     * @return [Result] of parsing [T]
-     */
-    suspend fun <T> execute(command: WriteCommand<T>): Result<T> = withContext(context) {
-        createProcess(command) { environment()[CONTENT] = command.content }
-    }
-
     private suspend fun <T> createProcess(command: Command<T>, config: ProcessBuilder.() -> Unit = {}): Result<T> =
         try {
             val result = processor.run(command.command.split(DELIMITER), config)

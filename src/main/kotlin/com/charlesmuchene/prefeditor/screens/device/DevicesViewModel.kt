@@ -38,7 +38,7 @@ class DevicesViewModel(
     private val scope: CoroutineScope,
     private val navigation: Navigation,
     private val favorites: FavoritesUseCase,
-    private val listDevices: ListDevicesUseCase = ListDevicesUseCase(bridge = bridge),
+    private val listDevicesUseCase: ListDevicesUseCase = ListDevicesUseCase(bridge = bridge),
 ) : CoroutineScope by scope {
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
@@ -53,7 +53,7 @@ class DevicesViewModel(
     }
 
     private suspend fun determineState(): UIState {
-        val result = listDevices.list()
+        val result = listDevicesUseCase.list()
         return when {
             result.isSuccess -> result.getOrNull()?.let { devices ->
                 if (devices.isEmpty()) UIState.NoDevices else UIState.Devices(mapDevices(devices))
@@ -90,7 +90,7 @@ class DevicesViewModel(
 
     fun filter(input: String) {
         launch {
-            _uiState.emit(UIState.Devices(mapDevices(listDevices.devices.filter { device ->
+            _uiState.emit(UIState.Devices(mapDevices(listDevicesUseCase.devices.filter { device ->
                 device.serial.contains(other = input, ignoreCase = true)
             }))) // TODO Include meta-date in filter
         }
@@ -100,7 +100,7 @@ class DevicesViewModel(
         launch {
             if (device.isFavorite) favorites.unfavoriteDevice(device = device.device)
             else favorites.favoriteDevice(device = device.device)
-            _uiState.emit(UIState.Devices(mapDevices(listDevices.devices)))
+            _uiState.emit(UIState.Devices(mapDevices(listDevicesUseCase.devices)))
         }
     }
 
