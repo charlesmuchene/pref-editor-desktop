@@ -34,6 +34,8 @@ object EditorFiles {
     private const val ADD_FILE = "add.sh"
     private const val CHANGE_FILE = "change.sh"
     private const val DELETE_FILE = "delete.sh"
+    private const val DEVICE_FILE = "device.sh"
+    private const val DESKTOP_FILE = "desktop.sh"
     private const val HOME_DIR = "user.home"
     private const val SCRIPTS_DIR = "scripts"
     private const val PREFERENCES = "preferences.xml"
@@ -69,7 +71,7 @@ object EditorFiles {
 
     private fun copyScripts() {
         val path = scriptsPath()
-        listOf(PUSH_FILE, ADD_FILE, DELETE_FILE, CHANGE_FILE).forEach { name ->
+        listOf(DESKTOP_FILE, DEVICE_FILE).forEach { name ->
             copyScript(name = name, path = path.resolve(name))
         }
     }
