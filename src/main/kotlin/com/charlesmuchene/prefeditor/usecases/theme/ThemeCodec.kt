@@ -20,6 +20,7 @@ import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobbleTag
 import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
+import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import org.xmlpull.v1.XmlPullParser
 import java.nio.file.Path
@@ -28,8 +29,8 @@ import kotlin.io.path.inputStream
 class ThemeCodec(private val codec: PreferencesCodec) {
 
     fun encode(theme: EditorTheme): Edit = Edit.Change(
-        matcher = "<$THEME>.*$",
-        content = codec.encode { tag(THEME) { text(theme.ordinal.toString()) } }
+        matcher = "<$THEME.*$",
+        content = codec.encode { tag(THEME) { attrib(name = VALUE, value = theme.ordinal.toString()) } }
     )
 
     suspend fun decode(path: Path): EditorTheme? {
@@ -44,11 +45,12 @@ class ThemeCodec(private val codec: PreferencesCodec) {
     }
 
     private fun XmlPullParser.parseTheme(): EditorTheme = gobbleTag(THEME) {
-        next()
-        EditorTheme.entries[text.toInt()]
+        val value = getAttributeValue(0).toInt()
+        EditorTheme.entries[value]
     }
 
     companion object Tags {
         const val THEME = "theme"
+        const val VALUE = "value"
     }
 }

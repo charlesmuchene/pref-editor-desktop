@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.files
 
+import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
 import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
 import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.usecases.theme.ThemeCodec
@@ -58,15 +59,15 @@ object EditorFiles {
     private fun createAppPreferences(path: Path, codec: PreferencesCodec) {
         if (path.exists()) return
         val content = codec.encodeDocument {
-            tag("version") { text("1.0") }
-            tag(ThemeCodec.THEME) { text("2") }
+            tag("version") { attrib(name = "value", value = "1.0") }
+            tag(ThemeCodec.THEME) { attrib(name = "value", value = "2") }
         }
         Files.writeString(path, content.trim())
     }
 
     // TODO Move to scripts dir
     private fun scriptsPath(): Path = appPath.apply {
-        ensurePathExists(this)
+        ensurePathExists(path = this)
     }
 
     private fun copyScripts() {
