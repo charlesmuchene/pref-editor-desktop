@@ -22,12 +22,12 @@ import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.SetSubPreference
-import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.foundation.lazy.tree.buildTree
 import org.jetbrains.jewel.ui.component.LazyTree
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
+import org.jetbrains.jewel.ui.component.Typography
 
 
 @OptIn(ExperimentalJewelApi::class)
@@ -57,7 +57,7 @@ fun SetPreferenceRow(preference: SetPreference, viewModel: EditorViewModel, modi
 
 @Composable
 private fun SetSubPreferenceHeaderRow(header: SetSubPreference.Header, modifier: Modifier = Modifier) {
-    Text(text = header.name, style = Typography.secondary, modifier = modifier)
+    Text(text = header.name, style = Typography.h3TextStyle(), modifier = modifier)
 }
 
 @Composable

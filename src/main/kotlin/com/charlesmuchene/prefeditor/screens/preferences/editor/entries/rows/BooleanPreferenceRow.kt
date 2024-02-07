@@ -21,19 +21,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.BooleanPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceAction
+import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceAction.Change
 import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceState
+import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceState.Deleted
 import com.charlesmuchene.prefeditor.screens.preferences.editor.UIPreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
-import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.RadioButtonRow
 import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.Typography
 
 @Composable
 fun BooleanPreferenceRow(uiPreference: UIPreference, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
@@ -44,26 +47,41 @@ fun BooleanPreferenceRow(uiPreference: UIPreference, viewModel: EditorViewModel,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(componentSpacing)
     ) {
-        Text(text = preference.name, style = Typography.secondary, modifier = Modifier.weight(NAME_COMPONENT_WEIGHT))
-
         var localPreference by remember(uiPreference) { mutableStateOf(uiPreference) }
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT)) {
-            val trueString by remember() { mutableStateOf(true.toString()) }
-            val falseString by remember() { mutableStateOf(false.toString()) }
-            val outline by remember(localPreference) { mutableStateOf(viewModel.outline(preference = localPreference.preference)) }
-            var isTrue by remember(localPreference) { mutableStateOf(localPreference.preference.value) }
-            val isEnabled by remember(localPreference) { mutableStateOf(localPreference.state !is PreferenceState.Deleted) }
+        val trueString by remember() { mutableStateOf(true.toString()) }
+        val falseString by remember() { mutableStateOf(false.toString()) }
 
+        val outline by remember(localPreference) {
+            mutableStateOf(viewModel.outline(preference = localPreference.preference))
+        }
+        var isTrue by remember(localPreference) {
+            mutableStateOf(localPreference.preference.value)
+        }
+        val isEnabled by remember(localPreference) {
+            mutableStateOf(localPreference.state !is Deleted)
+        }
+        val decoration by remember(localPreference) {
+            mutableStateOf(if (localPreference.state is Deleted) TextDecoration.LineThrough else null)
+        }
+
+        Text(
+            text = preference.name,
+            textDecoration = decoration,
+            style = Typography.h3TextStyle(),
+            modifier = Modifier.weight(NAME_COMPONENT_WEIGHT),
+        )
+
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT)) {
             RadioButtonRow(
                 selected = isTrue.toBooleanStrict(),
                 enabled = isEnabled,
                 outline = outline,
                 onClick = {
                     isTrue = trueString
-                    val change = PreferenceAction.Change(preference = localPreference.preference, change = trueString)
+                    val change = Change(preference = localPreference.preference, change = trueString)
                     localPreference = viewModel.preferenceAction(change)
                 },
-            ) { Text(text = "True") }
+            ) { Text(text = "True", textDecoration = decoration) }
 
             RadioButtonRow(
                 selected = !isTrue.toBooleanStrict(),
@@ -71,10 +89,10 @@ fun BooleanPreferenceRow(uiPreference: UIPreference, viewModel: EditorViewModel,
                 outline = outline,
                 onClick = {
                     isTrue = falseString
-                    val change = PreferenceAction.Change(preference = localPreference.preference, change = falseString)
+                    val change = Change(preference = localPreference.preference, change = falseString)
                     localPreference = viewModel.preferenceAction(change)
                 },
-            ) { Text(text = "False") }
+            ) { Text(text = "False", textDecoration = decoration) }
         }
 
         PreferenceAction(

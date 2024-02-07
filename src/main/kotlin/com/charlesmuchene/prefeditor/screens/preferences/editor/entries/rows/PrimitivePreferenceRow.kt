@@ -23,6 +23,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceAction
@@ -32,9 +33,10 @@ import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.ACTION_C
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.VALUE_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.componentSpacing
-import com.charlesmuchene.prefeditor.ui.theme.Typography
+import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
+import org.jetbrains.jewel.ui.component.Typography
 
 @Composable
 fun PrimitivePreferenceRow(
@@ -62,21 +64,33 @@ fun PrimitivePreferenceRow(
         }
         Text(
             textDecoration = decoration,
-            style = Typography.secondary,
+            style = Typography.h3TextStyle(),
             text = preference.preference.name,
             modifier = Modifier.weight(NAME_COMPONENT_WEIGHT)
         )
 
+        // Adapted from Jewel, all so that we can strike through text :sad:
+        var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = localPreference.preference.value)) }
+        val textFieldValue = textFieldValueState.copy(text = localPreference.preference.value)
+        var lastTextValue by remember(localPreference.preference.value) { mutableStateOf(localPreference.preference.value) }
+
         TextField(
+            textStyle = JewelTheme.textStyle.copy(textDecoration = decoration),
             outline = outline,
             enabled = isEnabled,
-            value = localPreference.preference.value,
+            value = textFieldValue,
             modifier = Modifier.weight(VALUE_COMPONENT_WEIGHT),
             placeholder = { Text(text = preference.preference.value) },
             keyboardOptions = KeyboardOptions(autoCorrect = false, keyboardType = keyboardType),
-            onValueChange = { changed ->
-                val change = PreferenceAction.Change(preference = localPreference.preference, change = changed)
-                localPreference = viewModel.preferenceAction(change)
+            onValueChange = { valueState ->
+                textFieldValueState = valueState
+                val stringChangedSinceLastInvocation = lastTextValue != valueState.text
+                lastTextValue = valueState.text
+                if (stringChangedSinceLastInvocation) {
+                    val change =
+                        PreferenceAction.Change(preference = localPreference.preference, change = valueState.text)
+                    localPreference = viewModel.preferenceAction(change)
+                }
             },
         )
 
