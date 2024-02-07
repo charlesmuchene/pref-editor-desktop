@@ -17,7 +17,7 @@
 package com.charlesmuchene.prefeditor.data
 
 sealed class Preference(open val name: String, open val value: String) {
-    fun toPair() = name to (this::class to value)
+    fun toPair() = name to value
 }
 
 data class BooleanPreference(override val name: String, override val value: String) : Preference(name = name, value = value)

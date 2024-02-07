@@ -23,7 +23,7 @@ class PreferenceValidatorTest {
     fun `valid edits`() {
         val edits = mapOf("another-integer" to (IntPreference::class to "4"))
 
-        val isValid = validator.validEdits(edits)
+        val isValid = validator.allowedEdits(edits)
 
         assertTrue(isValid)
     }
@@ -32,7 +32,7 @@ class PreferenceValidatorTest {
     fun `a string edit is always valid`() {
         val edits = mapOf("string" to (StringPreference::class to ""))
 
-        val isValid = validator.validEdits(edits)
+        val isValid = validator.allowedEdits(edits)
 
         assertTrue(isValid)
     }

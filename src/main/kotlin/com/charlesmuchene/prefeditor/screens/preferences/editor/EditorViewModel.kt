@@ -20,10 +20,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.bridge.Bridge
-import com.charlesmuchene.prefeditor.command.WritePref
 import com.charlesmuchene.prefeditor.data.*
 import com.charlesmuchene.prefeditor.navigation.Navigation
-import com.charlesmuchene.prefeditor.navigation.PrefListScreen
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.SetSubPreference
 import com.charlesmuchene.prefeditor.validation.PreferenceValidator
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -33,6 +31,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.jetbrains.jewel.ui.Outline
+import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
 private val logger = KotlinLogging.logger {}
@@ -71,19 +70,16 @@ class EditorViewModel(
     private var enableBackup = false
     private val _message = MutableSharedFlow<String?>()
     private val changes = MutableSharedFlow<CharSequence>()
-    private val edits = preferences.preferences.associate(Preference::toPair).toMutableMap()
+    private val original = preferences.preferences.associate(Preference::toPair)
 
-    private val original = preferences.preferences.associate { it.name to it.value }
-
-    // TODO Rename to edits
-    private val edited = preferences.preferences.map(::UIPreference).associateBy { it.preference.name }.toMutableMap()
-    private val _preferences = mutableStateOf(edited.values.toList())
+    private val edits = preferences.preferences.map(::UIPreference).associateBy { it.preference.name }.toMutableMap()
+    private val _preferences = mutableStateOf(edits.values.toList())
     val entries: State<List<UIPreference>> = _preferences
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     val enableSave: StateFlow<Boolean> = changes
-        .map { validator.validEdits(edits) }
-        .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = true)
+        .map { validator.allowedEdits(edits = edits) }
+        .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = false)
 
     /**
      * Create sub-preferences for a set preference
@@ -99,11 +95,11 @@ class EditorViewModel(
      */
     fun save() {
         launch {
-            val prefs = edited.values.filter { it.state == PreferenceState.Changed }.map(UIPreference::preference)
+            val prefs = edits.values.filter { it.state == PreferenceState.Changed }.map(UIPreference::preference)
             val isValid = validator.valid(prefs)
             if (isValid) saveChangesNow() else showInvalidEdits()
         }
-        logger.debug { "$edited" }
+        logger.debug { "$edits" }
     }
 
     /**
@@ -112,37 +108,12 @@ class EditorViewModel(
     private fun showInvalidEdits() {
         val message = "Invalid edits"
         launch { _message.emit(message) }
-        logger.info { "$message: $edits" }
     }
 
     private suspend fun saveChangesNow() {
-        val output = prefUseCase.writePreferences(edited.values)
+        val output = prefUseCase.writePreferences(edits.values)
         if (output.isNotBlank()) logger.info { "Saved Changes: $output" }
         appState.showToast("Changes saved to ${prefFile.name}")
-    }
-
-    private suspend fun saveChanges() {
-        val preferences = validator.editsToPreferences(edits = edits)
-        val command = WritePref(
-            app = app,
-            device = device,
-            prefFile = prefFile,
-            preferences = preferences,
-            enableBackup = enableBackup,
-        )
-        val result = bridge.execute(command)
-        when {
-            result.isSuccess -> {
-                appState.showToast("'${prefFile.name}' saved successfully!")
-                navigation.navigate(screen = PrefListScreen(app = app, device = device))
-            }
-
-            else -> {
-                val message = "Error saving preferences"
-                _message.emit(message)
-                logger.error(result.exceptionOrNull()) { message }
-            }
-        }
     }
 
     /**
@@ -197,8 +168,9 @@ class EditorViewModel(
      */
     private fun preferenceReset(preference: Preference): UIPreference {
         val value = original[preference.name] ?: error("Missing preference value ${preference.name}")
-        return UIPreference(createPreference(preference = preference, value = value)).also {
-            edited[preference.name] = it
+        return UIPreference(createPreference(preference = preference, value = value)).also { uiPreference ->
+            edits[preference.name] = uiPreference
+            launch { changes.emit(UUID.randomUUID().toString()) }
         }
     }
 
@@ -209,8 +181,9 @@ class EditorViewModel(
      * @return [UIPreference] with [PreferenceState.Deleted] state
      */
     private fun preferenceDeleted(preference: Preference): UIPreference {
-        return UIPreference(preference = preference, state = PreferenceState.Deleted).also {
-            edited[preference.name] = it
+        return UIPreference(preference = preference, state = PreferenceState.Deleted).also { uiPreference ->
+            edits[preference.name] = uiPreference
+            launch { changes.emit(UUID.randomUUID().toString()) }
         }
     }
 
@@ -223,11 +196,12 @@ class EditorViewModel(
      * [PreferenceState.None] otherwise
      */
     private fun preferenceChanged(preference: Preference, change: String): UIPreference {
-//        launch { changes.emit(change) }
-
         val newPref = createPreference(preference = preference, value = change)
         val state = if (original[preference.name] == newPref.value) PreferenceState.None else PreferenceState.Changed
-        return UIPreference(preference = newPref, state = state).also { edited[preference.name] = it }
+        return UIPreference(preference = newPref, state = state).also { uiPreference ->
+            edits[preference.name] = uiPreference
+            launch { changes.emit(change) }
+        }
     }
 
     /**
