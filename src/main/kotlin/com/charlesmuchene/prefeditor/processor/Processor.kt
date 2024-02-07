@@ -16,19 +16,17 @@
 
 package com.charlesmuchene.prefeditor.processor
 
-import com.charlesmuchene.prefeditor.files.EditorFiles
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
 import okio.Buffer
+import okio.BufferedSource
 import okio.buffer
 import okio.source
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.io.path.pathString
-import kotlin.math.log
 
-private val logger = KotlinLogging.logger {  }
+private val logger = KotlinLogging.logger { }
 
 /**
  * Run a system process
@@ -37,38 +35,35 @@ private val logger = KotlinLogging.logger {  }
  */
 class Processor(private val context: CoroutineContext = Dispatchers.IO) {
 
-    suspend fun run(command: List<String>, config: ProcessBuilder.() -> Unit = {}) = withContext(context) {
-        logger.debug { "$command" } // TODO Remove
-        val builder = ProcessBuilder(command).apply {
-            environment()[PATH] += ":${EditorFiles.appPath.pathString}"
-            redirectErrorStream(true)
-            config()
+    suspend fun run(command: List<String>, config: ProcessBuilder.() -> Unit = {}): Result<String> =
+        withContext(context) {
+            val builder = ProcessBuilder(command).apply {
+                redirectErrorStream(true)
+                config()
+            }
+
+            val process = try {
+                builder.start()
+            } catch (t: Throwable) {
+                return@withContext Result.failure(t)
+            }
+
+            val output = async {
+                process.inputStream
+                    .source()
+                    .buffer()
+                    .use(BufferedSource::readUtf8)
+            }
+            try {
+                runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }
+                Result.success(output.await())
+            } catch (exception: CancellationException) {
+                throw exception // propagate cancellation
+            }
         }
-        val buffer = Buffer()
-        val process = builder.start()
-        val result = async {
-            process
-                .inputStream
-                .source()
-                .buffer().use { source ->
-                    while (true) {
-                        yield()
-                        val line = source.readUtf8Line() ?: break
-                        buffer.writeUtf8(line)
-                        buffer.writeUtf8(System.lineSeparator())
-                    }
-                    buffer.readUtf8()
-                }
-        }
-        try {
-            runInterruptible { process.waitFor(10, TimeUnit.SECONDS) }
-            result.await()
-        } catch (exception: CancellationException) {
-            throw exception // propagate cancellation
-        }
-    }
 
     companion object {
+        private const val TIMEOUT_SECONDS = 10L
         private const val PATH = "PATH"
     }
 }

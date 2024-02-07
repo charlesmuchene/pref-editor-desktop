@@ -39,7 +39,7 @@ class PreferenceWriter(
      * @param edit [Edit] to make
      * @return Result of making the edit
      */
-    suspend fun edit(edit: Edit): String = when (edit) {
+    suspend fun edit(edit: Edit): Result<String> = when (edit) {
         is Edit.Add -> add(edit = edit)
         is Edit.Change -> change(edit = edit)
         is Edit.Delete -> delete(edit = edit)
@@ -51,46 +51,35 @@ class PreferenceWriter(
      * @param edits A [List] of [Edit]s to make
      * @return Result of batch editing
      */
-    suspend fun edit(edits: List<Edit>): String = buildString {
-        append(add(adds = edits.filterIsInstance<Edit.Add>()))
-        append(System.lineSeparator())
-        append(delete(deletes = edits.filterIsInstance<Edit.Delete>()))
-        append(System.lineSeparator())
-        append(change(changes = edits.filterIsInstance<Edit.Change>()))
+    suspend fun edit(edits: List<Edit>): List<Result<String>> = buildList {
+        add(adds = edits.filterIsInstance<Edit.Add>())
+        delete(deletes = edits.filterIsInstance<Edit.Delete>())
+        change(changes = edits.filterIsInstance<Edit.Change>())
     }
 
-    private suspend fun add(adds: List<Edit.Add>): String = buildString {
-        adds.forEach { add ->
-            append(add(edit = add))
-            append(System.lineSeparator())
-        }
+    private suspend fun MutableList<Result<String>>.add(adds: List<Edit.Add>) {
+        adds.forEach { add -> add(add(edit = add)) }
     }
 
-    private suspend fun add(edit: Edit.Add): String {
+    private suspend fun add(edit: Edit.Add): Result<String> {
         val command = command.command(edit = edit)
         return processor.run(command) // TODO { environment()[CONTENT] = content }
     }
 
-    private suspend fun delete(deletes: List<Edit.Delete>): String = buildString {
-        deletes.forEach { edit ->
-            append(delete(edit = edit))
-            append(System.lineSeparator())
-        }
+    private suspend fun MutableList<Result<String>>.delete(deletes: List<Edit.Delete>) {
+        deletes.forEach { edit -> add(delete(edit = edit)) }
     }
 
-    private suspend fun delete(edit: Edit.Delete): String {
+    private suspend fun delete(edit: Edit.Delete): Result<String> {
         val command = command.command(edit = edit)
         return processor.run(command)
     }
 
-    private suspend fun change(changes: List<Edit.Change>): String = buildString {
-        changes.forEach { edit ->
-            append(change(edit = edit))
-            append(System.lineSeparator())
-        }
+    private suspend fun MutableList<Result<String>>.change(changes: List<Edit.Change>) {
+        changes.forEach { edit -> add(change(edit = edit)) }
     }
 
-    private suspend fun change(edit: Edit.Change): String {
+    private suspend fun change(edit: Edit.Change): Result<String> {
         val command = command.command(edit = edit)
         return processor.run(command)
     }

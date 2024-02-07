@@ -23,9 +23,12 @@ import com.charlesmuchene.prefeditor.preferences.PreferenceReader
 import com.charlesmuchene.prefeditor.preferences.PreferenceWriter
 import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.processor.Processor
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+
+private val logger = KotlinLogging.logger { }
 
 class DevicePreferencesUseCase(
     val file: PrefFile,
@@ -44,11 +47,12 @@ class DevicePreferencesUseCase(
 
     suspend fun readPreferences() {
         val command = ReadPreferencesCommand(app = app, device = device, prefFile = file)
-        val content = reader.read(command)
-        _preferences.emit(codec.decode(content = content))
+        reader.read(command)
+            .onSuccess { content -> _preferences.emit(codec.decode(content = content)) }
+            .onFailure { logger.error(it) { "Failure when reading preferences" } }
     }
 
-    suspend fun writePreferences(preferences: Collection<UIPreference>): String {
+    suspend fun writePreferences(preferences: Collection<UIPreference>): List<Result<String>> {
         val edits = preferences.filter { it.state !is PreferenceState.None }
         val content = codec.encode(edits = edits, existing = this.preferences.value.preferences)
         return writer.edit(content).also { readPreferences() }

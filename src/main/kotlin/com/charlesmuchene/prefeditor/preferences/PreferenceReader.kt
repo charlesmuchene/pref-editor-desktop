@@ -21,7 +21,7 @@ import com.charlesmuchene.prefeditor.processor.Processor
 
 class PreferenceReader(private val processor: Processor) {
 
-    suspend fun read(command: ReaderCommand): String {
+    suspend fun read(command: ReaderCommand): Result<String> {
         return processor.run(command = command.command())
     }
 }

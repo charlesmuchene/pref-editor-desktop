@@ -107,8 +107,8 @@ class EditorViewModel(
 
     private suspend fun saveChangesNow() {
         val output = prefUseCase.writePreferences(edits.values)
-        if (output.isNotBlank()) logger.info { "Saved Changes: $output" }
-        appState.showToast("Changes saved to ${prefFile.name}")
+        if (output.all { it.isSuccess }) appState.showToast("Changes saved to ${prefFile.name}")
+        else output.filter { it.isFailure }.map { logger.error(it.exceptionOrNull()) {} }
     }
 
     /**
