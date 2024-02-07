@@ -19,9 +19,7 @@ package com.charlesmuchene.prefeditor.screens.preferences.editor
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.app.AppState
-import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.data.*
-import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.SetSubPreference
 import com.charlesmuchene.prefeditor.validation.PreferenceValidator
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -31,7 +29,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.jetbrains.jewel.ui.Outline
-import java.util.UUID
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 private val logger = KotlinLogging.logger {}
@@ -50,31 +48,28 @@ sealed interface PreferenceAction {
     data class Change(val preference: Preference, val change: String) : PreferenceAction
 }
 
+
 /**
  * Models data for the [Editor]
  */
 class EditorViewModel(
-    private val app: App,
-    private val device: Device,
-    private val bridge: Bridge,
-    private val prefFile: PrefFile,
     private val appState: AppState,
     private val scope: CoroutineScope,
-    private val navigation: Navigation,
-    private val preferences: Preferences,
     private val prefUseCase: DevicePreferencesUseCase,
     private val context: CoroutineContext = Dispatchers.Default,
-    private val validator: PreferenceValidator = PreferenceValidator(original = preferences.preferences),
 ) : CoroutineScope by scope + context {
 
+    private val prefFile = prefUseCase.file
+    private val originalPrefs = prefUseCase.preferences.value.preferences
+    private val validator: PreferenceValidator = PreferenceValidator(original = originalPrefs)
     private var enableBackup = false
     private val _message = MutableSharedFlow<String?>()
     private val changes = MutableSharedFlow<CharSequence>()
-    private val original = preferences.preferences.associate(Preference::toPair)
+    private val original = originalPrefs.associate(Preference::toPair)
 
-    private val edits = preferences.preferences.map(::UIPreference).associateBy { it.preference.name }.toMutableMap()
+    private val edits = originalPrefs.map(::UIPreference).associateBy { it.preference.name }.toMutableMap()
     private val _preferences = mutableStateOf(edits.values.toList())
-    val entries: State<List<UIPreference>> = _preferences
+    val preferences: State<List<UIPreference>> = _preferences
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     val enableSave: StateFlow<Boolean> = changes

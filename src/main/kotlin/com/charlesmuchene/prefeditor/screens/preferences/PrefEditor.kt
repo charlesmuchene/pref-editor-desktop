@@ -43,14 +43,7 @@ fun PrefEditor(prefFile: PrefFile, app: App, device: Device, modifier: Modifier 
         when (state) {
             is UIState.Error -> PrefError(modifier = modifier, message = state.message)
             UIState.Loading -> PrefLoading(modifier = modifier)
-            is UIState.Success -> Editor(
-                app = app,
-                device = device,
-                modifier = modifier,
-                prefFile = prefFile,
-                prefUseCase = viewModel.useCase,
-                preferences = state.preferences,
-            )
+            is UIState.Success -> Editor(modifier = modifier, prefUseCase = viewModel.useCase)
         }
     }
 }

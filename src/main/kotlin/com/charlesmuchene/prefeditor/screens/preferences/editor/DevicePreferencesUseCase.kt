@@ -28,8 +28,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class DevicePreferencesUseCase(
+    val file: PrefFile,
     private val app: App,
-    private val file: PrefFile,
     private val device: Device,
     processor: Processor,
     prefCodec: PreferencesCodec,

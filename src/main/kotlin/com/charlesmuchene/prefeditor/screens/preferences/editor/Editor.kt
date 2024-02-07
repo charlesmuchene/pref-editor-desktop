@@ -27,11 +27,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.providers.LocalAppState
-import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
-import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.PrefKey
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.PrimitivePreference
 import com.charlesmuchene.prefeditor.screens.preferences.editor.entries.setPreferenceSection
@@ -43,27 +41,15 @@ import org.jetbrains.jewel.ui.component.DefaultButton
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun Editor(preferences: Preferences, prefFile: PrefFile, app: App, device: Device, prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier) {
+fun Editor(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
-    val bridge = LocalBridge.current
     val appState = LocalAppState.current
-    val navigation = LocalNavigation.current
     val viewModel = remember {
-        EditorViewModel(
-            app = app,
-            scope = scope,
-            device = device,
-            bridge = bridge,
-            prefFile = prefFile,
-            appState = appState,
-            navigation = navigation,
-            preferences = preferences,
-            prefUseCase = prefUseCase,
-        )
+        EditorViewModel(appState = appState, scope = scope, prefUseCase = prefUseCase)
     }
 
-    val prefs by viewModel.entries
+    val prefs by viewModel.preferences
     val partition by remember(prefs) { mutableStateOf(prefs.partition { it.preference is SetPreference }) }
     val (sets, primitives) = partition
 
