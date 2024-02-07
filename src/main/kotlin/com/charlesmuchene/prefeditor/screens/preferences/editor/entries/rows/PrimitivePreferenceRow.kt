@@ -23,6 +23,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import com.charlesmuchene.prefeditor.screens.preferences.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceAction
 import com.charlesmuchene.prefeditor.screens.preferences.editor.PreferenceState
@@ -48,16 +49,23 @@ fun PrimitivePreferenceRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(componentSpacing)
     ) {
+        var localPreference by remember(preference) { mutableStateOf(preference) }
+
+        val outline by remember(localPreference) {
+            mutableStateOf(viewModel.outline(preference = localPreference.preference))
+        }
+        val isEnabled by remember(localPreference) {
+            mutableStateOf(localPreference.state !is PreferenceState.Deleted)
+        }
+        val decoration by remember(localPreference) {
+            mutableStateOf(if (localPreference.state is PreferenceState.Deleted) TextDecoration.LineThrough else null)
+        }
         Text(
+            textDecoration = decoration,
             style = Typography.secondary,
             text = preference.preference.name,
             modifier = Modifier.weight(NAME_COMPONENT_WEIGHT)
         )
-        var localPreference by remember(preference) { mutableStateOf(preference) }
-        val outline by remember(localPreference) {
-            mutableStateOf(viewModel.outline(preference = localPreference.preference))
-        }
-        val isEnabled by remember(localPreference) { mutableStateOf(localPreference.state !is PreferenceState.Deleted) }
 
         TextField(
             outline = outline,

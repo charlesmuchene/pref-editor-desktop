@@ -95,7 +95,7 @@ private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifi
         Spacer(modifier = Modifier.weight(1f))
         var checked by remember { mutableStateOf(false) }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            CheckboxRow(text = "Backup original file", checked = checked, onCheckedChange = {
+            CheckboxRow(text = "Backup file", checked = checked, onCheckedChange = {
                 viewModel.backup(it)
                 checked = it
             })
