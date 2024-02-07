@@ -54,7 +54,7 @@ fun PreferenceAction(
             Icon(
                 painter = resetPainter,
                 contentDescription = "Reset",
-                tint = if (state.isEnabled) Color.Black else Color.LightGray,
+                tint = if (state.isEnabled) Color.Green else Color.LightGray,
                 modifier = Modifier.pointerOnHover().size(24.dp).padding(4.dp),
             )
         }
