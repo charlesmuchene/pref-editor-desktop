@@ -16,8 +16,6 @@
 
 package com.charlesmuchene.prefeditor.utils
 
-import okio.BufferedSource
-import okio.buffer
-import okio.source
+import java.io.BufferedInputStream
 
-fun String.buffered(block: BufferedSource.() -> Unit): Unit = byteInputStream().source().buffer().use(block)
+fun String.buffered(block: BufferedInputStream.() -> Unit): Unit = byteInputStream().buffered().use(block)

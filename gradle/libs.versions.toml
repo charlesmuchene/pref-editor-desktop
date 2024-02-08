@@ -1,6 +1,5 @@
 [versions]
 kotlin = "1.9.20"
-okio = "3.7.0"
 jewel = "0.13.2"
 kxml2 = "2.3.0"
 turbine = "1.0.0"
@@ -14,7 +13,6 @@ compose-desktop = "1.6.0-dev1385"
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 kxml2 = { module = "net.sf.kxml:kxml2", version.ref = "kxml2" }
 sl4j = { module = "org.slf4j:slf4j-simple", version.ref = "sl4j" }
-okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 turbine = { module = "app.cash.turbine:turbine-jvm", version.ref = "turbine" }
 logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "logging" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

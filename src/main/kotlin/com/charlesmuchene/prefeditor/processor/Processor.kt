@@ -21,13 +21,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
-import okio.BufferedSource
-import okio.buffer
-import okio.source
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.io.StringReader
-import java.io.StringWriter
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException

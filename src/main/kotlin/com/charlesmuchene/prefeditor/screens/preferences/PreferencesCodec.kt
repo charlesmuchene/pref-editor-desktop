@@ -18,11 +18,11 @@ package com.charlesmuchene.prefeditor.screens.preferences
 
 import com.charlesmuchene.prefeditor.data.Tags
 import kotlinx.coroutines.yield
-import okio.Buffer
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 import org.xmlpull.v1.XmlSerializer
 import java.io.BufferedInputStream
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -45,9 +45,9 @@ class PreferencesCodec : PreferenceDecoder, PreferenceEncoder {
         }
     }
 
-    override fun encode(block: XmlSerializer.() -> Unit): String = Buffer().run {
-        encode(outputStream = outputStream(), block = block)
-        readUtf8().trim()
+    override fun encode(block: XmlSerializer.() -> Unit): String = ByteArrayOutputStream().run {
+        encode(outputStream = this, block = block)
+        toString().trim()
     }
 
     override fun encode(outputStream: OutputStream, block: XmlSerializer.() -> Unit) {
