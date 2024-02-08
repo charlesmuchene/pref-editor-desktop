@@ -24,7 +24,7 @@ import androidx.compose.ui.window.ApplicationScope
 import com.charlesmuchene.prefeditor.navigation.*
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
-import com.charlesmuchene.prefeditor.screens.apps.AppsScreen
+import com.charlesmuchene.prefeditor.screens.apps.AppListScreen
 import com.charlesmuchene.prefeditor.screens.home.Home
 import com.charlesmuchene.prefeditor.screens.listing.PrefListing
 import com.charlesmuchene.prefeditor.screens.preferences.PrefEditor
@@ -43,7 +43,7 @@ fun ApplicationScope.AppWindow(icon: Painter, appState: AppState) {
 
         when (screen) {
             HomeScreen -> Home(modifier = modifier)
-            is AppsScreen -> AppsScreen(modifier = modifier, device = (screen as AppsScreen).device)
+            is AppsScreen -> AppListScreen(modifier = modifier, device = (screen as AppsScreen).device)
             is PrefListScreen -> PrefListing(
                 modifier = modifier,
                 device = (screen as PrefListScreen).device,

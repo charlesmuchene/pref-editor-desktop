@@ -56,7 +56,7 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
             }
             try {
                 runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }
-                Result.success(output.await())
+                Result.success(output.await().trim())
             } catch (exception: CancellationException) {
                 throw exception // propagate cancellation
             }
@@ -64,6 +64,5 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
 
     companion object {
         private const val TIMEOUT_SECONDS = 10L
-        private const val PATH = "PATH"
     }
 }

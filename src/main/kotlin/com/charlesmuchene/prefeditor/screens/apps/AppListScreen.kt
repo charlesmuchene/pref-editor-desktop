@@ -32,7 +32,7 @@ import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.DeviceKey
-import com.charlesmuchene.prefeditor.screens.apps.AppsScreenViewModel.UIState
+import com.charlesmuchene.prefeditor.screens.apps.AppListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.FullScreenText
 import com.charlesmuchene.prefeditor.ui.Listing
 import com.charlesmuchene.prefeditor.ui.ListingRow
@@ -41,14 +41,14 @@ import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun AppsScreen(device: Device, modifier: Modifier = Modifier) {
+fun AppListScreen(device: Device, modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
     val bridge = LocalBridge.current
     val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val viewModel = remember {
-        AppsScreenViewModel(
+        AppListViewModel(
             bridge = bridge,
             scope = scope,
             device = device,
@@ -86,7 +86,7 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppsScreenViewModel) {
+private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
     Listing(header = header, filterPlaceholder = "Filter apps", modifier = modifier, onFilter = viewModel::filter) {
         if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }

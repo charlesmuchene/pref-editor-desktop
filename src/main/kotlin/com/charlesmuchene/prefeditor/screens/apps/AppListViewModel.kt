@@ -17,21 +17,19 @@
 package com.charlesmuchene.prefeditor.screens.apps
 
 import com.charlesmuchene.prefeditor.bridge.Bridge
-import com.charlesmuchene.prefeditor.command.ListApps
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Apps
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefListScreen
+import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class AppsScreenViewModel(
+class AppListViewModel(
     private val device: Device,
     private val bridge: Bridge,
     private val scope: CoroutineScope,
@@ -39,26 +37,21 @@ class AppsScreenViewModel(
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
 
-    private val apps = mutableListOf<App>()
+    private val processor = Processor()
+    private val decoder = AppListDecoder()
+    private val useCase = AppListUseCase(device = device, processor = processor, decoder = decoder)
+
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     init {
-        launch { _uiState.emit(getApps()) }
+        useCase.apps.onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
+        launch { useCase.list() }
     }
 
-    private suspend fun getApps(): UIState {
-        val result = bridge.execute(command = ListApps(device = device))
-        return when {
-            result.isSuccess -> result.getOrNull()?.let { apps ->
-                if (apps.isEmpty()) UIState.Error
-                else UIState.Apps(mapApps(apps)).also {
-                    this.apps.addAll(it.apps.map(UIApp::app))
-                }
-            } ?: UIState.Error
-
-            else -> UIState.Error
-        }
+    private fun mapToState(apps: Apps): UIState {
+        return if (apps.isEmpty()) UIState.Error
+        else UIState.Apps(mapApps(apps))
     }
 
     private fun mapApps(apps: Apps): List<UIApp> = apps.map { app ->
@@ -74,7 +67,7 @@ class AppsScreenViewModel(
 
     fun filter(input: String) {
         launch {
-            _uiState.emit(UIState.Apps(mapApps(apps.filter { app ->
+            _uiState.emit(UIState.Apps(mapApps(useCase.apps.value.filter { app ->
                 app.packageName.contains(other = input, ignoreCase = true)
             })))
         }
@@ -84,7 +77,7 @@ class AppsScreenViewModel(
         launch {
             if (app.isFavorite) favorites.unfavoriteApp(app = app.app, device = device)
             else favorites.favoriteApp(app = app.app, device = device)
-            _uiState.emit(UIState.Apps(mapApps(apps)))
+            _uiState.emit(UIState.Apps(mapApps(useCase.apps.value)))
         }
     }
 
