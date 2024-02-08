@@ -14,49 +14,53 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.screens.listing
+package com.charlesmuchene.prefeditor.screens.preffile
 
-import com.charlesmuchene.prefeditor.bridge.Bridge
-import com.charlesmuchene.prefeditor.command.ListPrefFiles
-import com.charlesmuchene.prefeditor.command.ListPrefFiles.PrefFilesResult
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.PrefFiles
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefEditScreen
+import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
 import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class PrefListingViewModel(
+class PrefListViewModel(
     private val app: App,
     private val device: Device,
-    private val bridge: Bridge,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
 
-    private val files = mutableListOf<PrefFile>()
+    private val decoder = PrefFileListDecoder()
+    private val processor = Processor()
+    private val useCase = PrefFileListUseCase(app = app, device = device, processor = processor, decoder = decoder)
+
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     init {
-        launch { _uiState.emit(getPrefFiles()) }
+        useCase.fileResult.onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
+        launch { useCase.list() }
     }
 
-    private suspend fun getPrefFiles(): UIState {
-        val result = bridge.execute(command = ListPrefFiles(app = app, device = device))
-        return when {
-            result.isSuccess -> result.getOrNull()?.let(::map) ?: UIState.Error()
-            else -> UIState.Error()
-        }
+    private fun mapToState(result: PrefFileResult): UIState = when (result) {
+        PrefFileResult.EmptyFiles,
+        PrefFileResult.EmptyPrefs,
+        -> UIState.Empty
+
+        is PrefFileResult.Files -> UIState.Files(map(result.files))
+
+        PrefFileResult.NonDebuggable -> UIState.Error(message = "Selected app is non-debuggable")
     }
+
+    private fun map(files: PrefFiles): List<UIPrefFile> =
+        files.map { file -> UIPrefFile(file = file, isFavorite = favorites.isFavorite(file, app, device)) }
 
     fun fileSelected(prefFile: UIPrefFile) {
         launch {
@@ -65,32 +69,27 @@ class PrefListingViewModel(
     }
 
     fun filter(input: String) {
-        launch { _uiState.emit(UIState.Files(map(files.filter { it.name.contains(input, ignoreCase = true) }))) }
+        launch {
+            val result = useCase.fileResult.value
+            if (result is PrefFileResult.Files) {
+                val files = result.files.filter { it.name.contains(input, ignoreCase = true) }
+                val state = UIState.Files(map(files))
+                _uiState.emit(state)
+            }
+        }
     }
 
     fun favorite(prefFile: UIPrefFile) {
         launch {
-            if (prefFile.isFavorite) favorites.unfavoriteFile(file = prefFile.file, app = app, device = device)
-            else favorites.favoriteFile(file = prefFile.file, app = app, device = device)
-            _uiState.emit(UIState.Files(map(files)))
+            val result = useCase.fileResult.value
+            if (result is PrefFileResult.Files) {
+                if (prefFile.isFavorite) favorites.unfavoriteFile(file = prefFile.file, app = app, device = device)
+                else favorites.favoriteFile(file = prefFile.file, app = app, device = device)
+                val state = UIState.Files(map(result.files))
+                _uiState.emit(state)
+            }
         }
     }
-
-    private fun map(result: PrefFilesResult): UIState = when (result) {
-        PrefFilesResult.EmptyFiles,
-        PrefFilesResult.EmptyPrefs,
-        -> UIState.Empty
-
-        is PrefFilesResult.Files -> {
-            this@PrefListingViewModel.files.addAll(result.files)
-            UIState.Files(map(result.files))
-        }
-
-        PrefFilesResult.NonDebuggable -> UIState.Error(message = "Selected app is non-debuggable")
-    }
-
-    private fun map(files: PrefFiles): List<UIPrefFile> =
-        files.map { file -> UIPrefFile(file = file, isFavorite = favorites.isFavorite(file, app, device)) }
 
     sealed interface UIState {
         data object Empty : UIState

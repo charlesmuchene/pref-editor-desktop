@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.screens.listing
+package com.charlesmuchene.prefeditor.screens.preffile
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.updateTransition
@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
@@ -33,11 +32,10 @@ import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.providers.LocalAppState
-import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.AppKey
-import com.charlesmuchene.prefeditor.screens.listing.PrefListingViewModel.UIState
+import com.charlesmuchene.prefeditor.screens.preffile.PrefListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.FullScreenText
 import com.charlesmuchene.prefeditor.ui.Listing
 import com.charlesmuchene.prefeditor.ui.ListingRow
@@ -47,17 +45,15 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun PrefListing(app: App, device: Device, modifier: Modifier = Modifier) {
-    val bridge = LocalBridge.current
+fun PrefFileListScreen(app: App, device: Device, modifier: Modifier = Modifier) {
     val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
-        PrefListingViewModel(
+        PrefListViewModel(
             app = app,
-            scope = scope,
             device = device,
-            bridge = bridge,
+            scope = scope,
             navigation = navigation,
             favorites = appState.favorites,
         )
@@ -96,7 +92,7 @@ private fun PrefListingLoading(modifier: Modifier = Modifier) {
 private fun PrefListingSuccess(
     prefFiles: List<UIPrefFile>,
     modifier: Modifier = Modifier,
-    viewModel: PrefListingViewModel,
+    viewModel: PrefListViewModel,
 ) {
     val header = LocalBundle.current[AppKey.PrefListingTitle]
     Listing(

@@ -26,7 +26,7 @@ import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.screens.apps.AppListScreen
 import com.charlesmuchene.prefeditor.screens.home.Home
-import com.charlesmuchene.prefeditor.screens.listing.PrefListing
+import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListScreen
 import com.charlesmuchene.prefeditor.screens.preferences.PrefEditor
 import com.charlesmuchene.prefeditor.ui.Toast
 
@@ -44,7 +44,7 @@ fun ApplicationScope.AppWindow(icon: Painter, appState: AppState) {
         when (screen) {
             HomeScreen -> Home(modifier = modifier)
             is AppsScreen -> AppListScreen(modifier = modifier, device = (screen as AppsScreen).device)
-            is PrefListScreen -> PrefListing(
+            is PrefListScreen -> PrefFileListScreen(
                 modifier = modifier,
                 device = (screen as PrefListScreen).device,
                 app = (screen as PrefListScreen).app
