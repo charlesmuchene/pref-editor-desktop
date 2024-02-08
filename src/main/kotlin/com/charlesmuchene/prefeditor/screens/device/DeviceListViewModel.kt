@@ -39,25 +39,21 @@ class DeviceListViewModel(
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
 
-    private val deviceListUseCase = DeviceListUseCase(processor = Processor(), decoder = DeviceListDecoder())
+    private val processor = Processor()
+    private val decoder = DeviceListDecoder()
+    private val useCase = DeviceListUseCase(processor = processor, decoder = decoder)
+
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
     private val _message = MutableSharedFlow<String?>()
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     init {
-        launch {
-            deviceListUseCase.devices
-                .onEach { _uiState.emit(determineState(it)) }
-                .launchIn(scope = scope)
-        }
-
-        launch {
-            deviceListUseCase.list()
-        }
+        useCase.devices.onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
+        launch { useCase.list() }
     }
 
-    private fun determineState(devices: Devices): UIState {
+    private fun mapToState(devices: Devices): UIState {
         return if (devices.isEmpty()) UIState.NoDevices else UIState.Devices(mapDevices(devices))
     }
 
@@ -88,9 +84,9 @@ class DeviceListViewModel(
 
     fun filter(input: String) {
         launch {
-//            _uiState.emit(UIState.Devices(mapDevices(listDevicesUseCase.devices.filter { device ->
-//                device.serial.contains(other = input, ignoreCase = true)
-//            }))) // TODO Include meta-date in filter
+            _uiState.emit(UIState.Devices(mapDevices(useCase.devices.value.filter { device ->
+                device.serial.contains(other = input, ignoreCase = true)
+            }))) // TODO Include meta-date in filter
         }
     }
 
@@ -98,7 +94,7 @@ class DeviceListViewModel(
         launch {
             if (device.isFavorite) favorites.unfavoriteDevice(device = device.device)
             else favorites.favoriteDevice(device = device.device)
-            _uiState.emit(UIState.Devices(mapDevices(deviceListUseCase.devices.value)))
+            _uiState.emit(UIState.Devices(mapDevices(useCase.devices.value)))
         }
     }
 
