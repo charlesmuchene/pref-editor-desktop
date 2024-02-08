@@ -17,7 +17,10 @@
 package com.charlesmuchene.prefeditor.ui
 
 import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -26,30 +29,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.ui.theme.Typography
-import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun ItemListing(
-    header: String,
-    modifier: Modifier = Modifier,
-    filterPlaceholder: String = "Filter",
-    onFilter: (String) -> Unit = {},
-    content: LazyListScope.() -> Unit,
-) {
-    val state = rememberLazyListState()
-
-    Column(modifier = modifier.fillMaxWidth()) {
-        Text(text = header, style = Typography.heading)
-        Spacer(modifier = Modifier.height(4.dp))
-        FilterTextField(placeHolder = filterPlaceholder, changed = onFilter)
-        Spacer(modifier = Modifier.height(4.dp))
-        Box(modifier = Modifier.fillMaxWidth()) {
-            LazyColumn(modifier = Modifier.padding(end = 18.dp), state = state, content = content)
-            VerticalScrollbar(
-                adapter = rememberScrollbarAdapter(scrollState = state),
-                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-            )
-        }
+fun ItemListing(content: LazyListScope.() -> Unit) {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        val state = rememberLazyListState()
+        LazyColumn(modifier = Modifier.padding(end = 18.dp), state = state, content = content)
+        VerticalScrollbar(
+            adapter = rememberScrollbarAdapter(scrollState = state),
+            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+        )
     }
 }

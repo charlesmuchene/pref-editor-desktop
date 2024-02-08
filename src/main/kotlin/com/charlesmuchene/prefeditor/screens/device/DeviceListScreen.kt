@@ -33,6 +33,7 @@ import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.screens.device.DeviceListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.*
+import com.charlesmuchene.prefeditor.ui.theme.Typography
 import com.charlesmuchene.prefeditor.ui.theme.Typography.primary
 import com.charlesmuchene.prefeditor.ui.theme.Typography.secondary
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -74,15 +75,15 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
 private fun DeviceList(devices: List<UIDevice>, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
     val header = LocalBundle.current[HomeKey.ConnectedDevices]
 
-    ItemListing(
-        header = header,
-        filterPlaceholder = "Filter devices",
+    Scaffolding(
         modifier = modifier,
-        onFilter = viewModel::filter
-    ) {
-        if (devices.isEmpty()) item { Text(text = "No devices matching filter", style = primary) }
-        else items(items = devices, key = { it.device.serial }) { device ->
-            DeviceRow(device = device, viewModel = viewModel)
+        header = { Text(text = header, style = Typography.heading) },
+        subHeader = { FilterRow(placeholder = "Filter devices", onFilter = viewModel::filter) }) {
+        ItemListing {
+            if (devices.isEmpty()) item { Text(text = "No devices matching filter", style = primary) }
+            else items(items = devices, key = { it.device.serial }) { device ->
+                DeviceRow(device = device, viewModel = viewModel)
+            }
         }
     }
 }

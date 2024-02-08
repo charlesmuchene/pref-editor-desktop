@@ -16,7 +16,7 @@
 
 package com.charlesmuchene.prefeditor.screens.apps
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
@@ -33,10 +33,7 @@ import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.DeviceKey
 import com.charlesmuchene.prefeditor.screens.apps.AppListViewModel.UIState
-import com.charlesmuchene.prefeditor.ui.FullScreenText
-import com.charlesmuchene.prefeditor.ui.ItemListing
-import com.charlesmuchene.prefeditor.ui.ItemRow
-import com.charlesmuchene.prefeditor.ui.Loading
+import com.charlesmuchene.prefeditor.ui.*
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
@@ -88,10 +85,15 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 @Composable
 private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
-    ItemListing(header = header, filterPlaceholder = "Filter apps", modifier = modifier, onFilter = viewModel::filter) {
-        if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }
-        items(items = apps, key = { it.app.packageName }) { app ->
-            AppRow(app = app, onClick = viewModel::appSelected, onFavorite = viewModel::onFavorite)
+    Scaffolding(
+        modifier = modifier,
+        header = { Text(text = header, style = Typography.heading) },
+        subHeader = { FilterRow(placeholder = "Filter apps", onFilter = viewModel::filter) }) {
+        ItemListing {
+            if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }
+            items(items = apps, key = { it.app.packageName }) { app ->
+                AppRow(app = app, onClick = viewModel::appSelected, onFavorite = viewModel::onFavorite)
+            }
         }
     }
 }

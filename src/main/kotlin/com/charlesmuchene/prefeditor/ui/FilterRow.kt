@@ -16,28 +16,21 @@
 
 package com.charlesmuchene.prefeditor.ui
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.jetbrains.jewel.foundation.modifier.onHover
-import org.jetbrains.jewel.ui.component.Text
-import org.jetbrains.jewel.ui.component.TextField
+import androidx.compose.ui.unit.dp
+import org.jetbrains.jewel.ui.component.CheckboxRow
 
 @Composable
-fun FilterTextField(placeholder: String, modifier: Modifier = Modifier, filtered: (String) -> Unit) {
-    // TODO Leading icon is search
-    // TODO Trailing icon is cancel
-
-    var value by remember { mutableStateOf("") }
-    var hovered by remember { mutableStateOf(false) }
-
-    TextField(
-        value = value,
-        undecorated = !hovered && value.isBlank(),
-        placeholder = { Text(text = placeholder) },
-        modifier = modifier.onHover { hovered = it },
-        onValueChange = { text ->
-            value = text
-            filtered(text)
-        }
-    )
+fun FilterRow(placeholder: String, onFilter: (String) -> Unit, modifier: Modifier = Modifier) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        FilterTextField(placeholder = placeholder, filtered = onFilter)
+        Spacer(modifier = Modifier.width(4.dp))
+        var checked by remember { mutableStateOf(false) }
+        CheckboxRow(checked = checked, onCheckedChange = {checked = !checked}, text = "Filter Starred")
+    }
 }

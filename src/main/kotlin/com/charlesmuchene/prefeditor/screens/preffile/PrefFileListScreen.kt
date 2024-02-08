@@ -36,10 +36,7 @@ import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.AppKey
 import com.charlesmuchene.prefeditor.screens.preffile.PrefListViewModel.UIState
-import com.charlesmuchene.prefeditor.ui.FullScreenText
-import com.charlesmuchene.prefeditor.ui.ItemListing
-import com.charlesmuchene.prefeditor.ui.ItemRow
-import com.charlesmuchene.prefeditor.ui.Loading
+import com.charlesmuchene.prefeditor.ui.*
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
@@ -95,15 +92,15 @@ private fun PrefListingSuccess(
     viewModel: PrefListViewModel,
 ) {
     val header = LocalBundle.current[AppKey.PrefListingTitle]
-    ItemListing(
-        header = header,
-        filterPlaceholder = "Filter preferences",
+    Scaffolding(
         modifier = modifier,
-        onFilter = viewModel::filter
-    ) {
-        if (prefFiles.isEmpty()) item { Text(text = "No preferences matching filter", style = Typography.primary) }
-        items(items = prefFiles, key = { it.file.name }) { prefFile ->
-            PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected, onFavorite = viewModel::favorite)
+        header = { Text(text = header, style = Typography.heading) },
+        subHeader = { FilterRow(placeholder = "Filter files", onFilter = viewModel::filter) }) {
+        ItemListing {
+            if (prefFiles.isEmpty()) item { Text(text = "No preferences matching filter", style = Typography.primary) }
+            items(items = prefFiles, key = { it.file.name }) { prefFile ->
+                PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected, onFavorite = viewModel::favorite)
+            }
         }
     }
 }
