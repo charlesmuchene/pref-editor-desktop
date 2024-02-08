@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
+import com.charlesmuchene.prefeditor.ui.padding
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 
@@ -40,7 +41,7 @@ fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
 
     Column(modifier = modifier.fillMaxWidth()) {
         FlowRow(
-            modifier = Modifier,
+            modifier = Modifier.padding(horizontal = padding, vertical = padding * .5f),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -48,7 +49,6 @@ fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
                 page(screen = screen, selected = current == screen)
             }
         }
-        Spacer(modifier.height(12.dp))
         Divider(orientation = Orientation.Horizontal, color = Color.LightGray)
     }
 }

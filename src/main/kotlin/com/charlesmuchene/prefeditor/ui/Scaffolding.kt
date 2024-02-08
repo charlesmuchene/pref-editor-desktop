@@ -32,7 +32,7 @@ fun Scaffolding(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val spacing = 8.dp
-    Column(modifier.padding(top = 12.dp).fillMaxSize()) {
+    Column(modifier.fillMaxSize()) {
         header()
         Spacer(modifier = Modifier.height(spacing))
         subHeader()
