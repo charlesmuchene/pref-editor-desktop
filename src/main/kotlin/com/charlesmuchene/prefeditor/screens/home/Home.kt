@@ -26,7 +26,7 @@ import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.screens.bridge.BridgeLoading
 import com.charlesmuchene.prefeditor.screens.bridge.BridgeUnavailable
-import com.charlesmuchene.prefeditor.screens.device.DevicesScreen
+import com.charlesmuchene.prefeditor.screens.device.DeviceListScreen
 
 @Preview
 @Composable
@@ -38,7 +38,7 @@ fun Home(modifier: Modifier = Modifier) {
 
     updateTransition(bridgeStatus).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { status ->
         when (status) {
-            Available -> DevicesScreen(modifier = modifier)
+            Available -> DeviceListScreen(modifier = modifier)
             Unknown -> BridgeLoading(modifier = modifier)
             Unavailable -> BridgeUnavailable(modifier = modifier)
         }

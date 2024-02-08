@@ -32,7 +32,7 @@ import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.HomeKey
-import com.charlesmuchene.prefeditor.screens.device.DevicesViewModel.UIState
+import com.charlesmuchene.prefeditor.screens.device.DeviceListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.*
 import com.charlesmuchene.prefeditor.ui.theme.Typography.primary
 import com.charlesmuchene.prefeditor.ui.theme.Typography.secondary
@@ -40,7 +40,7 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun DevicesScreen(modifier: Modifier = Modifier) {
+fun DeviceListScreen(modifier: Modifier = Modifier) {
 
     val bridge = LocalBridge.current
     val bundle = LocalBundle.current
@@ -48,7 +48,7 @@ fun DevicesScreen(modifier: Modifier = Modifier) {
     val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
-        DevicesViewModel(
+        DeviceListViewModel(
             bundle = bundle,
             scope = scope,
             navigation = navigation,
@@ -74,7 +74,7 @@ fun DevicesScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun DeviceList(devices: List<UIDevice>, viewModel: DevicesViewModel, modifier: Modifier = Modifier) {
+private fun DeviceList(devices: List<UIDevice>, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
     val header = LocalBundle.current[HomeKey.ConnectedDevices]
 
     Listing(header = header, filterPlaceholder = "Filter devices", modifier = modifier, onFilter = viewModel::filter) {
@@ -86,7 +86,7 @@ private fun DeviceList(devices: List<UIDevice>, viewModel: DevicesViewModel, mod
 }
 
 @Composable
-private fun DeviceRow(device: UIDevice, viewModel: DevicesViewModel, modifier: Modifier = Modifier) {
+private fun DeviceRow(device: UIDevice, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
     val statusColor = viewModel.statusColor(device = device.device)
     val radius = with(LocalDensity.current) { 12.dp.toPx() }
 

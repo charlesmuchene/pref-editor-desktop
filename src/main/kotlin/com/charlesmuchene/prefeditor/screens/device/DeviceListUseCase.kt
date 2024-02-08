@@ -23,15 +23,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class ListDevicesUseCase(private val processor: Processor, private val decoder: DeviceListDecoder) {
+class DeviceListUseCase(private val processor: Processor, private val decoder: DeviceListDecoder) {
 
-    private val command = ListDevicesCommand()
+    private val command = DeviceListCommand()
     private val _devices = MutableStateFlow(emptyList<Device>())
     val devices: StateFlow<Devices> = _devices.asStateFlow()
 
     suspend fun list(): Result<Devices> = processor.run(command.command()).map { content ->
-        val value = decoder.decode(content)
-        _devices.emit(value)
-        value
+        decoder.decode(content).also { _devices.emit(it) }
     }
 }

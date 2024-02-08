@@ -34,7 +34,7 @@ class DeviceListDecoder {
 
     private fun parseDevice(line: String): Device {
         require(line.isNotBlank())
-        val tokens = line.split(" ").filterNot(String::isEmpty)
+        val tokens = line.split(DELIMITER).filterNot(String::isEmpty)
         val attributesIndex = tokens.indexOfFirst { token -> token.contains(ATTRIBUTE_DELIMITER) }
         val attributes = tokens.subList(fromIndex = attributesIndex, toIndex = tokens.size).map {
             val value = it.split(ATTRIBUTE_DELIMITER)
@@ -50,6 +50,7 @@ class DeviceListDecoder {
 
     private companion object {
         const val DEVICE = "device"
+        const val DELIMITER = " "
         const val ATTRIBUTE_DELIMITER = ":"
         const val UNAUTHORIZED = "unauthorized"
     }

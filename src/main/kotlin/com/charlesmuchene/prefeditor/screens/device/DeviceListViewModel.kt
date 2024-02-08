@@ -32,14 +32,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class DevicesViewModel(
+class DeviceListViewModel(
     private val bundle: TextBundle,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
 
-    private val listDevicesUseCase = ListDevicesUseCase(processor = Processor(), decoder = DeviceListDecoder())
+    private val deviceListUseCase = DeviceListUseCase(processor = Processor(), decoder = DeviceListDecoder())
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
     private val _message = MutableSharedFlow<String?>()
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
@@ -47,13 +47,13 @@ class DevicesViewModel(
 
     init {
         launch {
-            listDevicesUseCase.devices
+            deviceListUseCase.devices
                 .onEach { _uiState.emit(determineState(it)) }
                 .launchIn(scope = scope)
         }
 
         launch {
-            listDevicesUseCase.list()
+            deviceListUseCase.list()
         }
     }
 
@@ -98,7 +98,7 @@ class DevicesViewModel(
         launch {
             if (device.isFavorite) favorites.unfavoriteDevice(device = device.device)
             else favorites.favoriteDevice(device = device.device)
-            _uiState.emit(UIState.Devices(mapDevices(listDevicesUseCase.devices.value)))
+            _uiState.emit(UIState.Devices(mapDevices(deviceListUseCase.devices.value)))
         }
     }
 
