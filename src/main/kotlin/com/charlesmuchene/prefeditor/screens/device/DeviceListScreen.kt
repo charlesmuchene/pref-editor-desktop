@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.providers.LocalAppState
-import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.HomeKey
@@ -41,8 +40,6 @@ import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 fun DeviceListScreen(modifier: Modifier = Modifier) {
-
-    val bridge = LocalBridge.current
     val bundle = LocalBundle.current
     val appState = LocalAppState.current
     val navigation = LocalNavigation.current
@@ -77,7 +74,12 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
 private fun DeviceList(devices: List<UIDevice>, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
     val header = LocalBundle.current[HomeKey.ConnectedDevices]
 
-    Listing(header = header, filterPlaceholder = "Filter devices", modifier = modifier, onFilter = viewModel::filter) {
+    ItemListing(
+        header = header,
+        filterPlaceholder = "Filter devices",
+        modifier = modifier,
+        onFilter = viewModel::filter
+    ) {
         if (devices.isEmpty()) item { Text(text = "No devices matching filter", style = primary) }
         else items(items = devices, key = { it.device.serial }) { device ->
             DeviceRow(device = device, viewModel = viewModel)
@@ -90,7 +92,7 @@ private fun DeviceRow(device: UIDevice, viewModel: DeviceListViewModel, modifier
     val statusColor = viewModel.statusColor(device = device.device)
     val radius = with(LocalDensity.current) { 12.dp.toPx() }
 
-    ListingRow(
+    ItemRow(
         item = device,
         dividerIndentation = padding,
         modifier = modifier,

@@ -24,7 +24,7 @@ import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefEditScreen
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
-import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesUseCase
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

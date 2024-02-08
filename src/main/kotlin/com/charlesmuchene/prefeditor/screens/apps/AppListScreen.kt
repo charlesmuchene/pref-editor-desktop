@@ -34,8 +34,8 @@ import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.DeviceKey
 import com.charlesmuchene.prefeditor.screens.apps.AppListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.FullScreenText
-import com.charlesmuchene.prefeditor.ui.Listing
-import com.charlesmuchene.prefeditor.ui.ListingRow
+import com.charlesmuchene.prefeditor.ui.ItemListing
+import com.charlesmuchene.prefeditor.ui.ItemRow
 import com.charlesmuchene.prefeditor.ui.Loading
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
@@ -88,7 +88,7 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 @Composable
 private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
-    Listing(header = header, filterPlaceholder = "Filter apps", modifier = modifier, onFilter = viewModel::filter) {
+    ItemListing(header = header, filterPlaceholder = "Filter apps", modifier = modifier, onFilter = viewModel::filter) {
         if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }
         items(items = apps, key = { it.app.packageName }) { app ->
             AppRow(app = app, onClick = viewModel::appSelected, onFavorite = viewModel::onFavorite)
@@ -98,7 +98,7 @@ private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewMod
 
 @Composable
 private fun AppRow(app: UIApp, modifier: Modifier = Modifier, onClick: (UIApp) -> Unit, onFavorite: OnFavorite<UIApp>) {
-    ListingRow(item = app, modifier = modifier, onClick = onClick, onFavorite = onFavorite) {
+    ItemRow(item = app, modifier = modifier, onClick = onClick, onFavorite = onFavorite) {
         Text(text = app.app.packageName, style = Typography.primary, modifier = Modifier.padding(4.dp))
     }
 }

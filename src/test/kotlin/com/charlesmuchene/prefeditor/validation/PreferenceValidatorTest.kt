@@ -5,6 +5,7 @@ import com.charlesmuchene.prefeditor.data.FloatPreference
 import com.charlesmuchene.prefeditor.data.IntPreference
 import com.charlesmuchene.prefeditor.data.LongPreference
 import com.charlesmuchene.prefeditor.data.StringPreference
+import com.charlesmuchene.prefeditor.screens.preferences.device.PreferenceValidator
 import org.junit.jupiter.api.BeforeEach
 import kotlin.test.Test
 import kotlin.test.assertFalse

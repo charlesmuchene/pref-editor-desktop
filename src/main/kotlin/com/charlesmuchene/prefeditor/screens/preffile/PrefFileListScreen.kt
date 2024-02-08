@@ -37,8 +37,8 @@ import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.AppKey
 import com.charlesmuchene.prefeditor.screens.preffile.PrefListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.FullScreenText
-import com.charlesmuchene.prefeditor.ui.Listing
-import com.charlesmuchene.prefeditor.ui.ListingRow
+import com.charlesmuchene.prefeditor.ui.ItemListing
+import com.charlesmuchene.prefeditor.ui.ItemRow
 import com.charlesmuchene.prefeditor.ui.Loading
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -95,7 +95,7 @@ private fun PrefListingSuccess(
     viewModel: PrefListViewModel,
 ) {
     val header = LocalBundle.current[AppKey.PrefListingTitle]
-    Listing(
+    ItemListing(
         header = header,
         filterPlaceholder = "Filter preferences",
         modifier = modifier,
@@ -115,7 +115,7 @@ private fun PrefListingRow(
     onClick: (UIPrefFile) -> Unit,
     onFavorite: OnFavorite<UIPrefFile>,
 ) {
-    ListingRow(item = prefFile, onClick = onClick, onFavorite = onFavorite) {
+    ItemRow(item = prefFile, onClick = onClick, onFavorite = onFavorite) {
         Column(modifier = modifier.padding(4.dp)) {
             Text(text = prefFile.file.name, style = Typography.primary)
             Spacer(modifier = Modifier.height(2.dp))

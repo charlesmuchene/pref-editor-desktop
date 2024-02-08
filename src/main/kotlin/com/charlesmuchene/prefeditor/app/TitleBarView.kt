@@ -26,8 +26,8 @@ import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.ApplicationKey.Title
 import com.charlesmuchene.prefeditor.ui.theme.teal
-import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme
-import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme.*
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme.*
 import org.jetbrains.jewel.ui.component.*
 import org.jetbrains.jewel.window.DecoratedWindowScope
 import org.jetbrains.jewel.window.TitleBar

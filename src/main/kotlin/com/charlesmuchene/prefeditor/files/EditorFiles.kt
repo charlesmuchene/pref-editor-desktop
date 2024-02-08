@@ -16,10 +16,10 @@
 
 package com.charlesmuchene.prefeditor.files
 
-import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.attrib
-import com.charlesmuchene.prefeditor.preferences.PreferenceEncoder.Encoder.tag
-import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
-import com.charlesmuchene.prefeditor.usecases.theme.ThemeCodec
+import com.charlesmuchene.prefeditor.screens.preferences.PreferenceEncoder.Encoder.attrib
+import com.charlesmuchene.prefeditor.screens.preferences.PreferenceEncoder.Encoder.tag
+import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.ThemeCodec
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths

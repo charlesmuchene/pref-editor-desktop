@@ -27,7 +27,7 @@ import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
 import com.charlesmuchene.prefeditor.ui.theme.green
-import com.charlesmuchene.prefeditor.usecases.favorites.FavoritesUseCase
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

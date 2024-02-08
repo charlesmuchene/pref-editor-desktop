@@ -23,10 +23,10 @@ import com.charlesmuchene.prefeditor.data.Tags.INT
 import com.charlesmuchene.prefeditor.data.Tags.LONG
 import com.charlesmuchene.prefeditor.data.Tags.SET
 import com.charlesmuchene.prefeditor.data.Tags.STRING
-import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
-import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder
-import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.gobbleTag
-import com.charlesmuchene.prefeditor.preferences.PreferenceDecoder.Reader.skip
+import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.PreferenceDecoder
+import com.charlesmuchene.prefeditor.screens.preferences.PreferenceDecoder.Reader.gobbleTag
+import com.charlesmuchene.prefeditor.screens.preferences.PreferenceDecoder.Reader.skip
 import okio.BufferedSource
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException

@@ -24,11 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import com.charlesmuchene.prefeditor.extensions.IconExtension.SVG
 import com.charlesmuchene.prefeditor.resources.TextBundle
-import com.charlesmuchene.prefeditor.ui.icon.IconExtension
-import com.charlesmuchene.prefeditor.ui.icon.IconExtension.SVG
 import org.jetbrains.jewel.ui.painter.rememberResourcePainterProvider
 import java.awt.Cursor
+
+enum class IconExtension(val extension: String) {
+    SVG(extension = "svg")
+}
 
 @Composable
 fun rememberIconPainter(name: String, extension: IconExtension = SVG): State<Painter> =

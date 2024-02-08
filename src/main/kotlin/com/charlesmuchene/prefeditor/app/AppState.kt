@@ -19,8 +19,8 @@ package com.charlesmuchene.prefeditor.app
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.preferences.AppPreferences
-import com.charlesmuchene.prefeditor.usecases.theme.EditorTheme
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.AppPreferences
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 

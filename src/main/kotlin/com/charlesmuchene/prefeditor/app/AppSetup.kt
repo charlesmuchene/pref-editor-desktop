@@ -18,9 +18,9 @@ package com.charlesmuchene.prefeditor.app
 
 import com.charlesmuchene.prefeditor.command.writes.DesktopEditorCommand
 import com.charlesmuchene.prefeditor.files.EditorFiles
-import com.charlesmuchene.prefeditor.preferences.AppPreferences
-import com.charlesmuchene.prefeditor.preferences.PreferenceWriter
-import com.charlesmuchene.prefeditor.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.AppPreferences
+import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
+import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.processor.Processor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
