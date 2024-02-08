@@ -16,11 +16,11 @@
 
 package com.charlesmuchene.prefeditor.screens.preffile
 
-import com.charlesmuchene.prefeditor.command.reads.ReaderCommand
+import com.charlesmuchene.prefeditor.command.ReadCommand
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 
-class PrefFileListCommand(private val app: App, private val device: Device) : ReaderCommand {
+class PrefFileListCommand(private val app: App, private val device: Device) : ReadCommand {
     override fun command(): List<String> =
-        "adb -s ${device.serial} shell run-as ${app.packageName} ls shared_prefs".split(ReaderCommand.DELIMITER)
+        "adb -s ${device.serial} shell run-as ${app.packageName} ls shared_prefs".split(ReadCommand.DELIMITER)
 }

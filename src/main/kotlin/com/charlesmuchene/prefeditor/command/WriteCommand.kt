@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.command.writes
+package com.charlesmuchene.prefeditor.command
 
 import com.charlesmuchene.prefeditor.data.Edit
 
-interface EditorCommand {
+interface WriteCommand {
     fun command(edit: Edit): List<String> = buildList {
         when (edit) {
             is Edit.Add -> add(edit = edit)

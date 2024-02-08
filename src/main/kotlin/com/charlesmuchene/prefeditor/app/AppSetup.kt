@@ -16,7 +16,7 @@
 
 package com.charlesmuchene.prefeditor.app
 
-import com.charlesmuchene.prefeditor.command.writes.DesktopEditorCommand
+import com.charlesmuchene.prefeditor.command.DesktopWriteCommand
 import com.charlesmuchene.prefeditor.files.EditorFiles
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.AppPreferences
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
@@ -34,7 +34,7 @@ suspend fun appSetup(): AppState = withContext(Dispatchers.IO) {
     val codec = PreferencesCodec()
     EditorFiles.initialize(codec = codec)
     val path = EditorFiles.preferencesPath().toString()
-    val command = DesktopEditorCommand(path = path)
+    val command = DesktopWriteCommand(path = path)
     val processor = Processor()
     val editor = PreferenceWriter(command = command, processor =  processor)
     val preferences = AppPreferences(codec = codec, editor = editor).apply { initialize() }

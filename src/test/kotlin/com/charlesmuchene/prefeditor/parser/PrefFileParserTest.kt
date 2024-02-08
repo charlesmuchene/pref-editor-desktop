@@ -1,6 +1,5 @@
 package com.charlesmuchene.prefeditor.parser
 
-import com.charlesmuchene.prefeditor.command.ListPrefFiles.PrefFilesResult.*
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.utils.buffered
 import org.junit.jupiter.api.Assertions.assertTrue

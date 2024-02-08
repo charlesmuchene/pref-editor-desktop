@@ -16,10 +16,10 @@
 
 package com.charlesmuchene.prefeditor.screens.apps
 
-import com.charlesmuchene.prefeditor.command.reads.ReaderCommand
+import com.charlesmuchene.prefeditor.command.ReadCommand
 import com.charlesmuchene.prefeditor.data.Device
 
-class AppListCommand(private val device: Device) : ReaderCommand {
+class AppListCommand(private val device: Device) : ReadCommand {
     override fun command(): List<String> =
-        "adb -s ${device.serial} shell cmd package list packages -3".split(ReaderCommand.DELIMITER)
+        "adb -s ${device.serial} shell cmd package list packages -3".split(ReadCommand.DELIMITER)
 }

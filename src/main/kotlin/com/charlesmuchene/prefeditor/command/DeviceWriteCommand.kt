@@ -14,50 +14,54 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.command.writes
+package com.charlesmuchene.prefeditor.command
 
-import com.charlesmuchene.prefeditor.command.writes.EditorCommand.Companion.ADD
-import com.charlesmuchene.prefeditor.command.writes.EditorCommand.Companion.CHANGE
-import com.charlesmuchene.prefeditor.command.writes.EditorCommand.Companion.DELETE
-import com.charlesmuchene.prefeditor.data.Edit
-import com.charlesmuchene.prefeditor.data.Tags
+import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.ADD
+import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.CHANGE
+import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.DELETE
+import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.SHELL
+import com.charlesmuchene.prefeditor.data.*
 
-class DesktopEditorCommand(private val path: String) : EditorCommand {
+class DeviceWriteCommand(
+    private val app: App,
+    private val device: Device,
+    private val file: PrefFile,
+) : WriteCommand {
 
     override fun MutableList<String>.delete(edit: Edit.Delete) {
-        val matcher = edit.matcher.escaped()
-        add(SHELL)
-        add(SCRIPT)
-        add(DELETE)
-        add(matcher)
-        add(path)
+        baseCommands(DELETE)
+        add(edit.matcher.escaped())
+        add(file.name)
     }
 
     override fun MutableList<String>.change(edit: Edit.Change) {
+        baseCommands(CHANGE)
         val matcher = edit.matcher.escaped()
         val content = edit.content.escaped()
-        add(SHELL)
-        add(SCRIPT)
-        add(CHANGE)
         add(matcher)
         add(content)
-        add(path)
+        add(file.name)
     }
 
     override fun MutableList<String>.add(edit: Edit.Add) {
+        baseCommands(ADD)
         val matcher = "</${Tags.ROOT}>".escaped()
         val content = edit.content.escaped()
-        add(SHELL)
-        add(SCRIPT)
-        add(ADD)
         add(matcher)
         add(content)
-        add(path)
+        add(file.name)
+    }
+
+    private fun MutableList<String>.baseCommands(edit: String) {
+        add(SHELL)
+        add(SCRIPT)
+        add(edit)
+        add(device.serial)
+        add(app.packageName)
+        add("i")
     }
 
     companion object {
-        private const val SHELL = "sh"
-        private const val SCRIPT = "desktop.sh"
+        private const val SCRIPT = "device.sh"
     }
-
 }

@@ -18,15 +18,10 @@ package com.charlesmuchene.prefeditor.bridge
 
 import com.charlesmuchene.prefeditor.bridge.BridgeStatus.Available
 import com.charlesmuchene.prefeditor.bridge.BridgeStatus.Unavailable
-import com.charlesmuchene.prefeditor.command.Command
-import com.charlesmuchene.prefeditor.command.ReadCommand
-import com.charlesmuchene.prefeditor.command.WriteCommand
 import com.charlesmuchene.prefeditor.processor.Processor
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okio.buffer
-import okio.source
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
@@ -41,25 +36,6 @@ class Bridge(
     private val processor: Processor = Processor(),
     private val context: CoroutineContext = Dispatchers.IO + CoroutineName(name = "Bridge"),
 ) {
-
-    /**
-     * Execute the given read command
-     *
-     * @param command [ReadCommand] to execute
-     * @return [Result] of parsing [T]
-     */
-    suspend fun <T> execute(command: ReadCommand<T>): Result<T> = withContext(context) {
-        createProcess(command = command)
-    }
-
-    private suspend fun <T> createProcess(command: Command<T>, config: ProcessBuilder.() -> Unit = {}): Result<T> =
-        try {
-            val result = processor.run(command.command.split(DELIMITER), config)
-            result.map { command.execute(it.byteInputStream().source().buffer()) }
-        } catch (t: Throwable) {
-            Result.failure(t)
-        }
-
     suspend fun checkBridge(): BridgeStatus = withContext(context) {
         try {
             processor.run(listOf("adb")) {

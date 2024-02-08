@@ -16,12 +16,12 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences
 
-import com.charlesmuchene.prefeditor.command.reads.ReaderCommand
+import com.charlesmuchene.prefeditor.command.ReadCommand
 import com.charlesmuchene.prefeditor.processor.Processor
 
 class PreferenceReader(private val processor: Processor) {
 
-    suspend fun read(command: ReaderCommand): Result<String> {
+    suspend fun read(command: ReadCommand): Result<String> {
         return processor.run(command = command.command())
     }
 }

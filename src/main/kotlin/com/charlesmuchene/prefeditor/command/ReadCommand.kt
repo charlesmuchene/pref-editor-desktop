@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.parser
+package com.charlesmuchene.prefeditor.command
 
-import okio.BufferedSource
+interface ReadCommand {
+    fun command(): List<String>
 
-interface Parser<T> {
-    /**
-     * Parse the source
-     *
-     * NB: This source is closed by the caller: verify
-     *
-     * @param source [BufferedSource] from the OS
-     *
-     * @return Instance of [T]
-     */
-    suspend fun parse(source: BufferedSource): T
+    companion object {
+        const val DELIMITER = " "
+    }
 }

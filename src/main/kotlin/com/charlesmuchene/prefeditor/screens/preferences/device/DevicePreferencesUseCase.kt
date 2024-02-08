@@ -16,8 +16,7 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device
 
-import com.charlesmuchene.prefeditor.command.reads.ReadPreferencesCommand
-import com.charlesmuchene.prefeditor.command.writes.DeviceEditorCommand
+import com.charlesmuchene.prefeditor.command.DeviceWriteCommand
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
@@ -43,7 +42,7 @@ class DevicePreferencesUseCase(
     prefCodec: PreferencesCodec,
 ) {
     private val codec = DevicePreferencesCodec(codec = prefCodec)
-    private val command = DeviceEditorCommand(app = app, device = device, file = file)
+    private val command = DeviceWriteCommand(app = app, device = device, file = file)
     private val writer = PreferenceWriter(processor = processor, command = command)
     private val reader = PreferenceReader(processor = processor)
 
@@ -51,7 +50,7 @@ class DevicePreferencesUseCase(
     val preferences: StateFlow<Preferences> = _preferences.asStateFlow()
 
     suspend fun readPreferences() {
-        val command = ReadPreferencesCommand(app = app, device = device, prefFile = file)
+        val command = PreferencesCommand(app = app, device = device, prefFile = file)
         reader.read(command)
             .onSuccess { content -> _preferences.emit(codec.decode(content = content)) }
             .onFailure { logger.error(it) { "Failure when reading preferences" } }

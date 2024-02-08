@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.command
+package com.charlesmuchene.prefeditor.screens.preferences.device
 
+import com.charlesmuchene.prefeditor.command.ReadCommand
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.data.Preferences
 import com.charlesmuchene.prefeditor.data.PrefFile
-import com.charlesmuchene.prefeditor.parser.Parser
-import com.charlesmuchene.prefeditor.parser.PrefParser
 
-data class ReadPref(
+class PreferencesCommand(
     private val app: App,
     private val device: Device,
     private val prefFile: PrefFile,
-    override val parser: Parser<Preferences> = PrefParser(),
-) : ReadCommand<Preferences> {
-    override val command: String =
-        "adb -s ${device.serial} exec-out run-as ${app.packageName} cat /data/data/${app.packageName}/shared_prefs/${prefFile.name}"
+) : ReadCommand {
+    override fun command(): List<String> {
+        return "adb -s ${device.serial} exec-out run-as ${app.packageName} cat /data/data/${app.packageName}/shared_prefs/${prefFile.name}"
+            .split(ReadCommand.DELIMITER)
+    }
 }

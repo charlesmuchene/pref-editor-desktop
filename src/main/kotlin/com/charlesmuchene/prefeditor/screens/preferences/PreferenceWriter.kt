@@ -16,7 +16,7 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences
 
-import com.charlesmuchene.prefeditor.command.writes.EditorCommand
+import com.charlesmuchene.prefeditor.command.WriteCommand
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.processor.Processor
 
@@ -30,7 +30,7 @@ import com.charlesmuchene.prefeditor.processor.Processor
  */
 class PreferenceWriter(
     private val processor: Processor,
-    private val command: EditorCommand,
+    private val command: WriteCommand,
 ) {
 
     /**

@@ -16,8 +16,8 @@
 
 package com.charlesmuchene.prefeditor.screens.device
 
-import com.charlesmuchene.prefeditor.command.reads.ReaderCommand
+import com.charlesmuchene.prefeditor.command.ReadCommand
 
-class DeviceListCommand : ReaderCommand {
-    override fun command(): List<String> = "adb devices -l".split(ReaderCommand.DELIMITER)
+class DeviceListCommand : ReadCommand {
+    override fun command(): List<String> = "adb devices -l".split(ReadCommand.DELIMITER)
 }
