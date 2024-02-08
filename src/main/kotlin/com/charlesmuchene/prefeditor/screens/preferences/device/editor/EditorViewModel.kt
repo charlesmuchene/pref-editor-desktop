@@ -48,7 +48,6 @@ sealed interface PreferenceAction {
     data class Change(val preference: Preference, val change: String) : PreferenceAction
 }
 
-
 /**
  * Models data for the [Editor]
  */
@@ -94,7 +93,6 @@ class EditorViewModel(
             val isValid = validator.valid(prefs)
             if (isValid) saveChangesNow() else showInvalidEdits()
         }
-        logger.debug { "$edits" }
     }
 
     /**

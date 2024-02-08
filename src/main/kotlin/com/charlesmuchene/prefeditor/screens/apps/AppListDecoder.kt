@@ -18,13 +18,11 @@ package com.charlesmuchene.prefeditor.screens.apps
 
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Apps
-import com.charlesmuchene.prefeditor.extensions.editorLogger
 import kotlinx.coroutines.yield
 
 class AppListDecoder(private val sorted: Boolean = true) {
 
     suspend fun decode(content: String): Apps = buildList {
-        editorLogger.debug { "$content--" }
         content.lineSequence().forEach { line ->
             yield()
             add(decodeApp(line = line))

@@ -16,17 +16,18 @@
 
 package com.charlesmuchene.prefeditor.processor
 
-import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.*
-import okio.Buffer
+import com.charlesmuchene.prefeditor.files.EditorFiles
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runInterruptible
+import kotlinx.coroutines.withContext
 import okio.BufferedSource
 import okio.buffer
 import okio.source
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
-
-private val logger = KotlinLogging.logger { }
+import kotlin.io.path.pathString
 
 /**
  * Run a system process
@@ -38,6 +39,8 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
     suspend fun run(command: List<String>, config: ProcessBuilder.() -> Unit = {}): Result<String> =
         withContext(context) {
             val builder = ProcessBuilder(command).apply {
+                val scriptsPath = EditorFiles.scriptsPath().pathString
+                environment()[PATH] += ":$scriptsPath"
                 redirectErrorStream(true)
                 config()
             }
@@ -63,6 +66,7 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
         }
 
     companion object {
+        private const val PATH = "PATH"
         private const val TIMEOUT_SECONDS = 10L
     }
 }
