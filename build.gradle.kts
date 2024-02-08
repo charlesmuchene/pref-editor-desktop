@@ -49,7 +49,7 @@ compose.desktop {
     application {
         mainClass = "com.charlesmuchene.prefeditor.App"
 
-        jvmArgs("-Dorg.jetbrains.jewel.debug=true", "-Dorg.slf4j.simpleLogger.defaultLogLevel=debug")
+        jvmArgs("-Dorg.jetbrains.jewel.debug=false", "-Dorg.slf4j.simpleLogger.defaultLogLevel=debug")
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
