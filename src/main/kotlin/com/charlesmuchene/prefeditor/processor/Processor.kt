@@ -24,6 +24,10 @@ import kotlinx.coroutines.withContext
 import okio.BufferedSource
 import okio.buffer
 import okio.source
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.StringReader
+import java.io.StringWriter
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
@@ -51,13 +55,8 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
                 return@withContext Result.failure(t)
             }
 
-            val output = async {
-                process.inputStream
-                    .source()
-                    .buffer()
-                    .use(BufferedSource::readUtf8)
-            }
             try {
+                val output = async { BufferedReader(InputStreamReader(process.inputStream)).readText() }
                 runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }
                 Result.success(output.await().trim())
             } catch (exception: CancellationException) {
