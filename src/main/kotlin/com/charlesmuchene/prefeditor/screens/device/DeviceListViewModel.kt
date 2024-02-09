@@ -26,8 +26,8 @@ import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
-import com.charlesmuchene.prefeditor.ui.theme.green
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
+import com.charlesmuchene.prefeditor.ui.theme.green
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -82,7 +82,13 @@ class DeviceListViewModel(
         }
     }
 
-    fun filter(input: String) {
+    /**
+     * Filter content based on input
+     *
+     * Invoking this function with a value clears the filter
+     * @param input Filter input
+     */
+    fun filter(input: String = "") {
         launch {
             _uiState.emit(UIState.Devices(mapDevices(useCase.devices.value.filter { device ->
                 device.serial.contains(other = input, ignoreCase = true)

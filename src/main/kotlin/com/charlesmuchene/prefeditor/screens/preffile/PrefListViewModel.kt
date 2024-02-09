@@ -68,7 +68,13 @@ class PrefListViewModel(
         }
     }
 
-    fun filter(input: String) {
+    /**
+     * Filter content based on input
+     *
+     * Invoking this function with a value clears the filter
+     * @param input Filter input
+     */
+    fun filter(input: String = "") {
         launch {
             val result = useCase.fileResult.value
             if (result is PrefFileResult.Files) {

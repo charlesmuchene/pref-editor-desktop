@@ -31,14 +31,12 @@ import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 
 @Composable
-fun FilterTextField(placeholder: String, modifier: Modifier = Modifier, filtered: (String) -> Unit) {
-    // TODO Leading icon is search
-    // TODO Trailing icon is cancel
-
+fun FilterTextField(placeholder: String, modifier: Modifier = Modifier, filtered: (String) -> Unit, onClear: () -> Unit) {
     var value by remember { mutableStateOf("") }
     var hovered by remember { mutableStateOf(false) }
     val filterPainter by rememberIconPainter(name = "filter@24x24")
     val clearPainter by rememberIconPainter(name = "clear@24x24")
+
     TextField(
         leadingIcon = {
             Icon(
@@ -49,9 +47,10 @@ fun FilterTextField(placeholder: String, modifier: Modifier = Modifier, filtered
             )
         },
         trailingIcon = {
-            IconButton(
-                onClick = { }
-            ) {
+            IconButton(onClick = {
+                value = ""
+                onClear()
+            }) {
                 Icon(
                     painter = clearPainter,
                     contentDescription = "Clear",

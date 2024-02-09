@@ -88,7 +88,9 @@ private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewMod
     Scaffolding(
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
-        subHeader = { FilterRow(placeholder = "Filter apps", onFilter = viewModel::filter) }) {
+        subHeader = {
+            FilterRow(placeholder = "Filter apps", onFilter = viewModel::filter, onClear = viewModel::filter)
+        }) {
         ItemListing {
             if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }
             items(items = apps, key = { it.app.packageName }) { app ->

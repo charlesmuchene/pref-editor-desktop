@@ -26,9 +26,9 @@ import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import org.jetbrains.jewel.ui.component.CheckboxRow
 
 @Composable
-fun FilterRow(placeholder: String, onFilter: (String) -> Unit, modifier: Modifier = Modifier) {
+fun FilterRow(placeholder: String, onFilter: (String) -> Unit, onClear: () -> Unit, modifier: Modifier = Modifier) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        FilterTextField(placeholder = placeholder, filtered = onFilter)
+        FilterTextField(placeholder = placeholder, filtered = onFilter, onClear = onClear)
         Spacer(modifier = Modifier.width(padding * 0.5f))
         var checked by remember { mutableStateOf(false) }
         CheckboxRow(

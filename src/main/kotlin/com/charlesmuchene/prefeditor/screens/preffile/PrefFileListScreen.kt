@@ -95,7 +95,9 @@ private fun PrefListingSuccess(
     Scaffolding(
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
-        subHeader = { FilterRow(placeholder = "Filter files", onFilter = viewModel::filter) }) {
+        subHeader = {
+            FilterRow(placeholder = "Filter files", onFilter = viewModel::filter, onClear = viewModel::filter)
+        }) {
         ItemListing {
             if (prefFiles.isEmpty()) item { Text(text = "No preferences matching filter", style = Typography.primary) }
             items(items = prefFiles, key = { it.file.name }) { prefFile ->

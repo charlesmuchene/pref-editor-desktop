@@ -78,7 +78,9 @@ private fun DeviceList(devices: List<UIDevice>, viewModel: DeviceListViewModel, 
     Scaffolding(
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
-        subHeader = { FilterRow(placeholder = "Filter devices", onFilter = viewModel::filter) }) {
+        subHeader = {
+            FilterRow(placeholder = "Filter devices", onFilter = viewModel::filter, onClear = viewModel::filter)
+        }) {
         ItemListing {
             if (devices.isEmpty()) item { Text(text = "No devices matching filter", style = primary) }
             else items(items = devices, key = { it.device.serial }) { device ->

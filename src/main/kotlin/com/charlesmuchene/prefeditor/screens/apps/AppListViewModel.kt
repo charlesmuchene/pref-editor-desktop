@@ -65,7 +65,13 @@ class AppListViewModel(
         }
     }
 
-    fun filter(input: String) {
+    /**
+     * Filter content based on input
+     *
+     * Invoking this function with a value clears the filter
+     * @param input Filter input
+     */
+    fun filter(input: String = "") {
         launch {
             _uiState.emit(UIState.Apps(mapApps(useCase.apps.value.filter { app ->
                 app.packageName.contains(other = input, ignoreCase = true)
