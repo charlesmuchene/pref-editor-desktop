@@ -17,7 +17,6 @@
 package com.charlesmuchene.prefeditor.screens.apps
 
 import com.charlesmuchene.prefeditor.bridge.Bridge
-import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Apps
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.models.UIApp
@@ -26,6 +25,8 @@ import com.charlesmuchene.prefeditor.navigation.PrefListScreen
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -79,12 +80,17 @@ class AppListViewModel(
         }
     }
 
-    fun onFavorite(app: UIApp) {
-        launch {
+    /**
+     * Un/Favorite an app
+     *
+     * @param app [UIApp] to un/favorite
+     */
+    suspend fun favorite(app: UIApp) = coroutineScope {
+        async {
             if (app.isFavorite) favorites.unfavoriteApp(app = app.app, device = device)
             else favorites.favoriteApp(app = app.app, device = device)
-            _uiState.emit(UIState.Apps(mapApps(useCase.apps.value)))
-        }
+            app.copy(isFavorite = !app.isFavorite)
+        }.await()
     }
 
     sealed interface UIState {

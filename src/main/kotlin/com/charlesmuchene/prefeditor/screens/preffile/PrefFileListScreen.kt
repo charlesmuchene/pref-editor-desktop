@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.providers.LocalAppState
@@ -38,6 +37,7 @@ import com.charlesmuchene.prefeditor.resources.AppKey
 import com.charlesmuchene.prefeditor.screens.preffile.PrefListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.*
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
 
@@ -102,24 +102,25 @@ private fun PrefListingSuccess(
 ) {
     ItemListing(modifier = modifier) {
         items(items = prefFiles, key = { it.file.name }) { prefFile ->
-            PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected, onFavorite = viewModel::favorite)
+            PrefListingRow(prefFile = prefFile, viewModel = viewModel)
         }
     }
 }
 
 @Composable
-private fun PrefListingRow(
-    prefFile: UIPrefFile,
-    modifier: Modifier = Modifier,
-    onClick: (UIPrefFile) -> Unit,
-    onFavorite: OnFavorite<UIPrefFile>,
-) {
-    ItemRow(item = prefFile, onClick = onClick, onFavorite = onFavorite) {
+private fun PrefListingRow(prefFile: UIPrefFile, modifier: Modifier = Modifier, viewModel: PrefListViewModel) {
+    val scope = rememberCoroutineScope()
+    var localPref by remember(prefFile) { mutableStateOf(prefFile) }
+
+    ItemRow(
+        item = localPref,
+        onClick = viewModel::fileSelected,
+        onFavorite = { scope.launch { localPref = viewModel.favorite(it) } }
+    ) {
         Column(modifier = modifier.padding(4.dp)) {
-            Text(text = prefFile.file.name, style = Typography.primary)
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(text = prefFile.file.type.text, style = Typography.secondary, color = JewelTheme.contentColor)
-            Spacer(modifier = Modifier.height(2.dp))
+            Text(text = localPref.file.name, style = Typography.primary)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = localPref.file.type.text, style = Typography.secondary, color = JewelTheme.contentColor)
         }
     }
 }

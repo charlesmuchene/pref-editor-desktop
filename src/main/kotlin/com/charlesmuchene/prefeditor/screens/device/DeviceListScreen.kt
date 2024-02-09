@@ -19,10 +19,12 @@ package com.charlesmuchene.prefeditor.screens.device
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
@@ -36,6 +38,7 @@ import com.charlesmuchene.prefeditor.ui.*
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import com.charlesmuchene.prefeditor.ui.theme.Typography.primary
 import com.charlesmuchene.prefeditor.ui.theme.Typography.secondary
+import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
 
@@ -85,23 +88,24 @@ private fun DeviceList(devices: List<UIDevice>, viewModel: DeviceListViewModel, 
 private fun DeviceRow(device: UIDevice, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
     val statusColor = viewModel.statusColor(device = device.device)
     val radius = with(LocalDensity.current) { 12.dp.toPx() }
+    val scope = rememberCoroutineScope()
+    var localDevice by remember(device) { mutableStateOf(device) }
 
     ItemRow(
-        item = device,
-        dividerIndentation = padding,
+        item = localDevice,
         modifier = modifier,
         onClick = viewModel::deviceSelected,
-        onFavorite = viewModel::favorite
+        onFavorite = { scope.launch { localDevice = viewModel.favorite(it) } },
     ) {
         Canvas(modifier = Modifier.size(12.dp).weight(0.1f)) {
             drawCircle(color = statusColor, radius = radius)
         }
         Spacer(modifier = Modifier.width(4.dp))
         Column(modifier = Modifier.weight(0.9f)) {
-            Text(text = device.device.serial, style = primary)
+            Text(text = localDevice.device.serial, style = primary)
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = viewModel.formatDeviceAttributes(device.device),
+                text = viewModel.formatDeviceAttributes(localDevice.device),
                 color = JewelTheme.contentColor,
                 style = secondary,
             )

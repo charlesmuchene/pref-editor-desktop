@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
+import com.charlesmuchene.prefeditor.ui.theme.green
 import org.jetbrains.jewel.foundation.modifier.onHover
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.IconButton
@@ -42,7 +43,7 @@ fun FilterTextField(placeholder: String, modifier: Modifier = Modifier, filtered
             Icon(
                 painter = filterPainter,
                 contentDescription = "Filter",
-                tint = if (hovered) Color.Green else Color.LightGray,
+                tint = if (hovered) green else Color.LightGray,
                 modifier = Modifier.size(20.dp).padding(4.dp),
             )
         },
@@ -54,7 +55,7 @@ fun FilterTextField(placeholder: String, modifier: Modifier = Modifier, filtered
                 Icon(
                     painter = clearPainter,
                     contentDescription = "Clear",
-                    tint = if (hovered) Color.Green else Color.LightGray,
+                    tint = if (hovered) green else Color.LightGray,
                     modifier = Modifier.pointerOnHover().size(20.dp).padding(4.dp),
                 )
             }

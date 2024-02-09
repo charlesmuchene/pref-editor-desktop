@@ -24,7 +24,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.providers.LocalAppState
@@ -35,6 +34,7 @@ import com.charlesmuchene.prefeditor.resources.DeviceKey
 import com.charlesmuchene.prefeditor.screens.apps.AppListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.*
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import kotlinx.coroutines.launch
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -90,15 +90,23 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
     ItemListing(modifier = modifier) {
         items(items = apps, key = { it.app.packageName }) { app ->
-            AppRow(app = app, onClick = viewModel::appSelected, onFavorite = viewModel::onFavorite)
+            AppRow(app = app, viewModel = viewModel)
         }
     }
 }
 
 @Composable
-private fun AppRow(app: UIApp, modifier: Modifier = Modifier, onClick: (UIApp) -> Unit, onFavorite: OnFavorite<UIApp>) {
-    ItemRow(item = app, modifier = modifier, onClick = onClick, onFavorite = onFavorite) {
-        Text(text = app.app.packageName, style = Typography.primary, modifier = Modifier.padding(4.dp))
+private fun AppRow(app: UIApp, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
+    val scope = rememberCoroutineScope()
+    var localApp by remember(app) { mutableStateOf(app) }
+
+    ItemRow(
+        item = localApp,
+        modifier = modifier,
+        onClick = viewModel::appSelected,
+        onFavorite = { scope.launch { localApp = viewModel.favorite(it) } }
+    ) {
+        Text(text = localApp.app.packageName, style = Typography.primary, modifier = Modifier.padding(4.dp))
     }
 }
 

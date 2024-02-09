@@ -23,9 +23,11 @@ import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefEditScreen
 import com.charlesmuchene.prefeditor.processor.Processor
-import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
+import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -85,16 +87,19 @@ class PrefListViewModel(
         }
     }
 
-    fun favorite(prefFile: UIPrefFile) {
-        launch {
-            val result = useCase.fileResult.value
-            if (result is PrefFileResult.Files) {
-                if (prefFile.isFavorite) favorites.unfavoriteFile(file = prefFile.file, app = app, device = device)
-                else favorites.favoriteFile(file = prefFile.file, app = app, device = device)
-                val state = UIState.Files(map(result.files))
-                _uiState.emit(state)
-            }
-        }
+    /**
+     * Un/Favorite a file
+     *
+     * @param file [UIPrefFile] to un/favorite
+     */
+    suspend fun favorite(file: UIPrefFile) = coroutineScope {
+        val result = useCase.fileResult.value
+        if (result !is PrefFileResult.Files) file
+        else async {
+            if (file.isFavorite) favorites.unfavoriteFile(file = file.file, app = app, device = device)
+            else favorites.favoriteFile(file = file.file, app = app, device = device)
+            file.copy(isFavorite = !file.isFavorite)
+        }.await()
     }
 
     sealed interface UIState {

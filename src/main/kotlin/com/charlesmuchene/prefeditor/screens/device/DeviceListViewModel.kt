@@ -29,6 +29,8 @@ import com.charlesmuchene.prefeditor.resources.TextBundle
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.ui.theme.green
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -96,12 +98,17 @@ class DeviceListViewModel(
         }
     }
 
-    fun favorite(device: UIDevice) {
-        launch {
+    /**
+     * Un/Favorite a device
+     *
+     * @param device [UIDevice] to un/favorite
+     */
+    suspend fun favorite(device: UIDevice) = coroutineScope {
+        async {
             if (device.isFavorite) favorites.unfavoriteDevice(device = device.device)
             else favorites.favoriteDevice(device = device.device)
-            _uiState.emit(UIState.Devices(mapDevices(useCase.devices.value)))
-        }
+            device.copy(isFavorite = !device.isFavorite)
+        }.await()
     }
 
     sealed interface UIState {

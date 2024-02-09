@@ -30,9 +30,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.extensions.OnFavorite
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.Favoritable
 import com.charlesmuchene.prefeditor.ui.theme.green
@@ -42,24 +40,29 @@ import org.jetbrains.jewel.ui.component.Divider
 @Composable
 fun <T : Favoritable> ItemRow(
     item: T,
-    modifier: Modifier = Modifier,
-    dividerIndentation: Dp = Dp.Hairline,
     onClick: (T) -> Unit,
-    onFavorite: OnFavorite<T>,
+    onFavorite: (T) -> Unit,
+    modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
 
     Column(modifier = modifier) {
-        Row(modifier = Modifier.fillMaxWidth().clickable { onClick(item) }
-            .pointerOnHover()
-            .hoverable(interactionSource)
-            .drawBehind {
-                if (isHovered)
-                    drawRoundRect(green, cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(width = 2f))
-            }
-            .padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClick(item) }
+                .pointerOnHover()
+                .hoverable(interactionSource)
+                .padding(vertical = 8.dp)
+                .drawBehind {
+                    if (isHovered)
+                        drawRoundRect(green, cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(width = 2f))
+                }
+                .padding(vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(.9f),
@@ -68,12 +71,12 @@ fun <T : Favoritable> ItemRow(
             Spacer(modifier = Modifier.width(24.dp))
             FavoriteButton(
                 selected = item.isFavorite,
-                modifier = Modifier.weight(.1f).fillMaxHeight(),
-                onFavorite = { onFavorite(item) })
+                onFavorite = { onFavorite(item) },
+                modifier = Modifier.weight(.1f)
+            )
         }
         Divider(
             orientation = Orientation.Horizontal,
-            startIndent = dividerIndentation,
             color = Color.LightGray.copy(alpha = 0.5f),
         )
     }
