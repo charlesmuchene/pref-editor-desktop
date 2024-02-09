@@ -21,5 +21,5 @@ import com.charlesmuchene.prefeditor.data.Device
 
 class AppListCommand(private val device: Device) : ReadCommand {
     override fun command(): List<String> =
-        "adb -s ${device.serial} shell cmd package list packages -3".split(ReadCommand.DELIMITER)
+        "adb -s ${device.serial} shell cmd package list packages -3 --user 0".split(ReadCommand.DELIMITER)
 }
