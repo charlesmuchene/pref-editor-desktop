@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.ui
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -26,14 +27,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.extensions.Breathing
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.Favoritable
-import com.charlesmuchene.prefeditor.ui.theme.green
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.Divider
 
@@ -48,6 +46,8 @@ fun <T : Favoritable> ItemRow(
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
 
+    val elevation = animateDpAsState(targetValue = if (isHovered) 8.dp else 0.dp, label = "elevation")
+
     Column(modifier = modifier) {
         Row(
             modifier = Modifier
@@ -55,12 +55,12 @@ fun <T : Favoritable> ItemRow(
                 .clickable { onClick(item) }
                 .pointerOnHover()
                 .hoverable(interactionSource)
-                .padding(vertical = 8.dp)
-                .drawBehind {
-                    if (isHovered)
-                        drawRoundRect(green, cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(width = 2f))
-                }
                 .padding(vertical = 12.dp),
+//                .padding(vertical = 8.dp)
+//                .drawBehind {
+//                    if (isHovered)
+//                        drawRoundRect(green, cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(width = 2f))
+//                }
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
@@ -69,11 +69,13 @@ fun <T : Favoritable> ItemRow(
                 content = content,
             )
             Spacer(modifier = Modifier.width(24.dp))
-            FavoriteButton(
-                selected = item.isFavorite,
-                onFavorite = { onFavorite(item) },
-                modifier = Modifier.weight(.1f)
-            )
+            Breathing {
+                FavoriteButton(
+                    selected = item.isFavorite,
+                    modifier = Modifier.weight(.1f),
+                    onFavorite = { onFavorite(item) },
+                )
+            }
         }
         Divider(
             orientation = Orientation.Horizontal,

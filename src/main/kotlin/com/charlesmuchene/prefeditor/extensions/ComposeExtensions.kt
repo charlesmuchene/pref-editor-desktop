@@ -17,10 +17,14 @@
 package com.charlesmuchene.prefeditor.extensions
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
@@ -50,3 +54,19 @@ fun screenTransitionSpec(): ContentTransform =
             fadeOut(animationSpec = tween(durationMillis = 300)) +
                     scaleOut(targetScale = .92f, animationSpec = tween(durationMillis = 220))
         )
+
+@Composable
+fun Breathing(breathe: Float = 1.2f, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    val infiniteTransition = rememberInfiniteTransition()
+
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = breathe,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2000),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    Box(modifier = modifier.scale(scale)) { content() }
+}

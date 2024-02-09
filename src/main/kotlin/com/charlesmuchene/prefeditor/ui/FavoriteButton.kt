@@ -16,24 +16,29 @@
 
 package com.charlesmuchene.prefeditor.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.ui.theme.orange
 import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.IconButton
 
 @Composable
 fun FavoriteButton(selected: Boolean, modifier: Modifier = Modifier, onFavorite: () -> Unit) {
     val icon = if (selected) "favorite-solid@24x24" else "favorite-outline@24x24"
     val painter by rememberIconPainter(icon)
-    Icon(
-        tint = orange,
-        painter = painter,
-        contentDescription = "Favorite item",
-        modifier = modifier.size(24.dp).clickable(onClick = onFavorite),
-    )
+    IconButton(onClick = onFavorite, modifier = modifier.size(36.dp).clip(CircleShape)) {
+        Icon(
+            tint = orange,
+            painter = painter,
+            contentDescription = "Favorite item",
+            modifier = Modifier.size(24.dp).pointerOnHover(),
+        )
+    }
 }
