@@ -16,22 +16,25 @@
 
 package com.charlesmuchene.prefeditor.ui
 
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.Breathing
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.Favoritable
+import kotlinx.coroutines.launch
+import org.jetbrains.jewel.foundation.modifier.onHover
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.Divider
 
@@ -45,22 +48,22 @@ fun <T : Favoritable> ItemRow(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
-
-    val elevation = animateDpAsState(targetValue = if (isHovered) 8.dp else 0.dp, label = "elevation")
-
+    val scope = rememberCoroutineScope()
+    val animatedScalePercent by remember { mutableStateOf(Animatable(initialValue = 1f)) }
     Column(modifier = modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onClick(item) }
                 .pointerOnHover()
+                .clickable { onClick(item) }
                 .hoverable(interactionSource)
-                .padding(vertical = 12.dp),
-//                .padding(vertical = 8.dp)
-//                .drawBehind {
-//                    if (isHovered)
-//                        drawRoundRect(green, cornerRadius = CornerRadius(10.dp.toPx()), style = Stroke(width = 2f))
-//                }
+                .padding(vertical = padding * .5f)
+                .onHover { isHovered ->
+                    scope.launch {
+                        hoverAnimation(isHovered = isHovered, animatedScalePercent = animatedScalePercent)
+                    }
+                }
+                .scale(animatedScalePercent.value),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
@@ -82,4 +85,12 @@ fun <T : Favoritable> ItemRow(
             color = Color.LightGray.copy(alpha = 0.5f),
         )
     }
+}
+
+private suspend fun hoverAnimation(
+    isHovered: Boolean,
+    animatedScalePercent: Animatable<Float, AnimationVector1D>,
+) {
+    if (isHovered) animatedScalePercent.animateTo(targetValue = 1.02f, animationSpec = tween(durationMillis = 300))
+    else animatedScalePercent.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 700))
 }

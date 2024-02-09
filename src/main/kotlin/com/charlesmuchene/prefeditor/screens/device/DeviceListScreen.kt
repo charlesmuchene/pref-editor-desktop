@@ -97,11 +97,11 @@ private fun DeviceRow(device: UIDevice, viewModel: DeviceListViewModel, modifier
         onClick = viewModel::deviceSelected,
         onFavorite = { scope.launch { localDevice = viewModel.favorite(it) } },
     ) {
-        Canvas(modifier = Modifier.size(12.dp).weight(0.1f)) {
+        Canvas(modifier = Modifier.size(12.dp).weight(0.05f)) {
             drawCircle(color = statusColor, radius = radius)
         }
         Spacer(modifier = Modifier.width(4.dp))
-        Column(modifier = Modifier.weight(0.9f)) {
+        Column(modifier = Modifier.weight(0.95f)) {
             Text(text = localDevice.device.serial, style = primary)
             Spacer(modifier = Modifier.height(4.dp))
             Text(
