@@ -19,12 +19,10 @@ package com.charlesmuchene.prefeditor.screens.device
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
@@ -94,7 +92,7 @@ private fun DeviceRow(device: UIDevice, viewModel: DeviceListViewModel, modifier
     ItemRow(
         item = localDevice,
         modifier = modifier,
-        onClick = viewModel::deviceSelected,
+        onClick = viewModel::select,
         onFavorite = { scope.launch { localDevice = viewModel.favorite(it) } },
     ) {
         Canvas(modifier = Modifier.size(12.dp).weight(0.05f)) {

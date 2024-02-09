@@ -18,6 +18,7 @@ package com.charlesmuchene.prefeditor.screens.apps
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
@@ -86,11 +87,12 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
     Loading(text = text, modifier = modifier)
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
     ItemListing(modifier = modifier) {
         items(items = apps, key = { it.app.packageName }) { app ->
-            AppRow(app = app, viewModel = viewModel)
+            AppRow(app = app, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
         }
     }
 }

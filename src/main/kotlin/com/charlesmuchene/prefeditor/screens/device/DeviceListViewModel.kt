@@ -55,15 +55,34 @@ class DeviceListViewModel(
         launch { useCase.list() }
     }
 
+    /**
+     * Map devices to a UI state
+     *
+     * @param devices A [List] of connected [Device]s
+     * @return An instance of [UIState]
+     */
     private fun mapToState(devices: Devices): UIState {
         return if (devices.isEmpty()) UIState.NoDevices else UIState.Devices(mapDevices(devices))
     }
 
+    /**
+     * Map connected devices to a UI model.
+     *
+     * @param devices A [List] of connected [Device]s
+     * @return A [List] of [UIDevice]
+     * @see [UIDevice]
+     */
     private fun mapDevices(devices: Devices): List<UIDevice> = devices.map { device ->
         val isFavorite = favorites.isFavorite(device)
         UIDevice(device = device, isFavorite = isFavorite)
     }
 
+    /**
+     * Format device attributes
+     *
+     * @param device [Device] to get attributes from
+     * @return A formatted string
+     */
     fun formatDeviceAttributes(device: Device): String = device.attributes.joinToString(
         separator = " ",
         transform = { attribute ->
@@ -71,10 +90,21 @@ class DeviceListViewModel(
         }
     )
 
+    /**
+     * Status color of displayed device
+     *
+     * @param device [Device] instance
+     * @return [Color] for based on device state
+     */
     fun statusColor(device: Device): Color = if (device.type == Type.Device) green
     else Color.Red
 
-    fun deviceSelected(device: UIDevice) {
+    /**
+     * Select a device
+     *
+     * @param device Selected [UIDevice]
+     */
+    fun select(device: UIDevice) {
         launch {
             when (device.device.type) {
                 Type.Device -> navigation.navigate(screen = AppsScreen(device = device.device))
@@ -116,5 +146,4 @@ class DeviceListViewModel(
         data object NoDevices : UIState
         data class Devices(val devices: List<UIDevice>) : UIState
     }
-
 }
