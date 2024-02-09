@@ -22,15 +22,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import org.jetbrains.jewel.ui.component.CheckboxRow
 
 @Composable
 fun FilterRow(placeholder: String, onFilter: (String) -> Unit, modifier: Modifier = Modifier) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         FilterTextField(placeholder = placeholder, filtered = onFilter)
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(padding * 0.5f))
         var checked by remember { mutableStateOf(false) }
-        CheckboxRow(checked = checked, onCheckedChange = {checked = !checked}, text = "Filter Starred")
+        CheckboxRow(
+            modifier = Modifier.pointerOnHover(),
+            checked = checked,
+            onCheckedChange = { checked = !checked },
+            text = "Starred"
+        )
     }
 }

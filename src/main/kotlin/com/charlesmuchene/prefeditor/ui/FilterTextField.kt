@@ -16,9 +16,17 @@
 
 package com.charlesmuchene.prefeditor.ui
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.extensions.pointerOnHover
+import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import org.jetbrains.jewel.foundation.modifier.onHover
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.IconButton
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 
@@ -29,8 +37,29 @@ fun FilterTextField(placeholder: String, modifier: Modifier = Modifier, filtered
 
     var value by remember { mutableStateOf("") }
     var hovered by remember { mutableStateOf(false) }
-
+    val filterPainter by rememberIconPainter(name = "filter@24x24")
+    val clearPainter by rememberIconPainter(name = "clear@24x24")
     TextField(
+        leadingIcon = {
+            Icon(
+                painter = filterPainter,
+                contentDescription = "Filter",
+                tint = if (hovered) Color.Green else Color.LightGray,
+                modifier = Modifier.size(20.dp).padding(4.dp),
+            )
+        },
+        trailingIcon = {
+            IconButton(
+                onClick = { }
+            ) {
+                Icon(
+                    painter = clearPainter,
+                    contentDescription = "Clear",
+                    tint = if (hovered) Color.Green else Color.LightGray,
+                    modifier = Modifier.pointerOnHover().size(20.dp).padding(4.dp),
+                )
+            }
+        },
         value = value,
         undecorated = !hovered && value.isBlank(),
         placeholder = { Text(text = placeholder) },
