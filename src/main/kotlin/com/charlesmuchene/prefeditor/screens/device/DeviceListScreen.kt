@@ -46,23 +46,23 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
     val navigation = LocalNavigation.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
-        DeviceListViewModel(
-            bundle = bundle,
-            scope = scope,
-            navigation = navigation,
-            favorites = appState.favorites,
-        )
+        DeviceListViewModel(bundle = bundle, scope = scope, navigation = navigation, favorites = appState.favorites)
     }
     val uiState by viewModel.uiState.collectAsState()
-    updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
-        when (state) {
-            UIState.Error -> DeviceListError(modifier = modifier)
-            UIState.NoDevices -> NoDevices(modifier = modifier)
-            is UIState.Devices -> DeviceList(
-                devices = state.devices,
-                viewModel = viewModel,
-                modifier = modifier,
-            )
+
+    val header = bundle[HomeKey.ConnectedDevices]
+    Scaffolding(
+        modifier = modifier,
+        header = { Text(text = header, style = Typography.heading) },
+        subHeader = {
+            FilterRow(placeholder = "Filter devices", onFilter = viewModel::filter, onClear = viewModel::filter)
+        }) {
+        updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
+            when (state) {
+                UIState.Error -> DeviceListError(modifier = modifier)
+                UIState.NoDevices -> NoDevices(modifier = modifier)
+                is UIState.Devices -> DeviceList(devices = state.devices, viewModel = viewModel, modifier = modifier)
+            }
         }
     }
 
@@ -73,19 +73,10 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
 
 @Composable
 private fun DeviceList(devices: List<UIDevice>, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
-    val header = LocalBundle.current[HomeKey.ConnectedDevices]
-
-    Scaffolding(
-        modifier = modifier,
-        header = { Text(text = header, style = Typography.heading) },
-        subHeader = {
-            FilterRow(placeholder = "Filter devices", onFilter = viewModel::filter, onClear = viewModel::filter)
-        }) {
-        ItemListing {
-            if (devices.isEmpty()) item { Text(text = "No devices matching filter", style = primary) }
-            else items(items = devices, key = { it.device.serial }) { device ->
-                DeviceRow(device = device, viewModel = viewModel)
-            }
+    ItemListing {
+        if (devices.isEmpty()) item { Text(text = "No devices matching filter", style = primary) }
+        else items(items = devices, key = { it.device.serial }) { device ->
+            DeviceRow(device = device, viewModel = viewModel)
         }
     }
 }

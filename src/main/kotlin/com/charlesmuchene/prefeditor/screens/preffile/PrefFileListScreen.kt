@@ -57,12 +57,24 @@ fun PrefFileListScreen(app: App, device: Device, modifier: Modifier = Modifier) 
     }
     val uiState by viewModel.uiState.collectAsState()
 
-    updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
-        when (state) {
-            UIState.Empty -> PrefListingEmpty(modifier = modifier)
-            UIState.Loading -> PrefListingLoading(modifier = modifier)
-            is UIState.Error -> PrefListingError(modifier = modifier, message = state.message)
-            is UIState.Files -> PrefListingSuccess(modifier = modifier, viewModel = viewModel, prefFiles = state.files)
+    val header = LocalBundle.current[AppKey.PrefListingTitle]
+    Scaffolding(
+        modifier = modifier,
+        header = { Text(text = header, style = Typography.heading) },
+        subHeader = {
+            FilterRow(placeholder = "Filter files", onFilter = viewModel::filter, onClear = viewModel::filter)
+        }) {
+        updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
+            when (state) {
+                UIState.Empty -> PrefListingEmpty(modifier = modifier)
+                UIState.Loading -> PrefListingLoading(modifier = modifier)
+                is UIState.Error -> PrefListingError(modifier = modifier, message = state.message)
+                is UIState.Files -> PrefListingSuccess(
+                    modifier = modifier,
+                    viewModel = viewModel,
+                    prefFiles = state.files
+                )
+            }
         }
     }
 }
@@ -91,18 +103,10 @@ private fun PrefListingSuccess(
     modifier: Modifier = Modifier,
     viewModel: PrefListViewModel,
 ) {
-    val header = LocalBundle.current[AppKey.PrefListingTitle]
-    Scaffolding(
-        modifier = modifier,
-        header = { Text(text = header, style = Typography.heading) },
-        subHeader = {
-            FilterRow(placeholder = "Filter files", onFilter = viewModel::filter, onClear = viewModel::filter)
-        }) {
-        ItemListing {
-            if (prefFiles.isEmpty()) item { Text(text = "No preferences matching filter", style = Typography.primary) }
-            items(items = prefFiles, key = { it.file.name }) { prefFile ->
-                PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected, onFavorite = viewModel::favorite)
-            }
+    ItemListing {
+        if (prefFiles.isEmpty()) item { Text(text = "No preferences matching filter", style = Typography.primary) }
+        items(items = prefFiles, key = { it.file.name }) { prefFile ->
+            PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected, onFavorite = viewModel::favorite)
         }
     }
 }

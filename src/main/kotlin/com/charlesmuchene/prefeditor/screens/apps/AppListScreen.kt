@@ -55,17 +55,24 @@ fun AppListScreen(device: Device, modifier: Modifier = Modifier) {
     }
     val uiState by viewModel.uiState.collectAsState()
 
-    updateTransition(uiState).AnimatedContent(
-        transitionSpec = { screenTransitionSpec() },
-    ) { state ->
-        when (state) {
-            UIState.Loading -> LoadingApps(modifier = modifier)
-            UIState.Error -> LoadingAppError(modifier = modifier)
-            is UIState.Apps -> AppListing(
-                apps = state.apps,
-                modifier = modifier,
-                viewModel = viewModel
-            )
+    val header = LocalBundle.current[DeviceKey.AppListingTitle]
+    Scaffolding(
+        modifier = modifier,
+        header = { Text(text = header, style = Typography.heading) },
+        subHeader = {
+            FilterRow(placeholder = "Filter apps", onFilter = viewModel::filter, onClear = viewModel::filter)
+        }
+    ) {
+        updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
+            when (state) {
+                UIState.Loading -> LoadingApps(modifier = modifier)
+                UIState.Error -> LoadingAppError(modifier = modifier)
+                is UIState.Apps -> AppListing(
+                    apps = state.apps,
+                    modifier = modifier,
+                    viewModel = viewModel
+                )
+            }
         }
     }
 }
@@ -84,18 +91,10 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 
 @Composable
 private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
-    val header = LocalBundle.current[DeviceKey.AppListingTitle]
-    Scaffolding(
-        modifier = modifier,
-        header = { Text(text = header, style = Typography.heading) },
-        subHeader = {
-            FilterRow(placeholder = "Filter apps", onFilter = viewModel::filter, onClear = viewModel::filter)
-        }) {
-        ItemListing {
-            if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }
-            items(items = apps, key = { it.app.packageName }) { app ->
-                AppRow(app = app, onClick = viewModel::appSelected, onFavorite = viewModel::onFavorite)
-            }
+    ItemListing {
+        if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }
+        items(items = apps, key = { it.app.packageName }) { app ->
+            AppRow(app = app, onClick = viewModel::appSelected, onFavorite = viewModel::onFavorite)
         }
     }
 }
