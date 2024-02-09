@@ -36,10 +36,10 @@ fun Scaffolding(
         header()
         Spacer(modifier = Modifier.height(spacing))
         subHeader()
+        Spacer(modifier = Modifier.height(spacing))
         Divider(
             color = Color.LightGray.copy(alpha = 0.75f),
             orientation = Orientation.Horizontal,
-            modifier = Modifier.padding(vertical = 12.dp),
         )
         content()
     }
