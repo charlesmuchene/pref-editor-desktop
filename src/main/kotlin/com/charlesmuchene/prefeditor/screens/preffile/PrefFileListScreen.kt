@@ -69,11 +69,8 @@ fun PrefFileListScreen(app: App, device: Device, modifier: Modifier = Modifier) 
                 UIState.Empty -> PrefListingEmpty(modifier = modifier)
                 UIState.Loading -> PrefListingLoading(modifier = modifier)
                 is UIState.Error -> PrefListingError(modifier = modifier, message = state.message)
-                is UIState.Files -> PrefListingSuccess(
-                    modifier = modifier,
-                    viewModel = viewModel,
-                    prefFiles = state.files
-                )
+                is UIState.Files -> if (state.files.isEmpty()) NoFilterMatch(modifier = modifier)
+                else PrefListingSuccess(modifier = modifier, viewModel = viewModel, prefFiles = state.files)
             }
         }
     }
@@ -100,11 +97,10 @@ private fun PrefListingLoading(modifier: Modifier = Modifier) {
 @Composable
 private fun PrefListingSuccess(
     prefFiles: List<UIPrefFile>,
-    modifier: Modifier = Modifier,
     viewModel: PrefListViewModel,
+    modifier: Modifier = Modifier,
 ) {
-    ItemListing {
-        if (prefFiles.isEmpty()) item { Text(text = "No preferences matching filter", style = Typography.primary) }
+    ItemListing(modifier = modifier) {
         items(items = prefFiles, key = { it.file.name }) { prefFile ->
             PrefListingRow(prefFile = prefFile, onClick = viewModel::fileSelected, onFavorite = viewModel::favorite)
         }
@@ -126,4 +122,9 @@ private fun PrefListingRow(
             Spacer(modifier = Modifier.height(2.dp))
         }
     }
+}
+
+@Composable
+private fun NoFilterMatch(modifier: Modifier = Modifier) {
+    FullScreenText(primary = "No preference files matching filter", modifier = modifier)
 }

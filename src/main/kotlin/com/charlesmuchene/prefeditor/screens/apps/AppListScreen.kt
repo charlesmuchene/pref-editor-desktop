@@ -67,11 +67,8 @@ fun AppListScreen(device: Device, modifier: Modifier = Modifier) {
             when (state) {
                 UIState.Loading -> LoadingApps(modifier = modifier)
                 UIState.Error -> LoadingAppError(modifier = modifier)
-                is UIState.Apps -> AppListing(
-                    apps = state.apps,
-                    modifier = modifier,
-                    viewModel = viewModel
-                )
+                is UIState.Apps -> if (state.apps.isEmpty()) NoFilterMatch(modifier = modifier)
+                else AppListing(apps = state.apps, modifier = modifier, viewModel = viewModel)
             }
         }
     }
@@ -91,8 +88,7 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 
 @Composable
 private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
-    ItemListing {
-        if (apps.isEmpty()) item { Text(text = "No apps matching filter", style = Typography.primary) }
+    ItemListing(modifier = modifier) {
         items(items = apps, key = { it.app.packageName }) { app ->
             AppRow(app = app, onClick = viewModel::appSelected, onFavorite = viewModel::onFavorite)
         }
@@ -104,4 +100,9 @@ private fun AppRow(app: UIApp, modifier: Modifier = Modifier, onClick: (UIApp) -
     ItemRow(item = app, modifier = modifier, onClick = onClick, onFavorite = onFavorite) {
         Text(text = app.app.packageName, style = Typography.primary, modifier = Modifier.padding(4.dp))
     }
+}
+
+@Composable
+private fun NoFilterMatch(modifier: Modifier = Modifier) {
+    FullScreenText(primary = "No apps matching filter", modifier = modifier)
 }

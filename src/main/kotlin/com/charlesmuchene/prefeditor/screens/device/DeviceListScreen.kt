@@ -61,7 +61,8 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
             when (state) {
                 UIState.Error -> DeviceListError(modifier = modifier)
                 UIState.NoDevices -> NoDevices(modifier = modifier)
-                is UIState.Devices -> DeviceList(devices = state.devices, viewModel = viewModel, modifier = modifier)
+                is UIState.Devices -> if (state.devices.isEmpty()) NoFilterMatch(modifier = modifier)
+                else DeviceList(devices = state.devices, viewModel = viewModel, modifier = modifier)
             }
         }
     }
@@ -73,9 +74,8 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
 
 @Composable
 private fun DeviceList(devices: List<UIDevice>, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
-    ItemListing {
-        if (devices.isEmpty()) item { Text(text = "No devices matching filter", style = primary) }
-        else items(items = devices, key = { it.device.serial }) { device ->
+    ItemListing(modifier = modifier) {
+        items(items = devices, key = { it.device.serial }) { device ->
             DeviceRow(device = device, viewModel = viewModel)
         }
     }
@@ -102,8 +102,8 @@ private fun DeviceRow(device: UIDevice, viewModel: DeviceListViewModel, modifier
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = viewModel.formatDeviceAttributes(device.device),
+                color = JewelTheme.contentColor,
                 style = secondary,
-                color = JewelTheme.contentColor
             )
             Spacer(modifier = Modifier.height(4.dp))
         }
@@ -120,4 +120,9 @@ private fun DeviceListError(modifier: Modifier = Modifier) {
 private fun NoDevices(modifier: Modifier = Modifier) {
     val primary = LocalBundle.current[HomeKey.EmptyDeviceList]
     FullScreenText(primary = primary, modifier = modifier)
+}
+
+@Composable
+private fun NoFilterMatch(modifier: Modifier = Modifier) {
+    FullScreenText(primary = "No devices matching filter", modifier = modifier)
 }
