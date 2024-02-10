@@ -107,7 +107,7 @@ private fun AppRow(app: UIApp, modifier: Modifier = Modifier, viewModel: AppList
     ItemRow(
         item = localApp,
         modifier = modifier,
-        onClick = viewModel::appSelected,
+        onClick = viewModel::selected,
         onFavorite = { scope.launch { localApp = viewModel.favorite(it) } }
     ) {
         Text(text = localApp.app.packageName, style = Typography.primary, modifier = Modifier.padding(4.dp))

@@ -46,6 +46,8 @@ class DeviceListViewModel(
     private val decoder = DeviceListDecoder()
     private val useCase = DeviceListUseCase(processor = processor, decoder = decoder)
 
+    private var filter = ItemFilter.none
+
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
@@ -66,9 +68,8 @@ class DeviceListViewModel(
      * @param devices A [List] of connected [Device]s
      * @return An instance of [UIState]
      */
-    private fun mapToState(devices: Devices): UIState {
-        return if (devices.isEmpty()) UIState.NoDevices else UIState.Devices(mapDevices(devices))
-    }
+    private fun mapToState(devices: Devices): UIState = if (devices.isEmpty()) UIState.NoDevices
+    else UIState.Devices(filter(filter = filter, devices = mapDevices(devices)))
 
     /**
      * Map connected devices to a UI model.
@@ -125,14 +126,25 @@ class DeviceListViewModel(
      * Invoking this function with a value clears the filter
      * @param filter [ItemFilter]
      */
-    fun filter(filter: ItemFilter = ItemFilter.none) {
+    fun filter(filter: ItemFilter) {
+        this.filter = filter
         launch {
-            val filtered = mapDevices(useCase.devices.value.filter { device ->
-                device.serial.contains(other = filter.text, ignoreCase = true) ||
-                        device.attributes.joinToString().contains(other = filter.text, ignoreCase = true)
-            })
-            _filtered.emit(filtered)
+            val devices = mapDevices(useCase.devices.value)
+            _filtered.emit(filter(filter = filter, devices = devices))
         }
+    }
+
+    /**
+     * Filter given list of devices
+     *
+     * @param filter [ItemFilter] to apply
+     * @param devices The [List] of [UIDevice]s to filter
+     * @return The filtered [List] of [UIDevice]s
+     */
+    private fun filter(filter: ItemFilter, devices: List<UIDevice>) = devices.filter { uiDevice ->
+        (if (filter.starred) uiDevice.isFavorite else true) &&
+                (uiDevice.device.serial.contains(other = filter.text, ignoreCase = true) ||
+                        uiDevice.device.attributes.joinToString().contains(other = filter.text, ignoreCase = true))
     }
 
     /**

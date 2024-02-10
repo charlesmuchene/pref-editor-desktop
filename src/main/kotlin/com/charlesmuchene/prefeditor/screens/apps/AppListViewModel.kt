@@ -43,6 +43,7 @@ class AppListViewModel(
     private val decoder = AppListDecoder()
     private val useCase = AppListUseCase(device = device, processor = processor, decoder = decoder)
 
+    private var filter = ItemFilter.none
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
     private val _filtered = MutableSharedFlow<List<UIApp>>()
@@ -55,7 +56,7 @@ class AppListViewModel(
 
     private fun mapToState(apps: Apps): UIState {
         return if (apps.isEmpty()) UIState.Error
-        else UIState.Apps(mapApps(apps))
+        else UIState.Apps(filter(filter = filter, apps = mapApps(apps)))
     }
 
     private fun mapApps(apps: Apps): List<UIApp> = apps.map { app ->
@@ -63,7 +64,12 @@ class AppListViewModel(
         UIApp(app = app, isFavorite = isFavorite)
     }
 
-    fun appSelected(app: UIApp) {
+    /**
+     * App selected
+     *
+     * @param app The selected [UIApp]
+     */
+    fun selected(app: UIApp) {
         launch {
             navigation.navigate(screen = PrefListScreen(app = app.app, device = device))
         }
@@ -75,13 +81,21 @@ class AppListViewModel(
      * Invoking this function with a value clears the filter
      * @param filter [ItemFilter]
      */
-    fun filter(filter: ItemFilter = ItemFilter.none) {
-        launch {
-            val filtered = mapApps(useCase.apps.value.filter { app ->
-                app.packageName.contains(other = filter.text, ignoreCase = true)
-            })
-            _filtered.emit(filtered)
-        }
+    fun filter(filter: ItemFilter) {
+        this.filter = filter
+        launch { _filtered.emit(filter(filter = filter, apps = mapApps(useCase.apps.value))) }
+    }
+
+    /**
+     * Filter the given list of apps
+     *
+     * @param filter [ItemFilter] to apply
+     * @param apps The [List] of [UIApp]s to filter
+     * @return The filtered [List] of [UIApp]s
+     */
+    private fun filter(filter: ItemFilter, apps: List<UIApp>) = apps.filter { uiApp ->
+        (if (filter.starred) uiApp.isFavorite else true) &&
+                uiApp.app.packageName.contains(other = filter.text, ignoreCase = true)
     }
 
     /**

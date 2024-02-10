@@ -48,8 +48,12 @@ class PrefListViewModel(
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
+
     private val _filtered = MutableSharedFlow<List<UIPrefFile>>()
     val filtered: SharedFlow<List<UIPrefFile>> = _filtered.asSharedFlow()
+
+    private val _message = MutableSharedFlow<String?>()
+    val message: SharedFlow<String?> = _message.asSharedFlow()
 
     init {
         useCase.fileResult.onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
@@ -86,28 +90,25 @@ class PrefListViewModel(
      * Invoking this function with a value clears the filter
      * @param filter [ItemFilter]
      */
-    fun filter(filter: ItemFilter = ItemFilter.none) {
+    fun filter(filter: ItemFilter) {
         this.filter = filter
         launch {
             val result = useCase.fileResult.value
-            if (result is PrefFileResult.Files) {
-                val files = map(result.files)
-                val filtered = filter(filter = filter, files = files)
-                _filtered.emit(filtered)
-            }
+            if (result is PrefFileResult.Files) _filtered.emit(filter(filter = filter, files = map(result.files)))
+            else _message.emit("Cannot perform filter on current files")
         }
     }
 
     /**
-     * Filter the provided list
+     * Filter the given list of files
      *
      * @param filter [ItemFilter] to apply
      * @param files The [List] of [UIPrefFile]s to filter
      * @return The filtered [List] of [UIPrefFile]s
      */
-    private fun filter(filter: ItemFilter, files: List<UIPrefFile>) = files.filter { file ->
-        (if (filter.starred) file.isFavorite else true) &&
-                file.file.name.contains(other = filter.text, ignoreCase = true)
+    private fun filter(filter: ItemFilter, files: List<UIPrefFile>) = files.filter { uiFile ->
+        (if (filter.starred) uiFile.isFavorite else true) &&
+                uiFile.file.name.contains(other = filter.text, ignoreCase = true)
     }
 
     /**
