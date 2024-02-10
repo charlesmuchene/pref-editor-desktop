@@ -19,6 +19,7 @@ package com.charlesmuchene.prefeditor.screens.apps
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.data.Apps
 import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefListScreen
@@ -72,12 +73,12 @@ class AppListViewModel(
      * Filter content based on input
      *
      * Invoking this function with a value clears the filter
-     * @param input Filter input
+     * @param filter [ItemFilter]
      */
-    fun filter(input: String = "") {
+    fun filter(filter: ItemFilter = ItemFilter.none) {
         launch {
             val filtered = mapApps(useCase.apps.value.filter { app ->
-                app.packageName.contains(other = input, ignoreCase = true)
+                app.packageName.contains(other = filter.text, ignoreCase = true)
             })
             _filtered.emit(filtered)
         }

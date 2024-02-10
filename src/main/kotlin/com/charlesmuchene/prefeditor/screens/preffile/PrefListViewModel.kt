@@ -19,6 +19,7 @@ package com.charlesmuchene.prefeditor.screens.preffile
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFiles
+import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefEditScreen
@@ -81,13 +82,15 @@ class PrefListViewModel(
      * Filter content based on input
      *
      * Invoking this function with a value clears the filter
-     * @param input Filter input
+     * @param filter [ItemFilter]
      */
-    fun filter(input: String = "") {
+    fun filter(filter: ItemFilter = ItemFilter.none) {
         launch {
             val result = useCase.fileResult.value
             if (result is PrefFileResult.Files) {
-                val files = result.files.filter { it.name.contains(input, ignoreCase = true) }
+                val files = result.files.filter {
+                    it.name.contains(other = filter.text, ignoreCase = true)
+                }
                 _filtered.emit(map(files))
             }
         }

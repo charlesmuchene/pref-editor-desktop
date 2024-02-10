@@ -23,18 +23,26 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
+import com.charlesmuchene.prefeditor.models.ItemFilter
 import org.jetbrains.jewel.ui.component.CheckboxRow
 
 @Composable
-fun FilterRow(placeholder: String, onFilter: (String) -> Unit, onClear: () -> Unit, modifier: Modifier = Modifier) {
+fun FilterRow(placeholder: String, onFilter: (ItemFilter) -> Unit, onClear: () -> Unit, modifier: Modifier = Modifier) {
+
+    var checked by remember { mutableStateOf(false) }
+    var text by remember { mutableStateOf("") }
+
+    LaunchedEffect(checked, text) {
+        onFilter(ItemFilter(text = text, starred = checked))
+    }
+
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        FilterTextField(placeholder = placeholder, filtered = onFilter, onClear = onClear)
+        FilterTextField(placeholder = placeholder, onClear = onClear, filtered = { text = it })
         Spacer(modifier = Modifier.width(padding * 0.5f))
-        var checked by remember { mutableStateOf(false) }
         CheckboxRow(
+            onCheckedChange = { checked = !checked },
             modifier = Modifier.pointerOnHover(),
             checked = checked,
-            onCheckedChange = { checked = !checked },
             text = "Starred"
         )
     }

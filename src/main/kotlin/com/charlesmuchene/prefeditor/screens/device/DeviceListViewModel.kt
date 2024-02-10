@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Device.Type
 import com.charlesmuchene.prefeditor.data.Devices
+import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
 import com.charlesmuchene.prefeditor.navigation.Navigation
@@ -122,13 +123,13 @@ class DeviceListViewModel(
      * Filter content based on input
      *
      * Invoking this function with a value clears the filter
-     * @param input Filter input
+     * @param filter [ItemFilter]
      */
-    fun filter(input: String = "") {
+    fun filter(filter: ItemFilter = ItemFilter.none) {
         launch {
             val filtered = mapDevices(useCase.devices.value.filter { device ->
-                device.serial.contains(other = input, ignoreCase = true) ||
-                        device.attributes.joinToString().contains(other = input, ignoreCase = true)
+                device.serial.contains(other = filter.text, ignoreCase = true) ||
+                        device.attributes.joinToString().contains(other = filter.text, ignoreCase = true)
             })
             _filtered.emit(filtered)
         }
