@@ -90,8 +90,10 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
+    val filtered by viewModel.filtered.collectAsState(apps)
+
     ItemListing(modifier = modifier) {
-        items(items = apps, key = { it.app.packageName }) { app ->
+        items(items = filtered, key = { it.app.packageName }) { app ->
             AppRow(app = app, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
         }
     }

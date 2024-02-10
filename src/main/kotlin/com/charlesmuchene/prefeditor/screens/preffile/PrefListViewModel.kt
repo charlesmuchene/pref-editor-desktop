@@ -45,6 +45,8 @@ class PrefListViewModel(
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
+    private val _filtered = MutableSharedFlow<List<UIPrefFile>>()
+    val filtered: SharedFlow<List<UIPrefFile>> = _filtered.asSharedFlow()
 
     init {
         useCase.fileResult.onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
@@ -64,9 +66,14 @@ class PrefListViewModel(
     private fun map(files: PrefFiles): List<UIPrefFile> =
         files.map { file -> UIPrefFile(file = file, isFavorite = favorites.isFavorite(file, app, device)) }
 
-    fun fileSelected(prefFile: UIPrefFile) {
+    /**
+     * Select a file
+     *
+     * @param file Selected [UIPrefFile]
+     */
+    fun selected(file: UIPrefFile) {
         launch {
-            navigation.navigate(screen = PrefEditScreen(prefFile = prefFile.file, app = app, device = device))
+            navigation.navigate(screen = PrefEditScreen(prefFile = file.file, app = app, device = device))
         }
     }
 
@@ -81,8 +88,7 @@ class PrefListViewModel(
             val result = useCase.fileResult.value
             if (result is PrefFileResult.Files) {
                 val files = result.files.filter { it.name.contains(input, ignoreCase = true) }
-                val state = UIState.Files(map(files))
-                _uiState.emit(state)
+                _filtered.emit(map(files))
             }
         }
     }

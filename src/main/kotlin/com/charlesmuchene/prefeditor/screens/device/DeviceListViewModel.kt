@@ -46,9 +46,13 @@ class DeviceListViewModel(
     private val useCase = DeviceListUseCase(processor = processor, decoder = decoder)
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
-    private val _message = MutableSharedFlow<String?>()
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
+
+    private val _message = MutableSharedFlow<String?>()
     val message: SharedFlow<String?> = _message.asSharedFlow()
+
+    private val _filtered = MutableSharedFlow<List<UIDevice>>()
+    val filtered: SharedFlow<List<UIDevice>> = _filtered.asSharedFlow()
 
     init {
         useCase.devices.onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
@@ -122,9 +126,11 @@ class DeviceListViewModel(
      */
     fun filter(input: String = "") {
         launch {
-            _uiState.emit(UIState.Devices(mapDevices(useCase.devices.value.filter { device ->
-                device.serial.contains(other = input, ignoreCase = true)
-            }))) // TODO Include meta-date in filter
+            val filtered = mapDevices(useCase.devices.value.filter { device ->
+                device.serial.contains(other = input, ignoreCase = true) ||
+                        device.attributes.joinToString().contains(other = input, ignoreCase = true)
+            })
+            _filtered.emit(filtered)
         }
     }
 

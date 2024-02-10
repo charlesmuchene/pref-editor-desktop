@@ -19,6 +19,7 @@ package com.charlesmuchene.prefeditor.screens.device
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
@@ -74,10 +75,13 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 private fun DeviceList(devices: List<UIDevice>, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
+    val filtered by viewModel.filtered.collectAsState(devices)
+
     ItemListing(modifier = modifier) {
-        items(items = devices, key = { it.device.serial }) { device ->
-            DeviceRow(device = device, viewModel = viewModel)
+        items(items = filtered, key = { it.device.serial }) { device ->
+            DeviceRow(device = device, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
         }
     }
 }

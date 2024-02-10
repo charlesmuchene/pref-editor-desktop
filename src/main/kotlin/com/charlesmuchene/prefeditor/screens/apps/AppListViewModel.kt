@@ -44,6 +44,8 @@ class AppListViewModel(
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
+    private val _filtered = MutableSharedFlow<List<UIApp>>()
+    val filtered: SharedFlow<List<UIApp>> = _filtered
 
     init {
         useCase.apps.onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
@@ -74,9 +76,10 @@ class AppListViewModel(
      */
     fun filter(input: String = "") {
         launch {
-            _uiState.emit(UIState.Apps(mapApps(useCase.apps.value.filter { app ->
+            val filtered = mapApps(useCase.apps.value.filter { app ->
                 app.packageName.contains(other = input, ignoreCase = true)
-            })))
+            })
+            _filtered.emit(filtered)
         }
     }
 

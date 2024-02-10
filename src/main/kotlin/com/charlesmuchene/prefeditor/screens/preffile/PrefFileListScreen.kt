@@ -18,6 +18,7 @@ package com.charlesmuchene.prefeditor.screens.preffile
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -95,14 +96,17 @@ private fun PrefListingLoading(modifier: Modifier = Modifier) {
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 private fun PrefListingSuccess(
     prefFiles: List<UIPrefFile>,
     viewModel: PrefListViewModel,
     modifier: Modifier = Modifier,
 ) {
+    val filtered by viewModel.filtered.collectAsState(prefFiles)
+
     ItemListing(modifier = modifier) {
-        items(items = prefFiles, key = { it.file.name }) { prefFile ->
-            PrefListingRow(prefFile = prefFile, viewModel = viewModel)
+        items(items = filtered, key = { it.file.name }) { prefFile ->
+            PrefListingRow(prefFile = prefFile, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
         }
     }
 }
@@ -114,10 +118,11 @@ private fun PrefListingRow(prefFile: UIPrefFile, modifier: Modifier = Modifier, 
 
     ItemRow(
         item = localPref,
-        onClick = viewModel::fileSelected,
+        modifier = modifier,
+        onClick = viewModel::selected,
         onFavorite = { scope.launch { localPref = viewModel.favorite(it) } }
     ) {
-        Column(modifier = modifier.padding(4.dp)) {
+        Column(modifier = Modifier.padding(4.dp)) {
             Text(text = localPref.file.name, style = Typography.primary)
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = localPref.file.type.text, style = Typography.secondary, color = JewelTheme.contentColor)
