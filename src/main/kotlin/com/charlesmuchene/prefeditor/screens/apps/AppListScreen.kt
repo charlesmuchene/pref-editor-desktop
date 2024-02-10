@@ -92,7 +92,8 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
     val filtered by viewModel.filtered.collectAsState(apps)
 
-    ItemListing(modifier = modifier) {
+    if (filtered.isEmpty()) NoFilterMatch(modifier = modifier)
+    else ItemListing(modifier = modifier) {
         items(items = filtered, key = { it.app.packageName }) { app ->
             AppRow(app = app, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
         }

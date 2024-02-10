@@ -79,7 +79,8 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
 private fun DeviceList(devices: List<UIDevice>, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
     val filtered by viewModel.filtered.collectAsState(devices)
 
-    ItemListing(modifier = modifier) {
+    if (filtered.isEmpty()) NoFilterMatch(modifier = modifier)
+    else ItemListing(modifier = modifier) {
         items(items = filtered, key = { it.device.serial }) { device ->
             DeviceRow(device = device, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
         }

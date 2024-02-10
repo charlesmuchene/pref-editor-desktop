@@ -108,7 +108,8 @@ private fun PrefListingSuccess(
 ) {
     val filtered by viewModel.filtered.collectAsState(prefFiles)
 
-    ItemListing(modifier = modifier) {
+    if (filtered.isEmpty()) NoFilterMatch(modifier = modifier)
+    else ItemListing(modifier = modifier) {
         items(items = filtered, key = { it.file.name }) { prefFile ->
             PrefListingRow(prefFile = prefFile, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
         }
