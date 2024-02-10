@@ -19,7 +19,6 @@ package com.charlesmuchene.prefeditor.extensions
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -56,7 +55,7 @@ fun screenTransitionSpec(): ContentTransform =
         )
 
 @Composable
-fun Breathing(breathe: Float = 1.2f, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+fun BreathingContainer(breathe: Float = 1.2f, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     val infiniteTransition = rememberInfiniteTransition()
 
     val scale by infiniteTransition.animateFloat(

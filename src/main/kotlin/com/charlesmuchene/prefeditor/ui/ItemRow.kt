@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.extensions.Breathing
+import com.charlesmuchene.prefeditor.extensions.BreathingContainer
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.Favoritable
 import kotlinx.coroutines.launch
@@ -72,7 +72,7 @@ fun <T : Favoritable> ItemRow(
                 content = content,
             )
             Spacer(modifier = Modifier.width(24.dp))
-            Breathing {
+            BreathingContainer() {
                 FavoriteButton(
                     selected = item.isFavorite,
                     modifier = Modifier.weight(.1f),
