@@ -75,6 +75,10 @@ fun PrefFileListScreen(app: App, device: Device, modifier: Modifier = Modifier) 
             }
         }
     }
+
+    // TODO Collect similar values
+    val message by viewModel.message.collectAsState(initial = null)
+    message?.let { Toast(text = it) }
 }
 
 @Composable
