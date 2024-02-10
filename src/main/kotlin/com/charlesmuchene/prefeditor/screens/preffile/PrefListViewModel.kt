@@ -40,9 +40,11 @@ class PrefListViewModel(
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
 
-    private val decoder = PrefFileListDecoder()
     private val processor = Processor()
+    private val decoder = PrefFileListDecoder()
     private val useCase = PrefFileListUseCase(app = app, device = device, processor = processor, decoder = decoder)
+
+    private var filter = ItemFilter.none
 
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
@@ -59,7 +61,7 @@ class PrefListViewModel(
         PrefFileResult.EmptyPrefs,
         -> UIState.Empty
 
-        is PrefFileResult.Files -> UIState.Files(map(result.files))
+        is PrefFileResult.Files -> UIState.Files(filter(filter = filter, files = map(result.files)))
 
         PrefFileResult.NonDebuggable -> UIState.Error(message = "Selected app is non-debuggable")
     }
@@ -85,15 +87,27 @@ class PrefListViewModel(
      * @param filter [ItemFilter]
      */
     fun filter(filter: ItemFilter = ItemFilter.none) {
+        this.filter = filter
         launch {
             val result = useCase.fileResult.value
             if (result is PrefFileResult.Files) {
-                val files = result.files.filter {
-                    it.name.contains(other = filter.text, ignoreCase = true)
-                }
-                _filtered.emit(map(files))
+                val files = map(result.files)
+                val filtered = filter(filter = filter, files = files)
+                _filtered.emit(filtered)
             }
         }
+    }
+
+    /**
+     * Filter the provided list
+     *
+     * @param filter [ItemFilter] to apply
+     * @param files The [List] of [UIPrefFile]s to filter
+     * @return The filtered [List] of [UIPrefFile]s
+     */
+    private fun filter(filter: ItemFilter, files: List<UIPrefFile>) = files.filter { file ->
+        (if (filter.starred) file.isFavorite else true) &&
+                file.file.name.contains(other = filter.text, ignoreCase = true)
     }
 
     /**
