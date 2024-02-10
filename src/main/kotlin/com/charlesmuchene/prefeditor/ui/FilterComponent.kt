@@ -27,7 +27,7 @@ import com.charlesmuchene.prefeditor.models.ItemFilter
 import org.jetbrains.jewel.ui.component.CheckboxRow
 
 @Composable
-fun FilterRow(placeholder: String, onFilter: (ItemFilter) -> Unit, modifier: Modifier = Modifier) {
+fun FilterComponent(placeholder: String, onFilter: (ItemFilter) -> Unit, modifier: Modifier = Modifier) {
 
     var checked by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }

@@ -57,7 +57,7 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
         subHeader = {
-            FilterRow(placeholder = "Filter devices", onFilter = viewModel::filter)
+            FilterComponent(placeholder = "Filter devices", onFilter = viewModel::filter)
         }) {
         updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
             when (state) {

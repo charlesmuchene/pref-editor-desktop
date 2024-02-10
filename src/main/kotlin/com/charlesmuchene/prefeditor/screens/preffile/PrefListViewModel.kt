@@ -88,14 +88,13 @@ class PrefListViewModel(
      * Filter content based on input
      *
      * Invoking this function with a value clears the filter
-     * @param filter [ItemFilter]
+     * @param filter [ItemFilter] to apply
      */
     fun filter(filter: ItemFilter) {
         this.filter = filter
         launch {
             val result = useCase.fileResult.value
             if (result is PrefFileResult.Files) _filtered.emit(filter(filter = filter, files = map(result.files)))
-            else _message.emit("Cannot perform filter on current files")
         }
     }
 

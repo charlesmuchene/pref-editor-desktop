@@ -63,7 +63,7 @@ fun PrefFileListScreen(app: App, device: Device, modifier: Modifier = Modifier) 
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
         subHeader = {
-            FilterRow(placeholder = "Filter files", onFilter = viewModel::filter)
+            FilterComponent(placeholder = "Filter files", onFilter = viewModel::filter)
         }) {
         updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
             when (state) {
