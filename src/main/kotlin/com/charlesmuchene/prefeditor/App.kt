@@ -21,25 +21,30 @@ package com.charlesmuchene.prefeditor
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.application
-import com.charlesmuchene.prefeditor.app.*
+import com.charlesmuchene.prefeditor.app.AppWindow
+import com.charlesmuchene.prefeditor.app.SetupWindow
+import com.charlesmuchene.prefeditor.app.appSetup
+import com.charlesmuchene.prefeditor.app.svgResource
+import com.charlesmuchene.prefeditor.models.AppStatus
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     val icon = svgResource(resource = "app")
 
     application {
-        var isSettingUp by remember { mutableStateOf(value = true) }
-        var appState by remember { mutableStateOf<AppState?>(value = null) }
+        var status by remember { mutableStateOf<AppStatus>(AppStatus.Initializing) }
 
         LaunchedEffect(Unit) {
-            joinAll(launch { appState = appSetup() }, launch { delay(timeMillis = 1_500) })
-            isSettingUp = false
+            status = awaitAll(async { appSetup() }, async { delay(timeMillis = 1_000) }).first() as AppStatus
         }
 
-        if (isSettingUp) SetupWindow()
-        else appState?.let { AppWindow(icon = icon, appState = it) } ?: error("Unusable. No AppState found!")
+        when (status) {
+            AppStatus.Initializing -> SetupWindow()
+            is AppStatus.NoBridge -> TODO()
+            is AppStatus.Ready -> AppWindow(icon = icon, appState = (status as AppStatus.Ready).state)
+        }
     }
 }

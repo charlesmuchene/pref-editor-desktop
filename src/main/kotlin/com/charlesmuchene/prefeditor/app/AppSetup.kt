@@ -16,27 +16,45 @@
 
 package com.charlesmuchene.prefeditor.app
 
+import com.charlesmuchene.prefeditor.bridge.Bridge
+import com.charlesmuchene.prefeditor.bridge.BridgeStatus
 import com.charlesmuchene.prefeditor.command.DesktopWriteCommand
 import com.charlesmuchene.prefeditor.files.EditorFiles
-import com.charlesmuchene.prefeditor.screens.preferences.desktop.AppPreferences
+import com.charlesmuchene.prefeditor.models.AppStatus
+import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
 import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
-import com.charlesmuchene.prefeditor.processor.Processor
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.AppPreferences
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 
 /**
  * Set app up
  *
  * TODO Add some DI framework if these get crazy!
  */
-suspend fun appSetup(): AppState = withContext(Dispatchers.IO) {
-    val codec = PreferencesCodec()
-    EditorFiles.initialize(codec = codec)
-    val path = EditorFiles.preferencesPath().toString()
-    val command = DesktopWriteCommand(path = path)
+suspend fun appSetup(): AppStatus = coroutineScope {
     val processor = Processor()
-    val editor = PreferenceWriter(command = command, processor =  processor)
-    val preferences = AppPreferences(codec = codec, editor = editor).apply { initialize() }
-    AppState(preferences = preferences)
+
+    val appState = async {
+        val codec = PreferencesCodec()
+        EditorFiles.initialize(codec = codec)
+        val path = EditorFiles.preferencesPath().toString()
+        val command = DesktopWriteCommand(path = path)
+        val editor = PreferenceWriter(command = command, processor = processor)
+        val preferences = AppPreferences(codec = codec, editor = editor).apply { initialize() }
+        AppState(preferences = preferences)
+    }
+
+    val bridgeStatus = async {
+        Bridge(processor = processor, context = currentCoroutineContext()).checkBridge()
+    }
+
+    val result = awaitAll(appState, bridgeStatus)
+    when (val status = result[1] as BridgeStatus) {
+        BridgeStatus.Available -> AppStatus.Ready(result[0] as AppState)
+        BridgeStatus.Unavailable, BridgeStatus.Unknown -> AppStatus.NoBridge(status)
+    }
 }

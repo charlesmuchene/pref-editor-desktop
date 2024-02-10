@@ -59,7 +59,7 @@ private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifie
     val navigation = LocalNavigation.current
 
     val text = when (screen) {
-        HomeScreen -> "Home"
+        DevicesScreen -> "Home"
         is AppsScreen -> screen.device.serial
         is PrefListScreen -> screen.app.packageName
         is PrefEditScreen -> screen.prefFile.name

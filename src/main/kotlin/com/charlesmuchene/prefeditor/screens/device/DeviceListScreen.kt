@@ -17,7 +17,6 @@
 package com.charlesmuchene.prefeditor.screens.device
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -56,10 +55,9 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
     Scaffolding(
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
-        subHeader = {
-            FilterComponent(placeholder = "Filter devices", onFilter = viewModel::filter)
-        }) {
-        updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
+        subHeader = { FilterComponent(placeholder = "Filter devices", onFilter = viewModel::filter) }
+    ) {
+        AnimatedContent(targetState = uiState, transitionSpec = { screenTransitionSpec() }) { state ->
             when (state) {
                 UIState.Error -> DeviceListError(modifier = modifier)
                 UIState.NoDevices -> NoDevices(modifier = modifier)

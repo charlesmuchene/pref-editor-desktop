@@ -36,7 +36,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     val viewModel = remember { HomeViewModel(scope = scope, bridge = bridge) }
     val bridgeStatus by viewModel.bridgeStatus.collectAsState()
 
-    updateTransition(bridgeStatus).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { status ->
+    AnimatedContent(targetState = bridgeStatus) { status ->
         when (status) {
             Available -> DeviceListScreen(modifier = modifier)
             Unknown -> BridgeLoading(modifier = modifier)

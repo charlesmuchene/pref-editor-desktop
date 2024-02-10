@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.navigation
+package com.charlesmuchene.prefeditor.models
 
-import com.charlesmuchene.prefeditor.data.App
-import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.data.PrefFile
+import com.charlesmuchene.prefeditor.app.AppState
+import com.charlesmuchene.prefeditor.bridge.BridgeStatus
 
-interface Screen
-
-data object DevicesScreen : Screen
-data class AppsScreen(val device: Device) : Screen
-data class PrefListScreen(val app: App, val device: Device) : Screen
-data class PrefEditScreen(val prefFile: PrefFile, val app: App, val device: Device) : Screen
+sealed interface AppStatus {
+    data object Initializing : AppStatus
+    data class Ready(val state: AppState) : AppStatus
+    data class NoBridge(val status: BridgeStatus) : AppStatus
+}

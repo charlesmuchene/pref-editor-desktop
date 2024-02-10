@@ -24,11 +24,11 @@ import kotlinx.coroutines.launch
 
 class Navigation(private val scope: CoroutineScope) : CoroutineScope by scope {
 
-    private val stack = mutableListOf<Screen>(HomeScreen)
+    private val stack = mutableListOf<Screen>(DevicesScreen)
 
     val screens: List<Screen> get() = stack
 
-    private val _currentScreen = MutableStateFlow<Screen>(HomeScreen)
+    private val _currentScreen = MutableStateFlow<Screen>(DevicesScreen)
     val current: StateFlow<Screen> = _currentScreen.asStateFlow()
 
     fun navigate(screen: Screen) {
@@ -42,7 +42,7 @@ class Navigation(private val scope: CoroutineScope) : CoroutineScope by scope {
     private fun navigateHome() {
         if (stack.size == 1) return
         stack.clear()
-        stack.add(HomeScreen)
+        stack.add(DevicesScreen)
         updateObservers()
     }
 

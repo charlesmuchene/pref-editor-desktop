@@ -25,7 +25,7 @@ import com.charlesmuchene.prefeditor.navigation.*
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.screens.apps.AppListScreen
-import com.charlesmuchene.prefeditor.screens.home.HomeScreen
+import com.charlesmuchene.prefeditor.screens.device.DeviceListScreen
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferencesScreen
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListScreen
 import com.charlesmuchene.prefeditor.ui.Toast
@@ -42,7 +42,7 @@ fun ApplicationScope.AppWindow(icon: Painter, appState: AppState) {
         message?.let { Toast(text = it) }
 
         when (val screen = currentScreen) {
-            HomeScreen -> HomeScreen(modifier = modifier)
+            DevicesScreen -> DeviceListScreen(modifier = modifier)
             is AppsScreen -> AppListScreen(modifier = modifier, device = screen.device)
             is PrefListScreen -> PrefFileListScreen(modifier = modifier, device = screen.device, app = screen.app)
 

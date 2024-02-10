@@ -27,14 +27,14 @@ class NavigationTest {
     @Test
     fun `navigation always has home as start`() = runTest(dispatcher) {
         navigation.current.test {
-            assertEquals(expected = HomeScreen, actual = awaitItem())
+            assertEquals(expected = DevicesScreen, actual = awaitItem())
         }
     }
 
     @Test
     fun `forward navigation appends screen to stack`() = runTest(dispatcher) {
         navigation.current.test {
-            assertEquals(expected = HomeScreen, actual = awaitItem())
+            assertEquals(expected = DevicesScreen, actual = awaitItem())
 
             navigation.navigate(AppsScreen(device))
 
@@ -59,11 +59,11 @@ class NavigationTest {
         navigation.navigate(AppsScreen(device))
         navigation.navigate(PrefListScreen(app, device))
 
-        navigation.navigate(HomeScreen)
+        navigation.navigate(DevicesScreen)
 
         val screens = navigation.screens
         assertTrue(screens.size == 1)
-        assertTrue(screens.first() is HomeScreen)
+        assertTrue(screens.first() is DevicesScreen)
     }
 
     private val device = Device(
