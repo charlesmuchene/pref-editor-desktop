@@ -16,15 +16,47 @@
 
 package com.charlesmuchene.prefeditor.screens.bridge
 
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
+import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.HomeKey
-import com.charlesmuchene.prefeditor.ui.FullScreenText
+import com.charlesmuchene.prefeditor.ui.padding
+import com.charlesmuchene.prefeditor.ui.theme.Typography
+import org.jetbrains.jewel.ui.component.ExternalLink
+import org.jetbrains.jewel.ui.component.Text
+import java.awt.Desktop
+import java.net.URI
 
 @Composable
 fun BridgeUnavailable(modifier: Modifier = Modifier) {
     val primary = LocalBundle.current[HomeKey.BridgeUnavailable]
     val secondary = LocalBundle.current[HomeKey.BridgeUnavailableSecondary]
-    FullScreenText(primary = primary, secondary = secondary, modifier = modifier)
+    val url = "https://developer.android.com/tools/releases/platform-tools"
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(text = primary, style = Typography.heading, textAlign = TextAlign.Center)
+        Spacer(modifier = Modifier.height(padding * .5f))
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = secondary, style = Typography.primary,
+                fontSize = TextUnit(value = 16f, type = TextUnitType.Sp),
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            ExternalLink(text = url, onClick = { Desktop.getDesktop().browse(URI.create(url)) })
+        }
+    }
 }

@@ -53,8 +53,9 @@ suspend fun appSetup(): AppStatus = coroutineScope {
     }
 
     val result = awaitAll(appState, bridgeStatus)
+    val state = result[0] as AppState
     when (val status = result[1] as BridgeStatus) {
-        BridgeStatus.Available -> AppStatus.Ready(result[0] as AppState)
-        BridgeStatus.Unavailable, BridgeStatus.Unknown -> AppStatus.NoBridge(status)
+        BridgeStatus.Available -> AppStatus.Ready(state = state)
+        BridgeStatus.Unavailable -> AppStatus.NoBridge(state = state, bridgeStatus = status)
     }
 }

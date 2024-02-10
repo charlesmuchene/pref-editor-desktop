@@ -29,9 +29,12 @@ import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.ui.padding
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
+import org.jetbrains.jewel.ui.component.ExternalLink
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.Typography
+import java.awt.Desktop
+import java.net.URI
 
 @Composable
 fun SetupWindow() {
@@ -51,7 +54,11 @@ fun SetupWindow() {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(text = title, style = Typography.h0TextStyle())
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(text = "Copyright © 2024 Charles Muchene", style = Typography.labelTextStyle())
+                val url = "https://www.charlesmuchene.com"
+                ExternalLink(
+                    text = "Copyright © 2024 Charles Muchene",
+                    onClick = { Desktop.getDesktop().browse(URI.create(url)) },
+                )
             }
         }
     }

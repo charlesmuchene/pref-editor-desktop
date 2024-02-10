@@ -21,10 +21,7 @@ package com.charlesmuchene.prefeditor
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.application
-import com.charlesmuchene.prefeditor.app.AppWindow
-import com.charlesmuchene.prefeditor.app.SetupWindow
-import com.charlesmuchene.prefeditor.app.appSetup
-import com.charlesmuchene.prefeditor.app.svgResource
+import com.charlesmuchene.prefeditor.app.*
 import com.charlesmuchene.prefeditor.models.AppStatus
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -43,7 +40,7 @@ fun main() {
 
         when (status) {
             AppStatus.Initializing -> SetupWindow()
-            is AppStatus.NoBridge -> TODO()
+            is AppStatus.NoBridge -> NoBridgeWindow(status = status as AppStatus.NoBridge, icon = icon)
             is AppStatus.Ready -> AppWindow(icon = icon, appState = (status as AppStatus.Ready).state)
         }
     }

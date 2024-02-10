@@ -30,7 +30,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.ResourceLoader
 import androidx.compose.ui.res.loadSvgPainter
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
@@ -86,15 +85,15 @@ fun ApplicationScope.scaffold(icon: Painter, appState: AppState, content: @Compo
 }
 
 @Composable
-private fun provideAppState(appState: AppState, content: @Composable () -> Unit) {
+fun provideAppState(appState: AppState, content: @Composable () -> Unit) {
     CompositionLocalProvider(
         LocalAppState provides appState,
         LocalBridge provides Bridge(),
         LocalBundle provides TextBundle(),
         LocalNavigation provides Navigation(rememberCoroutineScope()),
     ) {
-        val viewModel = LocalAppState.current
-        val isDark = viewModel.theme.isDark()
+        val state = LocalAppState.current
+        val isDark = state.theme.isDark()
 
         IntUiTheme(
             content = content,
@@ -108,15 +107,15 @@ private fun provideAppState(appState: AppState, content: @Composable () -> Unit)
 }
 
 @Composable
-private fun theme(isDark: Boolean): ThemeDefinition =
+fun theme(isDark: Boolean): ThemeDefinition =
     if (isDark) JewelTheme.darkThemeDefinition() else JewelTheme.lightThemeDefinition()
 
 @Composable
-private fun windowStyle(isDark: Boolean): DecoratedWindowStyle =
+fun windowStyle(isDark: Boolean): DecoratedWindowStyle =
     if (isDark) DecoratedWindowStyle.dark() else DecoratedWindowStyle.light()
 
 @Composable
-private fun titleBarStyle(isDark: Boolean): TitleBarStyle = if (isDark) TitleBarStyle.dark() else TitleBarStyle.light()
+fun titleBarStyle(isDark: Boolean): TitleBarStyle = if (isDark) TitleBarStyle.dark() else TitleBarStyle.light()
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun svgResource(
