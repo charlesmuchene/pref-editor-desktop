@@ -16,8 +16,12 @@
 
 package com.charlesmuchene.prefeditor.ui
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,6 +34,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
+import com.charlesmuchene.prefeditor.ui.theme.green
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.modifier.onHover
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -40,15 +45,20 @@ import org.jetbrains.jewel.ui.component.Tooltip
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun ReloadButton(modifier: Modifier = Modifier) {
+fun ReloadButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     val scope = rememberCoroutineScope()
     val animatedRotationAngle by remember { mutableStateOf(Animatable(initialValue = 0f)) }
+
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
+    val color by animateColorAsState(targetValue = if (isHovered) green else JewelTheme.contentColor)
 
     Tooltip(tooltip = { Text(text = "Reload screen") }, modifier = Modifier) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = modifier
                 .pointerOnHover()
+                .hoverable(interactionSource)
                 .onHover { isHovered ->
                     scope.launch {
                         hoverAnimation(isHovered = isHovered, animatedRotationAngle = animatedRotationAngle)
@@ -56,13 +66,13 @@ fun ReloadButton(modifier: Modifier = Modifier) {
                 }
                 .rotate(animatedRotationAngle.value),
         ) {
-            IconButton(onClick = {}, modifier = Modifier.size(64.dp).padding(8.dp).clip(CircleShape)) {
+            IconButton(onClick = onClick, modifier = Modifier.size(64.dp).padding(8.dp).clip(CircleShape)) {
                 val painter by rememberIconPainter(name = "reload")
                 Icon(
-                    painter = painter,
                     contentDescription = "Reload",
                     modifier = Modifier.size(24.dp),
-                    tint = JewelTheme.contentColor,
+                    painter = painter,
+                    tint = color,
                 )
             }
         }
