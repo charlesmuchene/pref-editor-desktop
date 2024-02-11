@@ -19,6 +19,7 @@ package com.charlesmuchene.prefeditor.screens.apps
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.data.Apps
 import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.extensions.useCaseTransform
 import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.navigation.Navigation
@@ -50,7 +51,7 @@ class AppListViewModel(
     val filtered: SharedFlow<List<UIApp>> = _filtered
 
     init {
-        useCase.apps.onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
+        useCase.apps.useCaseTransform().onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
         launch { useCase.list() }
     }
 

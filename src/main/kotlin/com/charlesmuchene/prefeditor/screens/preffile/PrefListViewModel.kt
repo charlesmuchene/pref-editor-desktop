@@ -19,6 +19,7 @@ package com.charlesmuchene.prefeditor.screens.preffile
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFiles
+import com.charlesmuchene.prefeditor.extensions.useCaseTransform
 import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.navigation.Navigation
@@ -56,7 +57,7 @@ class PrefListViewModel(
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     init {
-        useCase.fileResult.onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
+        useCase.fileResult.useCaseTransform().onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
         launch { useCase.list() }
     }
 

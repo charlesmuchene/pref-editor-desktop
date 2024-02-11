@@ -31,6 +31,7 @@ import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
+import com.charlesmuchene.prefeditor.resources.DeviceKey
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.screens.device.DeviceListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.*
@@ -138,13 +139,5 @@ private fun NoFilterMatch(modifier: Modifier = Modifier) {
 @Composable
 private fun DeviceListLoading(modifier: Modifier = Modifier) {
     val text = LocalBundle.current[HomeKey.DeviceListLoading]
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(text = text, style = primary)
-        Spacer(modifier = Modifier.height(padding))
-        IndeterminateHorizontalProgressBar(modifier = Modifier.width(128.dp))
-    }
+    Loading(text = text, modifier = modifier)
 }
