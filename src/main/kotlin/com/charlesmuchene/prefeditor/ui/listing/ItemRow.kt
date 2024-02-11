@@ -37,6 +37,7 @@ import com.charlesmuchene.prefeditor.ui.BreathingContainer
 import com.charlesmuchene.prefeditor.ui.FavoriteButton
 import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.green
+import com.charlesmuchene.prefeditor.ui.theme.highlightColor
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.modifier.onHover
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -59,7 +60,7 @@ fun <T : Favoritable> ItemRow(
     val isHovered by interactionSource.collectIsHoveredAsState()
     val color by animateColorAsState(
         animationSpec = tween(durationMillis = 300),
-        targetValue = if (isHovered) green else JewelTheme.contentColor,
+        targetValue = if (isHovered) highlightColor() else JewelTheme.contentColor,
     )
 
     CompositionLocalProvider(LocalContentColor provides color) {

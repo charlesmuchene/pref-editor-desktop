@@ -94,9 +94,9 @@ private fun DeviceList(devices: List<UIDevice>, viewModel: DeviceListViewModel, 
 @Composable
 private fun DeviceRow(device: UIDevice, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
     val statusColor = viewModel.statusColor(device = device.device)
+    var localDevice by remember(device) { mutableStateOf(device) }
     val radius = with(LocalDensity.current) { 12.dp.toPx() }
     val scope = rememberCoroutineScope()
-    var localDevice by remember(device) { mutableStateOf(device) }
 
     ItemRow(
         item = localDevice,

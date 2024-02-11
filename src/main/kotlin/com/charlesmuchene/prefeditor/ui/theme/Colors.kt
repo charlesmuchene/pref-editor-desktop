@@ -20,6 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import org.jetbrains.jewel.foundation.GlobalColors
 import org.jetbrains.jewel.foundation.OutlineColors
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.intui.core.theme.IntUiLightTheme
 import org.jetbrains.jewel.intui.standalone.theme.dark
 import org.jetbrains.jewel.intui.standalone.theme.light
 
@@ -33,3 +35,6 @@ fun globalColors(isDark: Boolean): GlobalColors {
     val darkColors = GlobalColors.Companion.dark(outlines = OutlineColors.dark(focused = green))
     return if (isDark) darkColors else GlobalColors.Companion.light()
 }
+
+@Composable
+fun highlightColor(): Color = if (JewelTheme.isDark) green else orange
