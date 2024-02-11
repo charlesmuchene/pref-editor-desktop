@@ -62,7 +62,7 @@ fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
                     page(screen = screen, selected = current == screen)
                 }
             }
-            ReloadButton(modifier = Modifier.weight(0.05f))
+            ReloadButton(modifier = Modifier.weight(0.05f), onClick = navigation::reload)
         }
         Divider(orientation = Orientation.Horizontal, color = Color.LightGray.copy(alpha = 0.9f))
     }

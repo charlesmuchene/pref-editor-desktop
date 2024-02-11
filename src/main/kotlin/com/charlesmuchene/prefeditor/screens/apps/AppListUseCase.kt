@@ -30,7 +30,8 @@ class AppListUseCase(device: Device, private val processor: Processor, private v
     private val _apps = MutableStateFlow(emptyList<App>())
     val apps: StateFlow<Apps> = _apps.asStateFlow()
 
-    suspend fun list(): Result<Apps> = processor.run(command.command()).map { content ->
+    suspend fun fetch(): Result<Apps> = processor.run(command.command()).map { content ->
+        _apps.emit(emptyList())
         decoder.decode(content = content).also { _apps.emit(it) }
     }
 

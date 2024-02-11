@@ -22,6 +22,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
@@ -47,32 +49,45 @@ import org.jetbrains.jewel.ui.component.Tooltip
 @OptIn(ExperimentalFoundationApi::class)
 fun ReloadButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     val scope = rememberCoroutineScope()
-    val animatedRotationAngle by remember { mutableStateOf(Animatable(initialValue = 0f)) }
 
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
-    val color by animateColorAsState(targetValue = if (isHovered) green else JewelTheme.contentColor)
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val animatedScale by animateFloatAsState(targetValue = if (isPressed) .9f else 1f)
+    val animatedRotationAngle by remember { mutableStateOf(Animatable(initialValue = 0f)) }
+    val animatedColor by animateColorAsState(targetValue = if (isHovered) green else JewelTheme.contentColor)
 
     Tooltip(tooltip = { Text(text = "Reload screen") }, modifier = Modifier) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = modifier
-                .pointerOnHover()
-                .hoverable(interactionSource)
                 .onHover { isHovered ->
                     scope.launch {
-                        hoverAnimation(isHovered = isHovered, animatedRotationAngle = animatedRotationAngle)
+                        hoverAnimation(
+                            isHovered = isHovered,
+                            animatedRotationAngle = animatedRotationAngle
+                        )
                     }
                 }
+                .pointerOnHover()
+                .scale(animatedScale)
+                .hoverable(interactionSource)
                 .rotate(animatedRotationAngle.value),
         ) {
-            IconButton(onClick = onClick, modifier = Modifier.size(64.dp).padding(8.dp).clip(CircleShape)) {
+            IconButton(
+                interactionSource = interactionSource,
+                onClick = onClick,
+                modifier = Modifier
+                    .size(64.dp)
+                    .padding(8.dp)
+                    .clip(CircleShape)
+            ) {
                 val painter by rememberIconPainter(name = "reload")
                 Icon(
                     contentDescription = "Reload",
                     modifier = Modifier.size(24.dp),
+                    tint = animatedColor,
                     painter = painter,
-                    tint = color,
                 )
             }
         }

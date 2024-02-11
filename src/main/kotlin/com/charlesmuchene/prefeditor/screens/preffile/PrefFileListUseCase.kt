@@ -35,7 +35,8 @@ class PrefFileListUseCase(
     private val _prefFileResult = MutableStateFlow<PrefFileResult>(EmptyPrefs)
     val fileResult: StateFlow<PrefFileResult> = _prefFileResult.asStateFlow()
 
-    suspend fun list(): Result<PrefFileResult> = processor.run(command.command()).map { content ->
+    suspend fun fetch(): Result<PrefFileResult> = processor.run(command.command()).map { content ->
+        _prefFileResult.emit(EmptyPrefs)
         decoder.decode(content = content).also { _prefFileResult.emit(it) }
     }
 }

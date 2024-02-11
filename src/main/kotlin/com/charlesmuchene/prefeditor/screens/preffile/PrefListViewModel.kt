@@ -19,12 +19,14 @@ package com.charlesmuchene.prefeditor.screens.preffile
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFiles
+import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.extensions.useCaseTransform
 import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefEditScreen
 import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.screens.device.DeviceListViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
 import kotlinx.coroutines.CoroutineScope
@@ -57,8 +59,17 @@ class PrefListViewModel(
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     init {
-        useCase.fileResult.useCaseTransform().onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
-        launch { useCase.list() }
+        useCase.fileResult
+            .onEach { _uiState.emit(mapToState(it)) }
+            .launchIn(scope = scope)
+
+        navigation.reloadSignal
+            .onEach { _uiState.emit(UIState.Loading) }
+            .throttleLatest(delayMillis = 300)
+            .onEach { useCase.fetch() }
+            .drop(count = 1)
+            .onEach { _message.emit("Files reloaded") }
+            .launchIn(scope = scope)
     }
 
     private fun mapToState(result: PrefFileResult): UIState = when (result) {

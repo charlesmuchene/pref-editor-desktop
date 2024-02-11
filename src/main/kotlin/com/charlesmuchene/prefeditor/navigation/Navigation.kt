@@ -17,9 +17,7 @@
 package com.charlesmuchene.prefeditor.navigation
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class Navigation(private val scope: CoroutineScope) : CoroutineScope by scope {
@@ -27,6 +25,9 @@ class Navigation(private val scope: CoroutineScope) : CoroutineScope by scope {
     private val stack = mutableListOf<Screen>(DevicesScreen)
 
     val screens: List<Screen> get() = stack
+
+    private val _reloadSignal = MutableSharedFlow<Unit>()
+    val reloadSignal = _reloadSignal.onSubscription { emit(Unit) }
 
     private val _currentScreen = MutableStateFlow<Screen>(DevicesScreen)
     val current: StateFlow<Screen> = _currentScreen.asStateFlow()
@@ -59,5 +60,9 @@ class Navigation(private val scope: CoroutineScope) : CoroutineScope by scope {
 
     private fun updateObservers() {
         launch { _currentScreen.emit(stack.last()) }
+    }
+
+    fun reload() {
+        launch { _reloadSignal.emit(Unit) }
     }
 }

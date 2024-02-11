@@ -29,7 +29,8 @@ class DeviceListUseCase(private val processor: Processor, private val decoder: D
     private val _devices = MutableStateFlow(emptyList<Device>())
     val devices: StateFlow<Devices> = _devices.asStateFlow()
 
-    suspend fun list(): Result<Devices> = processor.run(command.command()).map { content ->
+    suspend fun fetch(): Result<Devices> = processor.run(command.command()).map { content ->
+        _devices.emit(emptyList()) // Need to clear for flow to register updates
         decoder.decode(content).also { _devices.emit(it) }
     }
 }

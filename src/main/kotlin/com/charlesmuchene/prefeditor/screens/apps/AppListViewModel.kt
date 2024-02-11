@@ -16,10 +16,9 @@
 
 package com.charlesmuchene.prefeditor.screens.apps
 
-import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.data.Apps
 import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.extensions.useCaseTransform
+import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.navigation.Navigation
@@ -34,7 +33,6 @@ import kotlinx.coroutines.launch
 
 class AppListViewModel(
     private val device: Device,
-    private val bridge: Bridge,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
     private val favorites: FavoritesUseCase,
@@ -45,14 +43,28 @@ class AppListViewModel(
     private val useCase = AppListUseCase(device = device, processor = processor, decoder = decoder)
 
     private var filter = ItemFilter.none
+
+    private val _message = MutableSharedFlow<String?>()
+    val message: SharedFlow<String?> = _message.asSharedFlow()
+
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
+
     private val _filtered = MutableSharedFlow<List<UIApp>>()
     val filtered: SharedFlow<List<UIApp>> = _filtered
 
     init {
-        useCase.apps.useCaseTransform().onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
-        launch { useCase.list() }
+        useCase.apps
+            .onEach { _uiState.emit(mapToState(it)) }
+            .launchIn(scope = scope)
+
+        navigation.reloadSignal
+            .onEach { _uiState.emit(UIState.Loading) }
+            .throttleLatest(delayMillis = 300)
+            .onEach { useCase.fetch() }
+            .drop(count = 1)
+            .onEach { _message.emit("Apps reloaded") }
+            .launchIn(scope = scope)
     }
 
     private fun mapToState(apps: Apps): UIState {

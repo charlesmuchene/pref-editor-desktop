@@ -28,12 +28,13 @@ import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.providers.LocalAppState
-import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.DeviceKey
 import com.charlesmuchene.prefeditor.screens.apps.AppListViewModel.UIState
-import com.charlesmuchene.prefeditor.ui.*
+import com.charlesmuchene.prefeditor.ui.FullScreenText
+import com.charlesmuchene.prefeditor.ui.Loading
+import com.charlesmuchene.prefeditor.ui.Scaffolding
 import com.charlesmuchene.prefeditor.ui.filter.FilterComponent
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
 import com.charlesmuchene.prefeditor.ui.listing.ItemRow
@@ -45,14 +46,12 @@ import org.jetbrains.jewel.ui.component.Text
 fun AppListScreen(device: Device, modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
-    val bridge = LocalBridge.current
     val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val viewModel = remember {
         AppListViewModel(
-            bridge = bridge,
-            scope = scope,
             device = device,
+            scope = scope,
             navigation = navigation,
             favorites = appState.favorites,
         )

@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Device.Type
 import com.charlesmuchene.prefeditor.data.Devices
-import com.charlesmuchene.prefeditor.extensions.useCaseTransform
+import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
@@ -59,8 +59,17 @@ class DeviceListViewModel(
     val filtered: SharedFlow<List<UIDevice>> = _filtered.asSharedFlow()
 
     init {
-        useCase.devices.useCaseTransform().onEach { _uiState.emit(mapToState(it)) }.launchIn(scope = scope)
-        launch { useCase.list() }
+        useCase.devices
+            .onEach { _uiState.emit(mapToState(it)) }
+            .launchIn(scope = scope)
+
+        navigation.reloadSignal
+            .onEach { _uiState.emit(UIState.Loading) }
+            .throttleLatest(delayMillis = 300)
+            .onEach { useCase.fetch() }
+            .drop(count = 1)
+            .onEach { _message.emit("Devices reloaded") }
+            .launchIn(scope = scope)
     }
 
     /**
