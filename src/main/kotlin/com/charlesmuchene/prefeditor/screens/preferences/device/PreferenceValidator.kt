@@ -22,10 +22,8 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPrefere
 
 /**
  * Validates edited preference entries
- *
- * @param original Preferences read from disk/device
  */
-class PreferenceValidator(private val original: List<Preference>) {
+class PreferenceValidator {
 
     fun allowedEdits(edits: Map<String, UIPreference>): Boolean {
         return edits.values.any { it.state is PreferenceState.Deleted || it.state is PreferenceState.Changed }

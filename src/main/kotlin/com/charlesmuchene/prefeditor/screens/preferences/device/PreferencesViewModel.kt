@@ -20,15 +20,20 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preferences
-import com.charlesmuchene.prefeditor.extensions.useCaseTransform
-import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.extensions.throttleLatest
+import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
-class PreferencesViewModel(app: App, device: Device, prefFile: PrefFile, private val scope: CoroutineScope) :
-    CoroutineScope by scope {
+class PreferencesViewModel(
+    app: App,
+    device: Device,
+    prefFile: PrefFile,
+    private val scope: CoroutineScope,
+    private val reloadSignal: ReloadSignal,
+) : CoroutineScope by scope {
 
     private val processor = Processor()
     private val codec = PreferencesCodec()
@@ -39,8 +44,15 @@ class PreferencesViewModel(app: App, device: Device, prefFile: PrefFile, private
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     init {
-        useCase.preferences.useCaseTransform().onEach { _uiState.emit(UIState.Success(it)) }.launchIn(scope = scope)
-        launch { useCase.readPreferences() }
+        useCase.preferences
+            .onEach { _uiState.emit(UIState.Success(it)) }
+            .launchIn(scope = scope)
+
+        reloadSignal.signal
+            .onEach { _uiState.emit(UIState.Loading) }
+            .throttleLatest(delayMillis = 300)
+            .onEach { useCase.readPreferences() }
+            .launchIn(scope = scope)
     }
 
     sealed interface UIState {

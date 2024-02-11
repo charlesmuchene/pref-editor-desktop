@@ -58,22 +58,31 @@ class EditorViewModel(
     private val context: CoroutineContext = Dispatchers.Default,
 ) : CoroutineScope by scope + context {
 
-    private val prefFile = prefUseCase.file
-    private val originalPrefs = prefUseCase.preferences.value.preferences
-    private val validator: PreferenceValidator = PreferenceValidator(original = originalPrefs)
     private var enableBackup = false
-    private val _message = MutableSharedFlow<String?>()
+    private val prefFile = prefUseCase.file
+    private val validator = PreferenceValidator()
     private val changes = MutableSharedFlow<CharSequence>()
-    private val original = originalPrefs.associate(Preference::toPair)
 
-    private val edits = originalPrefs.map(::UIPreference).associateBy { it.preference.name }.toMutableMap()
-    private val _preferences = mutableStateOf(edits.values.toList())
+    private lateinit var initialPrefs: Map<String, String>
+    private lateinit var edits: MutableMap<String, UIPreference>
+
+    private val _preferences = mutableStateOf(emptyList<UIPreference>())
     val preferences: State<List<UIPreference>> = _preferences
+
+    private val _message = MutableSharedFlow<String?>()
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     val enableSave: StateFlow<Boolean> = changes
         .map { validator.allowedEdits(edits = edits) }
         .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = false)
+
+    init {
+        prefUseCase.preferences.onEach { prefs ->
+            initialPrefs = prefs.preferences.associate(Preference::toPair)
+            edits = prefs.preferences.map(::UIPreference).associateBy { it.preference.name }.toMutableMap()
+            _preferences.value = edits.values.toList()
+        }.launchIn(scope = scope)
+    }
 
     /**
      * Create sub-preferences for a set preference
@@ -126,7 +135,7 @@ class EditorViewModel(
      */
     fun outline(preference: Preference): Outline = when (preference) {
         is FloatPreference, is IntPreference, is LongPreference -> numberOutline(preference = preference)
-        is BooleanPreference, is StringPreference -> if (original[preference.name] == preference.value) Outline.None else Outline.Warning
+        is BooleanPreference, is StringPreference -> if (initialPrefs[preference.name] == preference.value) Outline.None else Outline.Warning
         else -> Outline.None
     }
 
@@ -137,7 +146,7 @@ class EditorViewModel(
      * @return [Outline] instance
      */
     private fun numberOutline(preference: Preference): Outline {
-        if (original[preference.name] == preference.value) return Outline.None
+        if (initialPrefs[preference.name] == preference.value) return Outline.None
         return if (validator.isValid(preference = preference)) Outline.Warning else Outline.Error
     }
 
@@ -160,7 +169,7 @@ class EditorViewModel(
      * @return Unedited [UIPreference]
      */
     private fun preferenceReset(preference: Preference): UIPreference {
-        val value = original[preference.name] ?: error("Missing preference value ${preference.name}")
+        val value = initialPrefs[preference.name] ?: error("Missing preference value ${preference.name}")
         return UIPreference(createPreference(preference = preference, value = value)).also { uiPreference ->
             edits[preference.name] = uiPreference
             launch { changes.emit(UUID.randomUUID().toString()) }
@@ -190,7 +199,8 @@ class EditorViewModel(
      */
     private fun preferenceChanged(preference: Preference, change: String): UIPreference {
         val newPref = createPreference(preference = preference, value = change)
-        val state = if (original[preference.name] == newPref.value) PreferenceState.None else PreferenceState.Changed
+        val state =
+            if (initialPrefs[preference.name] == newPref.value) PreferenceState.None else PreferenceState.Changed
         return UIPreference(preference = newPref, state = state).also { uiPreference ->
             edits[preference.name] = uiPreference
             launch { changes.emit(change) }

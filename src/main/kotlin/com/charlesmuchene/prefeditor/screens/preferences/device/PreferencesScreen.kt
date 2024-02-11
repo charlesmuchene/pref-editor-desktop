@@ -25,6 +25,7 @@ import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.providers.LocalBundle
+import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.resources.PrefKey
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferencesViewModel.UIState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.Editor
@@ -34,8 +35,16 @@ import com.charlesmuchene.prefeditor.ui.Loading
 @Composable
 fun PreferencesScreen(prefFile: PrefFile, app: App, device: Device, modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
+    val reloadSignal = LocalReloadSignal.current
+
     val viewModel = remember {
-        PreferencesViewModel(app = app, device = device, prefFile = prefFile, scope = scope)
+        PreferencesViewModel(
+            app = app,
+            scope = scope,
+            device = device,
+            prefFile = prefFile,
+            reloadSignal = reloadSignal
+        )
     }
     val uiState by viewModel.uiState.collectAsState()
 
