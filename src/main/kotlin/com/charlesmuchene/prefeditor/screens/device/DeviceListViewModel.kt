@@ -48,7 +48,7 @@ class DeviceListViewModel(
 
     private var filter = ItemFilter.none
 
-    private val _uiState = MutableStateFlow<UIState>(UIState.Devices(emptyList()))
+    private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     private val _message = MutableSharedFlow<String?>()
@@ -162,6 +162,7 @@ class DeviceListViewModel(
 
     sealed interface UIState {
         data object Error : UIState
+        data object Loading : UIState
         data object NoDevices : UIState
         data class Devices(val devices: List<UIDevice>) : UIState
     }

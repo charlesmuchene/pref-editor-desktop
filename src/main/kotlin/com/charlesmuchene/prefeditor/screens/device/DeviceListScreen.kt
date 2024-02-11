@@ -22,6 +22,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ import com.charlesmuchene.prefeditor.ui.theme.Typography.primary
 import com.charlesmuchene.prefeditor.ui.theme.Typography.secondary
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.ui.component.IndeterminateHorizontalProgressBar
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -59,6 +61,7 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
     ) {
         AnimatedContent(targetState = uiState, transitionSpec = { screenTransitionSpec() }) { state ->
             when (state) {
+                UIState.Loading -> DeviceListLoading(modifier = modifier)
                 UIState.Error -> DeviceListError(modifier = modifier)
                 UIState.NoDevices -> NoDevices(modifier = modifier)
                 is UIState.Devices -> if (state.devices.isEmpty()) NoFilterMatch(modifier = modifier)
@@ -130,4 +133,18 @@ private fun NoDevices(modifier: Modifier = Modifier) {
 @Composable
 private fun NoFilterMatch(modifier: Modifier = Modifier) {
     FullScreenText(primary = "No devices matching filter", modifier = modifier)
+}
+
+@Composable
+private fun DeviceListLoading(modifier: Modifier = Modifier) {
+    val text = LocalBundle.current[HomeKey.DeviceListLoading]
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = text, style = primary)
+        Spacer(modifier = Modifier.height(padding))
+        IndeterminateHorizontalProgressBar(modifier = Modifier.width(128.dp))
+    }
 }
