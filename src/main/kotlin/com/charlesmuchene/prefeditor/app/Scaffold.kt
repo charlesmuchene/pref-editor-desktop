@@ -34,11 +34,9 @@ import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import com.charlesmuchene.prefeditor.bridge.Bridge
+import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.navigation.Navigation
-import com.charlesmuchene.prefeditor.providers.LocalAppState
-import com.charlesmuchene.prefeditor.providers.LocalBridge
-import com.charlesmuchene.prefeditor.providers.LocalBundle
-import com.charlesmuchene.prefeditor.providers.LocalNavigation
+import com.charlesmuchene.prefeditor.providers.*
 import com.charlesmuchene.prefeditor.resources.ApplicationKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
 import com.charlesmuchene.prefeditor.ui.padding
@@ -80,11 +78,13 @@ fun ApplicationScope.scaffold(icon: Painter, appState: AppState, content: @Compo
 
 @Composable
 fun provideAppState(appState: AppState, content: @Composable () -> Unit) {
+    val scope = rememberCoroutineScope()
     CompositionLocalProvider(
         LocalAppState provides appState,
         LocalBridge provides Bridge(),
         LocalBundle provides TextBundle(),
-        LocalNavigation provides Navigation(rememberCoroutineScope()),
+        LocalNavigation provides Navigation(scope),
+        LocalReloadSignal provides ReloadSignal(scope),
     ) {
         val state = LocalAppState.current
         val isDark = state.theme.isDark()

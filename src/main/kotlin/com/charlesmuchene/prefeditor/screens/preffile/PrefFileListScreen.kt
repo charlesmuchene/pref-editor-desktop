@@ -34,9 +34,13 @@ import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
+import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.resources.AppKey
 import com.charlesmuchene.prefeditor.screens.preffile.PrefListViewModel.UIState
-import com.charlesmuchene.prefeditor.ui.*
+import com.charlesmuchene.prefeditor.ui.FullScreenText
+import com.charlesmuchene.prefeditor.ui.Loading
+import com.charlesmuchene.prefeditor.ui.Scaffolding
+import com.charlesmuchene.prefeditor.ui.Toast
 import com.charlesmuchene.prefeditor.ui.filter.FilterComponent
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
 import com.charlesmuchene.prefeditor.ui.listing.ItemRow
@@ -49,13 +53,15 @@ import org.jetbrains.jewel.ui.component.Text
 fun PrefFileListScreen(app: App, device: Device, modifier: Modifier = Modifier) {
     val appState = LocalAppState.current
     val navigation = LocalNavigation.current
+    val reloadSignal = LocalReloadSignal.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
         PrefListViewModel(
             app = app,
-            device = device,
             scope = scope,
+            device = device,
             navigation = navigation,
+            reloadSignal = reloadSignal,
             favorites = appState.favorites,
         )
     }

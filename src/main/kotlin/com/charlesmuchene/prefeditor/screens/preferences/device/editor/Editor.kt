@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
+import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.resources.PrefKey
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.ui.Toast
@@ -48,6 +49,7 @@ fun Editor(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier)
 
     val scope = rememberCoroutineScope()
     val appState = LocalAppState.current
+    val reloadSignal = LocalReloadSignal.current
     val viewModel = remember {
         EditorViewModel(appState = appState, scope = scope, prefUseCase = prefUseCase)
     }

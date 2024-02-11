@@ -22,6 +22,7 @@ import com.charlesmuchene.prefeditor.data.PrefFiles
 import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.extensions.useCaseTransform
 import com.charlesmuchene.prefeditor.models.ItemFilter
+import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.PrefEditScreen
@@ -40,6 +41,7 @@ class PrefListViewModel(
     private val device: Device,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
+    private val reloadSignal: ReloadSignal,
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
 
@@ -63,7 +65,7 @@ class PrefListViewModel(
             .onEach { _uiState.emit(mapToState(it)) }
             .launchIn(scope = scope)
 
-        navigation.reloadSignal
+        reloadSignal.signal
             .onEach { _uiState.emit(UIState.Loading) }
             .throttleLatest(delayMillis = 300)
             .onEach { useCase.fetch() }

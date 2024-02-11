@@ -30,6 +30,7 @@ import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
+import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.resources.DeviceKey
 import com.charlesmuchene.prefeditor.screens.apps.AppListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.FullScreenText
@@ -48,11 +49,13 @@ fun AppListScreen(device: Device, modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
     val appState = LocalAppState.current
     val navigation = LocalNavigation.current
+    val reloadSignal = LocalReloadSignal.current
     val viewModel = remember {
         AppListViewModel(
             device = device,
             scope = scope,
             navigation = navigation,
+            reloadSignal = reloadSignal,
             favorites = appState.favorites,
         )
     }

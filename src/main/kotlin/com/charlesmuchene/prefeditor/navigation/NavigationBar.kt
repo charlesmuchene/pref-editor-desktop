@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
+import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.ui.ReloadButton
 import com.charlesmuchene.prefeditor.ui.padding
 import kotlinx.coroutines.launch
@@ -45,6 +46,7 @@ import org.jetbrains.jewel.ui.component.*
 fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
 
     val navigation = LocalNavigation.current
+    val reloadSignal = LocalReloadSignal.current
     val screens by remember(current) { mutableStateOf(navigation.screens) }
 
     Column(modifier = modifier.fillMaxWidth()) {
@@ -62,7 +64,7 @@ fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
                     page(screen = screen, selected = current == screen)
                 }
             }
-            ReloadButton(modifier = Modifier.weight(0.05f), onClick = navigation::reload)
+            ReloadButton(modifier = Modifier.weight(0.05f), onClick = reloadSignal::reload)
         }
         Divider(orientation = Orientation.Horizontal, color = Color.LightGray.copy(alpha = 0.9f))
     }

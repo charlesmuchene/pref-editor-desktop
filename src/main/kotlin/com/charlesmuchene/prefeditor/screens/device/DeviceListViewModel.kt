@@ -22,6 +22,7 @@ import com.charlesmuchene.prefeditor.data.Device.Type
 import com.charlesmuchene.prefeditor.data.Devices
 import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.models.ItemFilter
+import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
 import com.charlesmuchene.prefeditor.navigation.Navigation
@@ -40,6 +41,7 @@ class DeviceListViewModel(
     private val bundle: TextBundle,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
+    private val reloadSignal: ReloadSignal,
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
 
@@ -63,7 +65,7 @@ class DeviceListViewModel(
             .onEach { _uiState.emit(mapToState(it)) }
             .launchIn(scope = scope)
 
-        navigation.reloadSignal
+        reloadSignal.signal
             .onEach { _uiState.emit(UIState.Loading) }
             .throttleLatest(delayMillis = 300)
             .onEach { useCase.fetch() }
