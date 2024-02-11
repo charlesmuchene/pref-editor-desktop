@@ -20,7 +20,7 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 
-interface Screen
+sealed interface Screen
 
 data object DevicesScreen : Screen
 data class AppsScreen(val device: Device) : Screen

@@ -27,8 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
+import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.ui.padding
+import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 
@@ -49,7 +51,7 @@ fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
                 page(screen = screen, selected = current == screen)
             }
         }
-        Divider(orientation = Orientation.Horizontal, color = Color.LightGray)
+        Divider(orientation = Orientation.Horizontal, color = Color.LightGray.copy(alpha = 0.9f))
     }
 }
 
@@ -58,13 +60,10 @@ fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
 private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifier) {
     val navigation = LocalNavigation.current
 
-    val text = when (screen) {
-        DevicesScreen -> "Home"
-        is AppsScreen -> screen.device.serial
-        is PrefListScreen -> screen.app.packageName
-        is PrefEditScreen -> screen.prefFile.name
-        else -> "Unknown"
-    }
+    val (text, icon) = screenInfo(screen = screen)
+
+    val painter by rememberIconPainter(icon)
+
     Tooltip(tooltip = { Text(text = "Navigate to $text") }) {
         Row(
             modifier = modifier.padding(horizontal = 2.dp).pointerOnHover(),
@@ -72,9 +71,23 @@ private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifie
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             RadioButtonChip(
-                selected = selected,
-                onClick = { navigation.navigate(screen = screen) }) { Text(text = text) }
+                selected = false,
+                onClick = { navigation.navigate(screen = screen) }
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(painter = painter, contentDescription = text, modifier = Modifier.size(20.dp), tint = JewelTheme.contentColor)
+                    Spacer(modifier = Modifier.width(padding * .5f))
+                    Text(text = text, style = Typography.labelTextStyle())
+                }
+            }
             if (!selected) Text(text = ">", style = Typography.h2TextStyle())
         }
     }
+}
+
+private fun screenInfo(screen: Screen): Pair<String, String> = when (screen) {
+    DevicesScreen -> "Home" to "home"
+    is AppsScreen -> screen.device.serial to "phone"
+    is PrefListScreen -> screen.app.packageName to "apps"
+    is PrefEditScreen -> screen.prefFile.name to "files"
 }
