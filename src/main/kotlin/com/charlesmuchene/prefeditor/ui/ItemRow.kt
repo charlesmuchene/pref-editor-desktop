@@ -20,9 +20,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -30,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.extensions.BreathingContainer
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.Favoritable
 import kotlinx.coroutines.launch
@@ -46,8 +42,6 @@ fun <T : Favoritable> ItemRow(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isHovered by interactionSource.collectIsHoveredAsState()
     val scope = rememberCoroutineScope()
     val animatedScalePercent by remember { mutableStateOf(Animatable(initialValue = 1f)) }
     Column(modifier = modifier) {
@@ -56,7 +50,6 @@ fun <T : Favoritable> ItemRow(
                 .fillMaxWidth()
                 .pointerOnHover()
                 .clickable { onClick(item) }
-                .hoverable(interactionSource)
                 .padding(vertical = padding * .5f)
                 .onHover { isHovered ->
                     scope.launch {
