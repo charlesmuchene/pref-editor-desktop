@@ -20,6 +20,7 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preferences
+import com.charlesmuchene.prefeditor.extensions.useCaseTransform
 import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
 import com.charlesmuchene.prefeditor.processor.Processor
 import kotlinx.coroutines.CoroutineScope
@@ -38,13 +39,13 @@ class PreferencesViewModel(app: App, device: Device, prefFile: PrefFile, private
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     init {
-        useCase.preferences.onEach { _uiState.emit(UIState.Success(it)) }.launchIn(scope = scope)
+        useCase.preferences.useCaseTransform().onEach { _uiState.emit(UIState.Success(it)) }.launchIn(scope = scope)
         launch { useCase.readPreferences() }
     }
 
     sealed interface UIState {
-        data class Error(val message: String? = null) : UIState
         data object Loading : UIState
+        data class Error(val message: String? = null) : UIState
         data class Success(val preferences: Preferences) : UIState
     }
 }

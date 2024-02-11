@@ -39,7 +39,7 @@ fun PreferencesScreen(prefFile: PrefFile, app: App, device: Device, modifier: Mo
     }
     val uiState by viewModel.uiState.collectAsState()
 
-    updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
+    AnimatedContent(targetState = uiState, transitionSpec = { screenTransitionSpec() }) { state ->
         when (state) {
             UIState.Loading -> PrefLoading(modifier = modifier)
             is UIState.Error -> PrefError(modifier = modifier, message = state.message)
