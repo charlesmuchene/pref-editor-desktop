@@ -32,7 +32,10 @@ import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.screens.device.DeviceListViewModel.UIState
-import com.charlesmuchene.prefeditor.ui.*
+import com.charlesmuchene.prefeditor.ui.FullScreenText
+import com.charlesmuchene.prefeditor.ui.Loading
+import com.charlesmuchene.prefeditor.ui.Scaffolding
+import com.charlesmuchene.prefeditor.ui.Toast
 import com.charlesmuchene.prefeditor.ui.filter.FilterComponent
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
 import com.charlesmuchene.prefeditor.ui.listing.ItemRow
@@ -40,7 +43,6 @@ import com.charlesmuchene.prefeditor.ui.theme.Typography
 import com.charlesmuchene.prefeditor.ui.theme.Typography.primary
 import com.charlesmuchene.prefeditor.ui.theme.Typography.secondary
 import kotlinx.coroutines.launch
-import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -111,7 +113,6 @@ private fun DeviceRow(device: UIDevice, viewModel: DeviceListViewModel, modifier
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = viewModel.formatDeviceAttributes(localDevice.device),
-                color = JewelTheme.contentColor,
                 style = secondary,
             )
             Spacer(modifier = Modifier.height(4.dp))

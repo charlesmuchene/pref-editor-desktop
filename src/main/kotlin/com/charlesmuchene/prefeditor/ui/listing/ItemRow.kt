@@ -16,10 +16,14 @@
 
 package com.charlesmuchene.prefeditor.ui.listing
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,8 +36,11 @@ import com.charlesmuchene.prefeditor.models.Favoritable
 import com.charlesmuchene.prefeditor.ui.BreathingContainer
 import com.charlesmuchene.prefeditor.ui.FavoriteButton
 import com.charlesmuchene.prefeditor.ui.padding
+import com.charlesmuchene.prefeditor.ui.theme.green
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.modifier.onHover
+import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.foundation.theme.LocalContentColor
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.Divider
 
@@ -47,39 +54,51 @@ fun <T : Favoritable> ItemRow(
 ) {
     val scope = rememberCoroutineScope()
     val animatedScalePercent by remember { mutableStateOf(Animatable(initialValue = 1f)) }
-    Column(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .pointerOnHover()
-                .clickable { onClick(item) }
-                .padding(vertical = padding * .5f)
-                .onHover { isHovered ->
-                    scope.launch {
-                        hoverAnimation(isHovered = isHovered, animatedScalePercent = animatedScalePercent)
-                    }
+
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
+    val color by animateColorAsState(
+        animationSpec = tween(durationMillis = 300),
+        targetValue = if (isHovered) green else JewelTheme.contentColor,
+    )
+
+    CompositionLocalProvider(LocalContentColor provides color) {
+        Column(modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick(item) }
+            .hoverable(interactionSource)
+            .pointerOnHover()
+            .onHover { isHovered ->
+                scope.launch {
+                    hoverAnimation(isHovered = isHovered, animatedScalePercent = animatedScalePercent)
                 }
-                .scale(animatedScalePercent.value),
-            verticalAlignment = Alignment.CenterVertically,
+            }
         ) {
             Row(
+                modifier = Modifier
+                    .padding(vertical = padding * .5f)
+                    .scale(animatedScalePercent.value),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(.9f),
-                content = content,
-            )
-            Spacer(modifier = Modifier.width(24.dp))
-            BreathingContainer {
-                FavoriteButton(
-                    selected = item.isFavorite,
-                    modifier = Modifier.weight(.1f),
-                    onFavorite = { onFavorite(item) },
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(.9f),
+                    content = content,
                 )
+                Spacer(modifier = Modifier.width(24.dp))
+                BreathingContainer {
+                    FavoriteButton(
+                        selected = item.isFavorite,
+                        modifier = Modifier.weight(.1f),
+                        onFavorite = { onFavorite(item) },
+                    )
+                }
             }
+            Divider(
+                orientation = Orientation.Horizontal,
+                color = Color.LightGray.copy(alpha = 0.5f),
+            )
         }
-        Divider(
-            orientation = Orientation.Horizontal,
-            color = Color.LightGray.copy(alpha = 0.5f),
-        )
     }
 }
 
