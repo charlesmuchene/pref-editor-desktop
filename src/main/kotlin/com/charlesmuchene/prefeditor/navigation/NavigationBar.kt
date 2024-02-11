@@ -18,23 +18,23 @@ package com.charlesmuchene.prefeditor.navigation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.ui.padding
-import com.charlesmuchene.prefeditor.ui.theme.green
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
-import org.jetbrains.jewel.ui.theme.chipStyle
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -44,13 +44,25 @@ fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
     val screens by remember(current) { mutableStateOf(navigation.screens) }
 
     Column(modifier = modifier.fillMaxWidth()) {
-        FlowRow(
-            modifier = Modifier.padding(horizontal = padding, vertical = padding * .5f),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            screens.forEach { screen ->
-                page(screen = screen, selected = current == screen)
+            FlowRow(
+                modifier = Modifier.padding(horizontal = padding, vertical = padding * .5f).weight(0.95f),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                screens.forEach { screen ->
+                    page(screen = screen, selected = current == screen)
+                }
+            }
+            Box(modifier = Modifier.pointerOnHover().weight(0.1f), contentAlignment = Alignment.Center) {
+                IconButton(onClick = {}, modifier = Modifier.size(64.dp).padding(8.dp).clip(CircleShape)) {
+                    val painter by rememberIconPainter(name = "reload")
+                    Icon(painter = painter, contentDescription = "Reload", modifier = Modifier.size(24.dp))
+                }
             }
         }
         Divider(orientation = Orientation.Horizontal, color = Color.LightGray.copy(alpha = 0.9f))
