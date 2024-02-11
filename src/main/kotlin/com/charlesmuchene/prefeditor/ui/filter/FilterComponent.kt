@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.ui
+package com.charlesmuchene.prefeditor.ui.filter
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.ItemFilter
+import com.charlesmuchene.prefeditor.ui.padding
 import org.jetbrains.jewel.ui.component.CheckboxRow
 
 @Composable

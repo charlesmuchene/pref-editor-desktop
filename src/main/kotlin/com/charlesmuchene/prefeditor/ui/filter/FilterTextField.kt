@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.ui
+package com.charlesmuchene.prefeditor.ui.filter
 
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.*
@@ -25,25 +28,30 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.ui.theme.green
-import org.jetbrains.jewel.foundation.modifier.onHover
 import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.IconButton
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 
 @Composable
-fun FilterTextField(placeholder: String, modifier: Modifier = Modifier, filtered: (String) -> Unit, onClear: () -> Unit) {
+fun FilterTextField(
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    filtered: (String) -> Unit,
+    onClear: () -> Unit,
+) {
     var value by remember { mutableStateOf("") }
-    var hovered by remember { mutableStateOf(false) }
     val filterPainter by rememberIconPainter(name = "filter@24x24")
     val clearPainter by rememberIconPainter(name = "clear@24x24")
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
 
     TextField(
         leadingIcon = {
             Icon(
                 painter = filterPainter,
                 contentDescription = "Filter",
-                tint = if (hovered) green else Color.LightGray,
+                tint = if (isHovered) green else Color.LightGray,
                 modifier = Modifier.size(20.dp).padding(4.dp),
             )
         },
@@ -55,15 +63,14 @@ fun FilterTextField(placeholder: String, modifier: Modifier = Modifier, filtered
                 Icon(
                     painter = clearPainter,
                     contentDescription = "Clear",
-                    tint = if (hovered) green else Color.LightGray,
+                    tint = if (isHovered) green else Color.LightGray,
                     modifier = Modifier.pointerOnHover().size(20.dp).padding(4.dp),
                 )
             }
         },
         value = value,
-        undecorated = !hovered && value.isBlank(),
         placeholder = { Text(text = placeholder) },
-        modifier = modifier.onHover { hovered = it },
+        modifier = modifier.hoverable(interactionSource),
         onValueChange = { text ->
             value = text
             filtered(text)

@@ -22,7 +22,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -31,16 +30,17 @@ import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
-import com.charlesmuchene.prefeditor.resources.DeviceKey
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.screens.device.DeviceListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.*
+import com.charlesmuchene.prefeditor.ui.filter.FilterComponent
+import com.charlesmuchene.prefeditor.ui.listing.ItemListing
+import com.charlesmuchene.prefeditor.ui.listing.ItemRow
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import com.charlesmuchene.prefeditor.ui.theme.Typography.primary
 import com.charlesmuchene.prefeditor.ui.theme.Typography.secondary
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
-import org.jetbrains.jewel.ui.component.IndeterminateHorizontalProgressBar
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable

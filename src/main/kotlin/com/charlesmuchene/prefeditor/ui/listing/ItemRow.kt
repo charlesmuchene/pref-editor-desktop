@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.ui
+package com.charlesmuchene.prefeditor.ui.listing
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -29,6 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.Favoritable
+import com.charlesmuchene.prefeditor.ui.BreathingContainer
+import com.charlesmuchene.prefeditor.ui.FavoriteButton
+import com.charlesmuchene.prefeditor.ui.padding
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.modifier.onHover
 import org.jetbrains.jewel.ui.Orientation

@@ -31,12 +31,11 @@ fun Scaffolding(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val spacing = 8.dp
     Column(modifier.fillMaxSize()) {
         header()
-        Spacer(modifier = Modifier.height(spacing))
+        Spacer(modifier = Modifier.height(8.dp))
         subHeader()
-        Spacer(modifier = Modifier.height(spacing))
+        Spacer(modifier = Modifier.height(padding * .5f))
         Divider(
             color = Color.LightGray.copy(alpha = 0.75f),
             orientation = Orientation.Horizontal,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.ui
+package com.charlesmuchene.prefeditor.ui.listing
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
