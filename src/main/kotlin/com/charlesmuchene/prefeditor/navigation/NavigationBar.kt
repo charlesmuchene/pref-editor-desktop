@@ -33,6 +33,7 @@ import com.charlesmuchene.prefeditor.ui.padding
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
+import org.jetbrains.jewel.ui.theme.chipStyle
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -70,12 +71,14 @@ private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifie
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            RadioButtonChip(
-                selected = false,
-                onClick = { navigation.navigate(screen = screen) }
-            ) {
+            Chip(onClick = { navigation.navigate(screen = screen) }, selected = selected) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(painter = painter, contentDescription = text, modifier = Modifier.size(20.dp), tint = JewelTheme.contentColor)
+                    Icon(
+                        painter = painter,
+                        contentDescription = text,
+                        modifier = Modifier.size(20.dp),
+                        tint = JewelTheme.contentColor
+                    )
                     Spacer(modifier = Modifier.width(padding * .5f))
                     Text(text = text, style = Typography.labelTextStyle())
                 }
