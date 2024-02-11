@@ -72,7 +72,7 @@ fun <T : Favoritable> ItemRow(
                 content = content,
             )
             Spacer(modifier = Modifier.width(24.dp))
-            BreathingContainer() {
+            BreathingContainer {
                 FavoriteButton(
                     selected = item.isFavorite,
                     modifier = Modifier.weight(.1f),

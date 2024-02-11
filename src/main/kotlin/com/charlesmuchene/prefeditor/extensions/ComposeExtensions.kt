@@ -53,19 +53,3 @@ fun screenTransitionSpec(): ContentTransform =
             fadeOut(animationSpec = tween(durationMillis = 300)) +
                     scaleOut(targetScale = .92f, animationSpec = tween(durationMillis = 220))
         )
-
-@Composable
-fun BreathingContainer(breathe: Float = 1.2f, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    val infiniteTransition = rememberInfiniteTransition()
-
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = breathe,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2000),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-
-    Box(modifier = modifier.scale(scale)) { content() }
-}
