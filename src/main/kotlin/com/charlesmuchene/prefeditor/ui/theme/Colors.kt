@@ -16,9 +16,20 @@
 
 package com.charlesmuchene.prefeditor.ui.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import org.jetbrains.jewel.foundation.GlobalColors
+import org.jetbrains.jewel.foundation.OutlineColors
+import org.jetbrains.jewel.intui.standalone.theme.dark
+import org.jetbrains.jewel.intui.standalone.theme.light
 
 val teal = Color(red = 0, green = 50, blue = 50)
 val green = Color(color = 0xFF08A045)
 val mustard = Color(color = 0xFFFFDB58)
 val orange = Color(color = 0xFFEE7600)
+
+@Composable
+fun globalColors(isDark: Boolean): GlobalColors {
+    val darkColors = GlobalColors.Companion.dark(outlines = OutlineColors.dark(focused = green))
+    return if (isDark) darkColors else GlobalColors.Companion.light()
+}

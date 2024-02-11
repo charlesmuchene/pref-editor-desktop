@@ -17,40 +17,30 @@
 package com.charlesmuchene.prefeditor.ui.theme
 
 import androidx.compose.runtime.Composable
+import com.charlesmuchene.prefeditor.ui.theme.styles.chipStyle
+import com.charlesmuchene.prefeditor.ui.theme.styles.textFieldStyle
+import org.jetbrains.jewel.foundation.LocalGlobalColors
+import org.jetbrains.jewel.foundation.LocalGlobalMetrics
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.foundation.theme.ThemeDefinition
-import org.jetbrains.jewel.intui.standalone.styling.dark
-import org.jetbrains.jewel.intui.standalone.styling.light
 import org.jetbrains.jewel.intui.standalone.theme.darkThemeDefinition
 import org.jetbrains.jewel.intui.standalone.theme.lightThemeDefinition
 import org.jetbrains.jewel.intui.window.decoratedWindow
-import org.jetbrains.jewel.intui.window.styling.dark
-import org.jetbrains.jewel.intui.window.styling.light
 import org.jetbrains.jewel.ui.ComponentStyling
-import org.jetbrains.jewel.ui.component.styling.ChipColors
-import org.jetbrains.jewel.ui.component.styling.ChipStyle
 import org.jetbrains.jewel.ui.component.styling.LocalChipStyle
-import org.jetbrains.jewel.window.styling.DecoratedWindowStyle
-import org.jetbrains.jewel.window.styling.TitleBarStyle
+import org.jetbrains.jewel.ui.component.styling.LocalTextFieldStyle
 
 @Composable
 fun ComponentStyling.prefEditorStyle(isDark: Boolean): ComponentStyling = decoratedWindow()
     .provide {
-        val darkChipStyle =
-            ChipStyle.Companion.dark(colors = ChipColors.dark(borderSelected = green.copy(alpha = 0.4f)))
-
         arrayOf(
-            LocalChipStyle provides if (isDark) darkChipStyle else ChipStyle.Companion.light()
+            LocalGlobalMetrics provides globalMetrics(),
+            LocalChipStyle provides chipStyle(isDark),
+            LocalGlobalColors provides globalColors(isDark),
+            LocalTextFieldStyle provides textFieldStyle(isDark),
         )
     }
 
 @Composable
 fun theme(isDark: Boolean): ThemeDefinition =
     if (isDark) JewelTheme.darkThemeDefinition() else JewelTheme.lightThemeDefinition()
-
-@Composable
-private fun windowStyle(isDark: Boolean): DecoratedWindowStyle =
-    if (isDark) DecoratedWindowStyle.dark() else DecoratedWindowStyle.light()
-
-@Composable
-private fun titleBarStyle(isDark: Boolean): TitleBarStyle = if (isDark) TitleBarStyle.dark() else TitleBarStyle.light()
