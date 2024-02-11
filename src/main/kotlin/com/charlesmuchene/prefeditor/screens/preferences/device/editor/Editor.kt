@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +27,7 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.providers.LocalAppState
@@ -35,8 +37,10 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreference
 import com.charlesmuchene.prefeditor.ui.Toast
 import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.CheckboxRow
 import org.jetbrains.jewel.ui.component.DefaultButton
+import org.jetbrains.jewel.ui.component.Divider
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -55,7 +59,13 @@ fun Editor(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier)
     Column(modifier = modifier.fillMaxSize()) {
         val endPadding = padding * 0.5f
         EditorTopBar(viewModel = viewModel, modifier = Modifier.padding(end = endPadding))
-        Spacer(modifier = Modifier.height(4.dp))
+        val spacerHeight = 8.dp
+        Spacer(modifier = Modifier.height(spacerHeight))
+        Divider(
+            orientation = Orientation.Horizontal,
+            color = Color.LightGray.copy(alpha = 0.2f),
+        )
+        Spacer(modifier = Modifier.height(spacerHeight))
         Box(modifier = Modifier.fillMaxSize()) {
             val state = rememberLazyListState()
             LazyColumn(modifier = Modifier.padding(end = endPadding), state = state) {
@@ -98,9 +108,10 @@ private fun LazyListScope.sets(preferences: List<UIPreference>, viewModel: Edito
     setPreferenceSection(preferences = preferences, viewModel = viewModel)
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 private fun LazyListScope.primitives(preferences: List<UIPreference>, viewModel: EditorViewModel) {
     items(items = preferences, key = { it.preference.name }) { preference ->
         val modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
-        PrimitivePreference(preference = preference, modifier = modifier, viewModel = viewModel)
+        PrimitivePreference(preference = preference, viewModel = viewModel, modifier = modifier.animateItemPlacement())
     }
 }
