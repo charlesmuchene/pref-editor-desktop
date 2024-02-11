@@ -47,8 +47,8 @@ fun PreferenceAction(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
-        val resetPainter by rememberIconPainter(name = "reset@24x24")
-        val deletePainter by rememberIconPainter(name = "trash@24x24")
+        val resetPainter by rememberIconPainter(name = "reset")
+        val deletePainter by rememberIconPainter(name = "trash")
         IconButton(
             enabled = isResettable,
             modifier = Modifier.weight(.5f),

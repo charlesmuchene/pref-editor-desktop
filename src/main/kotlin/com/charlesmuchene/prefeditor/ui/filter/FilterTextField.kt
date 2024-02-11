@@ -41,8 +41,8 @@ fun FilterTextField(
     onClear: () -> Unit,
 ) {
     var value by remember { mutableStateOf("") }
-    val filterPainter by rememberIconPainter(name = "filter@24x24")
-    val clearPainter by rememberIconPainter(name = "clear@24x24")
+    val filterPainter by rememberIconPainter(name = "filter")
+    val clearPainter by rememberIconPainter(name = "clear")
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
 
