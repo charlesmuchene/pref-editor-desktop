@@ -16,28 +16,32 @@
 
 package com.charlesmuchene.prefeditor.navigation
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
+import com.charlesmuchene.prefeditor.ui.ReloadButton
 import com.charlesmuchene.prefeditor.ui.padding
+import kotlinx.coroutines.launch
+import org.jetbrains.jewel.foundation.modifier.onHover
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
 
     val navigation = LocalNavigation.current
@@ -58,12 +62,7 @@ fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
                     page(screen = screen, selected = current == screen)
                 }
             }
-            Box(modifier = Modifier.pointerOnHover().weight(0.1f), contentAlignment = Alignment.Center) {
-                IconButton(onClick = {}, modifier = Modifier.size(64.dp).padding(8.dp).clip(CircleShape)) {
-                    val painter by rememberIconPainter(name = "reload")
-                    Icon(painter = painter, contentDescription = "Reload", modifier = Modifier.size(24.dp))
-                }
-            }
+            ReloadButton(modifier = Modifier.weight(0.05f))
         }
         Divider(orientation = Orientation.Horizontal, color = Color.LightGray.copy(alpha = 0.9f))
     }
