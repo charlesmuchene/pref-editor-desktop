@@ -19,16 +19,18 @@ package com.charlesmuchene.prefeditor.screens.preffile
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.extensions.pointerOnHover
+import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.providers.LocalAppState
@@ -47,6 +49,8 @@ import com.charlesmuchene.prefeditor.ui.listing.ItemRow
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.IconButton
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -136,10 +140,25 @@ private fun PrefListingRow(prefFile: UIPrefFile, modifier: Modifier = Modifier, 
         onClick = viewModel::selected,
         onFavorite = { scope.launch { localPref = viewModel.favorite(it) } }
     ) {
-        Column(modifier = Modifier.padding(4.dp)) {
-            Text(text = localPref.file.name, style = Typography.primary)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = localPref.file.type.text, style = Typography.secondary, color = JewelTheme.contentColor)
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(4.dp).weight(.95f)) {
+                Text(text = localPref.file.name, style = Typography.primary)
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = localPref.file.type.text, style = Typography.secondary, color = JewelTheme.contentColor)
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(modifier = Modifier.weight(.05f), contentAlignment = Alignment.Center) {
+                IconButton(onClick = { viewModel.read(prefFile) }, modifier = Modifier.size(36.dp).clip(CircleShape)) {
+                    val painter by rememberIconPainter(name = "read")
+                    Icon(
+                        painter = painter,
+                        contentDescription = "View file",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .pointerOnHover(),
+                    )
+                }
+            }
         }
     }
 }

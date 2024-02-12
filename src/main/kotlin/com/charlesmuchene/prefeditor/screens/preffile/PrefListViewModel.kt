@@ -139,6 +139,10 @@ class PrefListViewModel(
         }.await()
     }
 
+    fun read(file: UIPrefFile) {
+
+    }
+
     sealed interface UIState {
         data object Empty : UIState
         data object Loading : UIState
