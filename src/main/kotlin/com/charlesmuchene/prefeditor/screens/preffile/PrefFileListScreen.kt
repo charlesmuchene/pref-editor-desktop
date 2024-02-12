@@ -33,6 +33,7 @@ import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIPrefFile
+import com.charlesmuchene.prefeditor.navigation.FilesScreen
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -54,16 +55,16 @@ import org.jetbrains.jewel.ui.component.IconButton
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun PrefFileListScreen(app: App, device: Device, modifier: Modifier = Modifier) {
+fun FileListScreen(screen: FilesScreen, modifier: Modifier = Modifier) {
     val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val reloadSignal = LocalReloadSignal.current
     val scope = rememberCoroutineScope()
     val viewModel = remember {
         PrefListViewModel(
-            app = app,
             scope = scope,
-            device = device,
+            app = screen.app,
+            device = screen.device,
             navigation = navigation,
             reloadSignal = reloadSignal,
             favorites = appState.favorites,
@@ -148,7 +149,10 @@ private fun PrefListingRow(prefFile: UIPrefFile, modifier: Modifier = Modifier, 
             }
             Spacer(modifier = Modifier.width(8.dp))
             Box(modifier = Modifier.weight(.05f), contentAlignment = Alignment.Center) {
-                IconButton(onClick = { viewModel.read(prefFile) }, modifier = Modifier.size(36.dp).clip(CircleShape)) {
+                IconButton(
+                    modifier = Modifier.size(36.dp).clip(CircleShape),
+                    onClick = { viewModel.selected(file = prefFile, readOnly = true) },
+                ) {
                     val painter by rememberIconPainter(name = "read")
                     Icon(
                         painter = painter,

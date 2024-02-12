@@ -31,8 +31,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
@@ -81,6 +84,9 @@ fun ReloadButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
                     .size(64.dp)
                     .padding(8.dp)
                     .clip(CircleShape)
+                    .drawBehind {
+                        drawCircle(Color.DarkGray, style = Stroke(width = 4f))
+                    }
             ) {
                 val painter by rememberIconPainter(name = "reload")
                 Icon(

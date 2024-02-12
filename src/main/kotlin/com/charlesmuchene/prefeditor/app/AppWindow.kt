@@ -27,7 +27,7 @@ import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.screens.apps.AppListScreen
 import com.charlesmuchene.prefeditor.screens.device.DeviceListScreen
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferencesScreen
-import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListScreen
+import com.charlesmuchene.prefeditor.screens.preffile.FileListScreen
 import com.charlesmuchene.prefeditor.ui.Toast
 
 @Composable
@@ -43,15 +43,9 @@ fun ApplicationScope.AppWindow(icon: Painter, appState: AppState) {
 
         when (val screen = currentScreen) {
             DevicesScreen -> DeviceListScreen(modifier = modifier)
-            is AppsScreen -> AppListScreen(modifier = modifier, device = screen.device)
-            is PrefListScreen -> PrefFileListScreen(modifier = modifier, device = screen.device, app = screen.app)
-
-            is PrefEditScreen -> PreferencesScreen(
-                app = screen.app,
-                modifier = modifier,
-                device = screen.device,
-                prefFile = screen.prefFile,
-            )
+            is AppsScreen -> AppListScreen(modifier = modifier, screen = screen)
+            is FilesScreen -> FileListScreen(modifier = modifier, screen = screen)
+            is EditScreen -> PreferencesScreen(modifier = modifier, screen = screen)
         }
     }
 }

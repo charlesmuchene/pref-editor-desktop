@@ -45,7 +45,7 @@ class NavigationTest {
     @Test
     fun `backwards navigation pops screens on stack exclusively`() = runTest(dispatcher) {
         navigation.navigate(AppsScreen(device))
-        navigation.navigate(PrefListScreen(app, device))
+        navigation.navigate(FilesScreen(app, device))
         navigation.navigate(AppsScreen(device))
 
         val screens = navigation.screens
@@ -57,7 +57,7 @@ class NavigationTest {
     @Test
     fun `backwards navigation never pops the home screen`() = runTest(dispatcher) {
         navigation.navigate(AppsScreen(device))
-        navigation.navigate(PrefListScreen(app, device))
+        navigation.navigate(FilesScreen(app, device))
 
         navigation.navigate(DevicesScreen)
 

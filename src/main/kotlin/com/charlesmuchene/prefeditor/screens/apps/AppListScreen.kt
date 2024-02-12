@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIApp
+import com.charlesmuchene.prefeditor.navigation.AppsScreen
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
@@ -44,7 +45,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun AppListScreen(device: Device, modifier: Modifier = Modifier) {
+fun AppListScreen(screen: AppsScreen, modifier: Modifier = Modifier) {
 
     val scope = rememberCoroutineScope()
     val appState = LocalAppState.current
@@ -52,8 +53,8 @@ fun AppListScreen(device: Device, modifier: Modifier = Modifier) {
     val reloadSignal = LocalReloadSignal.current
     val viewModel = remember {
         AppListViewModel(
-            device = device,
             scope = scope,
+            device = screen.device,
             navigation = navigation,
             reloadSignal = reloadSignal,
             favorites = appState.favorites,

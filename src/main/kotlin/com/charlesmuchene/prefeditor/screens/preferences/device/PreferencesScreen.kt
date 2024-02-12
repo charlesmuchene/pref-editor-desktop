@@ -17,32 +17,31 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.charlesmuchene.prefeditor.data.App
-import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
+import com.charlesmuchene.prefeditor.navigation.EditScreen
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.resources.PrefKey
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferencesViewModel.UIState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.Editor
+import com.charlesmuchene.prefeditor.screens.preferences.device.viewer.Viewer
 import com.charlesmuchene.prefeditor.ui.FullScreenText
 import com.charlesmuchene.prefeditor.ui.Loading
 
 @Composable
-fun PreferencesScreen(prefFile: PrefFile, app: App, device: Device, modifier: Modifier = Modifier) {
+fun PreferencesScreen(screen: EditScreen, modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
     val reloadSignal = LocalReloadSignal.current
 
     val viewModel = remember {
         PreferencesViewModel(
-            app = app,
             scope = scope,
-            device = device,
-            prefFile = prefFile,
+            app = screen.app,
+            device = screen.device,
+            prefFile = screen.file,
+            readOnly = screen.readOnly,
             reloadSignal = reloadSignal
         )
     }
@@ -52,7 +51,8 @@ fun PreferencesScreen(prefFile: PrefFile, app: App, device: Device, modifier: Mo
         when (state) {
             UIState.Loading -> PrefLoading(modifier = modifier)
             is UIState.Error -> PrefError(modifier = modifier, message = state.message)
-            is UIState.Success -> Editor(modifier = modifier, prefUseCase = viewModel.useCase)
+            is UIState.Success -> if (state.readOnly) Viewer(prefUseCase = viewModel.useCase, modifier = modifier)
+            else Editor(modifier = modifier, prefUseCase = viewModel.useCase)
         }
     }
 }

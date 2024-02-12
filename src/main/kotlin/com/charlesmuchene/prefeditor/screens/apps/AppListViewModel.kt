@@ -23,7 +23,7 @@ import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.navigation.Navigation
-import com.charlesmuchene.prefeditor.navigation.PrefListScreen
+import com.charlesmuchene.prefeditor.navigation.FilesScreen
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -86,7 +86,7 @@ class AppListViewModel(
      */
     fun selected(app: UIApp) {
         launch {
-            navigation.navigate(screen = PrefListScreen(app = app.app, device = device))
+            navigation.navigate(screen = FilesScreen(app = app.app, device = device))
         }
     }
 

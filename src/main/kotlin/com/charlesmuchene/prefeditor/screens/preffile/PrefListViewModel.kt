@@ -20,14 +20,12 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFiles
 import com.charlesmuchene.prefeditor.extensions.throttleLatest
-import com.charlesmuchene.prefeditor.extensions.useCaseTransform
 import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.navigation.Navigation
-import com.charlesmuchene.prefeditor.navigation.PrefEditScreen
+import com.charlesmuchene.prefeditor.navigation.EditScreen
 import com.charlesmuchene.prefeditor.processor.Processor
-import com.charlesmuchene.prefeditor.screens.device.DeviceListViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
 import kotlinx.coroutines.CoroutineScope
@@ -41,7 +39,7 @@ class PrefListViewModel(
     private val device: Device,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
-    private val reloadSignal: ReloadSignal,
+    reloadSignal: ReloadSignal,
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
 
@@ -91,10 +89,11 @@ class PrefListViewModel(
      * Select a file
      *
      * @param file Selected [UIPrefFile]
+     * @param readOnly Determine if we should show read view or editor
      */
-    fun selected(file: UIPrefFile) {
+    fun selected(file: UIPrefFile, readOnly: Boolean = false) {
         launch {
-            navigation.navigate(screen = PrefEditScreen(prefFile = file.file, app = app, device = device))
+            navigation.navigate(screen = EditScreen(file = file.file, app = app, device = device, readOnly = readOnly))
         }
     }
 
@@ -137,10 +136,6 @@ class PrefListViewModel(
             else favorites.favoriteFile(file = file.file, app = app, device = device)
             file.copy(isFavorite = !file.isFavorite)
         }.await()
-    }
-
-    fun read(file: UIPrefFile) {
-
     }
 
     sealed interface UIState {

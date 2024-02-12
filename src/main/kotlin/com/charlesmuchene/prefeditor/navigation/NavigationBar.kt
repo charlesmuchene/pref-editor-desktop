@@ -16,17 +16,11 @@
 
 package com.charlesmuchene.prefeditor.navigation
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
@@ -35,8 +29,6 @@ import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.ui.ReloadButton
 import com.charlesmuchene.prefeditor.ui.padding
-import kotlinx.coroutines.launch
-import org.jetbrains.jewel.foundation.modifier.onHover
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
@@ -105,6 +97,6 @@ private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifie
 private fun screenInfo(screen: Screen): Pair<String, String> = when (screen) {
     DevicesScreen -> "Home" to "home"
     is AppsScreen -> screen.device.serial to "phone"
-    is PrefListScreen -> screen.app.packageName to "apps"
-    is PrefEditScreen -> screen.prefFile.name to "files"
+    is FilesScreen -> screen.app.packageName to "apps"
+    is EditScreen -> screen.file.name to "files"
 }

@@ -31,8 +31,9 @@ class PreferencesViewModel(
     app: App,
     device: Device,
     prefFile: PrefFile,
+    reloadSignal: ReloadSignal,
+    private val readOnly: Boolean,
     private val scope: CoroutineScope,
-    private val reloadSignal: ReloadSignal,
 ) : CoroutineScope by scope {
 
     private val processor = Processor()
@@ -45,7 +46,7 @@ class PreferencesViewModel(
 
     init {
         useCase.preferences
-            .onEach { _uiState.emit(UIState.Success(it)) }
+            .onEach { _uiState.emit(UIState.Success(preferences = it, readOnly = readOnly)) }
             .launchIn(scope = scope)
 
         reloadSignal.signal
@@ -58,6 +59,6 @@ class PreferencesViewModel(
     sealed interface UIState {
         data object Loading : UIState
         data class Error(val message: String? = null) : UIState
-        data class Success(val preferences: Preferences) : UIState
+        data class Success(val preferences: Preferences, val readOnly: Boolean) : UIState
     }
 }
