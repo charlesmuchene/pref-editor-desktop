@@ -19,6 +19,7 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.viewer
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.data.Preference
+import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
@@ -30,8 +31,8 @@ class ViewerViewModel(prefUseCase: DevicePreferencesUseCase, scope: CoroutineSco
     val preferences: State<List<Preference>> = _preferences
 
     init {
-        prefUseCase.preferences.onEach {
-            _preferences.value = it.preferences
+        prefUseCase.preferences.onEach { prefs ->
+            _preferences.value = prefs.preferences
         }.launchIn(scope = scope)
     }
 }

@@ -26,14 +26,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.Preference
+import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
+import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.DefaultButton
 import org.jetbrains.jewel.ui.component.Divider
-import org.jetbrains.jewel.ui.component.OutlinedButton
+import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
@@ -64,10 +66,30 @@ fun Viewer(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier)
 
 @Composable
 private fun PreferenceRow(preference: Preference, modifier: Modifier = Modifier) {
+    val icon = when (preference) {
+        is BooleanPreference -> "spherical"
+        is FloatPreference -> "cylindrical"
+        is IntPreference -> "conical"
+        is LongPreference -> "pyramidical"
+        is SetPreference -> "triangular"
+        is StringPreference -> "cubical"
+    }
+    val painter by rememberIconPainter(icon)
+
     Column(modifier = modifier.fillMaxWidth().padding(top = 8.dp)) {
-        Text(text = preference.name, fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(text = preference.value, fontSize = TextUnit(value = 14f, type = TextUnitType.Sp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(painter = painter, modifier = Modifier.size(24.dp), contentDescription = icon)
+            Spacer(modifier = Modifier.width(padding * .5f))
+            Column {
+                Text(text = preference.name, fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = preference.value,
+                    color = Color.Gray,
+                    fontSize = TextUnit(value = 14f, type = TextUnitType.Sp),
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Divider(
             orientation = Orientation.Horizontal,
