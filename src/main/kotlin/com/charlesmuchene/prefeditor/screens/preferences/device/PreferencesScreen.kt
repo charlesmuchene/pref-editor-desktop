@@ -51,7 +51,11 @@ fun PreferencesScreen(screen: EditScreen, modifier: Modifier = Modifier) {
         when (state) {
             UIState.Loading -> PrefLoading(modifier = modifier)
             is UIState.Error -> PrefError(modifier = modifier, message = state.message)
-            is UIState.Success -> if (state.readOnly) Viewer(prefUseCase = viewModel.useCase, modifier = modifier)
+            is UIState.Success -> if (state.readOnly) Viewer(
+                prefUseCase = viewModel.useCase,
+                onEditClick = viewModel::edit,
+                modifier = modifier,
+            )
             else Editor(modifier = modifier, prefUseCase = viewModel.useCase)
         }
     }

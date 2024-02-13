@@ -26,6 +26,7 @@ import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class PreferencesViewModel(
     app: App,
@@ -41,12 +42,13 @@ class PreferencesViewModel(
     val useCase =
         DevicePreferencesUseCase(prefCodec = codec, app = app, device = device, file = prefFile, processor = processor)
 
+    private var isReadyOnly = readOnly
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)
     val uiState: StateFlow<UIState> = _uiState.asStateFlow()
 
     init {
         useCase.preferences
-            .onEach { _uiState.emit(UIState.Success(preferences = it, readOnly = readOnly)) }
+            .onEach { _uiState.emit(UIState.Success(preferences = it, readOnly = isReadyOnly)) }
             .launchIn(scope = scope)
 
         reloadSignal.signal
@@ -54,6 +56,14 @@ class PreferencesViewModel(
             .throttleLatest(delayMillis = 300)
             .onEach { useCase.readPreferences() }
             .launchIn(scope = scope)
+    }
+
+    fun edit() {
+        val success = _uiState.value
+        if (success is UIState.Success) {
+            isReadyOnly = !isReadyOnly
+            launch { _uiState.emit(success.copy(readOnly = isReadyOnly)) }
+        }
     }
 
     sealed interface UIState {

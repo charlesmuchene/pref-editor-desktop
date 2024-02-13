@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
@@ -40,7 +41,7 @@ import org.jetbrains.jewel.ui.component.Text
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun Viewer(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier) {
+fun Viewer(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier, onEditClick: () -> Unit) {
 
     val scope = rememberCoroutineScope()
     val viewModel by remember {
@@ -50,7 +51,7 @@ fun Viewer(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier)
     val items by viewModel.preferences
 
     Column(modifier = modifier) {
-        ViewerHeader()
+        ViewerHeader(onClick = onEditClick)
         Spacer(modifier = Modifier.height(8.dp))
         Divider(
             color = Color.LightGray.copy(alpha = 0.75f),
@@ -99,7 +100,7 @@ private fun PreferenceRow(preference: Preference, modifier: Modifier = Modifier)
 }
 
 @Composable
-private fun ViewerHeader(modifier: Modifier = Modifier) {
+private fun ViewerHeader(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -107,7 +108,7 @@ private fun ViewerHeader(modifier: Modifier = Modifier) {
     ) {
         Text(text = "Preferences View", style = Typography.heading, modifier = modifier)
         Box(modifier = Modifier, contentAlignment = Alignment.Center) {
-            DefaultButton(onClick = {}) {
+            DefaultButton(onClick = onClick, modifier = Modifier.pointerOnHover()) {
                 Text(text = "Edit")
             }
         }
