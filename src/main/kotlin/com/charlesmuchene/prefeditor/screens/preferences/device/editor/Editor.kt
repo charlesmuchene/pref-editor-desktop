@@ -30,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.SetPreference
+import com.charlesmuchene.prefeditor.extensions.pointerOnHover
+import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.PrefKey
@@ -37,11 +39,9 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreference
 import com.charlesmuchene.prefeditor.ui.Toast
 import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.CheckboxRow
-import org.jetbrains.jewel.ui.component.DefaultButton
-import org.jetbrains.jewel.ui.component.Divider
-import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.*
 
 @Composable
 fun Editor(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier) {
@@ -90,6 +90,19 @@ private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifi
         Spacer(modifier = Modifier.weight(1f))
         val checked by viewModel.backupEnabled
         Row(verticalAlignment = Alignment.CenterVertically) {
+            OutlinedButton(onClick = {}, modifier = Modifier.pointerOnHover()) {
+                val text = "Add preference"
+                val painter by rememberIconPainter(name = "plus")
+                Icon(
+                    painter = painter,
+                    contentDescription = text,
+                    tint = JewelTheme.contentColor,
+                    modifier = Modifier.size(14.dp),
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = text)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
             CheckboxRow(text = "Backup file", checked = checked, onCheckedChange = viewModel::backup)
             Spacer(modifier = Modifier.width(12.dp))
             val enabled by viewModel.enableSave.collectAsState()
