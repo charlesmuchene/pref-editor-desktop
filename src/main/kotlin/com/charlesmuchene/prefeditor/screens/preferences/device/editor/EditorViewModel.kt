@@ -58,13 +58,14 @@ class EditorViewModel(
     private val context: CoroutineContext = Dispatchers.Default,
 ) : CoroutineScope by scope + context {
 
-    private var enableBackup = false
     private val prefFile = prefUseCase.file
     private val validator = PreferenceValidator()
     private val changes = MutableSharedFlow<CharSequence>()
 
     private lateinit var initialPrefs: Map<String, String>
     private lateinit var edits: MutableMap<String, UIPreference>
+
+    val backupEnabled = prefUseCase.backup
 
     private val _preferences = mutableStateOf(emptyList<UIPreference>())
     val preferences: State<List<UIPreference>> = _preferences
@@ -119,12 +120,12 @@ class EditorViewModel(
     }
 
     /**
-     * Enable or disable preference file backup
+     * Enable or disable preference file backup before edit
      *
      * @param backup `true` to back up file, `false` otherwise
      */
     fun backup(backup: Boolean) {
-        enableBackup = backup
+        prefUseCase.backup.value = backup
     }
 
     /**

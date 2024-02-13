@@ -31,9 +31,9 @@ import kotlinx.coroutines.launch
 class PreferencesViewModel(
     app: App,
     device: Device,
+    readOnly: Boolean,
     prefFile: PrefFile,
     reloadSignal: ReloadSignal,
-    private val readOnly: Boolean,
     private val scope: CoroutineScope,
 ) : CoroutineScope by scope {
 

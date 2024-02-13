@@ -16,9 +16,11 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device
 
+import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.command.DeviceWriteCommand
 import com.charlesmuchene.prefeditor.data.*
 import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.providers.TimeStampProviderImpl
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceReader
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
 import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
@@ -29,7 +31,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-private val logger = KotlinLogging.logger {  }
+private val logger = KotlinLogging.logger { }
 
 class DevicePreferencesUseCase(
     val file: PrefFile,
@@ -38,8 +40,12 @@ class DevicePreferencesUseCase(
     processor: Processor,
     prefCodec: PreferencesCodec,
 ) {
+    val backup = mutableStateOf(false)
+
     private val codec = DevicePreferencesCodec(codec = prefCodec)
-    private val command = DeviceWriteCommand(app = app, device = device, file = file)
+    private val timestamp = TimeStampProviderImpl()
+    private val command =
+        DeviceWriteCommand(app = app, device = device, file = file, backup = backup, timestamp = timestamp)
     private val writer = PreferenceWriter(processor = processor, command = command)
     private val reader = PreferenceReader(processor = processor)
 

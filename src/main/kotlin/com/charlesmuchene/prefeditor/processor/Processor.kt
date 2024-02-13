@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.processor
 
+import com.charlesmuchene.prefeditor.extensions.editorLogger
 import com.charlesmuchene.prefeditor.files.EditorFiles
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -37,6 +38,7 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
 
     suspend fun run(command: List<String>, config: ProcessBuilder.() -> Unit = {}): Result<String> =
         withContext(context) {
+        editorLogger.debug { command }
             val builder = ProcessBuilder(command).apply {
                 val scriptsPath = EditorFiles.scriptsPath().pathString
                 environment()[PATH] += ":$scriptsPath"

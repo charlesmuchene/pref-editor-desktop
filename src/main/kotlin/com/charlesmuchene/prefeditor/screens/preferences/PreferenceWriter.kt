@@ -63,7 +63,7 @@ class PreferenceWriter(
 
     private suspend fun add(edit: Edit.Add): Result<String> {
         val command = command.command(edit = edit)
-        return processor.run(command) // TODO { environment()[CONTENT] = content }
+        return processor.run(command)
     }
 
     private suspend fun MutableList<Result<String>>.delete(deletes: List<Edit.Delete>) {

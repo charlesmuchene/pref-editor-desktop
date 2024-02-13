@@ -88,12 +88,9 @@ private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifi
     Row(modifier = modifier) {
         Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
         Spacer(modifier = Modifier.weight(1f))
-        var checked by remember { mutableStateOf(false) }
+        val checked by viewModel.backupEnabled
         Row(verticalAlignment = Alignment.CenterVertically) {
-            CheckboxRow(text = "Backup file", checked = checked, onCheckedChange = {
-                viewModel.backup(it)
-                checked = it
-            })
+            CheckboxRow(text = "Backup file", checked = checked, onCheckedChange = viewModel::backup)
             Spacer(modifier = Modifier.width(12.dp))
             val enabled by viewModel.enableSave.collectAsState()
             DefaultButton(onClick = viewModel::save, enabled = enabled) {
