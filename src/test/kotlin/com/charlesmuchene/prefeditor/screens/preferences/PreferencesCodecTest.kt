@@ -1,14 +1,12 @@
-package com.charlesmuchene.prefeditor.desktop
+package com.charlesmuchene.prefeditor.screens.preferences
 
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceEncoder.Encoder.attrib
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceEncoder.Encoder.tag
-import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PreferencesCodecTest {
-
     private lateinit var manager: PreferencesCodec
 
     @BeforeEach

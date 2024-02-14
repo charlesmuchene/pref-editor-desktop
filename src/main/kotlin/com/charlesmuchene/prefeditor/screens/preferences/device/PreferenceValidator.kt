@@ -25,7 +25,13 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPrefere
  */
 class PreferenceValidator {
 
-    fun allowedEdits(edits: Map<String, UIPreference>): Boolean {
+    /**
+     * Determine there are any edited preferences
+     *
+     * @param edits Edits handle
+     * @return `true` if any prefs are edited, `false` otherwise
+     */
+    fun hasEdits(edits: Map<String, UIPreference>): Boolean {
         return edits.values.any { it.state is PreferenceState.Deleted || it.state is PreferenceState.Changed }
     }
 

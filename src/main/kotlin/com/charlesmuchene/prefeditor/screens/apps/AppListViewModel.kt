@@ -33,10 +33,10 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class AppListViewModel(
+    reloadSignal: ReloadSignal,
     private val device: Device,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
-    private val reloadSignal: ReloadSignal,
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
 

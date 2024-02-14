@@ -73,7 +73,7 @@ class EditorViewModel(
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     val enableSave: StateFlow<Boolean> = changes
-        .map { validator.allowedEdits(edits = edits) }
+        .map { validator.hasEdits(edits = edits) }
         .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = false)
 
     init {

@@ -1,64 +1,51 @@
-package com.charlesmuchene.prefeditor.parser
+package com.charlesmuchene.prefeditor.screens.device
 
 import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.utils.buffered
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
-class DeviceListParserTest {
+class DeviceListDecoderTest {
 
-    private lateinit var parser: DeviceListParser
+    private lateinit var decoder: DeviceListDecoder
 
     @BeforeEach
     fun setup() {
-        parser = DeviceListParser()
+        decoder = DeviceListDecoder()
     }
 
     @Test
     fun `parses no device stream`() = runTest {
-        NO_DEVICE.buffered {
-            val devices = parser.parse(this)
-            assertTrue(devices.isEmpty())
-        }
+        val devices = decoder.decode(NO_DEVICE)
+        kotlin.test.assertTrue(devices.isEmpty())
     }
 
     @Test
     fun `parsing one device`() = runTest {
-        ONE_DEVICE.buffered {
-            val devices = parser.parse(this)
-            assertEquals(expected = listOf(element = deviceOne), actual = devices)
-        }
+        val devices = decoder.decode(ONE_DEVICE)
+        kotlin.test.assertEquals(expected = listOf(element = deviceOne), actual = devices)
     }
 
     @Test
     fun `parsing multiple devices`() = runTest {
-        MULTIPLE_DEVICES.buffered {
-            val devices = parser.parse(this)
-            assertEquals(expected = listOf(deviceOne, deviceTwo), actual = devices)
-        }
+        val devices = decoder.decode(MULTIPLE_DEVICES)
+        kotlin.test.assertEquals(expected = listOf(deviceOne, deviceTwo), actual = devices)
     }
 
     @Test
     fun `parsing multiple devices with an unauthorized preference`() = runTest {
-        UNAUTHORIZED_DEVICE.buffered {
-            val devices = parser.parse(this)
-            assertEquals(expected = listOf(unauthorized, deviceTwo), actual = devices)
-        }
+        val devices = decoder.decode(UNAUTHORIZED_DEVICE)
+        kotlin.test.assertEquals(expected = listOf(unauthorized, deviceTwo), actual = devices)
     }
 
     @Test
     fun `parsing rare device connection`() = runTest {
-        NEVER_SEEN_BEFORE_DEVICE_CONNECTION.buffered {
-            val devices = parser.parse(this).first()
-            assertEquals(expected = deviceOne.serial, actual = devices.serial)
-        }
+        val devices = decoder.decode(NEVER_SEEN_BEFORE_DEVICE_CONNECTION).first()
+        kotlin.test.assertEquals(expected = deviceOne.serial, actual = devices.serial)
     }
 
     private companion object {
-        private val NO_DEVICE = """List of devices attached
+        private const val NO_DEVICE = """List of devices attached
             
         """
 

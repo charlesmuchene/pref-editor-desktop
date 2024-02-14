@@ -18,7 +18,10 @@ package com.charlesmuchene.prefeditor.navigation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +37,7 @@ import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
 
 @Composable
-@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
 
     val navigation = LocalNavigation.current

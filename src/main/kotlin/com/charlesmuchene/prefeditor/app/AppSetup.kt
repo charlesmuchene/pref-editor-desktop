@@ -29,19 +29,19 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
+import java.nio.file.Path
+import kotlin.io.path.pathString
 
 /**
  * Set app up
  *
  * TODO Add some DI framework if these get crazy!
  */
-suspend fun appSetup(): AppStatus = coroutineScope {
-    val processor = Processor()
-
+suspend fun appSetup(pathOverride: Path? = null, processor: Processor = Processor()): AppStatus = coroutineScope {
     val appState = async {
         val codec = PreferencesCodec()
-        EditorFiles.initialize(codec = codec)
-        val path = EditorFiles.preferencesPath().toString()
+        EditorFiles.initialize(codec = codec, appPathOverride = pathOverride)
+        val path = EditorFiles.preferencesPath(appPathOverride = pathOverride).pathString
         val command = DesktopWriteCommand(path = path)
         val editor = PreferenceWriter(command = command, processor = processor)
         val preferences = AppPreferences(codec = codec, editor = editor).apply { initialize() }

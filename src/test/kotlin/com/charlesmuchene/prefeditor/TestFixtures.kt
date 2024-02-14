@@ -17,6 +17,8 @@
 package com.charlesmuchene.prefeditor
 
 import com.charlesmuchene.prefeditor.data.*
+import java.nio.file.Files
+import java.nio.file.Path
 
 object TestFixtures {
 
@@ -64,4 +66,25 @@ object TestFixtures {
                     <long name="long" value="100" />
                 </map>
             """
+
+    val APP_LIST_OUTPUT = """package:com.charlesmuchene.player
+        package:com.charlesmuchene.now
+        package:com.charlesmuchene.works
+        package:com.charlesmuchene.in
+        package:com.charlesmuchene.compose
+    """.trimIndent()
+
+    val appList = listOf(
+        App(packageName = "com.charlesmuchene.player"),
+        App(packageName = "com.charlesmuchene.now"),
+        App(packageName = "com.charlesmuchene.works"),
+        App(packageName = "com.charlesmuchene.in"),
+        App(packageName = "com.charlesmuchene.compose"),
+    )
+
+    fun emptyPreferences(): String {
+        val url = javaClass.classLoader.getResource("empty-preferences.xml") ?: error("Missing empty preferences file")
+        val path = Path.of(url.toURI())
+        return Files.readAllLines(path).joinToString(separator = "\r\n")
+    }
 }

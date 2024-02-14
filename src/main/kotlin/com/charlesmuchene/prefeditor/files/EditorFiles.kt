@@ -19,6 +19,7 @@ package com.charlesmuchene.prefeditor.files
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceEncoder.Encoder.attrib
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceEncoder.Encoder.tag
 import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.ThemeCodec
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,43 +33,46 @@ import kotlin.io.path.exists
  */
 object EditorFiles {
 
-    private const val DIR = ".pref-editor"
+    private const val VERSION = "1.0"
     private const val HOME_DIR = "user.home"
-    private const val SCRIPTS_DIR = "scripts"
-    private const val DEVICE_FILE = "device.sh"
-    private const val DESKTOP_FILE = "desktop.sh"
-    private const val PREFERENCES = "preferences.xml"
+    private val DEFAULT_THEME = EditorTheme.System.ordinal
+
+    const val ROOT_DIR = ".pref-editor"
+    const val SCRIPTS_DIR = "scripts"
+    const val DEVICE_FILE = "device.sh"
+    const val DESKTOP_FILE = "desktop.sh"
+    const val PREFERENCES = "preferences.xml"
 
     private val context = Dispatchers.IO
 
-    private val appPath: Path = Paths.get(System.getProperty(HOME_DIR), DIR)
+    private val appPath: Path = Paths.get(System.getProperty(HOME_DIR), ROOT_DIR)
 
-    fun preferencesPath(): Path = appPath.resolve(PREFERENCES)
+    fun preferencesPath(appPathOverride: Path? = null): Path = (appPathOverride ?: appPath).resolve(PREFERENCES)
 
-    suspend fun scriptsPath(): Path = appPath.resolve(SCRIPTS_DIR).apply {
-        ensurePathExists(path = this)
-    }
+    suspend fun scriptsPath(appPathOverride: Path? = null): Path =
+        (appPathOverride ?: appPath).resolve(SCRIPTS_DIR).apply { ensurePathExists(path = this) }
 
-    suspend fun initialize(codec: PreferencesCodec) {
-        ensurePathExists(path = appPath)
-        createAppPreferences(path = preferencesPath(), codec = codec)
-        copyScripts()
+    suspend fun initialize(codec: PreferencesCodec, appPathOverride: Path? = null) {
+        val pathOverride = appPathOverride?.resolve(ROOT_DIR)
+        ensurePathExists(path = pathOverride ?: appPath)
+        createAppPreferences(path = preferencesPath(pathOverride), codec = codec)
+        val scriptsPath = scriptsPath(appPathOverride = pathOverride)
+        copyScripts(scriptsPath = scriptsPath)
     }
 
     private suspend fun createAppPreferences(path: Path, codec: PreferencesCodec) = withContext(context) {
         if (!path.exists()) {
             val content = codec.encodeDocument {
-                tag("version") { attrib(name = "value", value = "1.0") }
-                tag(ThemeCodec.THEME) { attrib(name = "value", value = "2") }
+                tag("version") { attrib(name = "value", value = VERSION) }
+                tag(ThemeCodec.THEME) { attrib(name = "value", value = "$DEFAULT_THEME") }
             }
             Files.writeString(path, content.trim())
         }
     }
 
-    private suspend fun copyScripts() {
-        val path = scriptsPath()
+    private suspend fun copyScripts(scriptsPath: Path) {
         listOf(DESKTOP_FILE, DEVICE_FILE).forEach { name ->
-            copyScript(name = name, path = path.resolve(name))
+            copyScript(name = name, path = scriptsPath.resolve(name))
         }
     }
 
@@ -81,7 +85,7 @@ object EditorFiles {
         }
     }
 
-    private suspend fun ensurePathExists(path: Path) = withContext(context){
+    private suspend fun ensurePathExists(path: Path) = withContext(context) {
         if (!path.exists()) Files.createDirectory(path)
     }
 

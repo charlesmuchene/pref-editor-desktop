@@ -1,11 +1,12 @@
 package com.charlesmuchene.prefeditor.validation
 
-import com.charlesmuchene.prefeditor.TestFixtures
 import com.charlesmuchene.prefeditor.data.FloatPreference
 import com.charlesmuchene.prefeditor.data.IntPreference
 import com.charlesmuchene.prefeditor.data.LongPreference
 import com.charlesmuchene.prefeditor.data.StringPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferenceValidator
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 import org.junit.jupiter.api.BeforeEach
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -17,23 +18,23 @@ class PreferenceValidatorTest {
 
     @BeforeEach
     fun setup() {
-        validator = PreferenceValidator(TestFixtures.prefs.preferences)
+        validator = PreferenceValidator()
     }
 
     @Test
     fun `valid edits`() {
-        val edits = mapOf("another-integer" to (IntPreference::class to "4"))
+        val preference = IntPreference("another-integer", "4")
 
-        val isValid = validator.allowedEdits(edits)
+        val isValid = validator.isValid(preference)
 
         assertTrue(isValid)
     }
 
     @Test
     fun `a string edit is always valid`() {
-        val edits = mapOf("string" to (StringPreference::class to ""))
+        val preference = StringPreference("string", "")
 
-        val isValid = validator.allowedEdits(edits)
+        val isValid = validator.isValid(preference)
 
         assertTrue(isValid)
     }
@@ -62,6 +63,24 @@ class PreferenceValidatorTest {
 
         val isValid = validator.isValid(preference)
 
-        assertFalse(isValid)
+        assertTrue(isValid)
+    }
+
+    @Test
+    fun `edit check returns false if there are no edited preferences`() {
+        val edits = mapOf("this" to UIPreference(IntPreference("int", "0")))
+
+        val hasEdits = validator.hasEdits(edits)
+
+        assertFalse(hasEdits)
+    }
+
+    @Test
+    fun `edit check returns true if there is an edited preference`() {
+        val edits = mapOf("this" to UIPreference(IntPreference("int", "0"), PreferenceState.Deleted))
+
+        val hasEdits = validator.hasEdits(edits)
+
+        assertTrue(hasEdits)
     }
 }
