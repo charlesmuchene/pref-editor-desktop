@@ -39,6 +39,7 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreference
 import com.charlesmuchene.prefeditor.ui.Toast
 import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.*
@@ -85,12 +86,14 @@ fun Editor(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier)
 
 @Composable
 private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+    var showAddPreference by remember { mutableStateOf(false) }
+
     Row(modifier = modifier) {
         Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
         Spacer(modifier = Modifier.weight(1f))
         val checked by viewModel.backupEnabled
         Row(verticalAlignment = Alignment.CenterVertically) {
-            OutlinedButton(onClick = {}, modifier = Modifier.pointerOnHover()) {
+            OutlinedButton(onClick = { showAddPreference = true }, modifier = Modifier.pointerOnHover()) {
                 val text = "Add preference"
                 val painter by rememberIconPainter(name = "plus")
                 Icon(
@@ -110,6 +113,15 @@ private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifi
                 Text(text = "Save")
             }
         }
+    }
+
+    if (showAddPreference) {
+        val scope = rememberCoroutineScope()
+        AddPreferenceComponent(onDismiss = { showAddPreference = false }, onAdd = { name, value, type ->
+            scope.launch {
+                showAddPreference = !viewModel.add(name = name, value = value, type = type)
+            }
+        })
     }
 }
 

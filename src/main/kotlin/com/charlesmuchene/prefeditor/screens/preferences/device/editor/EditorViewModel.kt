@@ -20,14 +20,12 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.models.PreferenceType
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferenceValidator
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import org.jetbrains.jewel.ui.Outline
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -38,6 +36,7 @@ sealed interface PreferenceState {
     data object Changed : PreferenceState
     data object Deleted : PreferenceState
     data object None : PreferenceState
+    data object New : PreferenceState
 }
 
 data class UIPreference(val preference: Preference, val state: PreferenceState = PreferenceState.None)
@@ -222,5 +221,36 @@ class EditorViewModel(
         is LongPreference -> LongPreference(preference.name, value = value)
         is StringPreference -> StringPreference(preference.name, value = value)
         else -> error("Changing $preference is not supported")
+    }
+
+    /**
+     * Add a new preference
+     *
+     * @param name Preference name
+     * @param value Preference value
+     * @param type [PreferenceType] instance
+     */
+    suspend fun add(name: String, value: String, type: PreferenceType?): Boolean = coroutineScope {
+        if (type == null) run {
+            _message.emit("Select a data type")
+            return@coroutineScope false
+        }
+
+        val preference = createPreference(name = name, value = value, type = type)
+        if (validator.isValid(preference)) {
+            prefUseCase.addPreference(preference).run { isSuccess }
+        } else {
+            _message.emit("'$value' cannot be added as ${type.name}")
+            false
+        }
+    }
+
+    private fun createPreference(name: String, value: String, type: PreferenceType): Preference = when (type) {
+        PreferenceType.Boolean -> BooleanPreference(name = name, value = value)
+        PreferenceType.String -> StringPreference(name = name, value = value)
+        PreferenceType.Float -> FloatPreference(name = name, value = value)
+        PreferenceType.Integer -> IntPreference(name = name, value = value)
+        PreferenceType.Long -> LongPreference(name = name, value = value)
+        PreferenceType.Set -> SetPreference(name = name, entries = listOf(value))
     }
 }

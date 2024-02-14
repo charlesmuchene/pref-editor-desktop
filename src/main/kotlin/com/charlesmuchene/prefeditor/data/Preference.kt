@@ -16,15 +16,35 @@
 
 package com.charlesmuchene.prefeditor.data
 
+import com.charlesmuchene.prefeditor.models.PreferenceType
+
 sealed class Preference(open val name: String, open val value: String) {
     fun toPair() = name to value
 }
 
-data class BooleanPreference(override val name: String, override val value: String) : Preference(name = name, value = value)
-data class StringPreference(override val name: String, override val value: String) : Preference(name = name, value = value)
-data class FloatPreference(override val name: String, override val value: String) : Preference(name = name, value = value)
-data class LongPreference(override val name: String, override val value: String) : Preference(name = name, value = value)
-data class IntPreference(override val name: String, override val value: String) : Preference(name = name, value = value)
+data class BooleanPreference(override val name: String, override val value: String) :
+    Preference(name = name, value = value)
+
+data class StringPreference(override val name: String, override val value: String) :
+    Preference(name = name, value = value)
+
+data class FloatPreference(override val name: String, override val value: String) :
+    Preference(name = name, value = value)
+
+data class LongPreference(override val name: String, override val value: String) :
+    Preference(name = name, value = value)
+
+data class IntPreference(override val name: String, override val value: String) :
+    Preference(name = name, value = value)
 
 data class SetPreference(override val name: String, val entries: List<String>) :
     Preference(name = name, value = entries.joinToString())
+
+fun preferenceIconName(preference: Preference): String = when (preference) {
+    is BooleanPreference -> PreferenceType.Boolean.icon
+    is StringPreference -> PreferenceType.String.icon
+    is FloatPreference -> PreferenceType.Float.icon
+    is IntPreference -> PreferenceType.Integer.icon
+    is LongPreference -> PreferenceType.Long.icon
+    is SetPreference -> PreferenceType.Set.icon
+}

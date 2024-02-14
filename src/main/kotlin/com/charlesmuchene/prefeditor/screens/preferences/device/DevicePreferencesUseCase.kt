@@ -65,4 +65,9 @@ class DevicePreferencesUseCase(
         val content = codec.encode(edits = edits, existing = this.preferences.value.preferences)
         return writer.edit(content).also { readPreferences() }
     }
+
+    suspend fun addPreference(preference: Preference): Result<String> {
+        val list = listOf(UIPreference(preference, state = PreferenceState.New))
+        return writePreferences(list).first()
+    }
 }

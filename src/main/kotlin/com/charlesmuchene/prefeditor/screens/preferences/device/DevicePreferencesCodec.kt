@@ -50,6 +50,7 @@ class DevicePreferencesCodec(private val codec: PreferencesCodec) {
                     ?: error("${preference.preference} missing from disk preferences"),
             )
 
+            PreferenceState.New -> encodeAdd(preference = preference.preference)
             PreferenceState.Deleted -> encodeDelete(preference = preference.preference)
             PreferenceState.None -> error("Unnecessary encode: no change to $preference")
         }
@@ -104,6 +105,17 @@ class DevicePreferencesCodec(private val codec: PreferencesCodec) {
     private fun encodeDelete(preference: Preference): Edit.Delete {
         val matcher = codec.encode { serializePreference(preference = preference) }
         return Edit.Delete(matcher = matcher)
+    }
+
+    /**
+     * Encode a preference to be added
+     *
+     * @param preference [Preference] to add
+     * @return [Edit.Add] instance
+     */
+    private fun encodeAdd(preference: Preference): Edit.Add {
+        val content = codec.encode { serializePreference(preference = preference) }
+        return Edit.Add(content = content)
     }
 
     /**

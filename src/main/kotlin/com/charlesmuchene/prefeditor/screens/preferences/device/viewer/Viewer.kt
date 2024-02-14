@@ -67,19 +67,12 @@ fun Viewer(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier,
 
 @Composable
 private fun PreferenceRow(preference: Preference, modifier: Modifier = Modifier) {
-    val icon = when (preference) {
-        is BooleanPreference -> "spherical"
-        is FloatPreference -> "cylindrical"
-        is IntPreference -> "conical"
-        is LongPreference -> "pyramidical"
-        is SetPreference -> "triangular"
-        is StringPreference -> "cubical"
-    }
-    val painter by rememberIconPainter(icon)
+    val name = preferenceIconName(preference)
+    val painter by rememberIconPainter(name)
 
     Column(modifier = modifier.fillMaxWidth().padding(top = 8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(painter = painter, modifier = Modifier.size(24.dp), contentDescription = icon)
+            Icon(painter = painter, modifier = Modifier.size(24.dp), contentDescription = name)
             Spacer(modifier = Modifier.width(padding * .5f))
             Column {
                 Text(text = preference.name, fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))
