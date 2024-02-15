@@ -33,11 +33,9 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreference
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
 import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.DefaultButton
-import org.jetbrains.jewel.ui.component.Divider
-import org.jetbrains.jewel.ui.component.Icon
-import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.*
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
@@ -66,13 +64,21 @@ fun Viewer(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier,
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 private fun PreferenceRow(preference: Preference, modifier: Modifier = Modifier) {
     val name = preferenceIconName(preference)
     val painter by rememberIconPainter(name)
 
     Column(modifier = modifier.fillMaxWidth().padding(top = 8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(painter = painter, modifier = Modifier.size(24.dp), contentDescription = name)
+            Tooltip(tooltip = { Text(text = preference.text) }) {
+                Icon(
+                    painter = painter,
+                    contentDescription = name,
+                    tint = JewelTheme.contentColor,
+                    modifier = Modifier.size(24.dp),
+                )
+            }
             Spacer(modifier = Modifier.width(padding * .5f))
             Column {
                 Text(text = preference.name, fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))

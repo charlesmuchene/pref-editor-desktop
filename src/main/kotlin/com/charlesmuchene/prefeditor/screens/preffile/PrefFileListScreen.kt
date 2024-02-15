@@ -155,6 +155,7 @@ private fun PrefListingRow(prefFile: UIPrefFile, modifier: Modifier = Modifier, 
                 ) {
                     val painter by rememberIconPainter(name = "read")
                     Icon(
+                        tint = JewelTheme.contentColor,
                         painter = painter,
                         contentDescription = "View file",
                         modifier = Modifier

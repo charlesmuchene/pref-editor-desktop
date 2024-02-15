@@ -19,6 +19,15 @@ package com.charlesmuchene.prefeditor.data
 import com.charlesmuchene.prefeditor.models.PreferenceType
 
 sealed class Preference(open val name: String, open val value: String) {
+    val text: String
+        get() = when (this) {
+            is BooleanPreference -> "Boolean"
+            is FloatPreference -> "Float"
+            is IntPreference -> "Integer"
+            is LongPreference -> "Long"
+            is SetPreference -> "Set"
+            is StringPreference -> "String"
+        }
     fun toPair() = name to value
 }
 
