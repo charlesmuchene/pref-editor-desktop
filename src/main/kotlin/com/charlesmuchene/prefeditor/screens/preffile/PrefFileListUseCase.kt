@@ -20,7 +20,7 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
-import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.EmptyPrefs
+import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.EmptyFiles
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,11 +32,12 @@ class PrefFileListUseCase(
     private val decoder: PrefFileListDecoder,
 ) {
     private val command = PrefFileListCommand(app = app, device = device)
-    private val _prefFileResult = MutableStateFlow<PrefFileResult>(EmptyPrefs)
+    private val _prefFileResult = MutableStateFlow<PrefFileResult>(EmptyFiles)
     val fileResult: StateFlow<PrefFileResult> = _prefFileResult.asStateFlow()
 
     suspend fun fetch(): Result<PrefFileResult> = processor.run(command.command()).map { content ->
-        _prefFileResult.emit(EmptyPrefs)
+        // Consider a default value e.g. NONE since state flow cannot 'flowisha' same value
+        _prefFileResult.emit(EmptyFiles)
         decoder.decode(content = content).also { _prefFileResult.emit(it) }
     }
 }
