@@ -17,9 +17,22 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device.viewer
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,12 +49,19 @@ import com.charlesmuchene.prefeditor.ui.listing.ItemListing
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.*
+import org.jetbrains.jewel.ui.component.DefaultButton
+import org.jetbrains.jewel.ui.component.Divider
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.Tooltip
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun Viewer(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier, onEditClick: () -> Unit) {
-
+fun Viewer(
+    prefUseCase: DevicePreferencesUseCase,
+    modifier: Modifier = Modifier,
+    onEditClick: () -> Unit,
+) {
     val scope = rememberCoroutineScope()
     val viewModel by remember {
         mutableStateOf(ViewerViewModel(prefUseCase = prefUseCase, scope = scope))
@@ -66,7 +86,10 @@ fun Viewer(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier,
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun PreferenceRow(preference: Preference, modifier: Modifier = Modifier) {
+private fun PreferenceRow(
+    preference: Preference,
+    modifier: Modifier = Modifier,
+) {
     val name = preferenceIconName(preference)
     val painter by rememberIconPainter(name)
 
@@ -100,11 +123,14 @@ private fun PreferenceRow(preference: Preference, modifier: Modifier = Modifier)
 }
 
 @Composable
-private fun ViewerHeader(modifier: Modifier = Modifier, onClick: () -> Unit) {
+private fun ViewerHeader(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(text = "Preferences View", style = Typography.heading, modifier = modifier)
         Box(modifier = Modifier, contentAlignment = Alignment.Center) {

@@ -37,25 +37,31 @@ import kotlin.io.path.pathString
  *
  * TODO Add some DI framework if these get crazy!
  */
-suspend fun appSetup(pathOverride: Path? = null, processor: Processor = Processor()): AppStatus = coroutineScope {
-    val appState = async {
-        val codec = PreferencesCodec()
-        EditorFiles.initialize(codec = codec, appPathOverride = pathOverride)
-        val path = EditorFiles.preferencesPath(appPathOverride = pathOverride).pathString
-        val command = DesktopWriteCommand(path = path)
-        val editor = PreferenceWriter(command = command, processor = processor)
-        val preferences = AppPreferences(codec = codec, editor = editor).apply { initialize() }
-        AppState(preferences = preferences)
-    }
+suspend fun appSetup(
+    pathOverride: Path? = null,
+    processor: Processor = Processor(),
+): AppStatus =
+    coroutineScope {
+        val appState =
+            async {
+                val codec = PreferencesCodec()
+                EditorFiles.initialize(codec = codec, appPathOverride = pathOverride)
+                val path = EditorFiles.preferencesPath(appPathOverride = pathOverride).pathString
+                val command = DesktopWriteCommand(path = path)
+                val editor = PreferenceWriter(command = command, processor = processor)
+                val preferences = AppPreferences(codec = codec, editor = editor).apply { initialize() }
+                AppState(preferences = preferences)
+            }
 
-    val bridgeStatus = async {
-        Bridge(processor = processor, context = currentCoroutineContext()).checkBridge()
-    }
+        val bridgeStatus =
+            async {
+                Bridge(processor = processor, context = currentCoroutineContext()).checkBridge()
+            }
 
-    val result = awaitAll(appState, bridgeStatus)
-    val state = result[0] as AppState
-    when (val status = result[1] as BridgeStatus) {
-        BridgeStatus.Available -> AppStatus.Ready(state = state)
-        BridgeStatus.Unavailable -> AppStatus.NoBridge(state = state, bridgeStatus = status)
+        val result = awaitAll(appState, bridgeStatus)
+        val state = result[0] as AppState
+        when (val status = result[1] as BridgeStatus) {
+            BridgeStatus.Available -> AppStatus.Ready(state = state)
+            BridgeStatus.Unavailable -> AppStatus.NoBridge(state = state, bridgeStatus = status)
+        }
     }
-}

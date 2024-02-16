@@ -22,10 +22,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.charlesmuchene.prefeditor.data.StringPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
-import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.PrimitivePreferenceRow
 
 @Composable
-fun StringPreferenceRow(uiPreference: UIPreference, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+fun StringPreferenceRow(
+    uiPreference: UIPreference,
+    viewModel: EditorViewModel,
+    modifier: Modifier = Modifier,
+) {
     if (uiPreference.preference !is StringPreference) return
 
     PrimitivePreferenceRow(

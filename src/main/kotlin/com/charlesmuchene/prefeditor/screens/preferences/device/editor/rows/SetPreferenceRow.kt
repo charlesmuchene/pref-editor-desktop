@@ -17,7 +17,11 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows
 
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorViewModel
@@ -29,18 +33,22 @@ import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.TextField
 import org.jetbrains.jewel.ui.component.Typography
 
-
 @OptIn(ExperimentalJewelApi::class)
 @Composable
-fun SetPreferenceRow(preference: SetPreference, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+fun SetPreferenceRow(
+    preference: SetPreference,
+    viewModel: EditorViewModel,
+    modifier: Modifier = Modifier,
+) {
     val subPrefs = viewModel.createSubPreferences(preference)
-    val tree = remember {
-        buildTree {
-            addNode(subPrefs.first) {
-                subPrefs.second.forEach(::addLeaf)
+    val tree =
+        remember {
+            buildTree {
+                addNode(subPrefs.first) {
+                    subPrefs.second.forEach(::addLeaf)
+                }
             }
         }
-    }
 
     // TODO Remove selection highlighting
     LazyTree(
@@ -55,12 +63,18 @@ fun SetPreferenceRow(preference: SetPreference, viewModel: EditorViewModel, modi
 }
 
 @Composable
-private fun SetSubPreferenceHeaderRow(header: SetSubPreference.Header, modifier: Modifier = Modifier) {
+private fun SetSubPreferenceHeaderRow(
+    header: SetSubPreference.Header,
+    modifier: Modifier = Modifier,
+) {
     Text(text = header.name, style = Typography.h3TextStyle(), modifier = modifier)
 }
 
 @Composable
-private fun SetSubPreferenceRow(preference: SetSubPreference.Preference, modifier: Modifier = Modifier) {
+private fun SetSubPreferenceRow(
+    preference: SetSubPreference.Preference,
+    modifier: Modifier = Modifier,
+) {
     var value by remember { mutableStateOf(preference.value) }
     TextField(
         modifier = modifier,

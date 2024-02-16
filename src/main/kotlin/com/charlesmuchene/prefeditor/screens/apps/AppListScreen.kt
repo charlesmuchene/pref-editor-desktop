@@ -21,10 +21,15 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
@@ -45,21 +50,24 @@ import kotlinx.coroutines.launch
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun AppListScreen(screen: AppsScreen, modifier: Modifier = Modifier) {
-
+fun AppListScreen(
+    screen: AppsScreen,
+    modifier: Modifier = Modifier,
+) {
     val scope = rememberCoroutineScope()
     val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val reloadSignal = LocalReloadSignal.current
-    val viewModel = remember {
-        AppListViewModel(
-            scope = scope,
-            device = screen.device,
-            navigation = navigation,
-            reloadSignal = reloadSignal,
-            favorites = appState.favorites,
-        )
-    }
+    val viewModel =
+        remember {
+            AppListViewModel(
+                scope = scope,
+                device = screen.device,
+                navigation = navigation,
+                reloadSignal = reloadSignal,
+                favorites = appState.favorites,
+            )
+        }
     val uiState by viewModel.uiState.collectAsState()
 
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
@@ -68,14 +76,18 @@ fun AppListScreen(screen: AppsScreen, modifier: Modifier = Modifier) {
         header = { Text(text = header, style = Typography.heading) },
         subHeader = {
             FilterComponent(placeholder = "Filter apps", onFilter = viewModel::filter)
-        }
+        },
     ) {
         updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
             when (state) {
                 UIState.Loading -> LoadingApps(modifier = modifier)
                 UIState.Error -> LoadingAppError(modifier = modifier)
-                is UIState.Apps -> if (state.apps.isEmpty()) NoFilterMatch(modifier = modifier)
-                else AppListing(apps = state.apps, modifier = modifier, viewModel = viewModel)
+                is UIState.Apps ->
+                    if (state.apps.isEmpty()) {
+                        NoFilterMatch(modifier = modifier)
+                    } else {
+                        AppListing(apps = state.apps, modifier = modifier, viewModel = viewModel)
+                    }
             }
         }
     }
@@ -95,19 +107,30 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun AppListing(apps: List<UIApp>, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
+private fun AppListing(
+    apps: List<UIApp>,
+    modifier: Modifier = Modifier,
+    viewModel: AppListViewModel,
+) {
     val filtered by viewModel.filtered.collectAsState(apps)
 
-    if (filtered.isEmpty()) NoFilterMatch(modifier = modifier)
-    else ItemListing(modifier = modifier) {
-        items(items = filtered, key = { it.app.packageName }) { app ->
-            AppRow(app = app, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
+    if (filtered.isEmpty()) {
+        NoFilterMatch(modifier = modifier)
+    } else {
+        ItemListing(modifier = modifier) {
+            items(items = filtered, key = { it.app.packageName }) { app ->
+                AppRow(app = app, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
+            }
         }
     }
 }
 
 @Composable
-private fun AppRow(app: UIApp, modifier: Modifier = Modifier, viewModel: AppListViewModel) {
+private fun AppRow(
+    app: UIApp,
+    modifier: Modifier = Modifier,
+    viewModel: AppListViewModel,
+) {
     val scope = rememberCoroutineScope()
     var localApp by remember(app) { mutableStateOf(app) }
 
@@ -115,7 +138,7 @@ private fun AppRow(app: UIApp, modifier: Modifier = Modifier, viewModel: AppList
         item = localApp,
         modifier = modifier,
         onClick = viewModel::selected,
-        onFavorite = { scope.launch { localApp = viewModel.favorite(it) } }
+        onFavorite = { scope.launch { localApp = viewModel.favorite(it) } },
     ) {
         Text(text = localApp.app.packageName, style = Typography.primary, modifier = Modifier.padding(4.dp))
     }

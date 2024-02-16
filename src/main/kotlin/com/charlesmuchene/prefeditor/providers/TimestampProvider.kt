@@ -24,7 +24,6 @@ fun interface TimestampProvider {
 }
 
 class TimeStampProviderImpl : TimestampProvider {
-
     override fun invoke(): String {
         val now = LocalDateTime.now()
         return now.format(formatter)

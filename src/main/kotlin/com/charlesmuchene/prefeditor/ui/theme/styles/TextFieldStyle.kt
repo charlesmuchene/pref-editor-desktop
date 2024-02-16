@@ -25,8 +25,9 @@ import org.jetbrains.jewel.ui.component.styling.TextFieldStyle
 
 @Composable
 fun textFieldStyle(isDark: Boolean): TextFieldStyle {
-    val darkStyle = TextFieldStyle.Companion.dark(
-        colors = TextFieldColors.Companion.dark(borderFocused = green, borderHovered = green)
-    )
+    val darkStyle =
+        TextFieldStyle.Companion.dark(
+            colors = TextFieldColors.Companion.dark(borderFocused = green, borderHovered = green),
+        )
     return if (isDark) darkStyle else TextFieldStyle.Companion.light()
 }

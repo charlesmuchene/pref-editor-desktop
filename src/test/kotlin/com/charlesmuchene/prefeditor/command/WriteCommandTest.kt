@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class WriteCommandTest {
-
     private lateinit var command: WriteCommand
 
     @BeforeEach
@@ -38,7 +37,7 @@ class WriteCommandTest {
             assertEquals(expected = "<\\/map>", actual = "</map>".escaped())
             assertEquals(
                 expected = "<file device=\\\"1234\\\" app=\\\"package\\\">filename<\\/file>",
-                actual = "<file device=\"1234\" app=\"package\">filename</file>".escaped()
+                actual = "<file device=\"1234\" app=\"package\">filename</file>".escaped(),
             )
         }
     }

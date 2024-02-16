@@ -33,7 +33,8 @@ class AppPreferences(codec: PreferencesCodec, editor: PreferenceWriter) {
     val favorites = FavoritesUseCase(editor = editor, codec = FavoritesCodec(codec))
     val theme = ThemeUseCase(editor = editor, codec = ThemeCodec(codec))
 
-    suspend fun initialize() = coroutineScope {
-        awaitAll(async { favorites.refresh() }, async { theme.loadTheme() })
-    }
+    suspend fun initialize() =
+        coroutineScope {
+            awaitAll(async { favorites.refresh() }, async { theme.loadTheme() })
+        }
 }

@@ -44,10 +44,11 @@ class PreferencesCodecTest {
 
     @Test
     fun `write xml content`() {
-        val output = manager.encode {
-            tag("tag") { attrib("name", "value") }
-            tag("stuff") { text("content") }
-        }
+        val output =
+            manager.encode {
+                tag("tag") { attrib("name", "value") }
+                tag("stuff") { text("content") }
+            }
         assertEquals(expected = "<tag name=\"value\" />\r\n<stuff>content</stuff>", actual = output.trim())
     }
 }

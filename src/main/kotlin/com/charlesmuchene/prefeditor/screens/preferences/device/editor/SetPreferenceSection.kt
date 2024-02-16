@@ -17,7 +17,11 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Alignment
@@ -33,12 +37,15 @@ import org.jetbrains.jewel.ui.component.Divider
 import org.jetbrains.jewel.ui.component.Text
 
 @OptIn(ExperimentalFoundationApi::class)
-fun LazyListScope.setPreferenceSection(preferences: List<UIPreference>, viewModel: EditorViewModel) {
+fun LazyListScope.setPreferenceSection(
+    preferences: List<UIPreference>,
+    viewModel: EditorViewModel,
+) {
     item {
         Divider(
             orientation = Orientation.Horizontal,
             color = Color.LightGray.copy(alpha = 0.5f),
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier.padding(vertical = 8.dp),
         )
     }
 
@@ -46,7 +53,7 @@ fun LazyListScope.setPreferenceSection(preferences: List<UIPreference>, viewMode
         Row(
             modifier = Modifier.padding(bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(text = "String sets", style = Typography.heading)
             Text(

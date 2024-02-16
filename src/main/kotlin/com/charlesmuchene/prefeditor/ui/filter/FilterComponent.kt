@@ -19,7 +19,12 @@ package com.charlesmuchene.prefeditor.ui.filter
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
@@ -28,8 +33,11 @@ import com.charlesmuchene.prefeditor.ui.halfPadding
 import org.jetbrains.jewel.ui.component.CheckboxRow
 
 @Composable
-fun FilterComponent(placeholder: String, onFilter: (ItemFilter) -> Unit, modifier: Modifier = Modifier) {
-
+fun FilterComponent(
+    placeholder: String,
+    onFilter: (ItemFilter) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var checked by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
 
@@ -47,7 +55,7 @@ fun FilterComponent(placeholder: String, onFilter: (ItemFilter) -> Unit, modifie
             onCheckedChange = { checked = !checked },
             modifier = Modifier.pointerOnHover(),
             checked = checked,
-            text = "Starred"
+            text = "Starred",
         )
     }
 }

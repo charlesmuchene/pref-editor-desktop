@@ -24,7 +24,6 @@ import java.io.InputStream
  * Contract to decode preferences in xml format
  */
 interface PreferenceDecoder {
-
     /**
      * Read content from the given stream.
      *
@@ -34,10 +33,12 @@ interface PreferenceDecoder {
      * @param block Block to extract tags from -- has a [XmlPullParser] as the receiver
      * @throws [XmlPullParserException]
      */
-    suspend fun decode(inputStream: InputStream, block: XmlPullParser.() -> Unit)
+    suspend fun decode(
+        inputStream: InputStream,
+        block: XmlPullParser.() -> Unit,
+    )
 
     companion object Reader {
-
         /**
          * Skip the next tag in the decoding context
          *
@@ -62,7 +63,10 @@ interface PreferenceDecoder {
          * @return [R] The type of the consumed content
          * @receiver [XmlPullParser] instance
          */
-        fun <R> XmlPullParser.gobbleTag(tag: String, block: XmlPullParser.() -> R): R {
+        fun <R> XmlPullParser.gobbleTag(
+            tag: String,
+            block: XmlPullParser.() -> R,
+        ): R {
             require(XmlPullParser.START_TAG, null, tag)
             val result = block()
             nextTag()

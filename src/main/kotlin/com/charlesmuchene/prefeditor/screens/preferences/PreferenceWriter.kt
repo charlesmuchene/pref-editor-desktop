@@ -29,18 +29,18 @@ import com.charlesmuchene.prefeditor.processor.Processor
  *  - [Edit.Delete]
  */
 class PreferenceWriter(private val processor: Processor, private val command: WriteCommand) {
-
     /**
      * Perform the given edit
      *
      * @param edit [Edit] to make
      * @return Result of making the edit
      */
-    suspend fun edit(edit: Edit): Result<String> = when (edit) {
-        is Edit.Add -> add(edit = edit)
-        is Edit.Change -> change(edit = edit)
-        is Edit.Delete -> delete(edit = edit)
-    }
+    suspend fun edit(edit: Edit): Result<String> =
+        when (edit) {
+            is Edit.Add -> add(edit = edit)
+            is Edit.Change -> change(edit = edit)
+            is Edit.Delete -> delete(edit = edit)
+        }
 
     /**
      * Perform a collection of edits
@@ -48,9 +48,10 @@ class PreferenceWriter(private val processor: Processor, private val command: Wr
      * @param edits A [List] of [Edit]s to make
      * @return Result of batch editing
      */
-    suspend fun edit(edits: List<Edit>): List<Result<String>> = buildList {
-        edits.forEach { add(edit(it)) }
-    }
+    suspend fun edit(edits: List<Edit>): List<Result<String>> =
+        buildList {
+            edits.forEach { add(edit(it)) }
+        }
 
     private suspend fun add(edit: Edit.Add): Result<String> {
         val command = command.command(edit = edit)

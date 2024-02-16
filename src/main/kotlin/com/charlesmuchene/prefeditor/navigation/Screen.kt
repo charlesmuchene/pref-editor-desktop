@@ -23,6 +23,9 @@ import com.charlesmuchene.prefeditor.data.PrefFile
 sealed interface Screen
 
 data object DevicesScreen : Screen
+
 data class AppsScreen(val device: Device) : Screen
+
 data class FilesScreen(val app: App, val device: Device) : Screen
+
 data class EditScreen(val file: PrefFile, val app: App, val device: Device, val readOnly: Boolean = false) : Screen

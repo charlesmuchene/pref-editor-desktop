@@ -20,7 +20,10 @@ import org.jetbrains.skiko.SystemTheme
 import org.jetbrains.skiko.currentSystemTheme
 
 enum class EditorTheme {
-    Light, Dark, System;
+    Light,
+    Dark,
+    System,
+    ;
 
     fun isDark(): Boolean = (if (this == System) fromSystemTheme(currentSystemTheme) else this) == Dark
 

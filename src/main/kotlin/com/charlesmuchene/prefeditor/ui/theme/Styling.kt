@@ -31,16 +31,16 @@ import org.jetbrains.jewel.ui.component.styling.LocalChipStyle
 import org.jetbrains.jewel.ui.component.styling.LocalTextFieldStyle
 
 @Composable
-fun ComponentStyling.prefEditorStyle(isDark: Boolean): ComponentStyling = decoratedWindow()
-    .provide {
-        arrayOf(
-            LocalGlobalMetrics provides globalMetrics(),
-            LocalChipStyle provides chipStyle(isDark),
-            LocalGlobalColors provides globalColors(isDark),
-            LocalTextFieldStyle provides textFieldStyle(isDark),
-        )
-    }
+fun ComponentStyling.prefEditorStyle(isDark: Boolean): ComponentStyling =
+    decoratedWindow()
+        .provide {
+            arrayOf(
+                LocalGlobalMetrics provides globalMetrics(),
+                LocalChipStyle provides chipStyle(isDark),
+                LocalGlobalColors provides globalColors(isDark),
+                LocalTextFieldStyle provides textFieldStyle(isDark),
+            )
+        }
 
 @Composable
-fun theme(isDark: Boolean): ThemeDefinition =
-    if (isDark) JewelTheme.darkThemeDefinition() else JewelTheme.lightThemeDefinition()
+fun theme(isDark: Boolean): ThemeDefinition = if (isDark) JewelTheme.darkThemeDefinition() else JewelTheme.lightThemeDefinition()

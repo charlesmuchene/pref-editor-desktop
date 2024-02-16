@@ -32,12 +32,13 @@ class PrefFileListUseCase(
     private val decoder: PrefFileListDecoder,
 ) {
     private val command = PrefFileListCommand(app = app, device = device)
-    private val _prefFileResult = MutableStateFlow<PrefFileResult>(EmptyFiles)
-    val fileResult: StateFlow<PrefFileResult> = _prefFileResult.asStateFlow()
+    private val _fileResult = MutableStateFlow<PrefFileResult>(EmptyFiles)
+    val fileResult: StateFlow<PrefFileResult> = _fileResult.asStateFlow()
 
-    suspend fun fetch(): Result<PrefFileResult> = processor.run(command.command()).map { content ->
-        // Consider a default value e.g. NONE since state flow cannot 'flowisha' same value
-        _prefFileResult.emit(EmptyFiles)
-        decoder.decode(content = content).also { _prefFileResult.emit(it) }
-    }
+    suspend fun fetch(): Result<PrefFileResult> =
+        processor.run(command.command()).map { content ->
+            // Consider a default value e.g. NONE since state flow cannot 'flowisha' same value
+            _fileResult.emit(EmptyFiles)
+            decoder.decode(content = content).also { _fileResult.emit(it) }
+        }
 }

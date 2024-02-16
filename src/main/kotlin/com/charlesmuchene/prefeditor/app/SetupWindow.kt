@@ -17,7 +17,11 @@
 package com.charlesmuchene.prefeditor.app
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,10 +48,11 @@ fun SetupWindow() {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.background(
-                    color = JewelTheme.globalColors.paneBackground,
-                    shape = RoundedCornerShape(padding),
-                ).fillMaxSize()
+                modifier =
+                    Modifier.background(
+                        color = JewelTheme.globalColors.paneBackground,
+                        shape = RoundedCornerShape(padding),
+                    ).fillMaxSize(),
             ) {
                 val painter by rememberIconPainter(name = "app")
                 Icon(painter = painter, contentDescription = "Application icon")

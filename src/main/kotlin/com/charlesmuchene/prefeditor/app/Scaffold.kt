@@ -36,7 +36,11 @@ import androidx.compose.ui.window.rememberWindowState
 import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.navigation.Navigation
-import com.charlesmuchene.prefeditor.providers.*
+import com.charlesmuchene.prefeditor.providers.LocalAppState
+import com.charlesmuchene.prefeditor.providers.LocalBridge
+import com.charlesmuchene.prefeditor.providers.LocalBundle
+import com.charlesmuchene.prefeditor.providers.LocalNavigation
+import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.resources.ApplicationKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
 import com.charlesmuchene.prefeditor.ui.halfPadding
@@ -50,7 +54,11 @@ import org.jetbrains.jewel.ui.ComponentStyling
 import org.jetbrains.jewel.window.DecoratedWindow
 
 @Composable
-fun ApplicationScope.scaffold(icon: Painter, appState: AppState, content: @Composable ColumnScope.(Modifier) -> Unit) {
+fun ApplicationScope.scaffold(
+    icon: Painter,
+    appState: AppState,
+    content: @Composable ColumnScope.(Modifier) -> Unit,
+) {
     provideAppState(appState = appState) {
         val (width, height) = LocalAppState.current.windowSize
         val position = WindowPosition.Aligned(alignment = Alignment.Center)
@@ -64,13 +72,14 @@ fun ApplicationScope.scaffold(icon: Painter, appState: AppState, content: @Compo
         ) {
             TitleBarView()
             Column(
-                modifier = Modifier
-                    .background(JewelTheme.globalColors.paneBackground)
+                modifier =
+                    Modifier
+                        .background(JewelTheme.globalColors.paneBackground),
             ) {
                 content(
                     Modifier
                         .trackActivation()
-                        .padding(horizontal = padding, vertical = halfPadding)
+                        .padding(horizontal = padding, vertical = halfPadding),
                 )
             }
         }
@@ -78,7 +87,10 @@ fun ApplicationScope.scaffold(icon: Painter, appState: AppState, content: @Compo
 }
 
 @Composable
-fun provideAppState(appState: AppState, content: @Composable () -> Unit) {
+fun provideAppState(
+    appState: AppState,
+    content: @Composable () -> Unit,
+) {
     val scope = rememberCoroutineScope()
     CompositionLocalProvider(
         LocalAppState provides appState,
@@ -102,6 +114,7 @@ fun provideAppState(appState: AppState, content: @Composable () -> Unit) {
 fun svgResource(
     resource: String,
     loader: ResourceLoader = ResourceLoader.Default,
-): Painter = loader.load(resourcePath = "icons/$resource.svg").use { stream ->
-    loadSvgPainter(inputStream = stream, density = Density(density = 1f))
-}
+): Painter =
+    loader.load(resourcePath = "icons/$resource.svg").use { stream ->
+        loadSvgPainter(inputStream = stream, density = Density(density = 1f))
+    }

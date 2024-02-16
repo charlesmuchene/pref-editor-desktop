@@ -22,14 +22,22 @@ import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.models.UIApp
-import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.FilesScreen
+import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class AppListViewModel(
@@ -39,7 +47,6 @@ class AppListViewModel(
     private val navigation: Navigation,
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
-
     private val processor = Processor()
     private val decoder = AppListDecoder()
     private val useCase = AppListUseCase(device = device, processor = processor, decoder = decoder)
@@ -70,14 +77,18 @@ class AppListViewModel(
     }
 
     private fun mapToState(apps: Apps): UIState {
-        return if (apps.isEmpty()) UIState.Error
-        else UIState.Apps(filter(filter = filter, apps = mapApps(apps)))
+        return if (apps.isEmpty()) {
+            UIState.Error
+        } else {
+            UIState.Apps(filter(filter = filter, apps = mapApps(apps)))
+        }
     }
 
-    private fun mapApps(apps: Apps): List<UIApp> = apps.map { app ->
-        val isFavorite = favorites.isFavorite(app = app, device = device)
-        UIApp(app = app, isFavorite = isFavorite)
-    }
+    private fun mapApps(apps: Apps): List<UIApp> =
+        apps.map { app ->
+            val isFavorite = favorites.isFavorite(app = app, device = device)
+            UIApp(app = app, isFavorite = isFavorite)
+        }
 
     /**
      * App selected
@@ -108,9 +119,12 @@ class AppListViewModel(
      * @param apps The [List] of [UIApp]s to filter
      * @return The filtered [List] of [UIApp]s
      */
-    private fun filter(filter: ItemFilter, apps: List<UIApp>) = apps.filter { uiApp ->
+    private fun filter(
+        filter: ItemFilter,
+        apps: List<UIApp>,
+    ) = apps.filter { uiApp ->
         (if (filter.starred) uiApp.isFavorite else true) &&
-                uiApp.app.packageName.contains(other = filter.text, ignoreCase = true)
+            uiApp.app.packageName.contains(other = filter.text, ignoreCase = true)
     }
 
     /**
@@ -118,17 +132,23 @@ class AppListViewModel(
      *
      * @param app [UIApp] to un/favorite
      */
-    suspend fun favorite(app: UIApp) = coroutineScope {
-        async {
-            if (app.isFavorite) favorites.unfavoriteApp(app = app.app, device = device)
-            else favorites.favoriteApp(app = app.app, device = device)
-            app.copy(isFavorite = !app.isFavorite)
-        }.await()
-    }
+    suspend fun favorite(app: UIApp) =
+        coroutineScope {
+            async {
+                if (app.isFavorite) {
+                    favorites.unfavoriteApp(app = app.app, device = device)
+                } else {
+                    favorites.favoriteApp(app = app.app, device = device)
+                }
+                app.copy(isFavorite = !app.isFavorite)
+            }.await()
+        }
 
     sealed interface UIState {
         data object Error : UIState
+
         data object Loading : UIState
+
         data class Apps(val apps: List<UIApp>) : UIState
     }
 }

@@ -30,8 +30,10 @@ import java.io.OutputStream
  * Manages encoding and decoding preferences
  */
 class PreferencesCodec : PreferenceDecoder, PreferenceEncoder {
-
-    override suspend fun decode(inputStream: InputStream, block: XmlPullParser.() -> Unit) {
+    override suspend fun decode(
+        inputStream: InputStream,
+        block: XmlPullParser.() -> Unit,
+    ) {
         with(XmlPullParserFactory.newInstance().newPullParser()) {
             setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
             setInput(BufferedInputStream(inputStream), null)
@@ -45,12 +47,16 @@ class PreferencesCodec : PreferenceDecoder, PreferenceEncoder {
         }
     }
 
-    override fun encode(block: XmlSerializer.() -> Unit): String = ByteArrayOutputStream().run {
-        encode(outputStream = this, block = block)
-        toString().trim()
-    }
+    override fun encode(block: XmlSerializer.() -> Unit): String =
+        ByteArrayOutputStream().run {
+            encode(outputStream = this, block = block)
+            toString().trim()
+        }
 
-    override fun encode(outputStream: OutputStream, block: XmlSerializer.() -> Unit) {
+    override fun encode(
+        outputStream: OutputStream,
+        block: XmlSerializer.() -> Unit,
+    ) {
         with(XmlPullParserFactory.newInstance().newSerializer()) {
             setFeature(INDENTATION_FEATURE, true)
             setOutput(outputStream, ENCODING)
@@ -59,13 +65,14 @@ class PreferencesCodec : PreferenceDecoder, PreferenceEncoder {
         }
     }
 
-    override fun encodeDocument(block: XmlSerializer.() -> Unit): String = encode {
-        startDocument(ENCODING, true)
-        startTag(null, Tags.ROOT)
-        block()
-        if (depth == 1) endTag(null, Tags.ROOT)
-        endDocument()
-    }
+    override fun encodeDocument(block: XmlSerializer.() -> Unit): String =
+        encode {
+            startDocument(ENCODING, true)
+            startTag(null, Tags.ROOT)
+            block()
+            if (depth == 1) endTag(null, Tags.ROOT)
+            endDocument()
+        }
 
     companion object Manager {
         const val INDENTATION_FEATURE = "http://xmlpull.org/v1/doc/features.html#indent-output"

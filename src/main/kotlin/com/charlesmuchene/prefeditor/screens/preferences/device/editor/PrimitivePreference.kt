@@ -19,8 +19,16 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.*
-import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.*
+import com.charlesmuchene.prefeditor.data.BooleanPreference
+import com.charlesmuchene.prefeditor.data.FloatPreference
+import com.charlesmuchene.prefeditor.data.IntPreference
+import com.charlesmuchene.prefeditor.data.LongPreference
+import com.charlesmuchene.prefeditor.data.StringPreference
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.BooleanPreferenceRow
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.FloatPreferenceRow
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.IntPreferenceRow
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.LongPreferenceRow
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.StringPreferenceRow
 
 val componentSpacing = 8.dp
 const val VALUE_COMPONENT_WEIGHT = 0.65f
@@ -28,14 +36,19 @@ const val NAME_COMPONENT_WEIGHT = 0.3f
 const val ACTION_COMPONENT_WEIGHT = 0.05f
 
 @Composable
-fun PrimitivePreference(preference: UIPreference, modifier: Modifier = Modifier, viewModel: EditorViewModel) {
+fun PrimitivePreference(
+    preference: UIPreference,
+    modifier: Modifier = Modifier,
+    viewModel: EditorViewModel,
+) {
     // TODO Wrap name to 2 lines, overflow -- clip?
     when (preference.preference) {
-        is BooleanPreference -> BooleanPreferenceRow(
-            modifier = modifier,
-            uiPreference = preference,
-            viewModel = viewModel
-        )
+        is BooleanPreference ->
+            BooleanPreferenceRow(
+                modifier = modifier,
+                uiPreference = preference,
+                viewModel = viewModel,
+            )
 
         is FloatPreference -> FloatPreferenceRow(modifier = modifier, preference = preference, viewModel = viewModel)
         is IntPreference -> IntPreferenceRow(modifier = modifier, preference = preference, viewModel = viewModel)

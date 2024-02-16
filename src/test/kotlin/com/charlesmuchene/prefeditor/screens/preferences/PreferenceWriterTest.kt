@@ -33,7 +33,6 @@ import java.nio.file.Path
 import kotlin.io.path.pathString
 
 class PreferenceWriterTest {
-
     @TempDir
     private lateinit var path: Path
 
@@ -45,51 +44,55 @@ class PreferenceWriterTest {
     @BeforeEach
     fun setup() {
         val command = DesktopWriteCommand(path = path.pathString)
-        processor = mockk(relaxed = true) {
-            coEvery {
-                run(command = any(), config = eq({}))
-            } returns Result.success("")
-        }
+        processor =
+            mockk(relaxed = true) {
+                coEvery {
+                    run(command = any(), config = eq({}))
+                } returns Result.success("")
+            }
         writer = PreferenceWriter(processor = processor, command = command)
     }
 
+    @Test
+    fun `add edit invokes processor with end root tag`() =
+        runTest(scheduler) {
+            val content = "content"
+            val add = Edit.Add(content = content)
+
+            writer.edit(edit = add)
+
+            coVerify { processor.run(listOf("sh", "desktop.sh", "add", "<\\/map>", content, path.pathString), any()) }
+        }
 
     @Test
-    fun `add edit invokes processor with end root tag`() = runTest(scheduler) {
-        val content = "content"
-        val add = Edit.Add(content = content)
+    fun `edit invokes processor with respective command`() =
+        runTest(scheduler) {
+            val content = "content"
+            val matcher = "matcher"
+            val addCmd = listOf("add")
+            val deleteCmd = listOf("delete")
+            val changeCmd = listOf("change")
+            val add = Edit.Add(content = content)
+            val delete = Edit.Delete(matcher = matcher)
+            val change = Edit.Change(matcher = matcher, content = content)
 
-        writer.edit(edit = add)
+            val command =
+                mockk<WriteCommand> {
+                    every { command(add) } returns addCmd
+                    every { command(delete) } returns deleteCmd
+                    every { command(change) } returns changeCmd
+                }
+            val processor =
+                mockk<Processor> {
+                    coEvery { run(addCmd) } returns Result.success(addCmd.first())
+                    coEvery { run(deleteCmd) } returns Result.success(deleteCmd.first())
+                    coEvery { run(changeCmd) } returns Result.success(changeCmd.first())
+                }
+            val writer = PreferenceWriter(processor, command)
 
-        coVerify { processor.run(listOf("sh", "desktop.sh", "add", "<\\/map>", content, path.pathString), any()) }
-    }
-
-    @Test
-    fun `edit invokes processor with respective command`() = runTest(scheduler) {
-        val content = "content"
-        val matcher = "matcher"
-        val addCmd = listOf("add")
-        val deleteCmd = listOf("delete")
-        val changeCmd = listOf("change")
-        val add = Edit.Add(content = content)
-        val delete = Edit.Delete(matcher = matcher)
-        val change = Edit.Change(matcher = matcher, content = content)
-
-        val command = mockk<WriteCommand> {
-            every { command(add) } returns addCmd
-            every { command(delete) } returns deleteCmd
-            every { command(change) } returns changeCmd
+            writer.edit(listOf(add, delete, change))
+            coVerify { processor.run(addCmd) }
+            coVerify { processor.run(deleteCmd) }
+            coVerify { processor.run(changeCmd) }
         }
-        val processor = mockk<Processor> {
-            coEvery { run(addCmd) } returns Result.success(addCmd.first())
-            coEvery { run(deleteCmd) } returns Result.success(deleteCmd.first())
-            coEvery { run(changeCmd) } returns Result.success(changeCmd.first())
-        }
-        val writer = PreferenceWriter(processor, command)
-
-        writer.edit(listOf(add, delete, change))
-        coVerify { processor.run(addCmd) }
-        coVerify { processor.run(deleteCmd) }
-        coVerify { processor.run(changeCmd) }
-    }
 }

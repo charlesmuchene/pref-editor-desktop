@@ -19,14 +19,32 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.app.AppState
-import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.data.BooleanPreference
+import com.charlesmuchene.prefeditor.data.FloatPreference
+import com.charlesmuchene.prefeditor.data.IntPreference
+import com.charlesmuchene.prefeditor.data.LongPreference
+import com.charlesmuchene.prefeditor.data.Preference
+import com.charlesmuchene.prefeditor.data.SetPreference
+import com.charlesmuchene.prefeditor.data.StringPreference
 import com.charlesmuchene.prefeditor.models.PreferenceType
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferenceValidator
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.SetSubPreference.Header
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import org.jetbrains.jewel.ui.Outline
 import kotlin.coroutines.CoroutineContext
 
@@ -34,8 +52,11 @@ private val logger = KotlinLogging.logger {}
 
 sealed interface PreferenceState {
     data object Changed : PreferenceState
+
     data object Deleted : PreferenceState
+
     data object None : PreferenceState
+
     data object New : PreferenceState
 }
 
@@ -43,7 +64,9 @@ data class UIPreference(val preference: Preference, val state: PreferenceState =
 
 sealed interface PreferenceAction {
     data class Reset(val preference: Preference) : PreferenceAction
+
     data class Delete(val preference: Preference) : PreferenceAction
+
     data class Change(val preference: Preference, val change: String) : PreferenceAction
 }
 
@@ -56,7 +79,6 @@ class EditorViewModel(
     private val prefUseCase: DevicePreferencesUseCase,
     private val context: CoroutineContext = Dispatchers.Default,
 ) : CoroutineScope by scope + context {
-
     private val prefFile = prefUseCase.file
     private val validator = PreferenceValidator()
     private val changes = MutableSharedFlow<Unit>()
@@ -72,9 +94,10 @@ class EditorViewModel(
     private val _message = MutableSharedFlow<String?>()
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
-    val enableSave: StateFlow<Boolean> = changes
-        .map { validator.hasEdits(edits = edits) }
-        .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = false)
+    val enableSave: StateFlow<Boolean> =
+        changes
+            .map { validator.hasEdits(edits = edits) }
+            .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = false)
 
     init {
         prefUseCase.preferences.onEach { prefs ->
@@ -114,8 +137,11 @@ class EditorViewModel(
 
     private suspend fun saveChangesNow() {
         val output = prefUseCase.writePreferences(edits.values)
-        if (output.all { it.isSuccess }) appState.showToast("Changes saved to ${prefFile.name}")
-        else output.filter { it.isFailure }.map { logger.error(it.exceptionOrNull()) {} }
+        if (output.all { it.isSuccess }) {
+            appState.showToast("Changes saved to ${prefFile.name}")
+        } else {
+            output.filter { it.isFailure }.map { logger.error(it.exceptionOrNull()) {} }
+        }
     }
 
     /**
@@ -133,13 +159,14 @@ class EditorViewModel(
      * @param preference Edited [Preference]
      * @return UI [Outline] to apply
      */
-    fun outline(preference: Preference): Outline = when (preference) {
-        is FloatPreference, is IntPreference, is LongPreference -> numberOutline(preference = preference)
-        is BooleanPreference, is StringPreference ->
-            if (initialPrefs[preference.name] == preference.value) Outline.None else Outline.Warning
+    fun outline(preference: Preference): Outline =
+        when (preference) {
+            is FloatPreference, is IntPreference, is LongPreference -> numberOutline(preference = preference)
+            is BooleanPreference, is StringPreference ->
+                if (initialPrefs[preference.name] == preference.value) Outline.None else Outline.Warning
 
-        else -> Outline.None
-    }
+            else -> Outline.None
+        }
 
     /**
      * Determine outline for a number preference
@@ -158,11 +185,12 @@ class EditorViewModel(
      * @param action Developer [PreferenceAction]
      * @return Resulting [UIPreference] instance
      */
-    fun preferenceAction(action: PreferenceAction): UIPreference = when (action) {
-        is PreferenceAction.Change -> preferenceChanged(action.preference, action.change)
-        is PreferenceAction.Delete -> preferenceDeleted(action.preference)
-        is PreferenceAction.Reset -> preferenceReset(action.preference)
-    }
+    fun preferenceAction(action: PreferenceAction): UIPreference =
+        when (action) {
+            is PreferenceAction.Change -> preferenceChanged(action.preference, action.change)
+            is PreferenceAction.Delete -> preferenceDeleted(action.preference)
+            is PreferenceAction.Reset -> preferenceReset(action.preference)
+        }
 
     /**
      * Preference reset
@@ -199,7 +227,10 @@ class EditorViewModel(
      * @return [UIPreference] with the [PreferenceState.Changed] if [preference] differs from original,
      * [PreferenceState.None] otherwise
      */
-    private fun preferenceChanged(preference: Preference, change: String): UIPreference {
+    private fun preferenceChanged(
+        preference: Preference,
+        change: String,
+    ): UIPreference {
         val newPref = createPreference(preference = preference, value = change)
         val state =
             if (initialPrefs[preference.name] == newPref.value) PreferenceState.None else PreferenceState.Changed
@@ -216,7 +247,10 @@ class EditorViewModel(
      * @param value Preference value
      * @return The created [Preference]
      */
-    private fun createPreference(preference: Preference, value: String) = when (preference) {
+    private fun createPreference(
+        preference: Preference,
+        value: String,
+    ) = when (preference) {
         is BooleanPreference -> BooleanPreference(preference.name, value = value)
         is FloatPreference -> FloatPreference(preference.name, value = value)
         is IntPreference -> IntPreference(preference.name, value = value)
@@ -232,27 +266,39 @@ class EditorViewModel(
      * @param value Preference value
      * @param type [PreferenceType] instance
      */
-    suspend fun add(name: String, value: String, type: PreferenceType?): Boolean = coroutineScope {
-        if (type == null) run {
-            _message.emit("Select a data type")
-            return@coroutineScope false
+    suspend fun add(
+        name: String,
+        value: String,
+        type: PreferenceType?,
+    ): Boolean =
+        coroutineScope {
+            if (type == null) {
+                run {
+                    _message.emit("Select a data type")
+                    return@coroutineScope false
+                }
+            }
+
+            val preference = createPreference(name = name, value = value, type = type)
+            if (validator.isValid(preference)) {
+                prefUseCase.addPreference(preference).run { isSuccess }
+            } else {
+                _message.emit("'$value' cannot be added as ${type.name}")
+                false
+            }
         }
 
-        val preference = createPreference(name = name, value = value, type = type)
-        if (validator.isValid(preference)) {
-            prefUseCase.addPreference(preference).run { isSuccess }
-        } else {
-            _message.emit("'$value' cannot be added as ${type.name}")
-            false
+    private fun createPreference(
+        name: String,
+        value: String,
+        type: PreferenceType,
+    ): Preference =
+        when (type) {
+            PreferenceType.Boolean -> BooleanPreference(name = name, value = value)
+            PreferenceType.String -> StringPreference(name = name, value = value)
+            PreferenceType.Float -> FloatPreference(name = name, value = value)
+            PreferenceType.Integer -> IntPreference(name = name, value = value)
+            PreferenceType.Long -> LongPreference(name = name, value = value)
+            PreferenceType.Set -> SetPreference(name = name, entries = listOf(value))
         }
-    }
-
-    private fun createPreference(name: String, value: String, type: PreferenceType): Preference = when (type) {
-        PreferenceType.Boolean -> BooleanPreference(name = name, value = value)
-        PreferenceType.String -> StringPreference(name = name, value = value)
-        PreferenceType.Float -> FloatPreference(name = name, value = value)
-        PreferenceType.Integer -> IntPreference(name = name, value = value)
-        PreferenceType.Long -> LongPreference(name = name, value = value)
-        PreferenceType.Set -> SetPreference(name = name, entries = listOf(value))
-    }
 }

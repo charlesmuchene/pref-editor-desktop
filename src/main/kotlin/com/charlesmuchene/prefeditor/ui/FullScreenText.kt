@@ -16,7 +16,11 @@
 
 package com.charlesmuchene.prefeditor.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,11 +33,15 @@ import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun FullScreenText(primary: String, modifier: Modifier = Modifier, secondary: String? = null) {
+fun FullScreenText(
+    primary: String,
+    modifier: Modifier = Modifier,
+    secondary: String? = null,
+) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(text = primary, style = Typography.heading, textAlign = TextAlign.Center)
         secondary?.let {
@@ -42,7 +50,7 @@ fun FullScreenText(primary: String, modifier: Modifier = Modifier, secondary: St
                 text = secondary,
                 color = Color.Gray,
                 fontSize = TextUnit(value = 16f, type = TextUnitType.Sp),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
     }

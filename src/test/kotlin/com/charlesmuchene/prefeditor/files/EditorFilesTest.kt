@@ -17,26 +17,26 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class EditorFilesTest {
-
     @TempDir
     private lateinit var appPath: Path
 
     private val codec = PreferencesCodec()
 
     @Test
-    fun `initialize creates app prefs and copies scripts`() = runTest {
-        EditorFiles.initialize(codec = codec, appPathOverride = appPath)
+    fun `initialize creates app prefs and copies scripts`() =
+        runTest {
+            EditorFiles.initialize(codec = codec, appPathOverride = appPath)
 
-        val root = appPath.resolve(ROOT_DIR)
-        assertTrue(root.exists())
-        assertTrue(root.resolve(PREFERENCES).exists())
+            val root = appPath.resolve(ROOT_DIR)
+            assertTrue(root.exists())
+            assertTrue(root.resolve(PREFERENCES).exists())
 
-        val scripts = root.resolve(SCRIPTS_DIR)
-        assertTrue(scripts.exists())
-        assertTrue(scripts.resolve(DEVICE_FILE).exists())
-        assertTrue(scripts.resolve(DESKTOP_FILE).exists())
+            val scripts = root.resolve(SCRIPTS_DIR)
+            assertTrue(scripts.exists())
+            assertTrue(scripts.resolve(DEVICE_FILE).exists())
+            assertTrue(scripts.resolve(DESKTOP_FILE).exists())
 
-        val emptyAppPreferences = Files.readString(root.resolve(PREFERENCES))
-        assertEquals(expected = TestFixtures.emptyPreferences(), actual = emptyAppPreferences)
-    }
+            val emptyAppPreferences = Files.readString(root.resolve(PREFERENCES))
+            assertEquals(expected = TestFixtures.emptyPreferences(), actual = emptyAppPreferences)
+        }
 }

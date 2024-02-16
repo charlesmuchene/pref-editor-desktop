@@ -34,21 +34,25 @@ import kotlin.io.path.pathString
  * @param context [CoroutineContext] for use when running actions
  */
 class Processor(private val context: CoroutineContext = Dispatchers.IO) {
-
-    suspend fun run(command: List<String>, config: ProcessBuilder.() -> Unit = {}): Result<String> =
+    suspend fun run(
+        command: List<String>,
+        config: ProcessBuilder.() -> Unit = {},
+    ): Result<String> =
         withContext(context) {
-            val builder = ProcessBuilder(command).apply {
-                val scriptsPath = EditorFiles.scriptsPath().pathString
-                environment()[PATH] += ":$scriptsPath"
-                redirectErrorStream(true)
-                config()
-            }
+            val builder =
+                ProcessBuilder(command).apply {
+                    val scriptsPath = EditorFiles.scriptsPath().pathString
+                    environment()[PATH] += ":$scriptsPath"
+                    redirectErrorStream(true)
+                    config()
+                }
 
-            val process = try {
-                builder.start()
-            } catch (exception: Exception) {
-                return@withContext Result.failure(exception)
-            }
+            val process =
+                try {
+                    builder.start()
+                } catch (exception: Exception) {
+                    return@withContext Result.failure(exception)
+                }
 
             try {
                 val output = async { BufferedReader(InputStreamReader(process.inputStream)).readText() }

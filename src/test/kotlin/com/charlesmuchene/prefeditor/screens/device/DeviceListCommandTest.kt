@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class DeviceListCommandTest {
-
     @Test
     fun `device list command is valid`() {
         val expected = "adb devices -l"

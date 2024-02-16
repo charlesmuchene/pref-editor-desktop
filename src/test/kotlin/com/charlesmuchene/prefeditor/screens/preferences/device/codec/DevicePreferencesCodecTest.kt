@@ -18,7 +18,14 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.codec
 
 import com.charlesmuchene.prefeditor.TestFixtures.PREFERENCES
 import com.charlesmuchene.prefeditor.TestFixtures.prefs
-import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.data.BooleanPreference
+import com.charlesmuchene.prefeditor.data.Edit
+import com.charlesmuchene.prefeditor.data.FloatPreference
+import com.charlesmuchene.prefeditor.data.IntPreference
+import com.charlesmuchene.prefeditor.data.LongPreference
+import com.charlesmuchene.prefeditor.data.Preference
+import com.charlesmuchene.prefeditor.data.SetPreference
+import com.charlesmuchene.prefeditor.data.StringPreference
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
@@ -39,30 +46,33 @@ class DevicePreferencesCodecTest {
     }
 
     @Test
-    fun decodePreferences() = runTest {
-        val preferences = codec.decode(PREFERENCES).preferences
-        assertEquals(expected = 8, actual = preferences.size)
+    fun decodePreferences() =
+        runTest {
+            val preferences = codec.decode(PREFERENCES).preferences
+            assertEquals(expected = 8, actual = preferences.size)
 
-        decodeSet(preferences[6])
-        decodeLong(preferences[7])
-        decodeFloat(preferences[4])
-        decodeBoolean(preferences[0])
-        decodeString(preferences[1], preferences[5])
-        decodeInt(preferences[2], preferences[3])
-    }
-
-    @Test
-    fun encodePreferences() = runTest {
-        val preferences = prefs.preferences
-        val edits = preferences.mapIndexed { index, preference ->
-            val state = if (index.mod(2) == 0) PreferenceState.Deleted else PreferenceState.New
-            UIPreference(preference = preference, state = state)
+            decodeSet(preferences[6])
+            decodeLong(preferences[7])
+            decodeFloat(preferences[4])
+            decodeBoolean(preferences[0])
+            decodeString(preferences[1], preferences[5])
+            decodeInt(preferences[2], preferences[3])
         }
 
-        val output = codec.encode(edits, preferences)
+    @Test
+    fun encodePreferences() =
+        runTest {
+            val preferences = prefs.preferences
+            val edits =
+                preferences.mapIndexed { index, preference ->
+                    val state = if (index.mod(2) == 0) PreferenceState.Deleted else PreferenceState.New
+                    UIPreference(preference = preference, state = state)
+                }
 
-        output.filterIndexed { index, _ -> index % 2 == 0 }.all { it is Edit.Delete }
-    }
+            val output = codec.encode(edits, preferences)
+
+            output.filterIndexed { index, _ -> index % 2 == 0 }.all { it is Edit.Delete }
+        }
 
     @Test
     fun `cannot edit a preference that does not exist`() {
@@ -88,7 +98,10 @@ class DevicePreferencesCodecTest {
         assertEquals(expected = "boolean", actual = preference.name)
     }
 
-    private fun decodeString(preference: Preference, another: Preference) {
+    private fun decodeString(
+        preference: Preference,
+        another: Preference,
+    ) {
         assertTrue(preference is StringPreference)
         assertEquals(expected = "string", actual = preference.name)
         assertEquals(expected = "string", actual = preference.value)
@@ -97,7 +110,10 @@ class DevicePreferencesCodecTest {
         assertEquals(expected = "empty-string", actual = another.name)
     }
 
-    private fun decodeInt(preference: Preference, another: Preference) {
+    private fun decodeInt(
+        preference: Preference,
+        another: Preference,
+    ) {
         assertTrue(preference is IntPreference)
         assertEquals(expected = -1, actual = preference.value.toInt())
         assertEquals(expected = "integer", actual = preference.name)

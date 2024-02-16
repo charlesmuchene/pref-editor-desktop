@@ -17,7 +17,11 @@
 package com.charlesmuchene.prefeditor.app
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,10 +29,16 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.ApplicationKey.Title
-import com.charlesmuchene.prefeditor.ui.theme.teal
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme
-import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme.*
-import org.jetbrains.jewel.ui.component.*
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme.Dark
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme.Light
+import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme.System
+import com.charlesmuchene.prefeditor.ui.theme.teal
+import org.jetbrains.jewel.ui.component.Dropdown
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.IconButton
+import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.Tooltip
 import org.jetbrains.jewel.window.DecoratedWindowScope
 import org.jetbrains.jewel.window.TitleBar
 import org.jetbrains.jewel.window.newFullscreenControls
@@ -50,7 +60,7 @@ fun DecoratedWindowScope.TitleBarView() {
                     onClick = {
                         Desktop.getDesktop().browse(URI.create("https://github.com/charlesmuchene/pref-editor-desktop"))
                     },
-                    modifier = Modifier.size(40.dp).padding(5.dp)
+                    modifier = Modifier.size(40.dp).padding(5.dp),
                 ) {
                     Icon(
                         resource = "icons/github@20x20.svg",
@@ -86,7 +96,10 @@ private fun EditorTheme.icon() {
 }
 
 @Composable
-private fun themeIcon(resource: String, contentDescription: String) {
+private fun themeIcon(
+    resource: String,
+    contentDescription: String,
+) {
     Icon(
         resource = "icons/$resource-theme@20x20.svg",
         contentDescription = contentDescription,

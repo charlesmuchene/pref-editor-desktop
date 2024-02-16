@@ -32,7 +32,6 @@ package com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favor
  * ```
  */
 sealed interface Favorite {
-
     /**
      * A favorite device
      *

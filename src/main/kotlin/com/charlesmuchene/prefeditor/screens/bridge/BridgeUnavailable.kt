@@ -16,7 +16,13 @@
 
 package com.charlesmuchene.prefeditor.screens.bridge
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,17 +48,17 @@ fun BridgeUnavailable(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         Text(text = primary, style = Typography.heading, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(halfPadding))
         Row(
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = secondary, style = Typography.primary,
+                text = secondary,
+                style = Typography.primary,
                 fontSize = TextUnit(value = 16f, type = TextUnitType.Sp),
             )
             Spacer(modifier = Modifier.width(4.dp))

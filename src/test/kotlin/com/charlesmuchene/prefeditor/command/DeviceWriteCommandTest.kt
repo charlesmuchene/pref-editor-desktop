@@ -8,30 +8,31 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class DeviceWriteCommandTest {
-
     private lateinit var command: DeviceWriteCommand
     private val backup = mutableStateOf(false)
 
     @BeforeEach
     fun setup() {
-        command = DeviceWriteCommand(
-            app = TestFixtures.app,
-            device = TestFixtures.device,
-            file = TestFixtures.prefFile,
-            backup = backup,
-            timestamp = { "now" },
-        )
+        command =
+            DeviceWriteCommand(
+                app = TestFixtures.app,
+                device = TestFixtures.device,
+                file = TestFixtures.prefFile,
+                backup = backup,
+                timestamp = { "now" },
+            )
     }
 
     @Test
     fun `delete command ordering is correct`() {
         val edit = Edit.Delete(matcher = "matcher")
 
-        val list = buildList {
-            with(command) {
-                delete(edit)
+        val list =
+            buildList {
+                with(command) {
+                    delete(edit)
+                }
             }
-        }
 
         assertEquals(
             listOf(
@@ -42,8 +43,9 @@ class DeviceWriteCommandTest {
                 "com.charlesmuchene.pref-editor",
                 "i",
                 "matcher",
-                "preferences.xml"
-            ), list
+                "preferences.xml",
+            ),
+            list,
         )
     }
 
@@ -51,11 +53,12 @@ class DeviceWriteCommandTest {
     fun `change command ordering is correct`() {
         val edit = Edit.Change(matcher = "matcher", content = "content")
 
-        val list = buildList {
-            with(command) {
-                change(edit)
+        val list =
+            buildList {
+                with(command) {
+                    change(edit)
+                }
             }
-        }
 
         assertEquals(
             listOf(
@@ -67,8 +70,9 @@ class DeviceWriteCommandTest {
                 "i",
                 "matcher",
                 "content",
-                "preferences.xml"
-            ), list
+                "preferences.xml",
+            ),
+            list,
         )
     }
 
@@ -76,11 +80,12 @@ class DeviceWriteCommandTest {
     fun `add command ordering is correct`() {
         val edit = Edit.Add(content = "content")
 
-        val list = buildList {
-            with(command) {
-                add(edit = edit)
+        val list =
+            buildList {
+                with(command) {
+                    add(edit = edit)
+                }
             }
-        }
 
         assertEquals(
             listOf(
@@ -92,8 +97,9 @@ class DeviceWriteCommandTest {
                 "i",
                 "<\\/map>",
                 "content",
-                "preferences.xml"
-            ), list
+                "preferences.xml",
+            ),
+            list,
         )
     }
 
@@ -102,11 +108,12 @@ class DeviceWriteCommandTest {
         backup.value = true
         val edit = Edit.Add(content = "content")
 
-        val list = buildList {
-            with(command) {
-                add(edit = edit)
+        val list =
+            buildList {
+                with(command) {
+                    add(edit = edit)
+                }
             }
-        }
 
         assertEquals(
             listOf(
@@ -118,8 +125,9 @@ class DeviceWriteCommandTest {
                 "i.backup-now",
                 "<\\/map>",
                 "content",
-                "preferences.xml"
-            ), list
+                "preferences.xml",
+            ),
+            list,
         )
     }
 }

@@ -29,21 +29,24 @@ import org.jetbrains.jewel.ui.component.styling.ChipStyle
 
 @Composable
 fun chipStyle(isDark: Boolean): ChipStyle {
-    val darkStyle = ChipStyle.Companion.dark(
-        colors = ChipColors.dark(
-            contentFocused = green,
-            contentPressed = green,
-            contentHovered = green,
-            contentSelected = green,
-            contentSelectedHovered = green,
-            contentSelectedFocused = green,
-            borderSelected = green,
-            borderFocused = green,
-            borderPressed = green,
-            borderHovered = IntUiDarkTheme.colors.grey(7),
-            borderSelectedFocused = green,
-            borderSelectedPressed = green,
-        ), metrics = ChipMetrics.defaults(borderWidthSelected = 1.dp)
-    )
+    val darkStyle =
+        ChipStyle.Companion.dark(
+            colors =
+                ChipColors.dark(
+                    contentFocused = green,
+                    contentPressed = green,
+                    contentHovered = green,
+                    contentSelected = green,
+                    contentSelectedHovered = green,
+                    contentSelectedFocused = green,
+                    borderSelected = green,
+                    borderFocused = green,
+                    borderPressed = green,
+                    borderHovered = IntUiDarkTheme.colors.grey(7),
+                    borderSelectedFocused = green,
+                    borderSelectedPressed = green,
+                ),
+            metrics = ChipMetrics.defaults(borderWidthSelected = 1.dp),
+        )
     return if (isDark) darkStyle else ChipStyle.Companion.light()
 }

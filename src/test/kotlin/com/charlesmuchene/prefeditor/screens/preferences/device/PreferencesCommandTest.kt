@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PreferencesCommandTest {
-
     @Test
     fun `preferences command is valid`() {
-        val expected = "adb -s ${device.serial} exec-out run-as ${app.packageName} " +
+        val expected =
+            "adb -s ${device.serial} exec-out run-as ${app.packageName} " +
                 "cat /data/data/${app.packageName}/shared_prefs/${prefFile.name}"
         val command = PreferencesCommand(app = app, device = device, prefFile = prefFile)
 

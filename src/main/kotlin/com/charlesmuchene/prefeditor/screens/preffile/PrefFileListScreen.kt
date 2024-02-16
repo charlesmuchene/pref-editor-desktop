@@ -19,16 +19,28 @@ package com.charlesmuchene.prefeditor.screens.preffile
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.App
-import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
@@ -55,21 +67,25 @@ import org.jetbrains.jewel.ui.component.IconButton
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun FileListScreen(screen: FilesScreen, modifier: Modifier = Modifier) {
+fun FileListScreen(
+    screen: FilesScreen,
+    modifier: Modifier = Modifier,
+) {
     val appState = LocalAppState.current
     val navigation = LocalNavigation.current
     val reloadSignal = LocalReloadSignal.current
     val scope = rememberCoroutineScope()
-    val viewModel = remember {
-        PrefListViewModel(
-            scope = scope,
-            app = screen.app,
-            device = screen.device,
-            navigation = navigation,
-            reloadSignal = reloadSignal,
-            favorites = appState.favorites,
-        )
-    }
+    val viewModel =
+        remember {
+            PrefListViewModel(
+                scope = scope,
+                app = screen.app,
+                device = screen.device,
+                navigation = navigation,
+                reloadSignal = reloadSignal,
+                favorites = appState.favorites,
+            )
+        }
     val uiState by viewModel.uiState.collectAsState()
 
     val header = LocalBundle.current[AppKey.PrefListingTitle]
@@ -78,14 +94,19 @@ fun FileListScreen(screen: FilesScreen, modifier: Modifier = Modifier) {
         header = { Text(text = header, style = Typography.heading) },
         subHeader = {
             FilterComponent(placeholder = "Filter files", onFilter = viewModel::filter)
-        }) {
+        },
+    ) {
         updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
             when (state) {
                 UIState.Empty -> PrefListingEmpty(modifier = modifier)
                 UIState.Loading -> PrefListingLoading(modifier = modifier)
                 is UIState.Error -> PrefListingError(modifier = modifier, message = state.message)
-                is UIState.Files -> if (state.files.isEmpty()) NoFilterMatch(modifier = modifier)
-                else PrefListingSuccess(modifier = modifier, viewModel = viewModel, prefFiles = state.files)
+                is UIState.Files ->
+                    if (state.files.isEmpty()) {
+                        NoFilterMatch(modifier = modifier)
+                    } else {
+                        PrefListingSuccess(modifier = modifier, viewModel = viewModel, prefFiles = state.files)
+                    }
             }
         }
     }
@@ -102,7 +123,10 @@ private fun PrefListingEmpty(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PrefListingError(modifier: Modifier = Modifier, message: String? = null) {
+private fun PrefListingError(
+    modifier: Modifier = Modifier,
+    message: String? = null,
+) {
     val primary = LocalBundle.current[AppKey.PrefListingError]
     FullScreenText(primary = primary, secondary = message, modifier = modifier)
 }
@@ -122,16 +146,23 @@ private fun PrefListingSuccess(
 ) {
     val filtered by viewModel.filtered.collectAsState(prefFiles)
 
-    if (filtered.isEmpty()) NoFilterMatch(modifier = modifier)
-    else ItemListing(modifier = modifier) {
-        items(items = filtered, key = { it.file.name }) { prefFile ->
-            PrefListingRow(prefFile = prefFile, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
+    if (filtered.isEmpty()) {
+        NoFilterMatch(modifier = modifier)
+    } else {
+        ItemListing(modifier = modifier) {
+            items(items = filtered, key = { it.file.name }) { prefFile ->
+                PrefListingRow(prefFile = prefFile, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
+            }
         }
     }
 }
 
 @Composable
-private fun PrefListingRow(prefFile: UIPrefFile, modifier: Modifier = Modifier, viewModel: PrefListViewModel) {
+private fun PrefListingRow(
+    prefFile: UIPrefFile,
+    modifier: Modifier = Modifier,
+    viewModel: PrefListViewModel,
+) {
     val scope = rememberCoroutineScope()
     var localPref by remember(prefFile) { mutableStateOf(prefFile) }
 
@@ -139,7 +170,7 @@ private fun PrefListingRow(prefFile: UIPrefFile, modifier: Modifier = Modifier, 
         item = localPref,
         modifier = modifier,
         onClick = viewModel::selected,
-        onFavorite = { scope.launch { localPref = viewModel.favorite(it) } }
+        onFavorite = { scope.launch { localPref = viewModel.favorite(it) } },
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
             val firstItemWeight = .95f
@@ -159,9 +190,10 @@ private fun PrefListingRow(prefFile: UIPrefFile, modifier: Modifier = Modifier, 
                         tint = JewelTheme.contentColor,
                         painter = painter,
                         contentDescription = "View file",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .pointerOnHover(),
+                        modifier =
+                            Modifier
+                                .size(24.dp)
+                                .pointerOnHover(),
                     )
                 }
             }

@@ -33,7 +33,10 @@ import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.window.DecoratedWindow
 
 @Composable
-fun ApplicationScope.NoBridgeWindow(status: AppStatus.NoBridge, icon: Painter) {
+fun ApplicationScope.NoBridgeWindow(
+    status: AppStatus.NoBridge,
+    icon: Painter,
+) {
     val bridgeStatus = status.bridgeStatus
     provideAppState(appState = status.state) {
         val windowState = rememberWindowState(position = WindowPosition.Aligned(Alignment.Center))

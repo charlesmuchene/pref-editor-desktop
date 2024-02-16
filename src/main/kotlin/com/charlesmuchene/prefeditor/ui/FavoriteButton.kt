@@ -30,7 +30,11 @@ import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.IconButton
 
 @Composable
-fun FavoriteButton(selected: Boolean, modifier: Modifier = Modifier, onFavorite: () -> Unit) {
+fun FavoriteButton(
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onFavorite: () -> Unit,
+) {
     val icon = if (selected) "favorite-solid" else "favorite-outline"
     val painter by rememberIconPainter(icon)
     IconButton(onClick = onFavorite, modifier = modifier.size(36.dp).clip(CircleShape)) {

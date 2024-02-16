@@ -19,9 +19,19 @@ package com.charlesmuchene.prefeditor.screens.device
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -53,30 +63,35 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
     val navigation = LocalNavigation.current
     val reloadSignal = LocalReloadSignal.current
     val scope = rememberCoroutineScope()
-    val viewModel = remember {
-        DeviceListViewModel(
-            bundle = bundle,
-            scope = scope,
-            navigation = navigation,
-            reloadSignal = reloadSignal,
-            favorites = appState.favorites
-        )
-    }
+    val viewModel =
+        remember {
+            DeviceListViewModel(
+                bundle = bundle,
+                scope = scope,
+                navigation = navigation,
+                reloadSignal = reloadSignal,
+                favorites = appState.favorites,
+            )
+        }
     val uiState by viewModel.uiState.collectAsState()
 
     val header = bundle[HomeKey.ConnectedDevices]
     Scaffolding(
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
-        subHeader = { FilterComponent(placeholder = "Filter devices", onFilter = viewModel::filter) }
+        subHeader = { FilterComponent(placeholder = "Filter devices", onFilter = viewModel::filter) },
     ) {
         AnimatedContent(targetState = uiState, transitionSpec = { screenTransitionSpec() }) { state ->
             when (state) {
                 UIState.Loading -> DeviceListLoading(modifier = modifier)
                 UIState.Error -> DeviceListError(modifier = modifier)
                 UIState.NoDevices -> NoDevices(modifier = modifier)
-                is UIState.Devices -> if (state.devices.isEmpty()) NoFilterMatch(modifier = modifier)
-                else DeviceList(devices = state.devices, viewModel = viewModel, modifier = modifier)
+                is UIState.Devices ->
+                    if (state.devices.isEmpty()) {
+                        NoFilterMatch(modifier = modifier)
+                    } else {
+                        DeviceList(devices = state.devices, viewModel = viewModel, modifier = modifier)
+                    }
             }
         }
     }
@@ -88,19 +103,30 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun DeviceList(devices: List<UIDevice>, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
+private fun DeviceList(
+    devices: List<UIDevice>,
+    viewModel: DeviceListViewModel,
+    modifier: Modifier = Modifier,
+) {
     val filtered by viewModel.filtered.collectAsState(devices)
 
-    if (filtered.isEmpty()) NoFilterMatch(modifier = modifier)
-    else ItemListing(modifier = modifier) {
-        items(items = filtered, key = { it.device.serial }) { device ->
-            DeviceRow(device = device, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
+    if (filtered.isEmpty()) {
+        NoFilterMatch(modifier = modifier)
+    } else {
+        ItemListing(modifier = modifier) {
+            items(items = filtered, key = { it.device.serial }) { device ->
+                DeviceRow(device = device, viewModel = viewModel, modifier = Modifier.animateItemPlacement())
+            }
         }
     }
 }
 
 @Composable
-private fun DeviceRow(device: UIDevice, viewModel: DeviceListViewModel, modifier: Modifier = Modifier) {
+private fun DeviceRow(
+    device: UIDevice,
+    viewModel: DeviceListViewModel,
+    modifier: Modifier = Modifier,
+) {
     val statusColor = viewModel.statusColor(device = device.device)
     var localDevice by remember(device) { mutableStateOf(device) }
     val radius = with(LocalDensity.current) { 12.dp.toPx() }

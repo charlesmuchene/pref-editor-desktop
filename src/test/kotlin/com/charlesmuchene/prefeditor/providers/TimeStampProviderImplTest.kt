@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 class TimeStampProviderImplTest {
-
     @Test
     fun `timestamp is formatted correctly`() {
         val timestamp = TimeStampProviderImpl()

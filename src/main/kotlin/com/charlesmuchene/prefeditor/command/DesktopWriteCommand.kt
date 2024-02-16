@@ -23,7 +23,6 @@ import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.data.Tags
 
 class DesktopWriteCommand(private val path: String) : WriteCommand {
-
     override fun MutableList<String>.delete(edit: Edit.Delete) {
         val matcher = edit.matcher.escaped()
         add(SHELL)
@@ -59,5 +58,4 @@ class DesktopWriteCommand(private val path: String) : WriteCommand {
         private const val SHELL = "sh"
         private const val SCRIPT = "desktop.sh"
     }
-
 }

@@ -9,7 +9,6 @@ import kotlin.io.path.pathString
 import kotlin.test.assertEquals
 
 class DesktopWriteCommandTest {
-
     @TempDir
     private lateinit var path: Path
 
@@ -24,9 +23,10 @@ class DesktopWriteCommandTest {
     fun `delete command ordering is correct`() {
         val edit = Edit.Delete(matcher = "matcher")
 
-        val list = buildList {
-            with(command) { delete(edit) }
-        }
+        val list =
+            buildList {
+                with(command) { delete(edit) }
+            }
 
         assertEquals(listOf("sh", "desktop.sh", "delete", "matcher", path.pathString), list)
     }
@@ -35,9 +35,10 @@ class DesktopWriteCommandTest {
     fun `change command ordering is correct`() {
         val edit = Edit.Change(matcher = "matcher", content = "content")
 
-        val list = buildList {
-            with(command) { change(edit) }
-        }
+        val list =
+            buildList {
+                with(command) { change(edit) }
+            }
 
         assertEquals(listOf("sh", "desktop.sh", "change", "matcher", "content", path.pathString), list)
     }
@@ -46,9 +47,10 @@ class DesktopWriteCommandTest {
     fun `add command ordering is correct`() {
         val edit = Edit.Add(content = "content")
 
-        val list = buildList {
-            with(command) { add(edit = edit) }
-        }
+        val list =
+            buildList {
+                with(command) { add(edit = edit) }
+            }
 
         assertEquals(listOf("sh", "desktop.sh", "add", "<\\/map>", "content", path.pathString), list)
     }

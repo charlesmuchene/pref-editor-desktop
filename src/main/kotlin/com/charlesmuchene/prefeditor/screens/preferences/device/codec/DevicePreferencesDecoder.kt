@@ -19,7 +19,6 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.codec
 import com.charlesmuchene.prefeditor.data.Preferences
 
 interface DevicePreferencesDecoder {
-
     /**
      * Decode content
      *

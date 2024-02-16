@@ -21,7 +21,11 @@ import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.ADD
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.CHANGE
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.DELETE
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.SHELL
-import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.data.App
+import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.data.Edit
+import com.charlesmuchene.prefeditor.data.PrefFile
+import com.charlesmuchene.prefeditor.data.Tags
 import com.charlesmuchene.prefeditor.providers.TimestampProvider
 
 class DeviceWriteCommand(
@@ -31,7 +35,6 @@ class DeviceWriteCommand(
     private val backup: State<Boolean>,
     private val timestamp: TimestampProvider,
 ) : WriteCommand {
-
     override fun MutableList<String>.delete(edit: Edit.Delete) {
         baseCommands(DELETE)
         add(edit.matcher.escaped())

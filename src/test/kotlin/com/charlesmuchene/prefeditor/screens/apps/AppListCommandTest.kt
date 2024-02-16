@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class AppListCommandTest {
-
     @Test
     fun `app listing command is valid`() {
         val device = TestFixtures.device

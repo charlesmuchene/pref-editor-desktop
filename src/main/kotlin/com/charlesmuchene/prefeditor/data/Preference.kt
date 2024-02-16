@@ -20,14 +20,16 @@ import com.charlesmuchene.prefeditor.models.PreferenceType
 
 sealed class Preference(open val name: String, open val value: String) {
     val text: String
-        get() = when (this) {
-            is BooleanPreference -> "Boolean"
-            is FloatPreference -> "Float"
-            is IntPreference -> "Integer"
-            is LongPreference -> "Long"
-            is SetPreference -> "Set"
-            is StringPreference -> "String"
-        }
+        get() =
+            when (this) {
+                is BooleanPreference -> "Boolean"
+                is FloatPreference -> "Float"
+                is IntPreference -> "Integer"
+                is LongPreference -> "Long"
+                is SetPreference -> "Set"
+                is StringPreference -> "String"
+            }
+
     fun toPair() = name to value
 }
 
@@ -49,11 +51,12 @@ data class IntPreference(override val name: String, override val value: String) 
 data class SetPreference(override val name: String, val entries: List<String>) :
     Preference(name = name, value = entries.joinToString())
 
-fun preferenceIconName(preference: Preference): String = when (preference) {
-    is BooleanPreference -> PreferenceType.Boolean.icon
-    is StringPreference -> PreferenceType.String.icon
-    is FloatPreference -> PreferenceType.Float.icon
-    is IntPreference -> PreferenceType.Integer.icon
-    is LongPreference -> PreferenceType.Long.icon
-    is SetPreference -> PreferenceType.Set.icon
-}
+fun preferenceIconName(preference: Preference): String =
+    when (preference) {
+        is BooleanPreference -> PreferenceType.Boolean.icon
+        is StringPreference -> PreferenceType.String.icon
+        is FloatPreference -> PreferenceType.Float.icon
+        is IntPreference -> PreferenceType.Integer.icon
+        is LongPreference -> PreferenceType.Long.icon
+        is SetPreference -> PreferenceType.Set.icon
+    }

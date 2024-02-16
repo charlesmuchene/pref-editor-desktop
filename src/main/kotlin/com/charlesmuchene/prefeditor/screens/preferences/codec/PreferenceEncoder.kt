@@ -23,7 +23,6 @@ import java.io.OutputStream
  * Contract for encoding preferences in xml format
  */
 interface PreferenceEncoder {
-
     /**
      * Encodes content without the xml declaration to the given output stream.
      *
@@ -32,7 +31,10 @@ interface PreferenceEncoder {
      * @param outputStream [OutputStream] to encode to
      * @param block Block used to add content
      */
-    fun encode(outputStream: OutputStream, block: XmlSerializer.() -> Unit)
+    fun encode(
+        outputStream: OutputStream,
+        block: XmlSerializer.() -> Unit,
+    )
 
     /**
      * Encodes content without the xml declaration
@@ -55,7 +57,6 @@ interface PreferenceEncoder {
     fun encodeDocument(block: XmlSerializer.() -> Unit = {}): String
 
     companion object Encoder {
-
         /**
          * Add a tag to the current encoding context.
          * The tag will be self-closing if no content is added using the given block.
@@ -64,7 +65,10 @@ interface PreferenceEncoder {
          * @param block Block to add tag content with [XmlSerializer] as the receiver
          * @receiver [XmlSerializer] instance
          */
-        fun XmlSerializer.tag(tag: String, block: XmlSerializer.() -> Unit) {
+        fun XmlSerializer.tag(
+            tag: String,
+            block: XmlSerializer.() -> Unit,
+        ) {
             startTag(null, tag)
             block()
             endTag(null, tag)
@@ -77,7 +81,10 @@ interface PreferenceEncoder {
          * @param value Attribute value
          * @receiver [XmlSerializer] instance
          */
-        fun XmlSerializer.attrib(name: String, value: String) {
+        fun XmlSerializer.attrib(
+            name: String,
+            value: String,
+        ) {
             attribute(null, name, value)
         }
     }

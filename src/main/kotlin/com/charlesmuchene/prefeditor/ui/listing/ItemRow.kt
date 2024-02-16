@@ -24,8 +24,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -63,21 +74,24 @@ fun <T : Favoritable> ItemRow(
     )
 
     CompositionLocalProvider(LocalContentColor provides color) {
-        Column(modifier = modifier
-            .fillMaxWidth()
-            .clickable { onClick(item) }
-            .hoverable(interactionSource)
-            .pointerOnHover()
-            .onHover { isHovered ->
-                scope.launch {
-                    hoverAnimation(isHovered = isHovered, animatedScalePercent = animatedScalePercent)
-                }
-            }
+        Column(
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .clickable { onClick(item) }
+                    .hoverable(interactionSource)
+                    .pointerOnHover()
+                    .onHover { isHovered ->
+                        scope.launch {
+                            hoverAnimation(isHovered = isHovered, animatedScalePercent = animatedScalePercent)
+                        }
+                    },
         ) {
             Row(
-                modifier = Modifier
-                    .padding(vertical = halfPadding)
-                    .scale(animatedScalePercent.value),
+                modifier =
+                    Modifier
+                        .padding(vertical = halfPadding)
+                        .scale(animatedScalePercent.value),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val firstItemWeight = .9f
@@ -107,6 +121,9 @@ private suspend fun hoverAnimation(
     isHovered: Boolean,
     animatedScalePercent: Animatable<Float, AnimationVector1D>,
 ) {
-    if (isHovered) animatedScalePercent.animateTo(targetValue = 1.02f, animationSpec = tween(durationMillis = 300))
-    else animatedScalePercent.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 700))
+    if (isHovered) {
+        animatedScalePercent.animateTo(targetValue = 1.02f, animationSpec = tween(durationMillis = 300))
+    } else {
+        animatedScalePercent.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 700))
+    }
 }

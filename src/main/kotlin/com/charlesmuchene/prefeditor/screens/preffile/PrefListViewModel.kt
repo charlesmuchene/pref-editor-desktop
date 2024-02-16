@@ -23,26 +23,33 @@ import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.models.UIPrefFile
-import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.navigation.EditScreen
+import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class PrefListViewModel(
+    reloadSignal: ReloadSignal,
     private val app: App,
     private val device: Device,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
-    reloadSignal: ReloadSignal,
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
-
     private val processor = Processor()
     private val decoder = PrefFileListDecoder()
     private val useCase = PrefFileListUseCase(app = app, device = device, processor = processor, decoder = decoder)
@@ -72,15 +79,16 @@ class PrefListViewModel(
             .launchIn(scope = scope)
     }
 
-    private fun mapToState(result: PrefFileResult): UIState = when (result) {
-        PrefFileResult.EmptyFiles,
-        PrefFileResult.EmptyPrefs,
-        -> UIState.Empty
+    private fun mapToState(result: PrefFileResult): UIState =
+        when (result) {
+            PrefFileResult.EmptyFiles,
+            PrefFileResult.EmptyPrefs,
+            -> UIState.Empty
 
-        is PrefFileResult.Files -> UIState.Files(filter(filter = filter, files = map(result.files)))
+            is PrefFileResult.Files -> UIState.Files(filter(filter = filter, files = map(result.files)))
 
-        PrefFileResult.NonDebuggable -> UIState.Error(message = "Selected app is non-debuggable")
-    }
+            PrefFileResult.NonDebuggable -> UIState.Error(message = "Selected app is non-debuggable")
+        }
 
     private fun map(files: PrefFiles): List<UIPrefFile> =
         files.map { file -> UIPrefFile(file = file, isFavorite = favorites.isFavorite(file, app, device)) }
@@ -91,7 +99,10 @@ class PrefListViewModel(
      * @param file Selected [UIPrefFile]
      * @param readOnly Determine if we should show read view or editor
      */
-    fun selected(file: UIPrefFile, readOnly: Boolean = false) {
+    fun selected(
+        file: UIPrefFile,
+        readOnly: Boolean = false,
+    ) {
         launch {
             navigation.navigate(screen = EditScreen(file = file.file, app = app, device = device, readOnly = readOnly))
         }
@@ -118,9 +129,12 @@ class PrefListViewModel(
      * @param files The [List] of [UIPrefFile]s to filter
      * @return The filtered [List] of [UIPrefFile]s
      */
-    private fun filter(filter: ItemFilter, files: List<UIPrefFile>) = files.filter { uiFile ->
+    private fun filter(
+        filter: ItemFilter,
+        files: List<UIPrefFile>,
+    ) = files.filter { uiFile ->
         (if (filter.starred) uiFile.isFavorite else true) &&
-                uiFile.file.name.contains(other = filter.text, ignoreCase = true)
+            uiFile.file.name.contains(other = filter.text, ignoreCase = true)
     }
 
     /**
@@ -128,20 +142,30 @@ class PrefListViewModel(
      *
      * @param file [UIPrefFile] to un/favorite
      */
-    suspend fun favorite(file: UIPrefFile) = coroutineScope {
-        val result = useCase.fileResult.value
-        if (result !is PrefFileResult.Files) file
-        else async {
-            if (file.isFavorite) favorites.unfavoriteFile(file = file.file, app = app, device = device)
-            else favorites.favoriteFile(file = file.file, app = app, device = device)
-            file.copy(isFavorite = !file.isFavorite)
-        }.await()
-    }
+    suspend fun favorite(file: UIPrefFile) =
+        coroutineScope {
+            val result = useCase.fileResult.value
+            if (result !is PrefFileResult.Files) {
+                file
+            } else {
+                async {
+                    if (file.isFavorite) {
+                        favorites.unfavoriteFile(file = file.file, app = app, device = device)
+                    } else {
+                        favorites.favoriteFile(file = file.file, app = app, device = device)
+                    }
+                    file.copy(isFavorite = !file.isFavorite)
+                }.await()
+            }
+        }
 
     sealed interface UIState {
         data object Empty : UIState
+
         data object Loading : UIState
+
         data class Files(val files: List<UIPrefFile>) : UIState
+
         data class Error(val message: String? = null) : UIState
     }
 }

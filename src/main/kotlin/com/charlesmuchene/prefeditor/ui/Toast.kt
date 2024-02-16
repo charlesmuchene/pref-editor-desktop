@@ -23,7 +23,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,8 +41,10 @@ import kotlinx.coroutines.delay
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun Toast(text: String, modifier: Modifier = Modifier) {
-
+fun Toast(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
     var shown by remember { mutableStateOf(true) }
 
     LaunchedEffect(text) {
@@ -49,20 +56,21 @@ fun Toast(text: String, modifier: Modifier = Modifier) {
     Popup(alignment = Alignment.BottomCenter) {
         AnimatedVisibility(shown) {
             Box(
-                modifier = modifier
-                    .height(72.dp)
-                    .padding(bottom = padding)
-                    .clip(RoundedCornerShape(size = 12.dp))
-                    .background(Color.Black.copy(alpha = 0.6f))
-                    .fillMaxWidth(fraction = 0.7f),
-                contentAlignment = Alignment.Center
+                modifier =
+                    modifier
+                        .height(72.dp)
+                        .padding(bottom = padding)
+                        .clip(RoundedCornerShape(size = 12.dp))
+                        .background(Color.Black.copy(alpha = 0.6f))
+                        .fillMaxWidth(fraction = 0.7f),
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = text,
                     style = Typography.primary,
                     color = Color.White,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }

@@ -17,26 +17,26 @@
 package com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme
 
 import com.charlesmuchene.prefeditor.data.Edit
-import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceDecoder.Reader.gobbleTag
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceDecoder.Reader.skip
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceEncoder.Encoder.attrib
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceEncoder.Encoder.tag
+import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 import org.xmlpull.v1.XmlPullParser
 import java.nio.file.Path
 import kotlin.io.path.inputStream
 
 class ThemeCodec(private val codec: PreferencesCodec) {
-
-    fun encode(theme: EditorTheme): Edit = Edit.Change(
-        matcher = "<$THEME.*$",
-        content = codec.encode { tag(THEME) { attrib(name = VALUE, value = theme.ordinal.toString()) } }
-    )
+    fun encode(theme: EditorTheme): Edit =
+        Edit.Change(
+            matcher = "<$THEME.*$",
+            content = codec.encode { tag(THEME) { attrib(name = VALUE, value = theme.ordinal.toString()) } },
+        )
 
     suspend fun decode(path: Path): EditorTheme? {
         var theme: EditorTheme? = null
         codec.decode(path.inputStream()) {
-            when(name) {
+            when (name) {
                 THEME -> theme = parseTheme()
                 else -> skip()
             }
@@ -44,10 +44,11 @@ class ThemeCodec(private val codec: PreferencesCodec) {
         return theme
     }
 
-    private fun XmlPullParser.parseTheme(): EditorTheme = gobbleTag(THEME) {
-        val value = getAttributeValue(0).toInt()
-        EditorTheme.entries[value]
-    }
+    private fun XmlPullParser.parseTheme(): EditorTheme =
+        gobbleTag(THEME) {
+            val value = getAttributeValue(0).toInt()
+            EditorTheme.entries[value]
+        }
 
     companion object Tags {
         const val THEME = "theme"

@@ -18,6 +18,8 @@ package com.charlesmuchene.prefeditor.data
 
 sealed interface Edit {
     data class Add(val content: String) : Edit
+
     data class Delete(val matcher: String) : Edit
+
     data class Change(val matcher: String, val content: String) : Edit
 }

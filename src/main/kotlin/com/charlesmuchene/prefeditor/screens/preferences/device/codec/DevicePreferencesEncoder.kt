@@ -21,7 +21,6 @@ import com.charlesmuchene.prefeditor.data.Preference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 
 interface DevicePreferencesEncoder {
-
     /**
      * Encode edits
      *
@@ -29,5 +28,8 @@ interface DevicePreferencesEncoder {
      * @param existing Downstream preferences
      * @return A [List] of [Edit]s
      */
-    fun encode(edits: List<UIPreference>, existing: List<Preference>): List<Edit>
+    fun encode(
+        edits: List<UIPreference>,
+        existing: List<Preference>,
+    ): List<Edit>
 }

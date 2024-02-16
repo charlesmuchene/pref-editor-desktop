@@ -16,7 +16,13 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device
 
-import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.data.BooleanPreference
+import com.charlesmuchene.prefeditor.data.FloatPreference
+import com.charlesmuchene.prefeditor.data.IntPreference
+import com.charlesmuchene.prefeditor.data.LongPreference
+import com.charlesmuchene.prefeditor.data.Preference
+import com.charlesmuchene.prefeditor.data.SetPreference
+import com.charlesmuchene.prefeditor.data.StringPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 
@@ -24,7 +30,6 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPrefere
  * Validates edited preference entries
  */
 class PreferenceValidator {
-
     /**
      * Determine there are any edited preferences
      *
@@ -49,11 +54,12 @@ class PreferenceValidator {
      * @param preference Edited [Preference]
      * @return `true` if valid, `false` otherwise
      */
-    fun isValid(preference: Preference): Boolean = when (preference) {
-        is SetPreference, is StringPreference -> true
-        is IntPreference -> preference.value.toIntOrNull() != null
-        is LongPreference -> preference.value.toLongOrNull() != null
-        is FloatPreference -> preference.value.toFloatOrNull() != null
-        is BooleanPreference -> preference.value.toBooleanStrictOrNull() != null
-    }
+    fun isValid(preference: Preference): Boolean =
+        when (preference) {
+            is SetPreference, is StringPreference -> true
+            is IntPreference -> preference.value.toIntOrNull() != null
+            is LongPreference -> preference.value.toLongOrNull() != null
+            is FloatPreference -> preference.value.toFloatOrNull() != null
+            is BooleanPreference -> preference.value.toBooleanStrictOrNull() != null
+        }
 }

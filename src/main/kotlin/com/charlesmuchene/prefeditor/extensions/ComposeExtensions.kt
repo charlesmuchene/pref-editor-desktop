@@ -16,8 +16,13 @@
 
 package com.charlesmuchene.prefeditor.extensions
 
-import androidx.compose.animation.*
+import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
@@ -31,7 +36,10 @@ import org.jetbrains.jewel.ui.painter.rememberResourcePainterProvider
 import java.awt.Cursor
 
 @Composable
-fun rememberIconPainter(name: String, extension: IconExtension = SVG): State<Painter> =
+fun rememberIconPainter(
+    name: String,
+    extension: IconExtension = SVG,
+): State<Painter> =
     rememberResourcePainterProvider(
         iconClass = TextBundle::class.java,
         path = "icons/$name.${extension.extension}",
@@ -41,9 +49,11 @@ fun rememberIconPainter(name: String, extension: IconExtension = SVG): State<Pai
 fun Modifier.pointerOnHover() = pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
 
 fun screenTransitionSpec(): ContentTransform =
-    (fadeIn(animationSpec = tween(durationMillis = 220, delayMillis = 90)) +
-            scaleIn(initialScale = 0.92f, animationSpec = tween(durationMillis = 220, delayMillis = 90)))
+    (
+        fadeIn(animationSpec = tween(durationMillis = 220, delayMillis = 90)) +
+            scaleIn(initialScale = 0.92f, animationSpec = tween(durationMillis = 220, delayMillis = 90))
+    )
         .togetherWith(
             fadeOut(animationSpec = tween(durationMillis = 300)) +
-                    scaleOut(targetScale = .92f, animationSpec = tween(durationMillis = 220))
+                scaleOut(targetScale = .92f, animationSpec = tween(durationMillis = 220)),
         )

@@ -18,4 +18,4 @@ package com.charlesmuchene.prefeditor.models
 
 import com.charlesmuchene.prefeditor.data.App
 
-data class UIApp(val app: App, override var isFavorite: Boolean): Favoritable
+data class UIApp(val app: App, override var isFavorite: Boolean) : Favoritable

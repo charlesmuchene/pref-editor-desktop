@@ -20,7 +20,6 @@ import com.charlesmuchene.prefeditor.command.ReadCommand
 import com.charlesmuchene.prefeditor.processor.Processor
 
 class PreferenceReader(private val processor: Processor) {
-
     suspend fun read(command: ReadCommand): Result<String> {
         return processor.run(command = command.command())
     }

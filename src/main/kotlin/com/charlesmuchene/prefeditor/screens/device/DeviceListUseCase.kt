@@ -24,13 +24,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class DeviceListUseCase(private val processor: Processor, private val decoder: DeviceListDecoder) {
-
     private val command = DeviceListCommand()
     private val _devices = MutableStateFlow(emptyList<Device>())
     val devices: StateFlow<Devices> = _devices.asStateFlow()
 
-    suspend fun fetch(): Result<Devices> = processor.run(command.command()).map { content ->
-        _devices.emit(emptyList()) // Need to clear for flow to register updates
-        decoder.decode(content).also { _devices.emit(it) }
-    }
+    suspend fun fetch(): Result<Devices> =
+        processor.run(command.command()).map { content ->
+            _devices.emit(emptyList()) // Need to clear for flow to register updates
+            decoder.decode(content).also { _devices.emit(it) }
+        }
 }

@@ -26,7 +26,6 @@ import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 class DevicePreferencesCodec(private val codec: PreferencesCodec) :
     DevicePreferencesEncoder by DevicePreferencesEncoderImpl(codec),
     DevicePreferencesDecoder by DevicePreferencesDecoderImpl(codec) {
-
     companion object {
         const val VALUE = "value"
         const val NAME = "name"

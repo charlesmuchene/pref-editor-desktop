@@ -19,18 +19,22 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorViewModel
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceAction
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
-import com.charlesmuchene.prefeditor.screens.preferences.device.editor.ACTION_COMPONENT_WEIGHT
-import com.charlesmuchene.prefeditor.screens.preferences.device.editor.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.VALUE_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.componentSpacing
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -45,11 +49,10 @@ fun PrimitivePreferenceRow(
     keyboardType: KeyboardType,
     modifier: Modifier = Modifier,
 ) {
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(componentSpacing)
+        horizontalArrangement = Arrangement.spacedBy(componentSpacing),
     ) {
         var localPreference by remember(preference) { mutableStateOf(preference) }
 
@@ -66,7 +69,7 @@ fun PrimitivePreferenceRow(
             textDecoration = decoration,
             style = Typography.h3TextStyle(),
             text = preference.preference.name,
-            modifier = Modifier.weight(NAME_COMPONENT_WEIGHT)
+            modifier = Modifier.weight(NAME_COMPONENT_WEIGHT),
         )
 
         // Adapted from Jewel, all so that we can strike through text :sad:

@@ -36,22 +36,27 @@ class FavoritesUseCase(
     private val path: Path = EditorFiles.preferencesPath(),
     private val context: CoroutineContext = Dispatchers.Default,
 ) : CoroutineScope by CoroutineScope(context) {
-
     private lateinit var favorites: List<Favorite>
 
     suspend fun refresh() {
         favorites = codec.decode(path = path)
     }
 
-    fun isFavorite(device: Device): Boolean =
-        favorites.filterIsInstance<Favorite.Device>().any { it.serial == device.serial }
+    fun isFavorite(device: Device): Boolean = favorites.filterIsInstance<Favorite.Device>().any { it.serial == device.serial }
 
-    fun isFavorite(app: App, device: Device): Boolean =
+    fun isFavorite(
+        app: App,
+        device: Device,
+    ): Boolean =
         favorites.filterIsInstance<Favorite.App>().any {
             it.device == device.serial && it.packageName == app.packageName
         }
 
-    fun isFavorite(file: PrefFile, app: App, device: Device): Boolean =
+    fun isFavorite(
+        file: PrefFile,
+        app: App,
+        device: Device,
+    ): Boolean =
         favorites.filterIsInstance<Favorite.File>().any {
             it.device == device.serial && it.app == app.packageName && it.name == file.name
         }
@@ -69,11 +74,17 @@ class FavoritesUseCase(
         refresh()
     }
 
-    suspend fun favoriteApp(app: App, device: Device) {
+    suspend fun favoriteApp(
+        app: App,
+        device: Device,
+    ) {
         writeFavorite(favorite = Favorite.App(device = device.serial, packageName = app.packageName))
     }
 
-    suspend fun unfavoriteApp(app: App, device: Device) {
+    suspend fun unfavoriteApp(
+        app: App,
+        device: Device,
+    ) {
         removeFavorite(favorite = Favorite.App(device = device.serial, packageName = app.packageName))
     }
 
@@ -85,11 +96,19 @@ class FavoritesUseCase(
         removeFavorite(favorite = Favorite.Device(device.serial))
     }
 
-    suspend fun favoriteFile(file: PrefFile, app: App, device: Device) {
+    suspend fun favoriteFile(
+        file: PrefFile,
+        app: App,
+        device: Device,
+    ) {
         writeFavorite(favorite = Favorite.File(device = device.serial, app = app.packageName, file.name))
     }
 
-    suspend fun unfavoriteFile(file: PrefFile, app: App, device: Device) {
+    suspend fun unfavoriteFile(
+        file: PrefFile,
+        app: App,
+        device: Device,
+    ) {
         removeFavorite(favorite = Favorite.File(device = device.serial, app = app.packageName, file.name))
     }
 }

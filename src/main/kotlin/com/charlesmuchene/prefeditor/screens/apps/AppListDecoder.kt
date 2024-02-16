@@ -21,7 +21,6 @@ import com.charlesmuchene.prefeditor.data.Apps
 import kotlinx.coroutines.yield
 
 class AppListDecoder(private val sorted: Boolean = true) {
-
     suspend fun decode(content: String): Apps {
         val apps = mutableListOf<App>()
         content.lineSequence().forEach { line ->
@@ -40,5 +39,4 @@ class AppListDecoder(private val sorted: Boolean = true) {
     private companion object {
         const val DELIMITER = ":"
     }
-
 }

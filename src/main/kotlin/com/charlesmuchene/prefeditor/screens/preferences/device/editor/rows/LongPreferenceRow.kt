@@ -24,7 +24,11 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorVie
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 
 @Composable
-fun LongPreferenceRow(uiPreference: UIPreference, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+fun LongPreferenceRow(
+    uiPreference: UIPreference,
+    viewModel: EditorViewModel,
+    modifier: Modifier = Modifier,
+) {
     if (uiPreference.preference !is LongPreference) return
 
     PrimitivePreferenceRow(

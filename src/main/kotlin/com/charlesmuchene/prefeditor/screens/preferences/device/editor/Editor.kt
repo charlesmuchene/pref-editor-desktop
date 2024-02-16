@@ -18,13 +18,30 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,16 +59,24 @@ import com.charlesmuchene.prefeditor.ui.theme.Typography
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.*
+import org.jetbrains.jewel.ui.component.CheckboxRow
+import org.jetbrains.jewel.ui.component.DefaultButton
+import org.jetbrains.jewel.ui.component.Divider
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.OutlinedButton
+import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun Editor(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier) {
-
+fun Editor(
+    prefUseCase: DevicePreferencesUseCase,
+    modifier: Modifier = Modifier,
+) {
     val scope = rememberCoroutineScope()
     val appState = LocalAppState.current
-    val viewModel = remember {
-        EditorViewModel(appState = appState, scope = scope, prefUseCase = prefUseCase)
-    }
+    val viewModel =
+        remember {
+            EditorViewModel(appState = appState, scope = scope, prefUseCase = prefUseCase)
+        }
 
     val prefs by viewModel.preferences
     val partition by remember(prefs) { mutableStateOf(prefs.partition { it.preference is SetPreference }) }
@@ -84,7 +109,10 @@ fun Editor(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier)
 }
 
 @Composable
-private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+private fun EditorTopBar(
+    viewModel: EditorViewModel,
+    modifier: Modifier = Modifier,
+) {
     var showAddPreference by remember { mutableStateOf(false) }
 
     Row(modifier = modifier) {
@@ -124,13 +152,19 @@ private fun EditorTopBar(viewModel: EditorViewModel, modifier: Modifier = Modifi
     }
 }
 
-private fun LazyListScope.sets(preferences: List<UIPreference>, viewModel: EditorViewModel) {
+private fun LazyListScope.sets(
+    preferences: List<UIPreference>,
+    viewModel: EditorViewModel,
+) {
     if (preferences.isEmpty()) return
     setPreferenceSection(preferences = preferences, viewModel = viewModel)
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-private fun LazyListScope.primitives(preferences: List<UIPreference>, viewModel: EditorViewModel) {
+private fun LazyListScope.primitives(
+    preferences: List<UIPreference>,
+    viewModel: EditorViewModel,
+) {
     items(items = preferences, key = { it.preference.name }) { preference ->
         val modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
         PrimitivePreference(preference = preference, viewModel = viewModel, modifier = modifier.animateItemPlacement())

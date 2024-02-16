@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class ViewerViewModel(prefUseCase: DevicePreferencesUseCase, scope: CoroutineScope) {
-
     private val _preferences = mutableStateOf(emptyList<Preference>())
     val preferences: State<List<Preference>> = _preferences
 

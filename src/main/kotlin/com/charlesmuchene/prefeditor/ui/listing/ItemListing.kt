@@ -31,7 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ItemListing(modifier: Modifier = Modifier, content: LazyListScope.() -> Unit) {
+fun ItemListing(
+    modifier: Modifier = Modifier,
+    content: LazyListScope.() -> Unit,
+) {
     Box(modifier = modifier.fillMaxWidth()) {
         val state = rememberLazyListState()
         LazyColumn(modifier = Modifier.padding(end = 18.dp), state = state, content = content)

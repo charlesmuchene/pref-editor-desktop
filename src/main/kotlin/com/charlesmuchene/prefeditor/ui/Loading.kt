@@ -16,7 +16,11 @@
 
 package com.charlesmuchene.prefeditor.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +29,10 @@ import org.jetbrains.jewel.ui.component.CircularProgressIndicator
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-fun Loading(text: String, modifier: Modifier = Modifier) {
+fun Loading(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier = modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.Center,

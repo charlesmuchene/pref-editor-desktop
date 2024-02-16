@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PrefFileListCommandTest {
-
     @Test
     fun `pref file list command is valid`() {
         val expected = "adb -s ${device.serial} shell run-as ${app.packageName} ls shared_prefs"

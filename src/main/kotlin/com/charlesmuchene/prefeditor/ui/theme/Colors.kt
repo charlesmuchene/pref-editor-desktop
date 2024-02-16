@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import org.jetbrains.jewel.foundation.GlobalColors
 import org.jetbrains.jewel.foundation.OutlineColors
 import org.jetbrains.jewel.foundation.theme.JewelTheme
-import org.jetbrains.jewel.intui.core.theme.IntUiLightTheme
 import org.jetbrains.jewel.intui.standalone.theme.dark
 import org.jetbrains.jewel.intui.standalone.theme.light
 

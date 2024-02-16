@@ -21,30 +21,32 @@ import com.charlesmuchene.prefeditor.data.Devices
 import kotlinx.coroutines.yield
 
 class DeviceListDecoder {
-
-    suspend fun decode(content: String): Devices = buildList {
-        content.lineSequence()
-            .drop(n = 1) // drop the header line: List of devices attached
-            .filter(String::isNotBlank)
-            .forEach { line ->
-                yield()
-                add(parseDevice(line = line))
-            }
-    }
+    suspend fun decode(content: String): Devices =
+        buildList {
+            content.lineSequence()
+                .drop(n = 1) // drop the header line: List of devices attached
+                .filter(String::isNotBlank)
+                .forEach { line ->
+                    yield()
+                    add(parseDevice(line = line))
+                }
+        }
 
     private fun parseDevice(line: String): Device {
         require(line.isNotBlank())
         val tokens = line.split(DELIMITER).filterNot(String::isEmpty)
         val attributesIndex = tokens.indexOfFirst { token -> token.contains(ATTRIBUTE_DELIMITER) }
-        val attributes = tokens.subList(fromIndex = attributesIndex, toIndex = tokens.size).map {
-            val value = it.split(ATTRIBUTE_DELIMITER)
-            Device.Attribute(name = value[0], value = value[1])
-        }
-        val type = when (tokens[1]) {
-            DEVICE -> Device.Type.Device
-            UNAUTHORIZED -> Device.Type.Unauthorized
-            else -> Device.Type.Unknown
-        }
+        val attributes =
+            tokens.subList(fromIndex = attributesIndex, toIndex = tokens.size).map {
+                val value = it.split(ATTRIBUTE_DELIMITER)
+                Device.Attribute(name = value[0], value = value[1])
+            }
+        val type =
+            when (tokens[1]) {
+                DEVICE -> Device.Type.Device
+                UNAUTHORIZED -> Device.Type.Unauthorized
+                else -> Device.Type.Unknown
+            }
         return Device(serial = tokens[0], type = type, attributes = attributes)
     }
 

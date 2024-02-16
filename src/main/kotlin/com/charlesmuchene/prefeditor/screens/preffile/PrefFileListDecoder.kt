@@ -18,28 +18,37 @@ package com.charlesmuchene.prefeditor.screens.preffile
 
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.PrefFiles
-import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.*
+import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.EmptyFiles
+import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.EmptyPrefs
+import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.Files
+import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.NonDebuggable
 import kotlinx.coroutines.yield
 
 class PrefFileListDecoder {
-
-    suspend fun decode(content: String): PrefFileResult = when {
-        content.isBlank() -> EmptyPrefs
-        content == EMPTY_FILES -> EmptyFiles
-        content == EMPTY_PREFS -> EmptyPrefs
-        content.startsWith(NON_DEBUGGABLE) -> NonDebuggable
-        else -> Files(buildList {
-            content.lineSequence().forEach { name ->
-                yield()
-                add(PrefFile(name = name, type = PrefFile.Type.KEY_VALUE))
-            }
-        })
-    }
+    suspend fun decode(content: String): PrefFileResult =
+        when {
+            content.isBlank() -> EmptyPrefs
+            content == EMPTY_FILES -> EmptyFiles
+            content == EMPTY_PREFS -> EmptyPrefs
+            content.startsWith(NON_DEBUGGABLE) -> NonDebuggable
+            else ->
+                Files(
+                    buildList {
+                        content.lineSequence().forEach { name ->
+                            yield()
+                            add(PrefFile(name = name, type = PrefFile.Type.KEY_VALUE))
+                        }
+                    },
+                )
+        }
 
     sealed interface PrefFileResult {
         data object EmptyFiles : PrefFileResult
+
         data object EmptyPrefs : PrefFileResult
+
         data object NonDebuggable : PrefFileResult
+
         data class Files(val files: PrefFiles) : PrefFileResult
     }
 

@@ -18,19 +18,23 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.BooleanPreference
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorViewModel
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceAction
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceAction.Change
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState.Deleted
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
-import com.charlesmuchene.prefeditor.screens.preferences.device.editor.ACTION_COMPONENT_WEIGHT
-import com.charlesmuchene.prefeditor.screens.preferences.device.editor.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.VALUE_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.componentSpacing
 import org.jetbrains.jewel.ui.component.RadioButtonRow
@@ -38,17 +42,21 @@ import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.component.Typography
 
 @Composable
-fun BooleanPreferenceRow(uiPreference: UIPreference, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+fun BooleanPreferenceRow(
+    uiPreference: UIPreference,
+    viewModel: EditorViewModel,
+    modifier: Modifier = Modifier,
+) {
     val preference = uiPreference.preference as? BooleanPreference ?: return
 
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(componentSpacing)
+        horizontalArrangement = Arrangement.spacedBy(componentSpacing),
     ) {
         var localPreference by remember(uiPreference) { mutableStateOf(uiPreference) }
-        val trueString by remember() { mutableStateOf(true.toString()) }
-        val falseString by remember() { mutableStateOf(false.toString()) }
+        val trueString by remember { mutableStateOf(true.toString()) }
+        val falseString by remember { mutableStateOf(false.toString()) }
 
         val outline by remember(localPreference) {
             mutableStateOf(viewModel.outline(preference = localPreference.preference))

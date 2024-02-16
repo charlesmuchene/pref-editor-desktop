@@ -25,14 +25,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class AppListUseCase(device: Device, private val processor: Processor, private val decoder: AppListDecoder) {
-
     private val command = AppListCommand(device = device)
     private val _apps = MutableStateFlow(emptyList<App>())
     val apps: StateFlow<Apps> = _apps.asStateFlow()
 
-    suspend fun fetch(): Result<Apps> = processor.run(command.command()).map { content ->
-        _apps.emit(emptyList())
-        decoder.decode(content = content).also { _apps.emit(it) }
-    }
-
+    suspend fun fetch(): Result<Apps> =
+        processor.run(command.command()).map { content ->
+            _apps.emit(emptyList())
+            decoder.decode(content = content).also { _apps.emit(it) }
+        }
 }

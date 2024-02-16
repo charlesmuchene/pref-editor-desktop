@@ -18,10 +18,18 @@
 
 package com.charlesmuchene.prefeditor
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.application
-import com.charlesmuchene.prefeditor.app.*
+import com.charlesmuchene.prefeditor.app.AppWindow
+import com.charlesmuchene.prefeditor.app.NoBridgeWindow
+import com.charlesmuchene.prefeditor.app.SetupWindow
+import com.charlesmuchene.prefeditor.app.appSetup
+import com.charlesmuchene.prefeditor.app.svgResource
 import com.charlesmuchene.prefeditor.models.AppStatus
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

@@ -34,7 +34,15 @@ import com.charlesmuchene.prefeditor.ui.theme.green
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class DeviceListViewModel(
@@ -44,7 +52,6 @@ class DeviceListViewModel(
     private val reloadSignal: ReloadSignal,
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
-
     private val processor = Processor()
     private val decoder = DeviceListDecoder()
     private val useCase = DeviceListUseCase(processor = processor, decoder = decoder)
@@ -80,8 +87,12 @@ class DeviceListViewModel(
      * @param devices A [List] of connected [Device]s
      * @return An instance of [UIState]
      */
-    private fun mapToState(devices: Devices): UIState = if (devices.isEmpty()) UIState.NoDevices
-    else UIState.Devices(filter(filter = filter, devices = mapDevices(devices)))
+    private fun mapToState(devices: Devices): UIState =
+        if (devices.isEmpty()) {
+            UIState.NoDevices
+        } else {
+            UIState.Devices(filter(filter = filter, devices = mapDevices(devices)))
+        }
 
     /**
      * Map connected devices to a UI model.
@@ -90,10 +101,11 @@ class DeviceListViewModel(
      * @return A [List] of [UIDevice]
      * @see [UIDevice]
      */
-    private fun mapDevices(devices: Devices): List<UIDevice> = devices.map { device ->
-        val isFavorite = favorites.isFavorite(device)
-        UIDevice(device = device, isFavorite = isFavorite)
-    }
+    private fun mapDevices(devices: Devices): List<UIDevice> =
+        devices.map { device ->
+            val isFavorite = favorites.isFavorite(device)
+            UIDevice(device = device, isFavorite = isFavorite)
+        }
 
     /**
      * Format device attributes
@@ -101,12 +113,13 @@ class DeviceListViewModel(
      * @param device [Device] to get attributes from
      * @return A formatted string
      */
-    fun formatDeviceAttributes(device: Device): String = device.attributes.joinToString(
-        separator = " ",
-        transform = { attribute ->
-            "${attribute.name}:${attribute.value}"
-        }
-    )
+    fun formatDeviceAttributes(device: Device): String =
+        device.attributes.joinToString(
+            separator = " ",
+            transform = { attribute ->
+                "${attribute.name}:${attribute.value}"
+            },
+        )
 
     /**
      * Status color of displayed device
@@ -114,8 +127,12 @@ class DeviceListViewModel(
      * @param device [Device] instance
      * @return [Color] for based on device state
      */
-    fun statusColor(device: Device): Color = if (device.type == Type.Device) green
-    else Color.Red
+    fun statusColor(device: Device): Color =
+        if (device.type == Type.Device) {
+            green
+        } else {
+            Color.Red
+        }
 
     /**
      * Select a device
@@ -153,10 +170,15 @@ class DeviceListViewModel(
      * @param devices The [List] of [UIDevice]s to filter
      * @return The filtered [List] of [UIDevice]s
      */
-    private fun filter(filter: ItemFilter, devices: List<UIDevice>) = devices.filter { uiDevice ->
+    private fun filter(
+        filter: ItemFilter,
+        devices: List<UIDevice>,
+    ) = devices.filter { uiDevice ->
         (if (filter.starred) uiDevice.isFavorite else true) &&
-                (uiDevice.device.serial.contains(other = filter.text, ignoreCase = true) ||
-                        uiDevice.device.attributes.joinToString().contains(other = filter.text, ignoreCase = true))
+            (
+                uiDevice.device.serial.contains(other = filter.text, ignoreCase = true) ||
+                    uiDevice.device.attributes.joinToString().contains(other = filter.text, ignoreCase = true)
+            )
     }
 
     /**
@@ -164,18 +186,25 @@ class DeviceListViewModel(
      *
      * @param device [UIDevice] to un/favorite
      */
-    suspend fun favorite(device: UIDevice) = coroutineScope {
-        async {
-            if (device.isFavorite) favorites.unfavoriteDevice(device = device.device)
-            else favorites.favoriteDevice(device = device.device)
-            device.copy(isFavorite = !device.isFavorite)
-        }.await()
-    }
+    suspend fun favorite(device: UIDevice) =
+        coroutineScope {
+            async {
+                if (device.isFavorite) {
+                    favorites.unfavoriteDevice(device = device.device)
+                } else {
+                    favorites.favoriteDevice(device = device.device)
+                }
+                device.copy(isFavorite = !device.isFavorite)
+            }.await()
+        }
 
     sealed interface UIState {
         data object Error : UIState
+
         data object Loading : UIState
+
         data object NoDevices : UIState
+
         data class Devices(val devices: List<UIDevice>) : UIState
     }
 }

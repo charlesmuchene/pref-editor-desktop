@@ -18,4 +18,4 @@ package com.charlesmuchene.prefeditor.models
 
 import com.charlesmuchene.prefeditor.data.PrefFile
 
-data class UIPrefFile(val file: PrefFile, override var isFavorite: Boolean): Favoritable
+data class UIPrefFile(val file: PrefFile, override var isFavorite: Boolean) : Favoritable

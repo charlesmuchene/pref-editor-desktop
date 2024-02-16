@@ -18,7 +18,11 @@ package com.charlesmuchene.prefeditor.screens.preferences.device
 
 import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.command.DeviceWriteCommand
-import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.data.App
+import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.data.PrefFile
+import com.charlesmuchene.prefeditor.data.Preference
+import com.charlesmuchene.prefeditor.data.Preferences
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.providers.TimeStampProviderImpl
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceReader

@@ -36,15 +36,16 @@ class Bridge(
     private val processor: Processor = Processor(),
     private val context: CoroutineContext = Dispatchers.IO + CoroutineName(name = "Bridge"),
 ) {
-    suspend fun checkBridge(): BridgeStatus = withContext(context) {
-        try {
-            processor.run(listOf("adb")) {
-                redirectOutput(ProcessBuilder.Redirect.DISCARD)
-                redirectError(ProcessBuilder.Redirect.DISCARD)
+    suspend fun checkBridge(): BridgeStatus =
+        withContext(context) {
+            try {
+                processor.run(listOf("adb")) {
+                    redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                    redirectError(ProcessBuilder.Redirect.DISCARD)
+                }
+                Available
+            } catch (_: IOException) {
+                Unavailable
             }
-            Available
-        } catch (_: IOException) {
-            Unavailable
         }
-    }
 }

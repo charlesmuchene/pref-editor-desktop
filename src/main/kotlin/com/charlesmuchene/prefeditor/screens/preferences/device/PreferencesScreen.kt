@@ -17,7 +17,11 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.navigation.EditScreen
@@ -31,32 +35,40 @@ import com.charlesmuchene.prefeditor.ui.FullScreenText
 import com.charlesmuchene.prefeditor.ui.Loading
 
 @Composable
-fun PreferencesScreen(screen: EditScreen, modifier: Modifier = Modifier) {
+fun PreferencesScreen(
+    screen: EditScreen,
+    modifier: Modifier = Modifier,
+) {
     val scope = rememberCoroutineScope()
     val reloadSignal = LocalReloadSignal.current
 
-    val viewModel = remember {
-        PreferencesViewModel(
-            scope = scope,
-            app = screen.app,
-            device = screen.device,
-            prefFile = screen.file,
-            readOnly = screen.readOnly,
-            reloadSignal = reloadSignal
-        )
-    }
+    val viewModel =
+        remember {
+            PreferencesViewModel(
+                scope = scope,
+                app = screen.app,
+                device = screen.device,
+                prefFile = screen.file,
+                readOnly = screen.readOnly,
+                reloadSignal = reloadSignal,
+            )
+        }
     val uiState by viewModel.uiState.collectAsState()
 
     AnimatedContent(targetState = uiState, transitionSpec = { screenTransitionSpec() }) { state ->
         when (state) {
             UIState.Loading -> PrefLoading(modifier = modifier)
             is UIState.Error -> PrefError(modifier = modifier, message = state.message)
-            is UIState.Success -> if (state.readOnly) Viewer(
-                prefUseCase = viewModel.useCase,
-                onEditClick = viewModel::edit,
-                modifier = modifier,
-            )
-            else Editor(modifier = modifier, prefUseCase = viewModel.useCase)
+            is UIState.Success ->
+                if (state.readOnly) {
+                    Viewer(
+                        prefUseCase = viewModel.useCase,
+                        onEditClick = viewModel::edit,
+                        modifier = modifier,
+                    )
+                } else {
+                    Editor(modifier = modifier, prefUseCase = viewModel.useCase)
+                }
         }
     }
 }
@@ -67,7 +79,10 @@ private fun PrefLoading(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PrefError(message: String?, modifier: Modifier = Modifier) {
+private fun PrefError(
+    message: String?,
+    modifier: Modifier = Modifier,
+) {
     val primary = LocalBundle.current[PrefKey.PrefError]
     FullScreenText(primary = primary, secondary = message, modifier = modifier)
 }

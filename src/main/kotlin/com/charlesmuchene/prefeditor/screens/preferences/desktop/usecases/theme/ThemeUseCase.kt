@@ -38,7 +38,6 @@ class ThemeUseCase(
     private val path: Path = EditorFiles.preferencesPath(),
     private val context: CoroutineContext = Dispatchers.Default,
 ) : CoroutineScope by CoroutineScope(context) {
-
     private val _theme = mutableStateOf(System)
     var theme: State<EditorTheme> = _theme
 

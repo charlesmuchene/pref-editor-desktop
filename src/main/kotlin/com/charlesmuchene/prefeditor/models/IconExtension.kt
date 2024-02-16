@@ -17,5 +17,5 @@
 package com.charlesmuchene.prefeditor.models
 
 enum class IconExtension(val extension: String) {
-    SVG(extension = "svg")
+    SVG(extension = "svg"),
 }

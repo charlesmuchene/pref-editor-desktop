@@ -23,13 +23,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class Navigation(private val scope: CoroutineScope) : CoroutineScope by scope {
-
     private val stack = mutableListOf<Screen>(DevicesScreen)
 
     val screens: List<Screen> get() = stack
 
     private val _currentScreen = MutableStateFlow<Screen>(DevicesScreen)
-    val current: StateFlow<Screen> = _currentScreen.asStateFlow()
+    val currentScreen: StateFlow<Screen> = _currentScreen.asStateFlow()
 
     fun navigate(screen: Screen) {
         when (val index = stack.indexOf(screen)) {

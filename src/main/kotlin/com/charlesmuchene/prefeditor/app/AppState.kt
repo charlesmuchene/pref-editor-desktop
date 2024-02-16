@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 class AppState(val preferences: AppPreferences) {
-
     val favorites = preferences.favorites
     val theme: EditorTheme by preferences.theme.theme
     val windowSize = DpSize(width = 1020.dp, height = 800.dp)

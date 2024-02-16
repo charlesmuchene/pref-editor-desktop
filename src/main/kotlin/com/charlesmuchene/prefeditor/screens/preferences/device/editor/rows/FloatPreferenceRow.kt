@@ -24,7 +24,11 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorVie
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 
 @Composable
-fun FloatPreferenceRow(preference: UIPreference, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+fun FloatPreferenceRow(
+    preference: UIPreference,
+    viewModel: EditorViewModel,
+    modifier: Modifier = Modifier,
+) {
     if (preference.preference !is FloatPreference) return
 
     PrimitivePreferenceRow(

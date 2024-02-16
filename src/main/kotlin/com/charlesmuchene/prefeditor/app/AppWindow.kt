@@ -21,7 +21,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.window.ApplicationScope
-import com.charlesmuchene.prefeditor.navigation.*
+import com.charlesmuchene.prefeditor.navigation.AppsScreen
+import com.charlesmuchene.prefeditor.navigation.DevicesScreen
+import com.charlesmuchene.prefeditor.navigation.EditScreen
+import com.charlesmuchene.prefeditor.navigation.FilesScreen
+import com.charlesmuchene.prefeditor.navigation.NavigationBar
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.screens.apps.AppListScreen
@@ -31,11 +35,14 @@ import com.charlesmuchene.prefeditor.screens.preffile.FileListScreen
 import com.charlesmuchene.prefeditor.ui.Toast
 
 @Composable
-fun ApplicationScope.AppWindow(icon: Painter, appState: AppState) {
+fun ApplicationScope.AppWindow(
+    icon: Painter,
+    appState: AppState,
+) {
     scaffold(icon = icon, appState = appState) { modifier ->
         // TODO Animate screen by sliding-left
 
-        val currentScreen by LocalNavigation.current.current.collectAsState()
+        val currentScreen by LocalNavigation.current.currentScreen.collectAsState()
         NavigationBar(current = currentScreen)
 
         val message by LocalAppState.current.toastMessage.collectAsState(initial = null)

@@ -13,7 +13,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class PreferenceValidatorTest {
-
     private lateinit var validator: PreferenceValidator
 
     @BeforeEach

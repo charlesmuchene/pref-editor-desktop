@@ -16,10 +16,9 @@
 
 package com.charlesmuchene.prefeditor.resources
 
-import java.util.*
+import java.util.Properties
 
 class TextBundle {
-
     private val texts: Properties? by lazy(::loadText)
 
     operator fun get(key: TextKey): String = texts?.getProperty(key.key) ?: DEFAULT_MESSAGE

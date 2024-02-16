@@ -17,7 +17,16 @@
 package com.charlesmuchene.prefeditor.navigation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,12 +44,19 @@ import com.charlesmuchene.prefeditor.ui.halfPadding
 import com.charlesmuchene.prefeditor.ui.padding
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.*
+import org.jetbrains.jewel.ui.component.Chip
+import org.jetbrains.jewel.ui.component.Divider
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.Tooltip
+import org.jetbrains.jewel.ui.component.Typography
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
-fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
-
+fun NavigationBar(
+    current: Screen,
+    modifier: Modifier = Modifier,
+) {
     val navigation = LocalNavigation.current
     val reloadSignal = LocalReloadSignal.current
     val screens by remember(current) { mutableStateOf(navigation.screens) }
@@ -69,7 +85,11 @@ fun NavigationBar(current: Screen, modifier: Modifier = Modifier) {
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifier) {
+private fun page(
+    screen: Screen,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+) {
     val navigation = LocalNavigation.current
 
     val (text, icon) = screenInfo(screen = screen)
@@ -80,7 +100,7 @@ private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifie
         Row(
             modifier = modifier.padding(horizontal = 2.dp).pointerOnHover(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Chip(onClick = { navigation.navigate(screen = screen) }, selected = selected) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -88,7 +108,7 @@ private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifie
                         painter = painter,
                         contentDescription = text,
                         modifier = Modifier.size(20.dp),
-                        tint = JewelTheme.contentColor
+                        tint = JewelTheme.contentColor,
                     )
                     Spacer(modifier = Modifier.width(halfPadding))
                     Text(text = text, style = Typography.labelTextStyle())
@@ -99,9 +119,10 @@ private fun page(screen: Screen, selected: Boolean, modifier: Modifier = Modifie
     }
 }
 
-private fun screenInfo(screen: Screen): Pair<String, String> = when (screen) {
-    DevicesScreen -> "Home" to "home"
-    is AppsScreen -> screen.device.serial to "phone"
-    is FilesScreen -> screen.app.packageName to "apps"
-    is EditScreen -> screen.file.name to "files"
-}
+private fun screenInfo(screen: Screen): Pair<String, String> =
+    when (screen) {
+        DevicesScreen -> "Home" to "home"
+        is AppsScreen -> screen.device.serial to "phone"
+        is FilesScreen -> screen.app.packageName to "apps"
+        is EditScreen -> screen.file.name to "files"
+    }

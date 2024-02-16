@@ -17,9 +17,21 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,7 +47,14 @@ import com.charlesmuchene.prefeditor.ui.halfPadding
 import com.charlesmuchene.prefeditor.ui.padding
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
-import org.jetbrains.jewel.ui.component.*
+import org.jetbrains.jewel.ui.component.DefaultButton
+import org.jetbrains.jewel.ui.component.Divider
+import org.jetbrains.jewel.ui.component.Dropdown
+import org.jetbrains.jewel.ui.component.Icon
+import org.jetbrains.jewel.ui.component.OutlinedButton
+import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.component.TextField
+import org.jetbrains.jewel.ui.component.Typography
 
 @Composable
 fun AddPreferenceComponent(
@@ -45,11 +64,12 @@ fun AddPreferenceComponent(
 ) {
     Dialog(onDismissRequest = onDismiss) {
         Column(
-            modifier = modifier
-                .fillMaxWidth(fraction = .6f)
-                .clip(RoundedCornerShape(percent = 5))
-                .background(JewelTheme.globalColors.paneBackground)
-                .padding(padding)
+            modifier =
+                modifier
+                    .fillMaxWidth(fraction = .6f)
+                    .clip(RoundedCornerShape(percent = 5))
+                    .background(JewelTheme.globalColors.paneBackground)
+                    .padding(padding),
         ) {
             Text(
                 text = "Add preference",
@@ -93,7 +113,7 @@ fun AddPreferenceComponent(
                             iconClass = AppState::class.java,
                         ) { Text(text = type.name) }
                     }
-                }
+                },
             ) { DropdownSelection(preferenceType) }
 
             Spacer(modifier = Modifier.height(padding))
@@ -106,7 +126,10 @@ fun AddPreferenceComponent(
 }
 
 @Composable
-private fun DropdownSelection(type: PreferenceType?, modifier: Modifier = Modifier) {
+private fun DropdownSelection(
+    type: PreferenceType?,
+    modifier: Modifier = Modifier,
+) {
     val (iconName, text) = (type?.icon ?: "apps") to (type?.name ?: "Data Type")
 
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
@@ -118,7 +141,11 @@ private fun DropdownSelection(type: PreferenceType?, modifier: Modifier = Modifi
 }
 
 @Composable
-private fun DialogButtons(modifier: Modifier = Modifier, onDismiss: () -> Unit, onAdd: () -> Unit) {
+private fun DialogButtons(
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit,
+    onAdd: () -> Unit,
+) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -126,14 +153,14 @@ private fun DialogButtons(modifier: Modifier = Modifier, onDismiss: () -> Unit, 
     ) {
         OutlinedButton(
             onClick = onDismiss,
-            modifier = Modifier.pointerOnHover().weight(1f)
+            modifier = Modifier.pointerOnHover().weight(1f),
         ) {
             Text(text = "Cancel")
         }
         Spacer(modifier = Modifier.width(padding))
         DefaultButton(
             onClick = onAdd,
-            modifier = Modifier.pointerOnHover().weight(1f)
+            modifier = Modifier.pointerOnHover().weight(1f),
         ) {
             Text(text = "Add")
         }

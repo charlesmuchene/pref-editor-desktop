@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.launch
 
 class ReloadSignal(scope: CoroutineScope) : CoroutineScope by scope {
-
     private val _signal = MutableSharedFlow<Unit>()
     val signal = _signal.onSubscription { emit(Unit) }
 

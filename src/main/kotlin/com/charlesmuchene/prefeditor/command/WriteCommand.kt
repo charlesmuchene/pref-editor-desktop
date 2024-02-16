@@ -19,20 +19,24 @@ package com.charlesmuchene.prefeditor.command
 import com.charlesmuchene.prefeditor.data.Edit
 
 interface WriteCommand {
-    fun command(edit: Edit): List<String> = buildList {
-        when (edit) {
-            is Edit.Add -> add(edit = edit)
-            is Edit.Change -> change(edit = edit)
-            is Edit.Delete -> delete(edit = edit)
+    fun command(edit: Edit): List<String> =
+        buildList {
+            when (edit) {
+                is Edit.Add -> add(edit = edit)
+                is Edit.Change -> change(edit = edit)
+                is Edit.Delete -> delete(edit = edit)
+            }
         }
-    }
 
     fun MutableList<String>.delete(edit: Edit.Delete)
+
     fun MutableList<String>.change(edit: Edit.Change)
+
     fun MutableList<String>.add(edit: Edit.Add)
 
-    fun String.escaped(): String = replace(oldValue = "/", newValue = "\\/")
-        .replace(oldValue = "\"", newValue = "\\\"")
+    fun String.escaped(): String =
+        replace(oldValue = "/", newValue = "\\/")
+            .replace(oldValue = "\"", newValue = "\\\"")
 
     companion object {
         const val SHELL = "sh"

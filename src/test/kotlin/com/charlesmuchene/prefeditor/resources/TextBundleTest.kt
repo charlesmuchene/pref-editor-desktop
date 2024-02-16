@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class TextBundleTest {
-
     private lateinit var bundle: TextBundle
 
     @BeforeEach

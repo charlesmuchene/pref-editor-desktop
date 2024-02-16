@@ -69,10 +69,11 @@ compose.desktop {
 
 tasks.withType<JavaExec> {
     afterEvaluate {
-        javaLauncher = project.javaToolchains.launcherFor {
-            vendor = JvmVendorSpec.JETBRAINS
-            languageVersion = 17
-        }
+        javaLauncher =
+            project.javaToolchains.launcherFor {
+                vendor = JvmVendorSpec.JETBRAINS
+                languageVersion = 17
+            }
         setExecutable(javaLauncher.map { it.executablePath.asFile.absoluteFile }.get())
     }
 }

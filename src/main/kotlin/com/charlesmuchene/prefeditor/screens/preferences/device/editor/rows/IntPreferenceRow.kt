@@ -24,7 +24,11 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorVie
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 
 @Composable
-fun IntPreferenceRow(preference: UIPreference, viewModel: EditorViewModel, modifier: Modifier = Modifier) {
+fun IntPreferenceRow(
+    preference: UIPreference,
+    viewModel: EditorViewModel,
+    modifier: Modifier = Modifier,
+) {
     if (preference.preference !is IntPreference) return
 
     PrimitivePreferenceRow(

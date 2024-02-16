@@ -25,7 +25,11 @@ import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class PreferencesViewModel(
@@ -36,7 +40,6 @@ class PreferencesViewModel(
     reloadSignal: ReloadSignal,
     private val scope: CoroutineScope,
 ) : CoroutineScope by scope {
-
     private val processor = Processor()
     private val codec = PreferencesCodec()
     val useCase =
@@ -68,7 +71,9 @@ class PreferencesViewModel(
 
     sealed interface UIState {
         data object Loading : UIState
+
         data class Error(val message: String? = null) : UIState
+
         data class Success(val preferences: Preferences, val readOnly: Boolean) : UIState
     }
 }

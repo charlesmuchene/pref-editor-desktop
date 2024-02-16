@@ -32,7 +32,6 @@ import kotlin.io.path.exists
  * All operations in this class perform IO.
  */
 object EditorFiles {
-
     private const val VERSION = "1.0"
     private const val HOME_DIR = "user.home"
     private val DEFAULT_THEME = EditorTheme.System.ordinal
@@ -52,7 +51,10 @@ object EditorFiles {
     suspend fun scriptsPath(appPathOverride: Path? = null): Path =
         (appPathOverride ?: appPath).resolve(SCRIPTS_DIR).apply { ensurePathExists(path = this) }
 
-    suspend fun initialize(codec: PreferencesCodec, appPathOverride: Path? = null) {
+    suspend fun initialize(
+        codec: PreferencesCodec,
+        appPathOverride: Path? = null,
+    ) {
         val pathOverride = appPathOverride?.resolve(ROOT_DIR)
         ensurePathExists(path = pathOverride ?: appPath)
         createAppPreferences(path = preferencesPath(pathOverride), codec = codec)
@@ -60,12 +62,16 @@ object EditorFiles {
         copyScripts(scriptsPath = scriptsPath)
     }
 
-    private suspend fun createAppPreferences(path: Path, codec: PreferencesCodec) = withContext(context) {
+    private suspend fun createAppPreferences(
+        path: Path,
+        codec: PreferencesCodec,
+    ) = withContext(context) {
         if (!path.exists()) {
-            val content = codec.encodeDocument {
-                tag("version") { attrib(name = "value", value = VERSION) }
-                tag(ThemeCodec.THEME) { attrib(name = "value", value = "$DEFAULT_THEME") }
-            }
+            val content =
+                codec.encodeDocument {
+                    tag("version") { attrib(name = "value", value = VERSION) }
+                    tag(ThemeCodec.THEME) { attrib(name = "value", value = "$DEFAULT_THEME") }
+                }
             Files.writeString(path, content.trim())
         }
     }
@@ -76,7 +82,10 @@ object EditorFiles {
         }
     }
 
-    private suspend fun copyScript(name: String, path: Path) = withContext(context) {
+    private suspend fun copyScript(
+        name: String,
+        path: Path,
+    ) = withContext(context) {
         if (!path.exists()) {
             val resourceName = "$SCRIPTS_DIR/$name"
             javaClass.classLoader.getResourceAsStream(resourceName)?.let {
@@ -85,8 +94,8 @@ object EditorFiles {
         }
     }
 
-    private suspend fun ensurePathExists(path: Path) = withContext(context) {
-        if (!path.exists()) Files.createDirectory(path)
-    }
-
+    private suspend fun ensurePathExists(path: Path) =
+        withContext(context) {
+            if (!path.exists()) Files.createDirectory(path)
+        }
 }

@@ -17,7 +17,12 @@
 package com.charlesmuchene.prefeditor.ui
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -27,7 +32,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,7 +59,10 @@ import org.jetbrains.jewel.ui.component.Tooltip
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun ReloadButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun ReloadButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
     val scope = rememberCoroutineScope()
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -63,30 +75,32 @@ fun ReloadButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Tooltip(tooltip = { Text(text = "Reload screen") }, modifier = Modifier) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = modifier
-                .onHover { isHovered ->
-                    scope.launch {
-                        hoverAnimation(
-                            isHovered = isHovered,
-                            animatedRotationAngle = animatedRotationAngle
-                        )
+            modifier =
+                modifier
+                    .onHover { isHovered ->
+                        scope.launch {
+                            hoverAnimation(
+                                isHovered = isHovered,
+                                animatedRotationAngle = animatedRotationAngle,
+                            )
+                        }
                     }
-                }
-                .pointerOnHover()
-                .scale(animatedScale)
-                .hoverable(interactionSource)
-                .rotate(animatedRotationAngle.value),
+                    .pointerOnHover()
+                    .scale(animatedScale)
+                    .hoverable(interactionSource)
+                    .rotate(animatedRotationAngle.value),
         ) {
             IconButton(
                 interactionSource = interactionSource,
                 onClick = onClick,
-                modifier = Modifier
-                    .size(64.dp)
-                    .padding(8.dp)
-                    .clip(CircleShape)
-                    .drawBehind {
-                        drawCircle(Color.DarkGray, style = Stroke(width = 4f))
-                    }
+                modifier =
+                    Modifier
+                        .size(64.dp)
+                        .padding(8.dp)
+                        .clip(CircleShape)
+                        .drawBehind {
+                            drawCircle(Color.DarkGray, style = Stroke(width = 4f))
+                        },
             ) {
                 val painter by rememberIconPainter(name = "reload")
                 Icon(
@@ -104,12 +118,16 @@ private suspend fun hoverAnimation(
     isHovered: Boolean,
     animatedRotationAngle: Animatable<Float, AnimationVector1D>,
 ) {
-    if (isHovered) animatedRotationAngle.animateTo(targetValue = 45f, animationSpec = tween(durationMillis = 300))
-    else animatedRotationAngle.animateTo(
-        targetValue = 0f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow,
+    if (isHovered) {
+        animatedRotationAngle.animateTo(targetValue = 45f, animationSpec = tween(durationMillis = 300))
+    } else {
+        animatedRotationAngle.animateTo(
+            targetValue = 0f,
+            animationSpec =
+                spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow,
+                ),
         )
-    )
+    }
 }

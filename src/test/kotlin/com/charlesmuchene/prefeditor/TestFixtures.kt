@@ -16,38 +16,52 @@
 
 package com.charlesmuchene.prefeditor
 
-import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.data.App
+import com.charlesmuchene.prefeditor.data.BooleanPreference
+import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.data.FloatPreference
+import com.charlesmuchene.prefeditor.data.IntPreference
+import com.charlesmuchene.prefeditor.data.LongPreference
+import com.charlesmuchene.prefeditor.data.PrefFile
+import com.charlesmuchene.prefeditor.data.Preferences
+import com.charlesmuchene.prefeditor.data.SetPreference
+import com.charlesmuchene.prefeditor.data.StringPreference
 import java.nio.file.Files
 import java.nio.file.Path
 
 object TestFixtures {
-
-    val device = Device(
-        serial = "1B241CAA5079LR", type = Device.Type.Device, attributes = listOf(
-            Device.Attribute(name = "usb", value = "1O845693Y"),
-            Device.Attribute(name = "product", value = "redfin"),
-            Device.Attribute(name = "model", value = "Pixel_5"),
-            Device.Attribute(name = "device", value = "redfin"),
-            Device.Attribute(name = "transport_id", value = "4"),
+    val device =
+        Device(
+            serial = "1B241CAA5079LR",
+            type = Device.Type.Device,
+            attributes =
+                listOf(
+                    Device.Attribute(name = "usb", value = "1O845693Y"),
+                    Device.Attribute(name = "product", value = "redfin"),
+                    Device.Attribute(name = "model", value = "Pixel_5"),
+                    Device.Attribute(name = "device", value = "redfin"),
+                    Device.Attribute(name = "transport_id", value = "4"),
+                ),
         )
-    )
 
     val app = App(packageName = "com.charlesmuchene.pref-editor")
 
     val prefFile = PrefFile(name = "preferences.xml", type = PrefFile.Type.KEY_VALUE)
 
-    val prefs = Preferences(
-        preferences = listOf(
-            BooleanPreference(name = "boolean", value = "false"),
-            StringPreference(name = "string", value = "string"),
-            IntPreference(name = "another-integer", value = "0"),
-            StringPreference(name = "empty-string", value = ""),
-            IntPreference(name = "integer", value = "-1"),
-            FloatPreference(name = "float", value = "0.0"),
-            SetPreference(name = "string-set", entries = listOf("strings", "one", "two", "three")),
-            LongPreference(name = "long", value = "0")
+    val prefs =
+        Preferences(
+            preferences =
+                listOf(
+                    BooleanPreference(name = "boolean", value = "false"),
+                    StringPreference(name = "string", value = "string"),
+                    IntPreference(name = "another-integer", value = "0"),
+                    StringPreference(name = "empty-string", value = ""),
+                    IntPreference(name = "integer", value = "-1"),
+                    FloatPreference(name = "float", value = "0.0"),
+                    SetPreference(name = "string-set", entries = listOf("strings", "one", "two", "three")),
+                    LongPreference(name = "long", value = "0"),
+                ),
         )
-    )
 
     const val PREFERENCES = """<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
                 <map>
@@ -67,20 +81,23 @@ object TestFixtures {
                 </map>
             """
 
-    val APP_LIST_OUTPUT = """package:com.charlesmuchene.player
+    val APP_LIST_OUTPUT =
+        """
+        package:com.charlesmuchene.player
         package:com.charlesmuchene.now
         package:com.charlesmuchene.works
         package:com.charlesmuchene.in
         package:com.charlesmuchene.compose
-    """.trimIndent()
+        """.trimIndent()
 
-    val appList = listOf(
-        App(packageName = "com.charlesmuchene.player"),
-        App(packageName = "com.charlesmuchene.now"),
-        App(packageName = "com.charlesmuchene.works"),
-        App(packageName = "com.charlesmuchene.in"),
-        App(packageName = "com.charlesmuchene.compose"),
-    )
+    val appList =
+        listOf(
+            App(packageName = "com.charlesmuchene.player"),
+            App(packageName = "com.charlesmuchene.now"),
+            App(packageName = "com.charlesmuchene.works"),
+            App(packageName = "com.charlesmuchene.in"),
+            App(packageName = "com.charlesmuchene.compose"),
+        )
 
     fun emptyPreferences(): String {
         val url = javaClass.classLoader.getResource("empty-preferences.xml") ?: error("Missing empty preferences file")
