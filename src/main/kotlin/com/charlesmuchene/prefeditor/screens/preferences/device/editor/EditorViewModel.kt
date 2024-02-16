@@ -27,7 +27,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.jetbrains.jewel.ui.Outline
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 private val logger = KotlinLogging.logger {}
@@ -59,7 +58,7 @@ class EditorViewModel(
 
     private val prefFile = prefUseCase.file
     private val validator = PreferenceValidator()
-    private val changes = MutableSharedFlow<CharSequence>()
+    private val changes = MutableSharedFlow<Unit>()
 
     private lateinit var initialPrefs: Map<String, String>
     private lateinit var edits: MutableMap<String, UIPreference>
@@ -172,7 +171,7 @@ class EditorViewModel(
         val value = initialPrefs[preference.name] ?: error("Missing preference value ${preference.name}")
         return UIPreference(createPreference(preference = preference, value = value)).also { uiPreference ->
             edits[preference.name] = uiPreference
-            launch { changes.emit(UUID.randomUUID().toString()) }
+            launch { changes.emit(Unit) }
         }
     }
 
@@ -185,7 +184,7 @@ class EditorViewModel(
     private fun preferenceDeleted(preference: Preference): UIPreference {
         return UIPreference(preference = preference, state = PreferenceState.Deleted).also { uiPreference ->
             edits[preference.name] = uiPreference
-            launch { changes.emit(UUID.randomUUID().toString()) }
+            launch { changes.emit(Unit) }
         }
     }
 
@@ -203,7 +202,7 @@ class EditorViewModel(
             if (initialPrefs[preference.name] == newPref.value) PreferenceState.None else PreferenceState.Changed
         return UIPreference(preference = newPref, state = state).also { uiPreference ->
             edits[preference.name] = uiPreference
-            launch { changes.emit(change) }
+            launch { changes.emit(Unit) }
         }
     }
 
