@@ -44,11 +44,13 @@ class DevicePreferencesCodec(private val codec: PreferencesCodec) {
      */
     fun encode(edits: List<UIPreference>, existing: List<Preference>): List<Edit> = edits.map { preference ->
         when (preference.state) {
-            PreferenceState.Changed -> encodeChange(
-                change = preference.preference,
-                existing = existing.find { it.name == preference.preference.name }
-                    ?: error("${preference.preference} missing from disk preferences"),
-            )
+            PreferenceState.Changed -> {
+                val change = preference.preference
+                val initial = (existing.find { it.name == preference.preference.name }
+                    ?: error("${preference.preference} is missing from existing preferences"))
+                require(value = change.value != initial.value) { "${change.name} didn't change value" }
+                encodeChange(change = change, existing = initial)
+            }
 
             PreferenceState.New -> encodeAdd(preference = preference.preference)
             PreferenceState.Deleted -> encodeDelete(preference = preference.preference)

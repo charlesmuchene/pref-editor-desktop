@@ -28,10 +28,7 @@ import com.charlesmuchene.prefeditor.processor.Processor
  *  - [Edit.Change]
  *  - [Edit.Delete]
  */
-class PreferenceWriter(
-    private val processor: Processor,
-    private val command: WriteCommand,
-) {
+class PreferenceWriter(private val processor: Processor, private val command: WriteCommand) {
 
     /**
      * Perform the given edit
@@ -46,19 +43,13 @@ class PreferenceWriter(
     }
 
     /**
-     * Perform a batch edit
+     * Perform a collection of edits
      *
      * @param edits A [List] of [Edit]s to make
      * @return Result of batch editing
      */
     suspend fun edit(edits: List<Edit>): List<Result<String>> = buildList {
-        add(adds = edits.filterIsInstance<Edit.Add>())
-        delete(deletes = edits.filterIsInstance<Edit.Delete>())
-        change(changes = edits.filterIsInstance<Edit.Change>())
-    }
-
-    private suspend fun MutableList<Result<String>>.add(adds: List<Edit.Add>) {
-        adds.forEach { add -> add(add(edit = add)) }
+        edits.forEach { add(edit(it)) }
     }
 
     private suspend fun add(edit: Edit.Add): Result<String> {
@@ -66,17 +57,9 @@ class PreferenceWriter(
         return processor.run(command)
     }
 
-    private suspend fun MutableList<Result<String>>.delete(deletes: List<Edit.Delete>) {
-        deletes.forEach { edit -> add(delete(edit = edit)) }
-    }
-
     private suspend fun delete(edit: Edit.Delete): Result<String> {
         val command = command.command(edit = edit)
         return processor.run(command)
-    }
-
-    private suspend fun MutableList<Result<String>>.change(changes: List<Edit.Change>) {
-        changes.forEach { edit -> add(change(edit = edit)) }
     }
 
     private suspend fun change(edit: Edit.Change): Result<String> {

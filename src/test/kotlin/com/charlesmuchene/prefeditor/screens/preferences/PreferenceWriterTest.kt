@@ -17,12 +17,13 @@
 package com.charlesmuchene.prefeditor.screens.preferences
 
 import com.charlesmuchene.prefeditor.command.DesktopWriteCommand
+import com.charlesmuchene.prefeditor.command.WriteCommand
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.processor.Processor
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -31,17 +32,14 @@ import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
-
 class PreferenceWriterTest {
 
     @TempDir
     private lateinit var path: Path
 
     private val scheduler = TestCoroutineScheduler()
-    private val dispatcher = StandardTestDispatcher(scheduler = scheduler)
 
-    private lateinit var editor: PreferenceWriter
-
+    private lateinit var writer: PreferenceWriter
     private lateinit var processor: Processor
 
     @BeforeEach
@@ -52,7 +50,7 @@ class PreferenceWriterTest {
                 run(command = any(), config = eq({}))
             } returns Result.success("")
         }
-        editor = PreferenceWriter(processor = processor, command = command)
+        writer = PreferenceWriter(processor = processor, command = command)
     }
 
 
@@ -61,8 +59,37 @@ class PreferenceWriterTest {
         val content = "content"
         val add = Edit.Add(content = content)
 
-        editor.edit(edit = add)
+        writer.edit(edit = add)
 
         coVerify { processor.run(listOf("sh", "desktop.sh", "add", "<\\/map>", content, path.pathString), any()) }
+    }
+
+    @Test
+    fun `edit invokes processor with respective command`() = runTest(scheduler) {
+        val content = "content"
+        val matcher = "matcher"
+        val addCmd = listOf("add")
+        val deleteCmd = listOf("delete")
+        val changeCmd = listOf("change")
+        val add = Edit.Add(content = content)
+        val delete = Edit.Delete(matcher = matcher)
+        val change = Edit.Change(matcher = matcher, content = content)
+
+        val command = mockk<WriteCommand> {
+            every { command(add) } returns addCmd
+            every { command(delete) } returns deleteCmd
+            every { command(change) } returns changeCmd
+        }
+        val processor = mockk<Processor> {
+            coEvery { run(addCmd) } returns Result.success(addCmd.first())
+            coEvery { run(deleteCmd) } returns Result.success(deleteCmd.first())
+            coEvery { run(changeCmd) } returns Result.success(changeCmd.first())
+        }
+        val writer = PreferenceWriter(processor, command)
+
+        writer.edit(listOf(add, delete, change))
+        coVerify { processor.run(addCmd) }
+        coVerify { processor.run(deleteCmd) }
+        coVerify { processor.run(changeCmd) }
     }
 }
