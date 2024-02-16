@@ -40,7 +40,8 @@ fun PrimitivePreference(preference: UIPreference, modifier: Modifier = Modifier,
         is FloatPreference -> FloatPreferenceRow(modifier = modifier, preference = preference, viewModel = viewModel)
         is IntPreference -> IntPreferenceRow(modifier = modifier, preference = preference, viewModel = viewModel)
         is LongPreference -> LongPreferenceRow(modifier = modifier, uiPreference = preference, viewModel = viewModel)
-        is StringPreference -> StringPreferenceRow(modifier = modifier, uiPreference = preference, viewModel = viewModel)
+        is StringPreference ->
+            StringPreferenceRow(modifier = modifier, uiPreference = preference, viewModel = viewModel)
         else -> Unit
     }
 }

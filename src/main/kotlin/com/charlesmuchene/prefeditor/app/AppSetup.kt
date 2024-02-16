@@ -23,7 +23,7 @@ import com.charlesmuchene.prefeditor.files.EditorFiles
 import com.charlesmuchene.prefeditor.models.AppStatus
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
-import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.AppPreferences
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

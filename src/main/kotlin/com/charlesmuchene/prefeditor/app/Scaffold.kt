@@ -39,6 +39,7 @@ import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.providers.*
 import com.charlesmuchene.prefeditor.resources.ApplicationKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
+import com.charlesmuchene.prefeditor.ui.halfPadding
 import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.prefEditorStyle
 import com.charlesmuchene.prefeditor.ui.theme.theme
@@ -69,7 +70,7 @@ fun ApplicationScope.scaffold(icon: Painter, appState: AppState, content: @Compo
                 content(
                     Modifier
                         .trackActivation()
-                        .padding(horizontal = padding, vertical = padding * 0.5f)
+                        .padding(horizontal = padding, vertical = halfPadding)
                 )
             }
         }

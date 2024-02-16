@@ -17,24 +17,18 @@
 package com.charlesmuchene.prefeditor.extensions
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.layout.Box
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import com.charlesmuchene.prefeditor.extensions.IconExtension.SVG
+import com.charlesmuchene.prefeditor.models.IconExtension
+import com.charlesmuchene.prefeditor.models.IconExtension.SVG
 import com.charlesmuchene.prefeditor.resources.TextBundle
 import org.jetbrains.jewel.ui.painter.rememberResourcePainterProvider
 import java.awt.Cursor
-
-enum class IconExtension(val extension: String) {
-    SVG(extension = "svg")
-}
 
 @Composable
 fun rememberIconPainter(name: String, extension: IconExtension = SVG): State<Painter> =

@@ -17,11 +17,11 @@
 package com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme
 
 import com.charlesmuchene.prefeditor.data.Edit
-import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
-import com.charlesmuchene.prefeditor.screens.preferences.PreferenceDecoder.Reader.gobbleTag
-import com.charlesmuchene.prefeditor.screens.preferences.PreferenceDecoder.Reader.skip
-import com.charlesmuchene.prefeditor.screens.preferences.PreferenceEncoder.Encoder.attrib
-import com.charlesmuchene.prefeditor.screens.preferences.PreferenceEncoder.Encoder.tag
+import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceDecoder.Reader.gobbleTag
+import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceDecoder.Reader.skip
+import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceEncoder.Encoder.attrib
+import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceEncoder.Encoder.tag
 import org.xmlpull.v1.XmlPullParser
 import java.nio.file.Path
 import kotlin.io.path.inputStream

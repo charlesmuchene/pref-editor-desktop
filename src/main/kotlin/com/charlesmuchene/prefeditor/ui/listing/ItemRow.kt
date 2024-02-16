@@ -35,8 +35,7 @@ import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.Favoritable
 import com.charlesmuchene.prefeditor.ui.BreathingContainer
 import com.charlesmuchene.prefeditor.ui.FavoriteButton
-import com.charlesmuchene.prefeditor.ui.padding
-import com.charlesmuchene.prefeditor.ui.theme.green
+import com.charlesmuchene.prefeditor.ui.halfPadding
 import com.charlesmuchene.prefeditor.ui.theme.highlightColor
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.modifier.onHover
@@ -77,20 +76,21 @@ fun <T : Favoritable> ItemRow(
         ) {
             Row(
                 modifier = Modifier
-                    .padding(vertical = padding * .5f)
+                    .padding(vertical = halfPadding)
                     .scale(animatedScalePercent.value),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                val firstItemWeight = .9f
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(.9f),
+                    modifier = Modifier.weight(firstItemWeight),
                     content = content,
                 )
                 Spacer(modifier = Modifier.width(24.dp))
                 BreathingContainer {
                     FavoriteButton(
                         selected = item.isFavorite,
-                        modifier = Modifier.weight(.1f),
+                        modifier = Modifier.weight(1 - firstItemWeight),
                         onFavorite = { onFavorite(item) },
                     )
                 }

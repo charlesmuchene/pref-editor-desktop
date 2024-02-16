@@ -46,8 +46,8 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
 
             val process = try {
                 builder.start()
-            } catch (t: Throwable) {
-                return@withContext Result.failure(t)
+            } catch (exception: Exception) {
+                return@withContext Result.failure(exception)
             }
 
             try {

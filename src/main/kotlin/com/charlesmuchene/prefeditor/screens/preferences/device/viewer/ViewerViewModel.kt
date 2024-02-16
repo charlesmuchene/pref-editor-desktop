@@ -19,7 +19,6 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.viewer
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.data.Preference
-import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn

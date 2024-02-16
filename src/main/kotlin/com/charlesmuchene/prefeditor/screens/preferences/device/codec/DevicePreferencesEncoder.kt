@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.ui
+package com.charlesmuchene.prefeditor.screens.preferences.device.codec
 
-import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.data.Edit
+import com.charlesmuchene.prefeditor.data.Preference
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 
-val padding = 24.dp
-val halfPadding = padding * .5f
+interface DevicePreferencesEncoder {
+
+    /**
+     * Encode edits
+     *
+     * @param edits A developer's edits
+     * @param existing Downstream preferences
+     * @return A [List] of [Edit]s
+     */
+    fun encode(edits: List<UIPreference>, existing: List<Preference>): List<Edit>
+}

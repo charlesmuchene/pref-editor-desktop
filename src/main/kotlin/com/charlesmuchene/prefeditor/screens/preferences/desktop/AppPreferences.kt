@@ -17,7 +17,7 @@
 package com.charlesmuchene.prefeditor.screens.preferences.desktop
 
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
-import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.ThemeCodec

@@ -41,7 +41,8 @@ fun Toast(text: String, modifier: Modifier = Modifier) {
     var shown by remember { mutableStateOf(true) }
 
     LaunchedEffect(text) {
-        delay(2_000L)
+        val timeMillis = 2_000L
+        delay(timeMillis = timeMillis)
         shown = false
     }
 

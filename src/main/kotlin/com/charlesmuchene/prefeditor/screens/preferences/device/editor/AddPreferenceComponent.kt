@@ -31,6 +31,7 @@ import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.models.PreferenceType
+import com.charlesmuchene.prefeditor.ui.halfPadding
 import com.charlesmuchene.prefeditor.ui.padding
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
@@ -57,12 +58,10 @@ fun AddPreferenceComponent(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            Spacer(modifier = Modifier.height(padding * .5f))
+            Spacer(modifier = Modifier.height(halfPadding))
             Divider(orientation = Orientation.Horizontal, color = Color.LightGray.copy(alpha = .5f))
-            Spacer(modifier = Modifier.height(padding * .5f))
-
+            Spacer(modifier = Modifier.height(halfPadding))
             Text(text = "Name", style = Typography.h3TextStyle(), modifier = Modifier.fillMaxWidth())
-
             Spacer(modifier = Modifier.height(4.dp))
 
             var name by remember { mutableStateOf("") }
@@ -70,10 +69,8 @@ fun AddPreferenceComponent(
                 Text(text = "Preference Name")
             })
 
-            Spacer(modifier = Modifier.height(padding * .5f))
-
+            Spacer(modifier = Modifier.height(halfPadding))
             Text(text = "Value", style = Typography.h3TextStyle(), modifier = Modifier.fillMaxWidth())
-
             Spacer(modifier = Modifier.height(4.dp))
 
             var value by remember { mutableStateOf("") }
@@ -103,25 +100,7 @@ fun AddPreferenceComponent(
             Divider(orientation = Orientation.Horizontal, color = Color.LightGray)
             Spacer(modifier = Modifier.height(padding))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly,
-            ) {
-                OutlinedButton(
-                    onClick = onDismiss,
-                    modifier = Modifier.pointerOnHover().weight(1f)
-                ) {
-                    Text(text = "Cancel")
-                }
-                Spacer(modifier = Modifier.width(padding))
-                DefaultButton(
-                    onClick = { onAdd(name, value, preferenceType) },
-                    modifier = Modifier.pointerOnHover().weight(1f)
-                ) {
-                    Text(text = "Add")
-                }
-            }
+            DialogButtons(onDismiss = onDismiss, onAdd = { onAdd(name, value, preferenceType) })
         }
     }
 }
@@ -135,5 +114,28 @@ private fun DropdownSelection(type: PreferenceType?, modifier: Modifier = Modifi
         Icon(painter = painter, contentDescription = text, modifier = Modifier.size(14.dp))
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = text)
+    }
+}
+
+@Composable
+private fun DialogButtons(modifier: Modifier = Modifier, onDismiss: () -> Unit, onAdd: () -> Unit) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly,
+    ) {
+        OutlinedButton(
+            onClick = onDismiss,
+            modifier = Modifier.pointerOnHover().weight(1f)
+        ) {
+            Text(text = "Cancel")
+        }
+        Spacer(modifier = Modifier.width(padding))
+        DefaultButton(
+            onClick = onAdd,
+            modifier = Modifier.pointerOnHover().weight(1f)
+        ) {
+            Text(text = "Add")
+        }
     }
 }

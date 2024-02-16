@@ -142,13 +142,14 @@ private fun PrefListingRow(prefFile: UIPrefFile, modifier: Modifier = Modifier, 
         onFavorite = { scope.launch { localPref = viewModel.favorite(it) } }
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(4.dp).weight(.95f)) {
+            val firstItemWeight = .95f
+            Column(modifier = Modifier.padding(4.dp).weight(firstItemWeight)) {
                 Text(text = localPref.file.name, style = Typography.primary)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = localPref.file.type.text, style = Typography.secondary, color = JewelTheme.contentColor)
             }
             Spacer(modifier = Modifier.width(8.dp))
-            Box(modifier = Modifier.weight(.05f), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.weight(1 - firstItemWeight), contentAlignment = Alignment.Center) {
                 IconButton(
                     modifier = Modifier.size(36.dp).clip(CircleShape),
                     onClick = { viewModel.selected(file = prefFile, readOnly = true) },

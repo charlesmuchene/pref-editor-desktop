@@ -23,7 +23,8 @@ import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.providers.TimeStampProviderImpl
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceReader
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
-import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.device.codec.DevicePreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 import io.github.oshai.kotlinlogging.KotlinLogging

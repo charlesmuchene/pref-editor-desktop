@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.screens.preferences
+package com.charlesmuchene.prefeditor.screens.preferences.codec
 
 import com.charlesmuchene.prefeditor.data.Tags
 import kotlinx.coroutines.yield

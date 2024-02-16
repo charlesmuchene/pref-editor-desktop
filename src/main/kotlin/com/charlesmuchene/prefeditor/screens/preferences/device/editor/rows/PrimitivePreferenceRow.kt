@@ -70,9 +70,13 @@ fun PrimitivePreferenceRow(
         )
 
         // Adapted from Jewel, all so that we can strike through text :sad:
-        var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = localPreference.preference.value)) }
+        var textFieldValueState by remember {
+            mutableStateOf(TextFieldValue(text = localPreference.preference.value))
+        }
         val textFieldValue = textFieldValueState.copy(text = localPreference.preference.value)
-        var lastTextValue by remember(localPreference.preference.value) { mutableStateOf(localPreference.preference.value) }
+        var lastTextValue by remember(localPreference.preference.value) {
+            mutableStateOf(localPreference.preference.value)
+        }
 
         TextField(
             textStyle = JewelTheme.textStyle.copy(textDecoration = decoration),

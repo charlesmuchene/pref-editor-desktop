@@ -23,6 +23,7 @@ import com.charlesmuchene.prefeditor.data.*
 import com.charlesmuchene.prefeditor.models.PreferenceType
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferenceValidator
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.SetSubPreference.Header
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -89,8 +90,8 @@ class EditorViewModel(
      * @param preference [SetPreference]
      * @return [List] of [SetSubPreference.Preference]
      */
-    fun createSubPreferences(preference: SetPreference): Pair<SetSubPreference.Header, List<SetSubPreference.Preference>> =
-        Pair(SetSubPreference.Header(preference.name), preference.entries.map(SetSubPreference::Preference))
+    fun createSubPreferences(preference: SetPreference): Pair<Header, List<SetSubPreference.Preference>> =
+        Pair(Header(preference.name), preference.entries.map(SetSubPreference::Preference))
 
     /**
      * Save edits
@@ -134,7 +135,9 @@ class EditorViewModel(
      */
     fun outline(preference: Preference): Outline = when (preference) {
         is FloatPreference, is IntPreference, is LongPreference -> numberOutline(preference = preference)
-        is BooleanPreference, is StringPreference -> if (initialPrefs[preference.name] == preference.value) Outline.None else Outline.Warning
+        is BooleanPreference, is StringPreference ->
+            if (initialPrefs[preference.name] == preference.value) Outline.None else Outline.Warning
+
         else -> Outline.None
     }
 

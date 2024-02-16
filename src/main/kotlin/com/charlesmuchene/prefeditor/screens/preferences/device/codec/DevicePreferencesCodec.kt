@@ -14,9 +14,21 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.ui
+package com.charlesmuchene.prefeditor.screens.preferences.device.codec
 
-import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 
-val padding = 24.dp
-val halfPadding = padding * .5f
+/**
+ * Codec for preferences on device
+ *
+ * @param codec [PreferencesCodec] instance
+ */
+class DevicePreferencesCodec(private val codec: PreferencesCodec) :
+    DevicePreferencesEncoder by DevicePreferencesEncoderImpl(codec),
+    DevicePreferencesDecoder by DevicePreferencesDecoderImpl(codec) {
+
+    companion object {
+        const val VALUE = "value"
+        const val NAME = "name"
+    }
+}

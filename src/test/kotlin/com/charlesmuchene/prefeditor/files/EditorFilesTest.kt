@@ -6,7 +6,7 @@ import com.charlesmuchene.prefeditor.files.EditorFiles.DEVICE_FILE
 import com.charlesmuchene.prefeditor.files.EditorFiles.PREFERENCES
 import com.charlesmuchene.prefeditor.files.EditorFiles.ROOT_DIR
 import com.charlesmuchene.prefeditor.files.EditorFiles.SCRIPTS_DIR
-import com.charlesmuchene.prefeditor.screens.preferences.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir

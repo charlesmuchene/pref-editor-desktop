@@ -57,11 +57,12 @@ fun LazyListScope.setPreferenceSection(preferences: List<UIPreference>, viewMode
         }
     }
 
+    val itemHeight = 64
     items(items = preferences.mapNotNull { it.preference as? SetPreference }, key = SetPreference::name) { preference ->
         SetPreferenceRow(
             preference = preference,
             viewModel = viewModel,
-            modifier = Modifier.padding(end = 18.dp).fillMaxWidth().height((64 * preference.entries.size).dp),
+            modifier = Modifier.padding(end = 18.dp).fillMaxWidth().height((itemHeight * preference.entries.size).dp),
         )
     }
 }

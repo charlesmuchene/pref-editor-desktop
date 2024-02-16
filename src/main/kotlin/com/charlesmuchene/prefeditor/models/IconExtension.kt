@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.ui
+package com.charlesmuchene.prefeditor.models
 
-import androidx.compose.ui.unit.dp
-
-val padding = 24.dp
-val halfPadding = padding * .5f
+enum class IconExtension(val extension: String) {
+    SVG(extension = "svg")
+}

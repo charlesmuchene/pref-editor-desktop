@@ -26,12 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.*
+import com.charlesmuchene.prefeditor.data.Preference
+import com.charlesmuchene.prefeditor.data.preferenceIconName
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
+import com.charlesmuchene.prefeditor.ui.halfPadding
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
-import com.charlesmuchene.prefeditor.ui.padding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
@@ -79,7 +80,7 @@ private fun PreferenceRow(preference: Preference, modifier: Modifier = Modifier)
                     modifier = Modifier.size(24.dp),
                 )
             }
-            Spacer(modifier = Modifier.width(padding * .5f))
+            Spacer(modifier = Modifier.width(halfPadding))
             Column {
                 Text(text = preference.name, fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))
                 Spacer(modifier = Modifier.height(4.dp))

@@ -49,18 +49,18 @@ class DeviceListDecoderTest {
             
         """
 
-        private val ONE_DEVICE = """List of devices attached
+        private const val ONE_DEVICE = """List of devices attached
             1B241CAA5079LR         device usb:1O845693Y product:redfin model:Pixel_5 device:redfin transport_id:4
             
         """
 
-        private val MULTIPLE_DEVICES = """List of devices attached
+        private const val MULTIPLE_DEVICES = """List of devices attached
             1B241CAA5079LR         device usb:1O845693Y product:redfin model:Pixel_5 device:redfin transport_id:4
             emulator-5554          device product:sdk_gphone64_arm64 model:sdk_gphone64_arm64 device:emu64a transport_id:1
             
         """
 
-        private val UNAUTHORIZED_DEVICE = """List of devices attached
+        private const val UNAUTHORIZED_DEVICE = """List of devices attached
             1B241CAA5079LR         unauthorized usb:1O845693Y transport_id:4
             emulator-5554          device product:sdk_gphone64_arm64 model:sdk_gphone64_arm64 device:emu64a transport_id:1
             

@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.ui
+package com.charlesmuchene.prefeditor.screens.preferences.device.codec
 
-import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.data.Preferences
 
-val padding = 24.dp
-val halfPadding = padding * .5f
+interface DevicePreferencesDecoder {
+
+    /**
+     * Decode content
+     *
+     * @param content Output from downstream
+     * @return [Preferences] instance
+     */
+    suspend fun decode(content: String): Preferences // TODO Return Result?
+}

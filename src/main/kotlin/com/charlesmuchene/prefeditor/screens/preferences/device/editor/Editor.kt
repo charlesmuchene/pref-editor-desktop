@@ -37,7 +37,7 @@ import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.PrefKey
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.ui.Toast
-import com.charlesmuchene.prefeditor.ui.padding
+import com.charlesmuchene.prefeditor.ui.halfPadding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
@@ -58,8 +58,7 @@ fun Editor(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier)
     val (sets, primitives) = partition
 
     Column(modifier = modifier.fillMaxSize()) {
-        val endPadding = padding * 0.5f
-        EditorTopBar(viewModel = viewModel, modifier = Modifier.padding(end = endPadding))
+        EditorTopBar(viewModel = viewModel, modifier = Modifier.padding(end = halfPadding))
         val spacerHeight = 8.dp
         Spacer(modifier = Modifier.height(spacerHeight))
         Divider(
@@ -69,13 +68,13 @@ fun Editor(prefUseCase: DevicePreferencesUseCase, modifier: Modifier = Modifier)
         Spacer(modifier = Modifier.height(spacerHeight))
         Box(modifier = Modifier.fillMaxSize()) {
             val state = rememberLazyListState()
-            LazyColumn(modifier = Modifier.padding(end = endPadding), state = state) {
+            LazyColumn(modifier = Modifier.padding(end = halfPadding), state = state) {
                 primitives(preferences = primitives, viewModel = viewModel)
                 sets(preferences = sets, viewModel = viewModel)
             }
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(scrollState = state),
-                modifier = Modifier.align(Alignment.CenterEnd).offset(x = endPadding).fillMaxHeight(),
+                modifier = Modifier.align(Alignment.CenterEnd).offset(x = halfPadding).fillMaxHeight(),
             )
         }
     }

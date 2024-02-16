@@ -47,9 +47,4 @@ class Bridge(
             Unavailable
         }
     }
-
-    companion object {
-        private const val DELIMITER = " "
-        private const val CONTENT = "PREF_EDITOR_CONTENT"
-    }
 }

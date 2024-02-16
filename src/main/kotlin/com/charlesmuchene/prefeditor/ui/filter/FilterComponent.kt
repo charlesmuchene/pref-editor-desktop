@@ -24,7 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.ItemFilter
-import com.charlesmuchene.prefeditor.ui.padding
+import com.charlesmuchene.prefeditor.ui.halfPadding
 import org.jetbrains.jewel.ui.component.CheckboxRow
 
 @Composable
@@ -42,7 +42,7 @@ fun FilterComponent(placeholder: String, onFilter: (ItemFilter) -> Unit, modifie
             text = ""
             onFilter(ItemFilter(text = "", starred = checked))
         }, filtered = { text = it })
-        Spacer(modifier = Modifier.width(padding * 0.5f))
+        Spacer(modifier = Modifier.width(halfPadding))
         CheckboxRow(
             onCheckedChange = { checked = !checked },
             modifier = Modifier.pointerOnHover(),

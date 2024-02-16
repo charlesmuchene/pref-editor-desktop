@@ -42,7 +42,6 @@ fun SetPreferenceRow(preference: SetPreference, viewModel: EditorViewModel, modi
         }
     }
 
-    // FIXME: Make an editable preference
     // TODO Remove selection highlighting
     LazyTree(
         tree = tree,
