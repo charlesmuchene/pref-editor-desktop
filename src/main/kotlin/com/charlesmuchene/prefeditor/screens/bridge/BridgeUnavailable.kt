@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.HomeKey
-import com.charlesmuchene.prefeditor.ui.halfPadding
+import com.charlesmuchene.prefeditor.ui.APP_HALF_SPACING
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.ExternalLink
 import org.jetbrains.jewel.ui.component.Text
@@ -51,7 +51,7 @@ fun BridgeUnavailable(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(text = primary, style = Typography.heading, textAlign = TextAlign.Center)
-        Spacer(modifier = Modifier.height(halfPadding))
+        Spacer(modifier = Modifier.height(APP_HALF_SPACING))
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,

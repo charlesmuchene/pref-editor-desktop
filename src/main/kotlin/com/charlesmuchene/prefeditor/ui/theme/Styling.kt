@@ -43,4 +43,9 @@ fun ComponentStyling.prefEditorStyle(isDark: Boolean): ComponentStyling =
         }
 
 @Composable
-fun theme(isDark: Boolean): ThemeDefinition = if (isDark) JewelTheme.darkThemeDefinition() else JewelTheme.lightThemeDefinition()
+fun theme(isDark: Boolean): ThemeDefinition =
+    if (isDark) {
+        JewelTheme.darkThemeDefinition()
+    } else {
+        JewelTheme.lightThemeDefinition()
+    }

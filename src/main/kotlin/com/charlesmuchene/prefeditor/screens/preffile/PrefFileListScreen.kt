@@ -19,11 +19,8 @@ package com.charlesmuchene.prefeditor.screens.preffile
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,13 +34,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
+import com.charlesmuchene.prefeditor.models.ItemRowAction
 import com.charlesmuchene.prefeditor.models.UIPrefFile
 import com.charlesmuchene.prefeditor.navigation.FilesScreen
 import com.charlesmuchene.prefeditor.providers.LocalAppState
@@ -52,14 +49,19 @@ import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.resources.AppKey
 import com.charlesmuchene.prefeditor.screens.preffile.PrefListViewModel.UIState
+import com.charlesmuchene.prefeditor.ui.APP_ICON_BUTTON_SIZE
+import com.charlesmuchene.prefeditor.ui.APP_SPACING
+import com.charlesmuchene.prefeditor.ui.BreathingContainer
 import com.charlesmuchene.prefeditor.ui.FullScreenText
+import com.charlesmuchene.prefeditor.ui.ListingScaffold
 import com.charlesmuchene.prefeditor.ui.Loading
-import com.charlesmuchene.prefeditor.ui.Scaffolding
 import com.charlesmuchene.prefeditor.ui.Toast
 import com.charlesmuchene.prefeditor.ui.filter.FilterComponent
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
 import com.charlesmuchene.prefeditor.ui.listing.ItemRow
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import com.charlesmuchene.prefeditor.ui.theme.mustard
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.component.Icon
@@ -89,7 +91,7 @@ fun FileListScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     val header = LocalBundle.current[AppKey.PrefListingTitle]
-    Scaffolding(
+    ListingScaffold(
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
         subHeader = {
@@ -98,14 +100,14 @@ fun FileListScreen(
     ) {
         updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
             when (state) {
-                UIState.Empty -> PrefListingEmpty(modifier = modifier)
-                UIState.Loading -> PrefListingLoading(modifier = modifier)
-                is UIState.Error -> PrefListingError(modifier = modifier, message = state.message)
+                UIState.Empty -> PrefListingEmpty()
+                UIState.Loading -> PrefListingLoading()
+                is UIState.Error -> PrefListingError(message = state.message)
                 is UIState.Files ->
                     if (state.files.isEmpty()) {
-                        NoFilterMatch(modifier = modifier)
+                        NoFilterMatch()
                     } else {
-                        PrefListingSuccess(modifier = modifier, viewModel = viewModel, prefFiles = state.files)
+                        PrefListingSuccess(viewModel = viewModel, prefFiles = state.files)
                     }
             }
         }
@@ -140,7 +142,7 @@ private fun PrefListingLoading(modifier: Modifier = Modifier) {
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 private fun PrefListingSuccess(
-    prefFiles: List<UIPrefFile>,
+    prefFiles: ImmutableList<UIPrefFile>,
     viewModel: PrefListViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -160,8 +162,8 @@ private fun PrefListingSuccess(
 @Composable
 private fun PrefListingRow(
     prefFile: UIPrefFile,
-    modifier: Modifier = Modifier,
     viewModel: PrefListViewModel,
+    modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
     var localPref by remember(prefFile) { mutableStateOf(prefFile) }
@@ -169,34 +171,45 @@ private fun PrefListingRow(
     ItemRow(
         item = localPref,
         modifier = modifier,
-        onClick = viewModel::selected,
-        onFavorite = { scope.launch { localPref = viewModel.favorite(it) } },
+        action = {
+            when (it) {
+                is ItemRowAction.Click<*> -> viewModel.select(it.item)
+                is ItemRowAction.Favorite<*> -> scope.launch { localPref = viewModel.favorite(it.item) }
+            }
+        },
+        endItems = { ViewFileButton(viewModel, prefFile) },
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-            val firstItemWeight = .95f
-            Column(modifier = Modifier.padding(4.dp).weight(firstItemWeight)) {
-                Text(text = localPref.file.name, style = Typography.primary)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = localPref.file.type.text, style = Typography.secondary, color = JewelTheme.contentColor)
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Box(modifier = Modifier.weight(1 - firstItemWeight), contentAlignment = Alignment.Center) {
-                IconButton(
-                    modifier = Modifier.size(36.dp).clip(CircleShape),
-                    onClick = { viewModel.selected(file = prefFile, readOnly = true) },
-                ) {
-                    val painter by rememberIconPainter(name = "read")
-                    Icon(
-                        tint = JewelTheme.contentColor,
-                        painter = painter,
-                        contentDescription = "View file",
-                        modifier =
-                            Modifier
-                                .size(24.dp)
-                                .pointerOnHover(),
-                    )
-                }
-            }
+        Column(modifier = Modifier.padding(4.dp)) {
+            Text(text = localPref.file.name, style = Typography.primary)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = localPref.file.type.text, style = Typography.secondary, color = JewelTheme.contentColor)
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+    }
+}
+
+@Composable
+private fun ViewFileButton(
+    viewModel: PrefListViewModel,
+    prefFile: UIPrefFile,
+    modifier: Modifier = Modifier,
+) {
+    BreathingContainer(modifier = modifier) {
+        IconButton(
+            modifier = Modifier.size(APP_ICON_BUTTON_SIZE).clip(CircleShape),
+            onClick = { viewModel.select(file = prefFile, readOnly = true) },
+        ) {
+            val painter by rememberIconPainter(name = "read")
+            val tint = if (LocalAppState.current.theme.isDark()) mustard else JewelTheme.contentColor
+            Icon(
+                tint = tint,
+                painter = painter,
+                contentDescription = "View file",
+                modifier =
+                    Modifier
+                        .size(APP_SPACING)
+                        .pointerOnHover(),
+            )
         }
     }
 }

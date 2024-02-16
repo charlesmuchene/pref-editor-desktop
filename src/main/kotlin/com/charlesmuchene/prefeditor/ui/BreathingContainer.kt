@@ -24,13 +24,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 
 @Composable
 fun BreathingContainer(
-    breathe: Float = 1.2f,
     modifier: Modifier = Modifier,
+    breathe: Float = 1.2f,
     content: @Composable () -> Unit,
 ) {
     val infiniteTransition = rememberInfiniteTransition()
@@ -45,5 +46,5 @@ fun BreathingContainer(
             ),
     )
 
-    Box(modifier = modifier.scale(scale)) { content() }
+    Box(modifier = modifier.scale(scale), contentAlignment = Alignment.Center) { content() }
 }

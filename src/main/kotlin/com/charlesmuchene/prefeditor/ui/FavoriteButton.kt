@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.ui.theme.orange
@@ -37,12 +36,12 @@ fun FavoriteButton(
 ) {
     val icon = if (selected) "favorite-solid" else "favorite-outline"
     val painter by rememberIconPainter(icon)
-    IconButton(onClick = onFavorite, modifier = modifier.size(36.dp).clip(CircleShape)) {
+    IconButton(onClick = onFavorite, modifier = modifier.size(APP_ICON_BUTTON_SIZE).clip(CircleShape)) {
         Icon(
             tint = orange,
             painter = painter,
             contentDescription = "Favorite item",
-            modifier = Modifier.size(24.dp).pointerOnHover(),
+            modifier = Modifier.size(APP_SPACING).pointerOnHover(),
         )
     }
 }

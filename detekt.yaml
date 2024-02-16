@@ -1,0 +1,17 @@
+Compose:
+  CompositionLocalAllowlist:
+    allowedCompositionLocals: LocalReloadSignal,LocalNavigation,LocalAppState,LocalBundle
+
+complexity:
+  TooManyFunctions:
+    excludes: [ '**/test/**' ]
+
+empty-blocks:
+  EmptyFunctionBlock:
+    excludes:
+      - '**/test/**'
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - Composable

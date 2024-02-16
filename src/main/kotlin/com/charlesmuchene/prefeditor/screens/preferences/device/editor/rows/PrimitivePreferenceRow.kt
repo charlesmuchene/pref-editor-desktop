@@ -33,6 +33,7 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.editor.ACTION_CO
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.NAME_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceAction
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceActionButtonRow
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.VALUE_COMPONENT_WEIGHT
@@ -101,7 +102,7 @@ fun PrimitivePreferenceRow(
             },
         )
 
-        PreferenceAction(
+        PreferenceActionButtonRow(
             onPreferenceAction = { localPreference = viewModel.preferenceAction(it) },
             modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
             preference = localPreference,

@@ -22,6 +22,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
+import java.io.IOException
 import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
@@ -50,7 +51,11 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
             val process =
                 try {
                     builder.start()
-                } catch (exception: Exception) {
+                } catch (exception: IOException) {
+                    return@withContext Result.failure(exception)
+                } catch (exception: SecurityException) {
+                    return@withContext Result.failure(exception)
+                } catch (exception: UnsupportedOperationException) {
                     return@withContext Result.failure(exception)
                 }
 
@@ -59,6 +64,7 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
                 runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }
                 Result.success(output.await().trim())
             } catch (exception: CancellationException) {
+                println(exception.message)
                 throw exception // propagate cancellation
             }
         }

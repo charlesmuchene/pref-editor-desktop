@@ -31,6 +31,8 @@ import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.ui.theme.green
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -173,13 +175,15 @@ class DeviceListViewModel(
     private fun filter(
         filter: ItemFilter,
         devices: List<UIDevice>,
-    ) = devices.filter { uiDevice ->
-        (if (filter.starred) uiDevice.isFavorite else true) &&
-            (
-                uiDevice.device.serial.contains(other = filter.text, ignoreCase = true) ||
-                    uiDevice.device.attributes.joinToString().contains(other = filter.text, ignoreCase = true)
-            )
-    }
+    ): ImmutableList<UIDevice> =
+        devices.filter { uiDevice ->
+            (if (filter.starred) uiDevice.isFavorite else true) &&
+                (
+                    uiDevice.device.serial.contains(other = filter.text, ignoreCase = true) ||
+                        uiDevice.device.attributes.joinToString()
+                            .contains(other = filter.text, ignoreCase = true)
+                )
+        }.toImmutableList()
 
     /**
      * Un/Favorite a device
@@ -205,6 +209,6 @@ class DeviceListViewModel(
 
         data object NoDevices : UIState
 
-        data class Devices(val devices: List<UIDevice>) : UIState
+        data class Devices(val devices: ImmutableList<UIDevice>) : UIState
     }
 }

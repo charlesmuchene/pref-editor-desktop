@@ -34,15 +34,16 @@ import org.jetbrains.jewel.window.DecoratedWindow
 
 @Composable
 fun ApplicationScope.NoBridgeWindow(
-    status: AppStatus.NoBridge,
     icon: Painter,
+    status: AppStatus.NoBridge,
+    modifier: Modifier = Modifier,
 ) {
     val bridgeStatus = status.bridgeStatus
-    provideAppState(appState = status.state) {
+    ProvideAppState(appState = status.state) {
         val windowState = rememberWindowState(position = WindowPosition.Aligned(Alignment.Center))
         DecoratedWindow(icon = icon, onCloseRequest = ::exitApplication, resizable = false, state = windowState) {
             TitleBarView()
-            Column(modifier = Modifier.background(JewelTheme.globalColors.paneBackground)) {
+            Column(modifier = modifier.background(JewelTheme.globalColors.paneBackground)) {
                 when (bridgeStatus) {
                     BridgeStatus.Available -> BridgeAvailable()
                     BridgeStatus.Unavailable -> BridgeUnavailable()

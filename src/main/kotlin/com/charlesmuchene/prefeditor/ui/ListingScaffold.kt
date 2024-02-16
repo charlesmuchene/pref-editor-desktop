@@ -23,13 +23,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import com.charlesmuchene.prefeditor.ui.theme.appGray
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.Divider
 
 @Composable
-fun Scaffolding(
+fun ListingScaffold(
     header: @Composable ColumnScope.() -> Unit,
     subHeader: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
@@ -37,13 +36,10 @@ fun Scaffolding(
 ) {
     Column(modifier.fillMaxSize()) {
         header()
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(APP_HALF_SPACING))
         subHeader()
-        Spacer(modifier = Modifier.height(halfPadding))
-        Divider(
-            color = Color.LightGray.copy(alpha = 0.75f),
-            orientation = Orientation.Horizontal,
-        )
+        Spacer(modifier = Modifier.height(APP_SPACING))
+        Divider(color = appGray, orientation = Orientation.Horizontal)
         content()
     }
 }

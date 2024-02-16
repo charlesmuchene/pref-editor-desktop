@@ -18,5 +18,8 @@ package com.charlesmuchene.prefeditor.ui
 
 import androidx.compose.ui.unit.dp
 
-val padding = 24.dp
-val halfPadding = padding * .5f
+val APP_SPACING = 24.dp
+val APP_HALF_SPACING = 12.dp
+val APP_ICON_BUTTON_SIZE = 36.dp
+
+val SET_PREFERENCE_ITEM_HEIGHT = 64.dp

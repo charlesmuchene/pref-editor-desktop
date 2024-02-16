@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
-import com.charlesmuchene.prefeditor.ui.padding
+import com.charlesmuchene.prefeditor.ui.APP_SPACING
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
 import org.jetbrains.jewel.ui.component.ExternalLink
@@ -41,7 +41,7 @@ import java.awt.Desktop
 import java.net.URI
 
 @Composable
-fun SetupWindow() {
+fun SetupWindow(modifier: Modifier = Modifier) {
     IntUiTheme(isDark = true) {
         val title = "Preference Editor"
         DialogWindow(onCloseRequest = {}, title = title, undecorated = true, transparent = true, resizable = false) {
@@ -49,9 +49,9 @@ fun SetupWindow() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier =
-                    Modifier.background(
+                    modifier.background(
                         color = JewelTheme.globalColors.paneBackground,
-                        shape = RoundedCornerShape(padding),
+                        shape = RoundedCornerShape(APP_SPACING),
                     ).fillMaxSize(),
             ) {
                 val painter by rememberIconPainter(name = "app")

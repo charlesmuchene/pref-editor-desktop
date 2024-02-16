@@ -18,7 +18,6 @@ package com.charlesmuchene.prefeditor.providers
 
 import androidx.compose.runtime.compositionLocalOf
 import com.charlesmuchene.prefeditor.app.AppState
-import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.resources.TextBundle
@@ -27,4 +26,3 @@ val LocalReloadSignal = compositionLocalOf<ReloadSignal> { error("No reload sign
 val LocalNavigation = compositionLocalOf<Navigation> { error("No navigation provided") }
 val LocalAppState = compositionLocalOf<AppState> { error("No app state provided") }
 val LocalBundle = compositionLocalOf<TextBundle> { error("No bundle provided") }
-val LocalBridge = compositionLocalOf<Bridge> { error("No bridge provided") }

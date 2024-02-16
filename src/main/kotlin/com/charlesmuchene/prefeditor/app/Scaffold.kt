@@ -33,18 +33,16 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import com.charlesmuchene.prefeditor.bridge.Bridge
 import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.providers.LocalAppState
-import com.charlesmuchene.prefeditor.providers.LocalBridge
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.resources.ApplicationKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
-import com.charlesmuchene.prefeditor.ui.halfPadding
-import com.charlesmuchene.prefeditor.ui.padding
+import com.charlesmuchene.prefeditor.ui.APP_HALF_SPACING
+import com.charlesmuchene.prefeditor.ui.APP_SPACING
 import com.charlesmuchene.prefeditor.ui.theme.prefEditorStyle
 import com.charlesmuchene.prefeditor.ui.theme.theme
 import org.jetbrains.jewel.foundation.modifier.trackActivation
@@ -54,12 +52,13 @@ import org.jetbrains.jewel.ui.ComponentStyling
 import org.jetbrains.jewel.window.DecoratedWindow
 
 @Composable
-fun ApplicationScope.scaffold(
+fun ApplicationScope.Scaffold(
     icon: Painter,
     appState: AppState,
+    modifier: Modifier = Modifier,
     content: @Composable ColumnScope.(Modifier) -> Unit,
 ) {
-    provideAppState(appState = appState) {
+    ProvideAppState(appState = appState) {
         val (width, height) = LocalAppState.current.windowSize
         val position = WindowPosition.Aligned(alignment = Alignment.Center)
         val state = rememberWindowState(position = position, width = width, height = height)
@@ -77,9 +76,9 @@ fun ApplicationScope.scaffold(
                         .background(JewelTheme.globalColors.paneBackground),
             ) {
                 content(
-                    Modifier
+                    modifier
                         .trackActivation()
-                        .padding(horizontal = padding, vertical = halfPadding),
+                        .padding(horizontal = APP_SPACING, vertical = APP_HALF_SPACING),
                 )
             }
         }
@@ -87,14 +86,13 @@ fun ApplicationScope.scaffold(
 }
 
 @Composable
-fun provideAppState(
+fun ProvideAppState(
     appState: AppState,
     content: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     CompositionLocalProvider(
         LocalAppState provides appState,
-        LocalBridge provides Bridge(),
         LocalBundle provides TextBundle(),
         LocalNavigation provides Navigation(scope),
         LocalReloadSignal provides ReloadSignal(scope),

@@ -40,9 +40,9 @@ import org.jetbrains.jewel.ui.component.TextField
 @Composable
 fun FilterTextField(
     placeholder: String,
-    modifier: Modifier = Modifier,
     filtered: (String) -> Unit,
     onClear: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var value by remember { mutableStateOf("") }
     val filterPainter by rememberIconPainter(name = "filter")

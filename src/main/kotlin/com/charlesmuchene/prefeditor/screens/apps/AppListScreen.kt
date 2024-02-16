@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
+import com.charlesmuchene.prefeditor.models.ItemRowAction
 import com.charlesmuchene.prefeditor.models.UIApp
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
 import com.charlesmuchene.prefeditor.providers.LocalAppState
@@ -40,12 +41,13 @@ import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.resources.DeviceKey
 import com.charlesmuchene.prefeditor.screens.apps.AppListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.FullScreenText
+import com.charlesmuchene.prefeditor.ui.ListingScaffold
 import com.charlesmuchene.prefeditor.ui.Loading
-import com.charlesmuchene.prefeditor.ui.Scaffolding
 import com.charlesmuchene.prefeditor.ui.filter.FilterComponent
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
 import com.charlesmuchene.prefeditor.ui.listing.ItemRow
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.ui.component.Text
 
@@ -71,7 +73,7 @@ fun AppListScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     val header = LocalBundle.current[DeviceKey.AppListingTitle]
-    Scaffolding(
+    ListingScaffold(
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
         subHeader = {
@@ -80,13 +82,13 @@ fun AppListScreen(
     ) {
         updateTransition(uiState).AnimatedContent(transitionSpec = { screenTransitionSpec() }) { state ->
             when (state) {
-                UIState.Loading -> LoadingApps(modifier = modifier)
-                UIState.Error -> LoadingAppError(modifier = modifier)
+                UIState.Loading -> LoadingApps()
+                UIState.Error -> LoadingAppError()
                 is UIState.Apps ->
                     if (state.apps.isEmpty()) {
-                        NoFilterMatch(modifier = modifier)
+                        NoFilterMatch()
                     } else {
-                        AppListing(apps = state.apps, modifier = modifier, viewModel = viewModel)
+                        AppListing(apps = state.apps, viewModel = viewModel)
                     }
             }
         }
@@ -108,9 +110,9 @@ private fun LoadingApps(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun AppListing(
-    apps: List<UIApp>,
-    modifier: Modifier = Modifier,
+    apps: ImmutableList<UIApp>,
     viewModel: AppListViewModel,
+    modifier: Modifier = Modifier,
 ) {
     val filtered by viewModel.filtered.collectAsState(apps)
 
@@ -128,8 +130,8 @@ private fun AppListing(
 @Composable
 private fun AppRow(
     app: UIApp,
-    modifier: Modifier = Modifier,
     viewModel: AppListViewModel,
+    modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
     var localApp by remember(app) { mutableStateOf(app) }
@@ -137,8 +139,12 @@ private fun AppRow(
     ItemRow(
         item = localApp,
         modifier = modifier,
-        onClick = viewModel::selected,
-        onFavorite = { scope.launch { localApp = viewModel.favorite(it) } },
+        action = {
+            when (it) {
+                is ItemRowAction.Click<*> -> viewModel.select(it.item)
+                is ItemRowAction.Favorite<*> -> scope.launch { localApp = viewModel.favorite(it.item) }
+            }
+        },
     ) {
         Text(text = localApp.app.packageName, style = Typography.primary, modifier = Modifier.padding(4.dp))
     }

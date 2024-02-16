@@ -32,14 +32,14 @@ import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.Stri
 
 val componentSpacing = 8.dp
 const val VALUE_COMPONENT_WEIGHT = 0.65f
-const val NAME_COMPONENT_WEIGHT = 0.3f
-const val ACTION_COMPONENT_WEIGHT = 0.05f
+const val NAME_COMPONENT_WEIGHT = 0.25f
+const val ACTION_COMPONENT_WEIGHT = 0.1f
 
 @Composable
 fun PrimitivePreference(
     preference: UIPreference,
-    modifier: Modifier = Modifier,
     viewModel: EditorViewModel,
+    modifier: Modifier = Modifier,
 ) {
     // TODO Wrap name to 2 lines, overflow -- clip?
     when (preference.preference) {

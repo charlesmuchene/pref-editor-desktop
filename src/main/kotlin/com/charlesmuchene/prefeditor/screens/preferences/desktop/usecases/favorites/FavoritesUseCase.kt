@@ -30,6 +30,7 @@ import kotlin.coroutines.CoroutineContext
 
 private val logger = KotlinLogging.logger {}
 
+@Suppress("TooManyFunctions")
 class FavoritesUseCase(
     private val codec: FavoritesCodec,
     private val editor: PreferenceWriter,
@@ -42,7 +43,9 @@ class FavoritesUseCase(
         favorites = codec.decode(path = path)
     }
 
-    fun isFavorite(device: Device): Boolean = favorites.filterIsInstance<Favorite.Device>().any { it.serial == device.serial }
+    fun isFavorite(device: Device): Boolean =
+        favorites.filterIsInstance<Favorite.Device>()
+            .any { it.serial == device.serial }
 
     fun isFavorite(
         app: App,

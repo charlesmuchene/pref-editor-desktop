@@ -31,8 +31,8 @@ import com.charlesmuchene.prefeditor.data.BooleanPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.NAME_COMPONENT_WEIGHT
-import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceAction
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceAction.Change
+import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceActionButtonRow
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState.Deleted
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.VALUE_COMPONENT_WEIGHT
@@ -102,7 +102,7 @@ fun BooleanPreferenceRow(
             ) { Text(text = "False", textDecoration = decoration) }
         }
 
-        PreferenceAction(
+        PreferenceActionButtonRow(
             onPreferenceAction = { localPreference = viewModel.preferenceAction(it) },
             modifier = Modifier.weight(ACTION_COMPONENT_WEIGHT),
             preference = localPreference,

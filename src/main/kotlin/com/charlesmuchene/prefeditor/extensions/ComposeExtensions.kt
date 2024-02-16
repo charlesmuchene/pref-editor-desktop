@@ -46,7 +46,7 @@ fun rememberIconPainter(
     ).getPainter()
 
 @Composable
-fun Modifier.pointerOnHover() = pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
+fun Modifier.pointerOnHover() = this then pointerHoverIcon(PointerIcon(Cursor(Cursor.HAND_CURSOR)))
 
 fun screenTransitionSpec(): ContentTransform =
     (

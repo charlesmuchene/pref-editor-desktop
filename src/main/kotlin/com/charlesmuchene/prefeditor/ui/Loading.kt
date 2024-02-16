@@ -39,7 +39,7 @@ fun Loading(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CircularProgressIndicator()
-        Spacer(modifier = Modifier.width(padding))
+        Spacer(modifier = Modifier.width(APP_SPACING))
         Text(text = text, style = primary)
     }
 }

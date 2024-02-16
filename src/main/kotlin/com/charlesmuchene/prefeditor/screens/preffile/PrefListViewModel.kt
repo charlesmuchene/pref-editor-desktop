@@ -28,6 +28,8 @@ import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -99,7 +101,7 @@ class PrefListViewModel(
      * @param file Selected [UIPrefFile]
      * @param readOnly Determine if we should show read view or editor
      */
-    fun selected(
+    fun select(
         file: UIPrefFile,
         readOnly: Boolean = false,
     ) {
@@ -132,10 +134,11 @@ class PrefListViewModel(
     private fun filter(
         filter: ItemFilter,
         files: List<UIPrefFile>,
-    ) = files.filter { uiFile ->
-        (if (filter.starred) uiFile.isFavorite else true) &&
-            uiFile.file.name.contains(other = filter.text, ignoreCase = true)
-    }
+    ): ImmutableList<UIPrefFile> =
+        files.filter { uiFile ->
+            (if (filter.starred) uiFile.isFavorite else true) &&
+                uiFile.file.name.contains(other = filter.text, ignoreCase = true)
+        }.toImmutableList()
 
     /**
      * Un/Favorite a file
@@ -164,7 +167,7 @@ class PrefListViewModel(
 
         data object Loading : UIState
 
-        data class Files(val files: List<UIPrefFile>) : UIState
+        data class Files(val files: ImmutableList<UIPrefFile>) : UIState
 
         data class Error(val message: String? = null) : UIState
     }

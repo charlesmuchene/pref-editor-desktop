@@ -29,7 +29,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -45,7 +44,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.ui.theme.green
@@ -72,11 +70,11 @@ fun ReloadButton(
     val animatedRotationAngle by remember { mutableStateOf(Animatable(initialValue = 0f)) }
     val animatedColor by animateColorAsState(targetValue = if (isHovered) green else JewelTheme.contentColor)
 
-    Tooltip(tooltip = { Text(text = "Reload screen") }, modifier = Modifier) {
+    Tooltip(tooltip = { Text(text = "Reload screen") }, modifier = modifier) {
         Box(
             contentAlignment = Alignment.Center,
             modifier =
-                modifier
+                Modifier
                     .onHover { isHovered ->
                         scope.launch {
                             hoverAnimation(
@@ -95,8 +93,7 @@ fun ReloadButton(
                 onClick = onClick,
                 modifier =
                     Modifier
-                        .size(64.dp)
-                        .padding(8.dp)
+                        .size(APP_ICON_BUTTON_SIZE)
                         .clip(CircleShape)
                         .drawBehind {
                             drawCircle(Color.DarkGray, style = Stroke(width = 4f))
@@ -105,7 +102,7 @@ fun ReloadButton(
                 val painter by rememberIconPainter(name = "reload")
                 Icon(
                     contentDescription = "Reload",
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(APP_SPACING),
                     tint = animatedColor,
                     painter = painter,
                 )

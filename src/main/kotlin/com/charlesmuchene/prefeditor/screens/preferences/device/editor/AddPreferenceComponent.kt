@@ -43,8 +43,8 @@ import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.models.PreferenceType
-import com.charlesmuchene.prefeditor.ui.halfPadding
-import com.charlesmuchene.prefeditor.ui.padding
+import com.charlesmuchene.prefeditor.ui.APP_HALF_SPACING
+import com.charlesmuchene.prefeditor.ui.APP_SPACING
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.DefaultButton
@@ -58,9 +58,9 @@ import org.jetbrains.jewel.ui.component.Typography
 
 @Composable
 fun AddPreferenceComponent(
-    modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     onAdd: (String, String, PreferenceType?) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Dialog(onDismissRequest = onDismiss) {
         Column(
@@ -69,7 +69,7 @@ fun AddPreferenceComponent(
                     .fillMaxWidth(fraction = .6f)
                     .clip(RoundedCornerShape(percent = 5))
                     .background(JewelTheme.globalColors.paneBackground)
-                    .padding(padding),
+                    .padding(APP_SPACING),
         ) {
             Text(
                 text = "Add preference",
@@ -78,9 +78,9 @@ fun AddPreferenceComponent(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            Spacer(modifier = Modifier.height(halfPadding))
+            Spacer(modifier = Modifier.height(APP_HALF_SPACING))
             Divider(orientation = Orientation.Horizontal, color = Color.LightGray.copy(alpha = .5f))
-            Spacer(modifier = Modifier.height(halfPadding))
+            Spacer(modifier = Modifier.height(APP_HALF_SPACING))
             Text(text = "Name", style = Typography.h3TextStyle(), modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(4.dp))
 
@@ -89,7 +89,7 @@ fun AddPreferenceComponent(
                 Text(text = "Preference Name")
             })
 
-            Spacer(modifier = Modifier.height(halfPadding))
+            Spacer(modifier = Modifier.height(APP_HALF_SPACING))
             Text(text = "Value", style = Typography.h3TextStyle(), modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(4.dp))
 
@@ -98,7 +98,7 @@ fun AddPreferenceComponent(
                 Text(text = "Preference Value")
             })
 
-            Spacer(modifier = Modifier.height(padding))
+            Spacer(modifier = Modifier.height(APP_SPACING))
 
             var preferenceType by remember { mutableStateOf<PreferenceType?>(null) }
 
@@ -116,9 +116,9 @@ fun AddPreferenceComponent(
                 },
             ) { DropdownSelection(preferenceType) }
 
-            Spacer(modifier = Modifier.height(padding))
+            Spacer(modifier = Modifier.height(APP_SPACING))
             Divider(orientation = Orientation.Horizontal, color = Color.LightGray)
-            Spacer(modifier = Modifier.height(padding))
+            Spacer(modifier = Modifier.height(APP_SPACING))
 
             DialogButtons(onDismiss = onDismiss, onAdd = { onAdd(name, value, preferenceType) })
         }
@@ -142,9 +142,9 @@ private fun DropdownSelection(
 
 @Composable
 private fun DialogButtons(
-    modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     onAdd: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -157,7 +157,7 @@ private fun DialogButtons(
         ) {
             Text(text = "Cancel")
         }
-        Spacer(modifier = Modifier.width(padding))
+        Spacer(modifier = Modifier.width(APP_SPACING))
         DefaultButton(
             onClick = onAdd,
             modifier = Modifier.pointerOnHover().weight(1f),

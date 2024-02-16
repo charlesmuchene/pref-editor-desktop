@@ -26,11 +26,12 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.SetPreferenceRow
+import com.charlesmuchene.prefeditor.ui.SET_PREFERENCE_ITEM_HEIGHT
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import com.charlesmuchene.prefeditor.ui.theme.appGray
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.Divider
@@ -44,7 +45,7 @@ fun LazyListScope.setPreferenceSection(
     item {
         Divider(
             orientation = Orientation.Horizontal,
-            color = Color.LightGray.copy(alpha = 0.5f),
+            color = appGray,
             modifier = Modifier.padding(vertical = 8.dp),
         )
     }
@@ -64,12 +65,13 @@ fun LazyListScope.setPreferenceSection(
         }
     }
 
-    val itemHeight = 64
     items(items = preferences.mapNotNull { it.preference as? SetPreference }, key = SetPreference::name) { preference ->
         SetPreferenceRow(
             preference = preference,
             viewModel = viewModel,
-            modifier = Modifier.padding(end = 18.dp).fillMaxWidth().height((itemHeight * preference.entries.size).dp),
+            modifier =
+                Modifier.padding(end = 18.dp).fillMaxWidth()
+                    .height(SET_PREFERENCE_ITEM_HEIGHT * preference.entries.size),
         )
     }
 }

@@ -33,9 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
+import com.charlesmuchene.prefeditor.models.ItemRowAction
 import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
@@ -43,9 +43,10 @@ import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.screens.device.DeviceListViewModel.UIState
+import com.charlesmuchene.prefeditor.ui.APP_SPACING
 import com.charlesmuchene.prefeditor.ui.FullScreenText
+import com.charlesmuchene.prefeditor.ui.ListingScaffold
 import com.charlesmuchene.prefeditor.ui.Loading
-import com.charlesmuchene.prefeditor.ui.Scaffolding
 import com.charlesmuchene.prefeditor.ui.Toast
 import com.charlesmuchene.prefeditor.ui.filter.FilterComponent
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
@@ -53,6 +54,7 @@ import com.charlesmuchene.prefeditor.ui.listing.ItemRow
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import com.charlesmuchene.prefeditor.ui.theme.Typography.primary
 import com.charlesmuchene.prefeditor.ui.theme.Typography.secondary
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.ui.component.Text
 
@@ -76,21 +78,21 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
     val uiState by viewModel.uiState.collectAsState()
 
     val header = bundle[HomeKey.ConnectedDevices]
-    Scaffolding(
+    ListingScaffold(
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
         subHeader = { FilterComponent(placeholder = "Filter devices", onFilter = viewModel::filter) },
     ) {
         AnimatedContent(targetState = uiState, transitionSpec = { screenTransitionSpec() }) { state ->
             when (state) {
-                UIState.Loading -> DeviceListLoading(modifier = modifier)
-                UIState.Error -> DeviceListError(modifier = modifier)
-                UIState.NoDevices -> NoDevices(modifier = modifier)
+                UIState.Loading -> DeviceListLoading()
+                UIState.Error -> DeviceListError()
+                UIState.NoDevices -> NoDevices()
                 is UIState.Devices ->
                     if (state.devices.isEmpty()) {
-                        NoFilterMatch(modifier = modifier)
+                        NoFilterMatch()
                     } else {
-                        DeviceList(devices = state.devices, viewModel = viewModel, modifier = modifier)
+                        DeviceList(devices = state.devices, viewModel = viewModel)
                     }
             }
         }
@@ -104,7 +106,7 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 private fun DeviceList(
-    devices: List<UIDevice>,
+    devices: ImmutableList<UIDevice>,
     viewModel: DeviceListViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -129,20 +131,23 @@ private fun DeviceRow(
 ) {
     val statusColor = viewModel.statusColor(device = device.device)
     var localDevice by remember(device) { mutableStateOf(device) }
-    val radius = with(LocalDensity.current) { 12.dp.toPx() }
     val scope = rememberCoroutineScope()
 
     ItemRow(
         item = localDevice,
         modifier = modifier,
-        onClick = viewModel::select,
-        onFavorite = { scope.launch { localDevice = viewModel.favorite(it) } },
+        action = {
+            when (it) {
+                is ItemRowAction.Click<*> -> viewModel.select(it.item)
+                is ItemRowAction.Favorite<*> -> scope.launch { localDevice = viewModel.favorite(it.item) }
+            }
+        },
     ) {
-        Canvas(modifier = Modifier.size(12.dp).weight(0.05f)) {
-            drawCircle(color = statusColor, radius = radius)
+        Canvas(modifier = Modifier.size(APP_SPACING)) {
+            drawCircle(color = statusColor)
         }
-        Spacer(modifier = Modifier.width(4.dp))
-        Column(modifier = Modifier.weight(0.95f)) {
+        Spacer(modifier = Modifier.width(APP_SPACING))
+        Column(modifier = Modifier) {
             Text(text = localDevice.device.serial, style = primary)
             Spacer(modifier = Modifier.height(4.dp))
             Text(

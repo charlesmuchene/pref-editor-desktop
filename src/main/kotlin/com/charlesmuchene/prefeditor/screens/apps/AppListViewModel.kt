@@ -26,6 +26,8 @@ import com.charlesmuchene.prefeditor.navigation.FilesScreen
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -91,11 +93,11 @@ class AppListViewModel(
         }
 
     /**
-     * App selected
+     * Select app
      *
      * @param app The selected [UIApp]
      */
-    fun selected(app: UIApp) {
+    fun select(app: UIApp) {
         launch {
             navigation.navigate(screen = FilesScreen(app = app.app, device = device))
         }
@@ -122,10 +124,11 @@ class AppListViewModel(
     private fun filter(
         filter: ItemFilter,
         apps: List<UIApp>,
-    ) = apps.filter { uiApp ->
-        (if (filter.starred) uiApp.isFavorite else true) &&
-            uiApp.app.packageName.contains(other = filter.text, ignoreCase = true)
-    }
+    ): ImmutableList<UIApp> =
+        apps.filter { uiApp ->
+            (if (filter.starred) uiApp.isFavorite else true) &&
+                uiApp.app.packageName.contains(other = filter.text, ignoreCase = true)
+        }.toImmutableList()
 
     /**
      * Un/Favorite an app
@@ -149,6 +152,6 @@ class AppListViewModel(
 
         data object Loading : UIState
 
-        data class Apps(val apps: List<UIApp>) : UIState
+        data class Apps(val apps: ImmutableList<UIApp>) : UIState
     }
 }

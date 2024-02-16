@@ -29,7 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.ItemFilter
-import com.charlesmuchene.prefeditor.ui.halfPadding
+import com.charlesmuchene.prefeditor.ui.APP_HALF_SPACING
 import org.jetbrains.jewel.ui.component.CheckboxRow
 
 @Composable
@@ -50,7 +50,7 @@ fun FilterComponent(
             text = ""
             onFilter(ItemFilter(text = "", starred = checked))
         }, filtered = { text = it })
-        Spacer(modifier = Modifier.width(halfPadding))
+        Spacer(modifier = Modifier.width(APP_HALF_SPACING))
         CheckboxRow(
             onCheckedChange = { checked = !checked },
             modifier = Modifier.pointerOnHover(),

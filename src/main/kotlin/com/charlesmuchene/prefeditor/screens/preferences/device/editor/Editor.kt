@@ -18,6 +18,7 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,7 +45,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
@@ -53,9 +53,10 @@ import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.resources.PrefKey
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
+import com.charlesmuchene.prefeditor.ui.APP_HALF_SPACING
 import com.charlesmuchene.prefeditor.ui.Toast
-import com.charlesmuchene.prefeditor.ui.halfPadding
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import com.charlesmuchene.prefeditor.ui.theme.appGray
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
@@ -83,23 +84,18 @@ fun Editor(
     val (sets, primitives) = partition
 
     Column(modifier = modifier.fillMaxSize()) {
-        EditorTopBar(viewModel = viewModel, modifier = Modifier.padding(end = halfPadding))
-        val spacerHeight = 8.dp
-        Spacer(modifier = Modifier.height(spacerHeight))
-        Divider(
-            orientation = Orientation.Horizontal,
-            color = Color.LightGray.copy(alpha = 0.2f),
-        )
-        Spacer(modifier = Modifier.height(spacerHeight))
+        EditorTopBar(viewModel = viewModel, modifier = Modifier)
+        Spacer(modifier = Modifier.height(APP_HALF_SPACING))
+        Divider(orientation = Orientation.Horizontal, color = appGray)
         Box(modifier = Modifier.fillMaxSize()) {
             val state = rememberLazyListState()
-            LazyColumn(modifier = Modifier.padding(end = halfPadding), state = state) {
+            LazyColumn(modifier = Modifier.padding(end = APP_HALF_SPACING), state = state) {
                 primitives(preferences = primitives, viewModel = viewModel)
                 sets(preferences = sets, viewModel = viewModel)
             }
             VerticalScrollbar(
                 adapter = rememberScrollbarAdapter(scrollState = state),
-                modifier = Modifier.align(Alignment.CenterEnd).offset(x = halfPadding).fillMaxHeight(),
+                modifier = Modifier.align(Alignment.CenterEnd).offset(x = APP_HALF_SPACING).fillMaxHeight(),
             )
         }
     }
@@ -115,9 +111,8 @@ private fun EditorTopBar(
 ) {
     var showAddPreference by remember { mutableStateOf(false) }
 
-    Row(modifier = modifier) {
+    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
-        Spacer(modifier = Modifier.weight(1f))
         val checked by viewModel.backupEnabled
         Row(verticalAlignment = Alignment.CenterVertically) {
             OutlinedButton(onClick = { showAddPreference = true }, modifier = Modifier.pointerOnHover()) {
@@ -132,9 +127,9 @@ private fun EditorTopBar(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = text)
             }
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(APP_HALF_SPACING))
             CheckboxRow(text = "Backup file", checked = checked, onCheckedChange = viewModel::backup)
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(APP_HALF_SPACING))
             val enabled by viewModel.enableSave.collectAsState()
             DefaultButton(onClick = viewModel::save, enabled = enabled) {
                 Text(text = "Save")

@@ -5,6 +5,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.compose.desktop)
+    alias(libs.plugins.detekt)
 }
 
 group = "com.charlesmuchene.prefeditor"
@@ -28,11 +29,14 @@ dependencies {
     implementation(compose.desktop.currentOs) {
         exclude(group = "org.jetbrains.compose.material") // we're jeweling up! :D
     }
-    implementation(libs.jewel.standalone)
+    implementation(libs.immutable.collections)
     implementation(libs.jewel.deco.window)
+    implementation(libs.jewel.standalone)
     implementation(libs.logging)
     implementation(libs.kxml2)
     runtimeOnly(libs.sl4j)
+
+    detektPlugins(libs.detekt.compose.rules)
 
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)
@@ -80,3 +84,8 @@ tasks.withType<JavaExec> {
 
 @Suppress("unused")
 fun Property<JavaLanguageVersion>.assign(version: Int) = set(JavaLanguageVersion.of(version))
+
+detekt {
+    config.from(file(path = "detekt.yaml"))
+    buildUponDefaultConfig = true
+}

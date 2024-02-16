@@ -33,15 +33,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
+import com.charlesmuchene.prefeditor.ui.APP_HALF_SPACING
+import com.charlesmuchene.prefeditor.ui.APP_SPACING
 import com.charlesmuchene.prefeditor.ui.ReloadButton
-import com.charlesmuchene.prefeditor.ui.halfPadding
-import com.charlesmuchene.prefeditor.ui.padding
+import com.charlesmuchene.prefeditor.ui.theme.appGray
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.Chip
@@ -65,27 +65,26 @@ fun NavigationBar(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = APP_SPACING),
         ) {
-            val rowWeight = .95f
             FlowRow(
-                modifier = Modifier.padding(horizontal = padding, vertical = halfPadding).weight(rowWeight),
+                modifier = Modifier.padding(vertical = APP_HALF_SPACING),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 screens.forEach { screen ->
-                    page(screen = screen, selected = current == screen)
+                    Screen(screen = screen, selected = current == screen)
                 }
             }
-            ReloadButton(modifier = Modifier.weight(1 - rowWeight), onClick = reloadSignal::reload)
+            ReloadButton(onClick = reloadSignal::reload)
         }
-        Divider(orientation = Orientation.Horizontal, color = Color.LightGray.copy(alpha = 0.9f))
+        Divider(orientation = Orientation.Horizontal, color = appGray)
     }
 }
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-private fun page(
+private fun Screen(
     screen: Screen,
     selected: Boolean,
     modifier: Modifier = Modifier,
@@ -110,7 +109,7 @@ private fun page(
                         modifier = Modifier.size(20.dp),
                         tint = JewelTheme.contentColor,
                     )
-                    Spacer(modifier = Modifier.width(halfPadding))
+                    Spacer(modifier = Modifier.width(APP_HALF_SPACING))
                     Text(text = text, style = Typography.labelTextStyle())
                 }
             }

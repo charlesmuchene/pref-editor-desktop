@@ -24,13 +24,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -40,13 +39,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.Favoritable
+import com.charlesmuchene.prefeditor.models.ItemRowAction
+import com.charlesmuchene.prefeditor.ui.APP_HALF_SPACING
 import com.charlesmuchene.prefeditor.ui.BreathingContainer
 import com.charlesmuchene.prefeditor.ui.FavoriteButton
-import com.charlesmuchene.prefeditor.ui.halfPadding
+import com.charlesmuchene.prefeditor.ui.theme.dividerColor
 import com.charlesmuchene.prefeditor.ui.theme.highlightColor
 import kotlinx.coroutines.launch
 import org.jetbrains.jewel.foundation.modifier.onHover
@@ -58,9 +57,9 @@ import org.jetbrains.jewel.ui.component.Divider
 @Composable
 fun <T : Favoritable> ItemRow(
     item: T,
-    onClick: (T) -> Unit,
-    onFavorite: (T) -> Unit,
+    action: (ItemRowAction<T>) -> Unit,
     modifier: Modifier = Modifier,
+    endItems: @Composable RowScope.() -> Unit = {},
     content: @Composable RowScope.() -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -78,7 +77,7 @@ fun <T : Favoritable> ItemRow(
             modifier =
                 modifier
                     .fillMaxWidth()
-                    .clickable { onClick(item) }
+                    .clickable { action(ItemRowAction.Click(item)) }
                     .hoverable(interactionSource)
                     .pointerOnHover()
                     .onHover { isHovered ->
@@ -90,29 +89,28 @@ fun <T : Favoritable> ItemRow(
             Row(
                 modifier =
                     Modifier
-                        .padding(vertical = halfPadding)
+                        .fillMaxWidth()
+                        .padding(vertical = APP_HALF_SPACING)
                         .scale(animatedScalePercent.value),
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                val firstItemWeight = .9f
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(firstItemWeight),
+                    modifier = Modifier,
                     content = content,
                 )
-                Spacer(modifier = Modifier.width(24.dp))
-                BreathingContainer {
-                    FavoriteButton(
-                        selected = item.isFavorite,
-                        modifier = Modifier.weight(1 - firstItemWeight),
-                        onFavorite = { onFavorite(item) },
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceAround) {
+                    endItems()
+                    BreathingContainer {
+                        FavoriteButton(
+                            selected = item.isFavorite,
+                            onFavorite = { action(ItemRowAction.Favorite(item)) },
+                        )
+                    }
                 }
             }
-            Divider(
-                orientation = Orientation.Horizontal,
-                color = Color.LightGray.copy(alpha = 0.5f),
-            )
+            Divider(orientation = Orientation.Horizontal, color = dividerColor)
         }
     }
 }

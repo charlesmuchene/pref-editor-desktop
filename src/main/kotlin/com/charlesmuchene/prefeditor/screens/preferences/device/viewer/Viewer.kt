@@ -44,9 +44,10 @@ import com.charlesmuchene.prefeditor.data.preferenceIconName
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
-import com.charlesmuchene.prefeditor.ui.halfPadding
+import com.charlesmuchene.prefeditor.ui.APP_SPACING
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
 import com.charlesmuchene.prefeditor.ui.theme.Typography
+import com.charlesmuchene.prefeditor.ui.theme.appGray
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.DefaultButton
@@ -103,7 +104,7 @@ private fun PreferenceRow(
                     modifier = Modifier.size(24.dp),
                 )
             }
-            Spacer(modifier = Modifier.width(halfPadding))
+            Spacer(modifier = Modifier.width(APP_SPACING))
             Column {
                 Text(text = preference.name, fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))
                 Spacer(modifier = Modifier.height(4.dp))
@@ -115,10 +116,7 @@ private fun PreferenceRow(
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Divider(
-            orientation = Orientation.Horizontal,
-            color = Color.LightGray.copy(alpha = 0.5f),
-        )
+        Divider(orientation = Orientation.Horizontal, color = appGray)
     }
 }
 
@@ -132,7 +130,7 @@ private fun ViewerHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(text = "Preferences View", style = Typography.heading, modifier = modifier)
+        Text(text = "Preferences", style = Typography.heading)
         Box(modifier = Modifier, contentAlignment = Alignment.Center) {
             DefaultButton(onClick = onClick, modifier = Modifier.pointerOnHover()) {
                 Text(text = "Edit")

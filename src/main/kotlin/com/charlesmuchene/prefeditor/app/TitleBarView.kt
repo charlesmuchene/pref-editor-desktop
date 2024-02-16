@@ -47,10 +47,10 @@ import java.net.URI
 
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun DecoratedWindowScope.TitleBarView() {
+fun DecoratedWindowScope.TitleBarView(modifier: Modifier = Modifier) {
     val appState = LocalAppState.current
     val title = LocalBundle.current[Title]
-    TitleBar(modifier = Modifier.newFullscreenControls(), gradientStartColor = teal) {
+    TitleBar(modifier = modifier.newFullscreenControls(), gradientStartColor = teal) {
         Text(text = title)
         Row(modifier = Modifier.align(Alignment.End), verticalAlignment = Alignment.CenterVertically) {
             Tooltip(tooltip = {
@@ -89,14 +89,14 @@ fun DecoratedWindowScope.TitleBarView() {
 @Composable
 private fun EditorTheme.icon() {
     when (this) {
-        Dark -> themeIcon(resource = "dark", contentDescription = "Dark Theme")
-        Light -> themeIcon(resource = "light", contentDescription = "Light Theme")
-        System -> themeIcon(resource = "system", contentDescription = "System Theme")
+        Dark -> ThemeIcon(resource = "dark", contentDescription = "Dark Theme")
+        Light -> ThemeIcon(resource = "light", contentDescription = "Light Theme")
+        System -> ThemeIcon(resource = "system", contentDescription = "System Theme")
     }
 }
 
 @Composable
-private fun themeIcon(
+private fun ThemeIcon(
     resource: String,
     contentDescription: String,
 ) {

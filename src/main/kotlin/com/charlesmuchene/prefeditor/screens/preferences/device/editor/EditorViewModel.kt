@@ -73,6 +73,7 @@ sealed interface PreferenceAction {
 /**
  * Models data for the [Editor]
  */
+@Suppress("TooManyFunctions")
 class EditorViewModel(
     private val appState: AppState,
     private val scope: CoroutineScope,
@@ -182,7 +183,7 @@ class EditorViewModel(
     /**
      * Preference action
      *
-     * @param action Developer [PreferenceAction]
+     * @param action Developer [PreferenceActionButtonRow]
      * @return Resulting [UIPreference] instance
      */
     fun preferenceAction(action: PreferenceAction): UIPreference =

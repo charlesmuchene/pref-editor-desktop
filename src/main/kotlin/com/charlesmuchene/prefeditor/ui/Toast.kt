@@ -40,6 +40,8 @@ import com.charlesmuchene.prefeditor.ui.theme.Typography
 import kotlinx.coroutines.delay
 import org.jetbrains.jewel.ui.component.Text
 
+const val TOAST_DURATION_MILLIS = 2_000L
+
 @Composable
 fun Toast(
     text: String,
@@ -48,8 +50,7 @@ fun Toast(
     var shown by remember { mutableStateOf(true) }
 
     LaunchedEffect(text) {
-        val timeMillis = 2_000L
-        delay(timeMillis = timeMillis)
+        delay(timeMillis = TOAST_DURATION_MILLIS)
         shown = false
     }
 
@@ -59,7 +60,7 @@ fun Toast(
                 modifier =
                     modifier
                         .height(72.dp)
-                        .padding(bottom = padding)
+                        .padding(bottom = APP_SPACING)
                         .clip(RoundedCornerShape(size = 12.dp))
                         .background(Color.Black.copy(alpha = 0.6f))
                         .fillMaxWidth(fraction = 0.7f),

@@ -19,6 +19,7 @@ package com.charlesmuchene.prefeditor.app
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.window.ApplicationScope
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
@@ -38,21 +39,22 @@ import com.charlesmuchene.prefeditor.ui.Toast
 fun ApplicationScope.AppWindow(
     icon: Painter,
     appState: AppState,
+    modifier: Modifier = Modifier,
 ) {
-    scaffold(icon = icon, appState = appState) { modifier ->
+    Scaffold(icon = icon, appState = appState, modifier = modifier) {
         // TODO Animate screen by sliding-left
 
         val currentScreen by LocalNavigation.current.currentScreen.collectAsState()
         NavigationBar(current = currentScreen)
 
         val message by LocalAppState.current.toastMessage.collectAsState(initial = null)
-        message?.let { Toast(text = it) }
+        message?.let { text -> Toast(text = text) }
 
         when (val screen = currentScreen) {
-            DevicesScreen -> DeviceListScreen(modifier = modifier)
-            is AppsScreen -> AppListScreen(modifier = modifier, screen = screen)
-            is FilesScreen -> FileListScreen(modifier = modifier, screen = screen)
-            is EditScreen -> PreferencesScreen(modifier = modifier, screen = screen)
+            DevicesScreen -> DeviceListScreen(modifier = it)
+            is AppsScreen -> AppListScreen(modifier = it, screen = screen)
+            is FilesScreen -> FileListScreen(modifier = it, screen = screen)
+            is EditScreen -> PreferencesScreen(modifier = it, screen = screen)
         }
     }
 }

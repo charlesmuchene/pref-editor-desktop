@@ -29,6 +29,7 @@ import org.jetbrains.jewel.ui.component.styling.ChipStyle
 
 @Composable
 fun chipStyle(isDark: Boolean): ChipStyle {
+    @Suppress("MagicNumber")
     val darkStyle =
         ChipStyle.Companion.dark(
             colors =
