@@ -1,6 +1,10 @@
 Compose:
   CompositionLocalAllowlist:
     allowedCompositionLocals: LocalReloadSignal,LocalNavigation,LocalAppState,LocalBundle
+  ModifierComposable:
+    active: false
+  ViewModelForwarding:
+    active: false
 
 complexity:
   TooManyFunctions:

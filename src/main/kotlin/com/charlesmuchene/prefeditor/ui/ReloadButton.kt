@@ -111,7 +111,7 @@ fun ReloadButton(
     }
 }
 
-private suspend fun hoverAnimation(
+suspend fun hoverAnimation(
     isHovered: Boolean,
     animatedRotationAngle: Animatable<Float, AnimationVector1D>,
 ) {
