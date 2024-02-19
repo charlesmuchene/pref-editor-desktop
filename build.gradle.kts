@@ -65,7 +65,15 @@ compose.desktop {
             macOS {
                 dockName = "Preferences Editor"
                 bundleID = "com.charlesmuchene.prefeditor"
-                // iconFile = file(path = "icons/prefeditor.icns") TODO Provide icons
+                iconFile = file(path = "icons/prefeditor.icns")
+            }
+
+            windows {
+                iconFile = file(path = "icons/prefeditor.ico")
+            }
+
+            linux {
+                iconFile = file(path = "icons/prefeditor.png")
             }
         }
     }
