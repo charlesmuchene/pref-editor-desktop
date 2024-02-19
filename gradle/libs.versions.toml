@@ -8,7 +8,7 @@ sl4j = "2.0.3"
 mockk = "1.13.5"
 detekt = "1.23.3"
 coroutines-test = "1.7.2"
-compose-desktop = "1.6.0-rc01"
+compose-desktop = "1.6.0-rc02"
 detekt-compose-rules = "0.3.11"
 immutable-collections = "0.3.7"
 
