@@ -7,19 +7,22 @@ A desktop app to edit on-device shared preferences.
 A local installation of ADB is required. It should be included in the Android SDK Platform Tools package downloaded while setting up Android Studio.
 If not, download the package with the SDK Manager or get the standalone tools from [here](https://developer.android.com/studio/releases/platform-tools).
 
-| Device Listing                                | App Listing                                |
-|-----------------------------------------------|--------------------------------------------|
-| ![image](./images/01-pref-editor-devices.png) | ![image](./images/02-pref-editor-apps.png) |
-
-| Preferences Files Listing                   | Editing Preferences                        |
-|---------------------------------------------|--------------------------------------------|
-| ![image](./images/03-pref-editor-files.png) | ![image](./images/04-pref-editor-edit.png) |
-
 From the main window:
 * Select device
 * Choose your app
 * Select preferences file
 * View/Edit preferences
+* Star any item to find it faster next time
+
+| Device Listing                                | Editing Preferences                        |
+|-----------------------------------------------|--------------------------------------------|
+| ![image](./images/01-pref-editor-devices.png) | ![image](./images/04-pref-editor-edit.png) |
+
+And we go dark too 😎
+
+| Preferences Files Listing                   | Filtering is supported                         |
+|---------------------------------------------|------------------------------------------------|
+| ![image](./images/03-pref-editor-files.png) | ![image](./images/02-pref-editor-filtered.png) |
 
 # Installation
 
