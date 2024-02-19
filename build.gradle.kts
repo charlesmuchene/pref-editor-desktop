@@ -54,6 +54,10 @@ compose.desktop {
 
         jvmArgs("-Dorg.jetbrains.jewel.debug=false", "-Dorg.slf4j.simpleLogger.defaultLogLevel=debug")
 
+        buildTypes.release.proguard {
+            configurationFiles.from(file(path = "prefeditor.pro"))
+        }
+
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Preferences Editor"
