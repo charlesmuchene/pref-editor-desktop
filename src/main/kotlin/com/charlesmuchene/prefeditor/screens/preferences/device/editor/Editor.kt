@@ -51,7 +51,7 @@ import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
-import com.charlesmuchene.prefeditor.resources.PrefKey
+import com.charlesmuchene.prefeditor.resources.PrefsKey
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.ui.APP_HALF_SPACING
 import com.charlesmuchene.prefeditor.ui.Toast
@@ -112,7 +112,7 @@ private fun EditorTopBar(
     var showAddPreference by remember { mutableStateOf(false) }
 
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = LocalBundle.current[PrefKey.PrefTitle], style = Typography.heading)
+        Text(text = LocalBundle.current[PrefsKey.PrefTitle], style = Typography.heading)
         val checked by viewModel.backupEnabled
         Row(verticalAlignment = Alignment.CenterVertically) {
             OutlinedButton(onClick = { showAddPreference = true }, modifier = Modifier.pointerOnHover()) {

@@ -38,7 +38,7 @@ import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
-import com.charlesmuchene.prefeditor.resources.DeviceKey
+import com.charlesmuchene.prefeditor.resources.AppsKey
 import com.charlesmuchene.prefeditor.screens.apps.AppListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.FullScreenText
 import com.charlesmuchene.prefeditor.ui.ListingScaffold
@@ -72,7 +72,7 @@ fun AppListScreen(
         }
     val uiState by viewModel.uiState.collectAsState()
 
-    val header = LocalBundle.current[DeviceKey.AppListingTitle]
+    val header = LocalBundle.current[AppsKey.AppListingTitle]
     ListingScaffold(
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
@@ -97,13 +97,13 @@ fun AppListScreen(
 
 @Composable
 private fun LoadingAppError(modifier: Modifier = Modifier) {
-    val text = LocalBundle.current[DeviceKey.AppListingError]
+    val text = LocalBundle.current[AppsKey.AppListingError]
     FullScreenText(primary = text, modifier = modifier)
 }
 
 @Composable
 private fun LoadingApps(modifier: Modifier = Modifier) {
-    val text = LocalBundle.current[DeviceKey.AppListingLoading]
+    val text = LocalBundle.current[AppsKey.AppListingLoading]
     Loading(text = text, modifier = modifier)
 }
 

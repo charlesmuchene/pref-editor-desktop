@@ -27,7 +27,7 @@ import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.navigation.EditScreen
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
-import com.charlesmuchene.prefeditor.resources.PrefKey
+import com.charlesmuchene.prefeditor.resources.PrefsKey
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferencesViewModel.UIState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.Editor
 import com.charlesmuchene.prefeditor.screens.preferences.device.viewer.Viewer
@@ -75,7 +75,7 @@ fun PreferencesScreen(
 
 @Composable
 private fun PrefLoading(modifier: Modifier = Modifier) {
-    Loading(modifier = modifier, text = LocalBundle.current[PrefKey.PrefLoading])
+    Loading(modifier = modifier, text = LocalBundle.current[PrefsKey.PrefLoading])
 }
 
 @Composable
@@ -83,6 +83,6 @@ private fun PrefError(
     message: String?,
     modifier: Modifier = Modifier,
 ) {
-    val primary = LocalBundle.current[PrefKey.PrefError]
+    val primary = LocalBundle.current[PrefsKey.PrefError]
     FullScreenText(primary = primary, secondary = message, modifier = modifier)
 }

@@ -40,37 +40,36 @@ interface TextKey {
     val key: String
 }
 
-enum class ApplicationKey(override val key: String) : TextKey {
-    Title(key = "app.title"),
-    HomeTitle(key = "app.main.window.title"),
-}
-
-enum class HomeKey(override val key: String) : TextKey {
-    BridgeUnavailable(key = "home.bridge.unavailable"),
-    BridgeUnavailableSecondary(key = "home.bridge.unavailable.secondary"),
-    EmptyDeviceList(key = "home.empty.device.list"),
-    DeviceListLoading(key = "home.device.list.loading"),
-    DeviceListError(key = "home.device.list.error"),
-    ConnectedDevices(key = "home.connected.devices"),
-    UnauthorizedDevice(key = "home.device.unauthorized"),
-    UnknownDevice(key = "home.device.unknown"),
-}
-
-enum class DeviceKey(override val key: String) : TextKey {
-    AppListingTitle(key = "device.app.listing.title"),
-    AppListingError(key = "device.app.listing.error"),
-    AppListingLoading(key = "device.app.listing.loading"),
-}
-
 enum class AppKey(override val key: String) : TextKey {
-    PrefListingError(key = "app.pref.listing.error"),
-    PrefListingLoading(key = "app.pref.listing.loading"),
-    PrefListingTitle(key = "app.pref.listing.title"),
-    PrefListingEmpty(key = "app.pref.listing.empty"),
+    Title(key = "app.title"),
 }
 
-enum class PrefKey(override val key: String) : TextKey {
-    PrefLoading(key = "pref.editor.loading"),
-    PrefError(key = "pref.editor.error"),
-    PrefTitle(key = "pref.editor.title"),
+enum class DevicesKey(override val key: String) : TextKey {
+    BridgeUnavailable(key = "devices.bridge.unavailable"),
+    BridgeUnavailableSecondary(key = "devices.bridge.unavailable.secondary"),
+    EmptyDeviceList(key = "devices.listing.empty"),
+    DeviceListLoading(key = "devices.listing.loading"),
+    DeviceListError(key = "devices.listing.error"),
+    ConnectedDevices(key = "devices.connected.devices"),
+    UnauthorizedDevice(key = "devices.unauthorized.device"),
+    UnknownDevice(key = "devices.unknown.device"),
+}
+
+enum class AppsKey(override val key: String) : TextKey {
+    AppListingTitle(key = "apps.listing.title"),
+    AppListingError(key = "apps.listing.error"),
+    AppListingLoading(key = "apps.listing.loading"),
+}
+
+enum class PrefFilesKey(override val key: String) : TextKey {
+    PrefListingError(key = "pref.files.listing.error"),
+    PrefListingLoading(key = "pref.files.listing.loading"),
+    PrefListingTitle(key = "pref.files.listing.title"),
+    PrefListingEmpty(key = "pref.files.listing.empty"),
+}
+
+enum class PrefsKey(override val key: String) : TextKey {
+    PrefLoading(key = "prefs.editor.loading"),
+    PrefError(key = "prefs.editor.error"),
+    PrefTitle(key = "prefs.editor.title"),
 }

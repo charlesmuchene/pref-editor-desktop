@@ -27,7 +27,7 @@ import com.charlesmuchene.prefeditor.models.UIDevice
 import com.charlesmuchene.prefeditor.navigation.AppsScreen
 import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.processor.Processor
-import com.charlesmuchene.prefeditor.resources.HomeKey
+import com.charlesmuchene.prefeditor.resources.DevicesKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
 import com.charlesmuchene.prefeditor.screens.device.DeviceListUseCase.FetchStatus
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
@@ -101,7 +101,7 @@ class DeviceListViewModel(
                 }
             }
 
-            is FetchStatus.Error -> UIState.Error(status.message ?: bundle[HomeKey.DeviceListError])
+            is FetchStatus.Error -> UIState.Error(status.message ?: bundle[DevicesKey.DeviceListError])
         }
 
     /**
@@ -153,8 +153,8 @@ class DeviceListViewModel(
         launch {
             when (device.device.type) {
                 Type.Device -> navigation.navigate(screen = AppsScreen(device = device.device))
-                Type.Unknown -> _message.emit(bundle[HomeKey.UnknownDevice])
-                Type.Unauthorized -> _message.emit(bundle[HomeKey.UnauthorizedDevice])
+                Type.Unknown -> _message.emit(bundle[DevicesKey.UnknownDevice])
+                Type.Unauthorized -> _message.emit(bundle[DevicesKey.UnauthorizedDevice])
             }
         }
     }

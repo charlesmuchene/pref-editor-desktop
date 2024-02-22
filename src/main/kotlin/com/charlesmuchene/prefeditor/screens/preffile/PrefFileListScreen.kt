@@ -47,7 +47,7 @@ import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
-import com.charlesmuchene.prefeditor.resources.AppKey
+import com.charlesmuchene.prefeditor.resources.PrefFilesKey
 import com.charlesmuchene.prefeditor.screens.preffile.PrefListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.APP_ICON_BUTTON_SIZE
 import com.charlesmuchene.prefeditor.ui.APP_SPACING
@@ -90,7 +90,7 @@ fun FileListScreen(
         }
     val uiState by viewModel.uiState.collectAsState()
 
-    val header = LocalBundle.current[AppKey.PrefListingTitle]
+    val header = LocalBundle.current[PrefFilesKey.PrefListingTitle]
     ListingScaffold(
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
@@ -120,7 +120,7 @@ fun FileListScreen(
 
 @Composable
 private fun PrefListingEmpty(modifier: Modifier = Modifier) {
-    val primary = LocalBundle.current[AppKey.PrefListingEmpty]
+    val primary = LocalBundle.current[PrefFilesKey.PrefListingEmpty]
     FullScreenText(primary = primary, modifier = modifier)
 }
 
@@ -129,13 +129,13 @@ private fun PrefListingError(
     modifier: Modifier = Modifier,
     message: String? = null,
 ) {
-    val primary = LocalBundle.current[AppKey.PrefListingError]
+    val primary = LocalBundle.current[PrefFilesKey.PrefListingError]
     FullScreenText(primary = primary, secondary = message, modifier = modifier)
 }
 
 @Composable
 private fun PrefListingLoading(modifier: Modifier = Modifier) {
-    val text = LocalBundle.current[AppKey.PrefListingLoading]
+    val text = LocalBundle.current[PrefFilesKey.PrefListingLoading]
     Loading(text = text, modifier = modifier)
 }
 

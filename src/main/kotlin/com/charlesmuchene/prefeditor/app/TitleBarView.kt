@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
-import com.charlesmuchene.prefeditor.resources.ApplicationKey.Title
+import com.charlesmuchene.prefeditor.resources.AppKey.Title
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme.Dark
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme.Light

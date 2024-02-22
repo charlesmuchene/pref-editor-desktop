@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.providers.LocalBundle
-import com.charlesmuchene.prefeditor.resources.HomeKey
+import com.charlesmuchene.prefeditor.resources.DevicesKey
 import com.charlesmuchene.prefeditor.ui.APP_HALF_SPACING
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import org.jetbrains.jewel.ui.component.ExternalLink
@@ -41,8 +41,8 @@ import java.net.URI
 
 @Composable
 fun BridgeUnavailable(modifier: Modifier = Modifier) {
-    val primary = LocalBundle.current[HomeKey.BridgeUnavailable]
-    val secondary = LocalBundle.current[HomeKey.BridgeUnavailableSecondary]
+    val primary = LocalBundle.current[DevicesKey.BridgeUnavailable]
+    val secondary = LocalBundle.current[DevicesKey.BridgeUnavailableSecondary]
     val url = "https://developer.android.com/tools/releases/platform-tools"
 
     Column(

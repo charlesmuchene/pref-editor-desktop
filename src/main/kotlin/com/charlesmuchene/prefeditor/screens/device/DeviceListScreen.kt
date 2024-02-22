@@ -41,7 +41,7 @@ import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
-import com.charlesmuchene.prefeditor.resources.HomeKey
+import com.charlesmuchene.prefeditor.resources.DevicesKey
 import com.charlesmuchene.prefeditor.screens.device.DeviceListViewModel.UIState
 import com.charlesmuchene.prefeditor.ui.APP_SPACING
 import com.charlesmuchene.prefeditor.ui.FullScreenText
@@ -77,7 +77,7 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
         }
     val uiState by viewModel.uiState.collectAsState()
 
-    val header = bundle[HomeKey.ConnectedDevices]
+    val header = bundle[DevicesKey.ConnectedDevices]
     ListingScaffold(
         modifier = modifier,
         header = { Text(text = header, style = Typography.heading) },
@@ -169,7 +169,7 @@ private fun DeviceListError(
 
 @Composable
 private fun NoDevices(modifier: Modifier = Modifier) {
-    val primary = LocalBundle.current[HomeKey.EmptyDeviceList]
+    val primary = LocalBundle.current[DevicesKey.EmptyDeviceList]
     FullScreenText(primary = primary, modifier = modifier)
 }
 
@@ -180,6 +180,6 @@ private fun NoFilterMatch(modifier: Modifier = Modifier) {
 
 @Composable
 private fun DeviceListLoading(modifier: Modifier = Modifier) {
-    val text = LocalBundle.current[HomeKey.DeviceListLoading]
+    val text = LocalBundle.current[DevicesKey.DeviceListLoading]
     Loading(text = text, modifier = modifier)
 }

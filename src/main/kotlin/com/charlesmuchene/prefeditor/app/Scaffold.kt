@@ -39,7 +39,7 @@ import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalNavigation
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
-import com.charlesmuchene.prefeditor.resources.ApplicationKey
+import com.charlesmuchene.prefeditor.resources.AppKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
 import com.charlesmuchene.prefeditor.ui.APP_HALF_SPACING
 import com.charlesmuchene.prefeditor.ui.APP_SPACING
@@ -62,7 +62,7 @@ fun ApplicationScope.Scaffold(
         val (width, height) = LocalAppState.current.windowSize
         val position = WindowPosition.Aligned(alignment = Alignment.Center)
         val state = rememberWindowState(position = position, width = width, height = height)
-        val title = LocalBundle.current[ApplicationKey.Title]
+        val title = LocalBundle.current[AppKey.Title]
         DecoratedWindow(
             state = state,
             icon = icon,
