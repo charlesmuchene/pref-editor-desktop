@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Device.Type
 import com.charlesmuchene.prefeditor.data.Devices
+import com.charlesmuchene.prefeditor.extensions.editorLogger
 import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.ReloadSignal
@@ -56,7 +57,7 @@ class DeviceListViewModel(
 ) : CoroutineScope by scope {
     private val processor = Processor()
     private val decoder = DeviceListDecoder()
-    private val useCase = DeviceListUseCase(processor = processor, decoder = decoder)
+    private val useCase = DeviceListUseCase(processor = processor, decoder = decoder, command = DeviceListCommand())
 
     private var filter = ItemFilter.none
 
@@ -70,12 +71,11 @@ class DeviceListViewModel(
     val filtered: SharedFlow<List<UIDevice>> = _filtered.asSharedFlow()
 
     init {
-        useCase.devices
+        useCase.status
             .onEach { _uiState.emit(mapToState(it)) }
             .launchIn(scope = scope)
 
         reloadSignal.signal
-            .onEach { _uiState.emit(UIState.Loading) }
             .throttleLatest(delayMillis = 300)
             .onEach { useCase.fetch() }
             .drop(count = 1)
@@ -84,17 +84,27 @@ class DeviceListViewModel(
     }
 
     /**
-     * Map devices to a UI state
+     * Map use case status to a UI state
      *
-     * @param devices A [List] of connected [Device]s
+     * @param status A [DeviceListUseCase.FetchStatus]
      * @return An instance of [UIState]
      */
-    private fun mapToState(devices: Devices): UIState =
-        if (devices.isEmpty()) {
-            UIState.NoDevices
-        } else {
-            UIState.Devices(filter(filter = filter, devices = mapDevices(devices)))
+    private fun mapToState(status: DeviceListUseCase.FetchStatus): UIState {
+        editorLogger.debug { status }
+        return when (status) {
+            DeviceListUseCase.FetchStatus.Fetching -> UIState.Loading
+            is DeviceListUseCase.FetchStatus.Fetched -> {
+                val devices = status.devices
+                if (devices.isEmpty()) {
+                    UIState.NoDevices
+                } else {
+                    UIState.Devices(filter(filter = filter, devices = mapDevices(devices)))
+                }
+            }
+
+            is DeviceListUseCase.FetchStatus.Error -> UIState.NoDevices
         }
+    }
 
     /**
      * Map connected devices to a UI model.
@@ -160,8 +170,11 @@ class DeviceListViewModel(
     fun filter(filter: ItemFilter) {
         this.filter = filter
         launch {
-            val devices = mapDevices(useCase.devices.value)
-            _filtered.emit(filter(filter = filter, devices = devices))
+            val status = useCase.status.value
+            if (status is DeviceListUseCase.FetchStatus.Fetched) {
+                val devices = mapDevices(status.devices)
+                _filtered.emit(filter(filter = filter, devices = devices))
+            }
         }
     }
 

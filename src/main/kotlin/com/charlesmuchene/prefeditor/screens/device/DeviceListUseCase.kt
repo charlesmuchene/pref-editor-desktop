@@ -16,21 +16,40 @@
 
 package com.charlesmuchene.prefeditor.screens.device
 
-import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Devices
 import com.charlesmuchene.prefeditor.processor.Processor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class DeviceListUseCase(private val processor: Processor, private val decoder: DeviceListDecoder) {
-    private val command = DeviceListCommand()
-    private val _devices = MutableStateFlow(emptyList<Device>())
-    val devices: StateFlow<Devices> = _devices.asStateFlow()
+class DeviceListUseCase(
+    private val processor: Processor,
+    private val command: DeviceListCommand,
+    private val decoder: DeviceListDecoder,
+) {
+    private val _status = MutableStateFlow<FetchStatus>(FetchStatus.Fetching)
+    val status: StateFlow<FetchStatus> = _status.asStateFlow()
 
-    suspend fun fetch(): Result<Devices> =
-        processor.run(command.command()).map { content ->
-            _devices.emit(emptyList()) // Need to clear for flow to register updates
-            decoder.decode(content).also { _devices.emit(it) }
-        }
+    suspend fun fetch() {
+        _status.emit(FetchStatus.Fetching)
+        val result =
+            processor.run(command.command()).map { content ->
+                decoder.decode(content)
+            }
+        val fetchStatus =
+            if (result.isSuccess) {
+                FetchStatus.Fetched(result.getOrDefault(emptyList()))
+            } else {
+                FetchStatus.Error(result.exceptionOrNull()?.message ?: "Unknown error")
+            }
+        _status.emit(fetchStatus)
+    }
+
+    sealed interface FetchStatus {
+        data object Fetching : FetchStatus
+
+        data class Fetched(val devices: Devices) : FetchStatus
+
+        data class Error(val message: String) : FetchStatus
+    }
 }
