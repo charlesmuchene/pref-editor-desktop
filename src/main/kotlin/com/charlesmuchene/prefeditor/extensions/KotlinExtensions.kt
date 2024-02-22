@@ -16,21 +16,12 @@
 
 package com.charlesmuchene.prefeditor.extensions
 
-import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.onEach
-
-fun <T> Result<T>.eval(logger: KLogger): Result<T> {
-    onFailure { throwable -> logger.error(throwable) { "kotlin.Result.eval" } }
-    return this
-}
 
 fun <T> Flow<T>.throttleLatest(delayMillis: Long): Flow<T> = conflate().onEach { delay(delayMillis) }
 
-fun <T> Flow<T>.useCaseTransform(): Flow<T> = drop(count = 1).throttleLatest(delayMillis = 150)
-
-val editorLogger = KotlinLogging.logger(name = "General logger")
+val editorLogger = KotlinLogging.logger(name = "Debugging logger")
