@@ -3,8 +3,10 @@ package com.charlesmuchene.prefeditor.screens.apps
 import app.cash.turbine.test
 import com.charlesmuchene.prefeditor.TestFixtures.APP_LIST_OUTPUT
 import com.charlesmuchene.prefeditor.TestFixtures.appList
-import com.charlesmuchene.prefeditor.TestFixtures.device
+import com.charlesmuchene.prefeditor.TestFixtures.appListCommand
 import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.screens.apps.AppListUseCase.FetchStatus.Fetched
+import com.charlesmuchene.prefeditor.screens.apps.AppListUseCase.FetchStatus.Fetching
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -25,11 +27,13 @@ class AppListUseCaseTest {
     @Test
     fun `use case resets list and sends fetched content`() =
         runTest {
-            val useCase = AppListUseCase(device = device, processor = processor, decoder = decoder)
-            useCase.apps.test {
+            val useCase = AppListUseCase(command = appListCommand, processor = processor, decoder = decoder)
+            useCase.status.test {
                 useCase.fetch()
-                assertTrue(awaitItem().isEmpty())
-                assertEquals(expected = appList, actual = awaitItem())
+                assertTrue(awaitItem() is Fetching)
+                val item = awaitItem()
+                assertTrue(item is Fetched)
+                assertEquals(expected = appList, actual = item.apps)
             }
         }
 }

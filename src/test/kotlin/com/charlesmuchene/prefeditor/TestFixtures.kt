@@ -26,6 +26,7 @@ import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preferences
 import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.data.StringPreference
+import com.charlesmuchene.prefeditor.screens.apps.AppListCommand
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -98,6 +99,8 @@ object TestFixtures {
             App(packageName = "com.charlesmuchene.in"),
             App(packageName = "com.charlesmuchene.compose"),
         )
+
+    val appListCommand = AppListCommand(device = device)
 
     fun emptyPreferences(): String {
         val url = javaClass.classLoader.getResource("empty-preferences.xml") ?: error("Missing empty preferences file")

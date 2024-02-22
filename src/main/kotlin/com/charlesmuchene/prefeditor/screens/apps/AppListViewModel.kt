@@ -51,7 +51,8 @@ class AppListViewModel(
 ) : CoroutineScope by scope {
     private val processor = Processor()
     private val decoder = AppListDecoder()
-    private val useCase = AppListUseCase(device = device, processor = processor, decoder = decoder)
+    private val command = AppListCommand(device = device)
+    private val useCase = AppListUseCase(command = command, processor = processor, decoder = decoder)
 
     private var filter = ItemFilter.none
 
@@ -65,7 +66,7 @@ class AppListViewModel(
     val filtered: SharedFlow<List<UIApp>> = _filtered
 
     init {
-        useCase.apps
+        useCase.status
             .onEach { _uiState.emit(mapToState(it)) }
             .launchIn(scope = scope)
 
@@ -78,13 +79,18 @@ class AppListViewModel(
             .launchIn(scope = scope)
     }
 
-    private fun mapToState(apps: Apps): UIState {
-        return if (apps.isEmpty()) {
-            UIState.Error
-        } else {
-            UIState.Apps(filter(filter = filter, apps = mapApps(apps)))
+    private fun mapToState(fetchStatus: AppListUseCase.FetchStatus): UIState =
+        when (fetchStatus) {
+            is AppListUseCase.FetchStatus.Error -> UIState.Error
+            is AppListUseCase.FetchStatus.Fetched ->
+                if (fetchStatus.apps.isEmpty()) {
+                    UIState.Error
+                } else {
+                    UIState.Apps(filter(filter = filter, apps = mapApps(fetchStatus.apps)))
+                }
+
+            AppListUseCase.FetchStatus.Fetching -> UIState.Loading
         }
-    }
 
     private fun mapApps(apps: Apps): List<UIApp> =
         apps.map { app ->
@@ -111,7 +117,14 @@ class AppListViewModel(
      */
     fun filter(filter: ItemFilter) {
         this.filter = filter
-        launch { _filtered.emit(filter(filter = filter, apps = mapApps(useCase.apps.value))) }
+        launch {
+            val status = useCase.status.value
+            if (status is AppListUseCase.FetchStatus.Fetched) {
+                val apps = mapApps(status.apps)
+                val result = filter(filter = filter, apps = apps)
+                _filtered.emit(result)
+            }
+        }
     }
 
     /**

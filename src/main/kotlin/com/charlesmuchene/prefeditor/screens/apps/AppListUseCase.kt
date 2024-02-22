@@ -16,22 +16,36 @@
 
 package com.charlesmuchene.prefeditor.screens.apps
 
-import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Apps
-import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.processor.Processor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class AppListUseCase(device: Device, private val processor: Processor, private val decoder: AppListDecoder) {
-    private val command = AppListCommand(device = device)
-    private val _apps = MutableStateFlow(emptyList<App>())
-    val apps: StateFlow<Apps> = _apps.asStateFlow()
+class AppListUseCase(private val command: AppListCommand, private val processor: Processor, private val decoder: AppListDecoder) {
+    private val _status = MutableStateFlow<FetchStatus>(FetchStatus.Fetching)
+    val status: StateFlow<FetchStatus> = _status.asStateFlow()
 
-    suspend fun fetch(): Result<Apps> =
-        processor.run(command.command()).map { content ->
-            _apps.emit(emptyList())
-            decoder.decode(content = content).also { _apps.emit(it) }
-        }
+    suspend fun fetch() {
+        _status.emit(FetchStatus.Fetching)
+        val result =
+            processor.run(command.command()).map { content ->
+                decoder.decode(content = content)
+            }
+        val fetchStatus =
+            if (result.isSuccess) {
+                FetchStatus.Fetched(result.getOrDefault(emptyList()))
+            } else {
+                FetchStatus.Error(result.exceptionOrNull()?.message ?: "Unknown")
+            }
+        _status.emit(fetchStatus)
+    }
+
+    sealed interface FetchStatus {
+        data object Fetching : FetchStatus
+
+        data class Fetched(val apps: Apps) : FetchStatus
+
+        data class Error(val message: String) : FetchStatus
+    }
 }
