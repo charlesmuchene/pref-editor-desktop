@@ -101,7 +101,7 @@ class DeviceListViewModel(
                 }
             }
 
-            is FetchStatus.Error -> UIState.NoDevices
+            is FetchStatus.Error -> UIState.Error(status.message ?: bundle[HomeKey.DeviceListError])
         }
 
     /**
@@ -214,7 +214,7 @@ class DeviceListViewModel(
         }
 
     sealed interface UIState {
-        data object Error : UIState
+        data class Error(val message: String) : UIState
 
         data object Loading : UIState
 

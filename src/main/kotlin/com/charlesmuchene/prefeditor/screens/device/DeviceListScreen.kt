@@ -86,7 +86,7 @@ fun DeviceListScreen(modifier: Modifier = Modifier) {
         AnimatedContent(targetState = uiState, transitionSpec = { screenTransitionSpec() }) { state ->
             when (state) {
                 UIState.Loading -> DeviceListLoading()
-                UIState.Error -> DeviceListError()
+                is UIState.Error -> DeviceListError(state.message)
                 UIState.NoDevices -> NoDevices()
                 is UIState.Devices ->
                     if (state.devices.isEmpty()) {
@@ -160,9 +160,11 @@ private fun DeviceRow(
 }
 
 @Composable
-private fun DeviceListError(modifier: Modifier = Modifier) {
-    val primary = LocalBundle.current[HomeKey.DeviceListError]
-    FullScreenText(primary = primary, modifier = modifier)
+private fun DeviceListError(
+    message: String,
+    modifier: Modifier = Modifier,
+) {
+    FullScreenText(primary = message, modifier = modifier)
 }
 
 @Composable

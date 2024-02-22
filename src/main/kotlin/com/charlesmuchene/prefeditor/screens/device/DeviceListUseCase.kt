@@ -18,9 +18,12 @@ package com.charlesmuchene.prefeditor.screens.device
 
 import com.charlesmuchene.prefeditor.data.Devices
 import com.charlesmuchene.prefeditor.processor.Processor
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+
+private val logger = KotlinLogging.logger { }
 
 class DeviceListUseCase(
     private val processor: Processor,
@@ -40,7 +43,8 @@ class DeviceListUseCase(
             if (result.isSuccess) {
                 FetchStatus.Done(result.getOrDefault(emptyList()))
             } else {
-                FetchStatus.Error(result.exceptionOrNull()?.message ?: "Unknown error")
+                logger.error { result.exceptionOrNull() }
+                FetchStatus.Error(result.exceptionOrNull()?.message)
             }
         _status.emit(fetchStatus)
     }
@@ -50,6 +54,6 @@ class DeviceListUseCase(
 
         data class Done(val devices: Devices) : FetchStatus
 
-        data class Error(val message: String) : FetchStatus
+        data class Error(val message: String?) : FetchStatus
     }
 }
