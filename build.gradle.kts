@@ -55,6 +55,7 @@ compose.desktop {
         jvmArgs("-Dorg.jetbrains.jewel.debug=false", "-Dorg.slf4j.simpleLogger.defaultLogLevel=debug")
 
         buildTypes.release.proguard {
+            isEnabled = false
             configurationFiles.from(file(path = "prefeditor.pro"))
         }
 
@@ -65,6 +66,8 @@ compose.desktop {
             description = "View/Edit preferences"
             vendor = "Charles Muchene"
             licenseFile = rootProject.file("LICENSE")
+
+            modules("jdk.unsupported")
 
             macOS {
                 dockName = "Preferences Editor"
