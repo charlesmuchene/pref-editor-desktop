@@ -28,11 +28,10 @@ import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
+import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListUseCase.FetchStatus
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -54,7 +53,8 @@ class PrefListViewModel(
 ) : CoroutineScope by scope {
     private val processor = Processor()
     private val decoder = PrefFileListDecoder()
-    private val useCase = PrefFileListUseCase(app = app, device = device, processor = processor, decoder = decoder)
+    private val command = PrefFileListCommand(app = app, device = device)
+    private val useCase = PrefFileListUseCase(command = command, processor = processor, decoder = decoder)
 
     private var filter = ItemFilter.none
 
@@ -68,7 +68,7 @@ class PrefListViewModel(
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     init {
-        useCase.fileResult
+        useCase.status
             .onEach { _uiState.emit(mapToState(it)) }
             .launchIn(scope = scope)
 
@@ -81,15 +81,20 @@ class PrefListViewModel(
             .launchIn(scope = scope)
     }
 
-    private fun mapToState(result: PrefFileResult): UIState =
-        when (result) {
-            PrefFileResult.EmptyFiles,
-            PrefFileResult.EmptyPrefs,
-            -> UIState.Empty
+    private fun mapToState(fetchStatus: FetchStatus): UIState =
+        when (fetchStatus) {
+            is FetchStatus.Error -> UIState.Error(fetchStatus.message)
+            FetchStatus.Fetching -> UIState.Loading
+            is FetchStatus.Fetched ->
+                when (val result = fetchStatus.result) {
+                    PrefFileResult.EmptyFiles,
+                    PrefFileResult.EmptyPrefs,
+                    -> UIState.Empty
 
-            is PrefFileResult.Files -> UIState.Files(filter(filter = filter, files = map(result.files)))
+                    is PrefFileResult.Files -> UIState.Files(filter(filter = filter, files = map(result.files)))
 
-            PrefFileResult.NonDebuggable -> UIState.Error(message = "Selected app is non-debuggable")
+                    PrefFileResult.NonDebuggable -> UIState.Error(message = "Selected app is non-debuggable")
+                }
         }
 
     private fun map(files: PrefFiles): List<UIPrefFile> =
@@ -119,8 +124,13 @@ class PrefListViewModel(
     fun filter(filter: ItemFilter) {
         this.filter = filter
         launch {
-            val result = useCase.fileResult.value
-            if (result is PrefFileResult.Files) _filtered.emit(filter(filter = filter, files = map(result.files)))
+            val status = useCase.status.value
+            if (status is FetchStatus.Fetched) {
+                val result = status.result
+                if (result is PrefFileResult.Files) {
+                    _filtered.emit(filter(filter = filter, files = map(result.files)))
+                }
+            }
         }
     }
 
@@ -145,22 +155,16 @@ class PrefListViewModel(
      *
      * @param file [UIPrefFile] to un/favorite
      */
-    suspend fun favorite(file: UIPrefFile) =
-        coroutineScope {
-            val result = useCase.fileResult.value
-            if (result !is PrefFileResult.Files) {
-                file
-            } else {
-                async {
-                    if (file.isFavorite) {
-                        favorites.unfavoriteFile(file = file.file, app = app, device = device)
-                    } else {
-                        favorites.favoriteFile(file = file.file, app = app, device = device)
-                    }
-                    file.copy(isFavorite = !file.isFavorite)
-                }.await()
-            }
+    suspend fun favorite(file: UIPrefFile): UIPrefFile {
+        val status = useCase.status.value
+        if (status !is FetchStatus.Fetched || status.result !is PrefFileResult.Files) return file
+        if (file.isFavorite) {
+            favorites.unfavoriteFile(file = file.file, app = app, device = device)
+        } else {
+            favorites.favoriteFile(file = file.file, app = app, device = device)
         }
+        return file.copy(isFavorite = !file.isFavorite)
+    }
 
     sealed interface UIState {
         data object Empty : UIState

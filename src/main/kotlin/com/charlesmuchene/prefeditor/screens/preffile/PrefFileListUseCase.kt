@@ -16,29 +16,40 @@
 
 package com.charlesmuchene.prefeditor.screens.preffile
 
-import com.charlesmuchene.prefeditor.data.App
-import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
-import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.EmptyFiles
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class PrefFileListUseCase(
-    app: App,
-    device: Device,
+    private val command: PrefFileListCommand,
     private val processor: Processor,
     private val decoder: PrefFileListDecoder,
 ) {
-    private val command = PrefFileListCommand(app = app, device = device)
-    private val _fileResult = MutableStateFlow<PrefFileResult>(EmptyFiles)
-    val fileResult: StateFlow<PrefFileResult> = _fileResult.asStateFlow()
+    private val _status = MutableStateFlow<FetchStatus>(FetchStatus.Fetching)
+    val status: StateFlow<FetchStatus> = _status.asStateFlow()
 
-    suspend fun fetch(): Result<PrefFileResult> =
-        processor.run(command.command()).map { content ->
-            // Consider a default value e.g. NONE since state flow cannot 'flowisha' same value
-            _fileResult.emit(EmptyFiles)
-            decoder.decode(content = content).also { _fileResult.emit(it) }
-        }
+    suspend fun fetch() {
+        val result =
+            processor.run(command.command()).map { content ->
+                decoder.decode(content = content)
+            }
+
+        val fetchStatus =
+            if (result.isSuccess) {
+                result.getOrNull()?.let { FetchStatus.Fetched(it) } ?: FetchStatus.Error("No file result")
+            } else {
+                FetchStatus.Error(result.exceptionOrNull()?.message ?: "Unknown")
+            }
+        _status.emit(fetchStatus)
+    }
+
+    sealed interface FetchStatus {
+        data object Fetching : FetchStatus
+
+        data class Error(val message: String) : FetchStatus
+
+        data class Fetched(val result: PrefFileResult) : FetchStatus
+    }
 }
