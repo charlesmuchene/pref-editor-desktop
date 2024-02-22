@@ -54,8 +54,8 @@ fun SetupWindow(modifier: Modifier = Modifier) {
                         shape = RoundedCornerShape(APP_SPACING),
                     ).fillMaxSize(),
             ) {
-                val painter by rememberIconPainter(name = "app")
-                Icon(painter = painter, contentDescription = "Application icon")
+                val painter by rememberIconPainter(name = "app@1024x1024")
+                Icon(painter = painter, contentDescription = "Application icon", tint = JewelTheme.contentColor)
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(text = title, style = Typography.h0TextStyle())
                 Spacer(modifier = Modifier.height(12.dp))
