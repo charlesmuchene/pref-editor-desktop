@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Device.Type
 import com.charlesmuchene.prefeditor.data.Devices
-import com.charlesmuchene.prefeditor.extensions.editorLogger
 import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.models.ItemFilter
 import com.charlesmuchene.prefeditor.models.ReloadSignal
@@ -30,6 +29,7 @@ import com.charlesmuchene.prefeditor.navigation.Navigation
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.resources.HomeKey
 import com.charlesmuchene.prefeditor.resources.TextBundle
+import com.charlesmuchene.prefeditor.screens.device.DeviceListUseCase.FetchStatus
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.favorites.FavoritesUseCase
 import com.charlesmuchene.prefeditor.ui.theme.green
 import kotlinx.collections.immutable.ImmutableList
@@ -86,14 +86,13 @@ class DeviceListViewModel(
     /**
      * Map use case status to a UI state
      *
-     * @param status A [DeviceListUseCase.FetchStatus]
+     * @param status A [FetchStatus]
      * @return An instance of [UIState]
      */
-    private fun mapToState(status: DeviceListUseCase.FetchStatus): UIState {
-        editorLogger.debug { status }
-        return when (status) {
-            DeviceListUseCase.FetchStatus.Fetching -> UIState.Loading
-            is DeviceListUseCase.FetchStatus.Fetched -> {
+    private fun mapToState(status: FetchStatus): UIState =
+        when (status) {
+            FetchStatus.Fetching -> UIState.Loading
+            is FetchStatus.Fetched -> {
                 val devices = status.devices
                 if (devices.isEmpty()) {
                     UIState.NoDevices
@@ -102,9 +101,8 @@ class DeviceListViewModel(
                 }
             }
 
-            is DeviceListUseCase.FetchStatus.Error -> UIState.NoDevices
+            is FetchStatus.Error -> UIState.NoDevices
         }
-    }
 
     /**
      * Map connected devices to a UI model.
@@ -171,7 +169,7 @@ class DeviceListViewModel(
         this.filter = filter
         launch {
             val status = useCase.status.value
-            if (status is DeviceListUseCase.FetchStatus.Fetched) {
+            if (status is FetchStatus.Fetched) {
                 val devices = mapDevices(status.devices)
                 _filtered.emit(filter(filter = filter, devices = devices))
             }
