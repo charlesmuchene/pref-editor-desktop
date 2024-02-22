@@ -34,7 +34,7 @@ class AppListUseCase(private val command: AppListCommand, private val processor:
             }
         val fetchStatus =
             if (result.isSuccess) {
-                FetchStatus.Fetched(result.getOrDefault(emptyList()))
+                FetchStatus.Done(result.getOrDefault(emptyList()))
             } else {
                 FetchStatus.Error(result.exceptionOrNull()?.message ?: "Unknown")
             }
@@ -44,7 +44,7 @@ class AppListUseCase(private val command: AppListCommand, private val processor:
     sealed interface FetchStatus {
         data object Fetching : FetchStatus
 
-        data class Fetched(val apps: Apps) : FetchStatus
+        data class Done(val apps: Apps) : FetchStatus
 
         data class Error(val message: String) : FetchStatus
     }

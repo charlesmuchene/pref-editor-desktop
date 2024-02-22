@@ -82,7 +82,7 @@ class AppListViewModel(
     private fun mapToState(fetchStatus: AppListUseCase.FetchStatus): UIState =
         when (fetchStatus) {
             is AppListUseCase.FetchStatus.Error -> UIState.Error
-            is AppListUseCase.FetchStatus.Fetched ->
+            is AppListUseCase.FetchStatus.Done ->
                 if (fetchStatus.apps.isEmpty()) {
                     UIState.Error
                 } else {
@@ -119,7 +119,7 @@ class AppListViewModel(
         this.filter = filter
         launch {
             val status = useCase.status.value
-            if (status is AppListUseCase.FetchStatus.Fetched) {
+            if (status is AppListUseCase.FetchStatus.Done) {
                 val apps = mapApps(status.apps)
                 val result = filter(filter = filter, apps = apps)
                 _filtered.emit(result)

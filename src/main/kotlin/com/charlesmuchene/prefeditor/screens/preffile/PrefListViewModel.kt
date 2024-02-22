@@ -85,7 +85,7 @@ class PrefListViewModel(
         when (fetchStatus) {
             is FetchStatus.Error -> UIState.Error(fetchStatus.message)
             FetchStatus.Fetching -> UIState.Loading
-            is FetchStatus.Fetched ->
+            is FetchStatus.Done ->
                 when (val result = fetchStatus.result) {
                     PrefFileResult.EmptyFiles,
                     PrefFileResult.EmptyPrefs,
@@ -125,7 +125,7 @@ class PrefListViewModel(
         this.filter = filter
         launch {
             val status = useCase.status.value
-            if (status is FetchStatus.Fetched) {
+            if (status is FetchStatus.Done) {
                 val result = status.result
                 if (result is PrefFileResult.Files) {
                     _filtered.emit(filter(filter = filter, files = map(result.files)))
@@ -157,7 +157,7 @@ class PrefListViewModel(
      */
     suspend fun favorite(file: UIPrefFile): UIPrefFile {
         val status = useCase.status.value
-        if (status !is FetchStatus.Fetched || status.result !is PrefFileResult.Files) return file
+        if (status !is FetchStatus.Done || status.result !is PrefFileResult.Files) return file
         if (file.isFavorite) {
             favorites.unfavoriteFile(file = file.file, app = app, device = device)
         } else {

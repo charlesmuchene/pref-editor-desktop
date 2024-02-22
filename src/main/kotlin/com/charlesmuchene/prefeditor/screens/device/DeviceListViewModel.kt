@@ -92,7 +92,7 @@ class DeviceListViewModel(
     private fun mapToState(status: FetchStatus): UIState =
         when (status) {
             FetchStatus.Fetching -> UIState.Loading
-            is FetchStatus.Fetched -> {
+            is FetchStatus.Done -> {
                 val devices = status.devices
                 if (devices.isEmpty()) {
                     UIState.NoDevices
@@ -169,7 +169,7 @@ class DeviceListViewModel(
         this.filter = filter
         launch {
             val status = useCase.status.value
-            if (status is FetchStatus.Fetched) {
+            if (status is FetchStatus.Done) {
                 val devices = mapDevices(status.devices)
                 _filtered.emit(filter(filter = filter, devices = devices))
             }

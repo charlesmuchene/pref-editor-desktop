@@ -38,7 +38,7 @@ class DeviceListUseCase(
             }
         val fetchStatus =
             if (result.isSuccess) {
-                FetchStatus.Fetched(result.getOrDefault(emptyList()))
+                FetchStatus.Done(result.getOrDefault(emptyList()))
             } else {
                 FetchStatus.Error(result.exceptionOrNull()?.message ?: "Unknown error")
             }
@@ -48,7 +48,7 @@ class DeviceListUseCase(
     sealed interface FetchStatus {
         data object Fetching : FetchStatus
 
-        data class Fetched(val devices: Devices) : FetchStatus
+        data class Done(val devices: Devices) : FetchStatus
 
         data class Error(val message: String) : FetchStatus
     }

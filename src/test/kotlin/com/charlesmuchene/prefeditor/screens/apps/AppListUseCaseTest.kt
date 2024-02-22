@@ -5,7 +5,7 @@ import com.charlesmuchene.prefeditor.TestFixtures.APP_LIST_OUTPUT
 import com.charlesmuchene.prefeditor.TestFixtures.appList
 import com.charlesmuchene.prefeditor.TestFixtures.appListCommand
 import com.charlesmuchene.prefeditor.processor.Processor
-import com.charlesmuchene.prefeditor.screens.apps.AppListUseCase.FetchStatus.Fetched
+import com.charlesmuchene.prefeditor.screens.apps.AppListUseCase.FetchStatus.Done
 import com.charlesmuchene.prefeditor.screens.apps.AppListUseCase.FetchStatus.Fetching
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -32,7 +32,7 @@ class AppListUseCaseTest {
                 useCase.fetch()
                 assertTrue(awaitItem() is Fetching)
                 val item = awaitItem()
-                assertTrue(item is Fetched)
+                assertTrue(item is Done)
                 assertEquals(expected = appList, actual = item.apps)
             }
         }

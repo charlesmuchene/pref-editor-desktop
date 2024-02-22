@@ -38,7 +38,7 @@ class PrefFileListUseCase(
 
         val fetchStatus =
             if (result.isSuccess) {
-                result.getOrNull()?.let { FetchStatus.Fetched(it) } ?: FetchStatus.Error("No file result")
+                result.getOrNull()?.let { FetchStatus.Done(it) } ?: FetchStatus.Error("No file result")
             } else {
                 FetchStatus.Error(result.exceptionOrNull()?.message ?: "Unknown")
             }
@@ -50,6 +50,6 @@ class PrefFileListUseCase(
 
         data class Error(val message: String) : FetchStatus
 
-        data class Fetched(val result: PrefFileResult) : FetchStatus
+        data class Done(val result: PrefFileResult) : FetchStatus
     }
 }
