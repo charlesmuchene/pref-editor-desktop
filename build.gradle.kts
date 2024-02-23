@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.immutable.collections)
     implementation(libs.jewel.deco.window)
     implementation(libs.jewel.standalone)
+    implementation(libs.rebugger)
     implementation(libs.logging)
     implementation(libs.kxml2)
     runtimeOnly(libs.sl4j)
