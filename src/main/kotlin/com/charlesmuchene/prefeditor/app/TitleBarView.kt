@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,6 +61,7 @@ import java.net.URI
 fun DecoratedWindowScope.TitleBarView(modifier: Modifier = Modifier) {
     val appState = LocalAppState.current
     val title = LocalBundle.current[Title]
+    val isDark by remember(appState.theme) { mutableStateOf(appState.theme.isDark()) }
     TitleBar(modifier = modifier.newFullscreenControls(), gradientStartColor = teal) {
         Text(text = title)
         Row(
@@ -80,11 +82,11 @@ fun DecoratedWindowScope.TitleBarView(modifier: Modifier = Modifier) {
                             .hoverable(interactionSource)
                             .scale(animatedScale),
                 ) {
-                    Icon(
-                        modifier = Modifier.size(20.dp).pointerOnHover(),
-                        resource = "icons/github@20x20.svg",
-                        contentDescription = "Github Repo",
-                        iconClass = AppState::class.java,
+                    TitleBarIcon(
+                        isDark = isDark,
+                        isForBar = true,
+                        resource = "github",
+                        contentDescription = "App's repository on github",
                     )
                 }
             }
@@ -94,9 +96,10 @@ fun DecoratedWindowScope.TitleBarView(modifier: Modifier = Modifier) {
             Dropdown(
                 menuContent = {
                     EditorTheme.entries.forEach { theme ->
-                        selectableItem(selected = appState.theme == theme, onClick = { appState.changeTheme(theme) }) {
+                        val isSelected = appState.theme == theme
+                        selectableItem(selected = isSelected, onClick = { appState.changeTheme(theme) }) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                theme.Icon()
+                                theme.Icon(isDark = isDark, isSelected = isSelected)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(text = "${theme.name} Theme")
                             }
@@ -105,31 +108,70 @@ fun DecoratedWindowScope.TitleBarView(modifier: Modifier = Modifier) {
                 },
                 modifier = Modifier.hoverable(interactionSource).scale(animatedScale),
             ) {
-                Tooltip(tooltip = { Text(text = "Change theme") }) { appState.theme.Icon() }
+                Tooltip(tooltip = { Text(text = "Change theme") }) { appState.theme.Icon(isDark = isDark) }
             }
         }
     }
 }
 
 @Composable
-private fun EditorTheme.Icon() {
+private fun EditorTheme.Icon(
+    isDark: Boolean,
+    modifier: Modifier = Modifier,
+    isSelected: Boolean = false,
+    isForBar: Boolean = false,
+) {
     when (this) {
-        Dark -> ThemeIcon(resource = "dark", contentDescription = "Dark Theme")
-        Light -> ThemeIcon(resource = "light", contentDescription = "Light Theme")
-        System -> ThemeIcon(resource = "system", contentDescription = "System Theme")
+        Dark ->
+            TitleBarIcon(
+                contentDescription = "Dark Theme",
+                isSelected = isSelected,
+                resource = "dark-theme",
+                modifier = modifier,
+                isForBar = isForBar,
+                isDark = isDark,
+            )
+
+        Light ->
+            TitleBarIcon(
+                contentDescription = "Light Theme",
+                isSelected = isSelected,
+                resource = "light-theme",
+                modifier = modifier,
+                isForBar = isForBar,
+                isDark = isDark,
+            )
+
+        System ->
+            TitleBarIcon(
+                contentDescription = "System Theme",
+                resource = "system-theme",
+                isSelected = isSelected,
+                modifier = modifier,
+                isForBar = isForBar,
+                isDark = isDark,
+            )
     }
 }
 
 @Composable
-private fun ThemeIcon(
+private fun TitleBarIcon(
+    isDark: Boolean,
     resource: String,
     contentDescription: String,
+    isForBar: Boolean = false,
+    isSelected: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
+    val selected = if (isSelected) "-selected" else ""
+    val bar = if (isForBar) "@20x20" else ""
+    val dark = if (isDark) "_dark" else ""
+    val filename = "icons/$resource$bar$selected$dark.svg"
+
     Icon(
         modifier = modifier.size(20.dp).pointerOnHover(),
-        resource = "icons/$resource-theme@20x20.svg",
         contentDescription = contentDescription,
         iconClass = AppState::class.java,
+        resource = filename,
     )
 }
