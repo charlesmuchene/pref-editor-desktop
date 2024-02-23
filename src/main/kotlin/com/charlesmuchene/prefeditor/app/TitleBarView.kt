@@ -108,7 +108,9 @@ fun DecoratedWindowScope.TitleBarView(modifier: Modifier = Modifier) {
                 },
                 modifier = Modifier.hoverable(interactionSource).scale(animatedScale),
             ) {
-                Tooltip(tooltip = { Text(text = "Change theme") }) { appState.theme.Icon(isDark = isDark) }
+                Tooltip(tooltip = { Text(text = "Change theme") }) {
+                    appState.theme.Icon(isDark = isDark, isForBar = true)
+                }
             }
         }
     }
@@ -169,8 +171,8 @@ private fun TitleBarIcon(
     val filename = "icons/$resource$bar$selected$dark.svg"
 
     Icon(
-        modifier = modifier.size(20.dp).pointerOnHover(),
         contentDescription = contentDescription,
+        modifier = modifier.pointerOnHover(),
         iconClass = AppState::class.java,
         resource = filename,
     )
