@@ -52,18 +52,7 @@ compose.desktop {
     application {
         mainClass = "com.charlesmuchene.prefeditor.App"
 
-        jvmArgs(
-            "-Dorg.jetbrains.jewel.debug=false",
-            "-Dorg.slf4j.simpleLogger.defaultLogLevel=debug",
-        )
-
-        buildTypes.release {
-            jvmArgs(
-                "-Dorg.slf4j.simpleLogger.showDateTime=true",
-                "-Dorg.slf4j.simpleLogger.dateTimeFormat=EEE, d MMM yyyy HH:mm:ss Z",
-                "-Dorg.slf4j.simpleLogger.logFile=/tmp/prefeditor.tmp",
-            )
-        }
+        jvmArgs("-Dorg.jetbrains.jewel.debug=false")
 
         buildTypes.release.proguard {
             isEnabled = false
