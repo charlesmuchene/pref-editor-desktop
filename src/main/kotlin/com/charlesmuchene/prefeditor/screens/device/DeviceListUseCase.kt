@@ -18,12 +18,9 @@ package com.charlesmuchene.prefeditor.screens.device
 
 import com.charlesmuchene.prefeditor.data.Devices
 import com.charlesmuchene.prefeditor.processor.Processor
-import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-
-private val logger = KotlinLogging.logger { }
 
 class DeviceListUseCase(
     private val processor: Processor,
@@ -35,16 +32,17 @@ class DeviceListUseCase(
 
     suspend fun fetch() {
         _status.emit(FetchStatus.Fetching)
-        val result =
-            processor.run(command.command()).map { content ->
-                decoder.decode(content)
-            }
+        val output = processor.run(command.command())
         val fetchStatus =
-            if (result.isSuccess) {
-                FetchStatus.Done(result.getOrDefault(emptyList()))
+            if (output.isSuccess) {
+                val result = decoder.decode(output.getOrNull().orEmpty())
+                if (result.isSuccess) {
+                    FetchStatus.Done(result.getOrDefault(emptyList()))
+                } else {
+                    FetchStatus.Error(result.exceptionOrNull()?.message)
+                }
             } else {
-                logger.error { result.exceptionOrNull() }
-                FetchStatus.Error(result.exceptionOrNull()?.message)
+                FetchStatus.Error(output.exceptionOrNull()?.message)
             }
         _status.emit(fetchStatus)
     }

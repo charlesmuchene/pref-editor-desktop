@@ -18,19 +18,26 @@ package com.charlesmuchene.prefeditor.screens.device
 
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Devices
+import com.charlesmuchene.prefeditor.exceptions.DecodeException
 import kotlinx.coroutines.yield
 
 class DeviceListDecoder {
-    suspend fun decode(content: String): Devices =
-        buildList {
-            content.lineSequence()
-                .drop(n = 1) // drop the header line: List of devices attached
-                .filter(String::isNotBlank)
-                .forEach { line ->
-                    yield()
-                    add(parseDevice(line = line))
-                }
+    suspend fun decode(content: String): Result<Devices> =
+        if (content.contains(DEVICE_RESULT_HEADER)) {
+            Result.success(buildList { parseDevices(content) })
+        } else {
+            Result.failure(DecodeException(content))
         }
+
+    private suspend fun MutableList<Device>.parseDevices(content: String) {
+        content.lineSequence()
+            .drop(1) // drop header
+            .filter(String::isNotBlank)
+            .forEach { line ->
+                yield()
+                add(parseDevice(line = line))
+            }
+    }
 
     private fun parseDevice(line: String): Device {
         require(line.isNotBlank())
@@ -55,5 +62,6 @@ class DeviceListDecoder {
         const val DELIMITER = " "
         const val ATTRIBUTE_DELIMITER = ":"
         const val UNAUTHORIZED = "unauthorized"
+        const val DEVICE_RESULT_HEADER = "List of devices attached"
     }
 }

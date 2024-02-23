@@ -161,10 +161,11 @@ private fun DeviceRow(
 
 @Composable
 private fun DeviceListError(
-    message: String,
+    message: String?,
     modifier: Modifier = Modifier,
 ) {
-    FullScreenText(primary = message, modifier = modifier)
+    val primary = LocalBundle.current[DevicesKey.DeviceListError]
+    FullScreenText(primary = primary, secondary = message, modifier = modifier)
 }
 
 @Composable

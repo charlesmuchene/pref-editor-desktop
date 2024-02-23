@@ -101,7 +101,7 @@ class DeviceListViewModel(
                 }
             }
 
-            is FetchStatus.Error -> UIState.Error(status.message ?: bundle[DevicesKey.DeviceListError])
+            is FetchStatus.Error -> UIState.Error(status.message)
         }
 
     /**
@@ -214,7 +214,7 @@ class DeviceListViewModel(
         }
 
     sealed interface UIState {
-        data class Error(val message: String) : UIState
+        data class Error(val message: String?) : UIState
 
         data object Loading : UIState
 
