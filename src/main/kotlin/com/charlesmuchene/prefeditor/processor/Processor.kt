@@ -17,6 +17,7 @@
 package com.charlesmuchene.prefeditor.processor
 
 import com.charlesmuchene.prefeditor.files.EditorFiles
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runInterruptible
@@ -28,6 +29,8 @@ import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.io.path.pathString
+
+private val logger = KotlinLogging.logger { }
 
 /**
  * Run a system process
@@ -50,12 +53,16 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
 
             val process =
                 try {
+                    logger.debug { "Executing: $command" }
                     builder.start()
                 } catch (exception: IOException) {
+                    logger.error(exception) { "Starting the process" }
                     return@withContext Result.failure(exception)
                 } catch (exception: SecurityException) {
+                    logger.error(exception) { "Starting the process" }
                     return@withContext Result.failure(exception)
                 } catch (exception: UnsupportedOperationException) {
+                    logger.error(exception) { "Starting the process" }
                     return@withContext Result.failure(exception)
                 }
 
