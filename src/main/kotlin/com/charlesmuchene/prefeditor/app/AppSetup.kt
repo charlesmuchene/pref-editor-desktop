@@ -28,7 +28,6 @@ import com.charlesmuchene.prefeditor.screens.preferences.desktop.AppPreferences
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.currentCoroutineContext
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
@@ -53,10 +52,7 @@ suspend fun appSetup(
                 AppState(preferences = preferences)
             }
 
-        val bridgeStatus =
-            async {
-                Bridge(processor = processor, context = currentCoroutineContext()).checkBridge()
-            }
+        val bridgeStatus = async { Bridge(processor = processor).checkBridge() }
 
         val result = awaitAll(appState, bridgeStatus)
         val state = result[0] as AppState

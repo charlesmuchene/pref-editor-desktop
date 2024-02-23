@@ -19,33 +19,23 @@ package com.charlesmuchene.prefeditor.bridge
 import com.charlesmuchene.prefeditor.bridge.BridgeStatus.Available
 import com.charlesmuchene.prefeditor.bridge.BridgeStatus.Unavailable
 import com.charlesmuchene.prefeditor.processor.Processor
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.io.IOException
-import kotlin.coroutines.CoroutineContext
 
 /**
  * Interface to the debug bridge
  *
- * Current implementation expects the bridge to be on the system `PATH`
- *
- * @param context [CoroutineContext] for all bridge operations
+ * Implementation expects the bridge to be on the system `PATH`
  */
-class Bridge(
-    private val processor: Processor = Processor(),
-    private val context: CoroutineContext = Dispatchers.IO + CoroutineName(name = "Bridge"),
-) {
-    suspend fun checkBridge(): BridgeStatus =
-        withContext(context) {
-            try {
-                processor.run(listOf("adb")) {
-                    redirectOutput(ProcessBuilder.Redirect.DISCARD)
-                    redirectError(ProcessBuilder.Redirect.DISCARD)
-                }
-                Available
-            } catch (_: IOException) {
-                Unavailable
+class Bridge(private val processor: Processor = Processor()) {
+    suspend fun checkBridge(): BridgeStatus {
+        val result =
+            processor.run(listOf(EXECUTABLE)) {
+                redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                redirectError(ProcessBuilder.Redirect.DISCARD)
             }
-        }
+        return if (result.isSuccess) Available else Unavailable
+    }
+
+    companion object {
+        private const val EXECUTABLE = "adb"
+    }
 }
