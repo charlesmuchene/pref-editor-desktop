@@ -7,6 +7,9 @@ Compose:
     active: false
 
 complexity:
+  LongParameterList:
+    constructorThreshold: 8
+    functionThreshold: 7
   TooManyFunctions:
     excludes: [ '**/test/**' ]
 

@@ -17,7 +17,7 @@
 package com.charlesmuchene.prefeditor.bridge
 
 sealed interface BridgeStatus {
-    data object Available : BridgeStatus
+    data class Available(val path: String) : BridgeStatus
 
     data object Unavailable : BridgeStatus
 }

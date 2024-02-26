@@ -20,7 +20,6 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.data.PrefFile
-import com.charlesmuchene.prefeditor.files.EditorFiles
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
@@ -32,9 +31,9 @@ private val logger = KotlinLogging.logger {}
 
 @Suppress("TooManyFunctions")
 class FavoritesUseCase(
+    private val path: Path,
     private val codec: FavoritesCodec,
-    private val editor: PreferenceWriter,
-    private val path: Path = EditorFiles.preferencesPath(),
+    private val writer: PreferenceWriter,
     private val context: CoroutineContext = Dispatchers.Default,
 ) : CoroutineScope by CoroutineScope(context) {
     private lateinit var favorites: List<Favorite>
@@ -66,13 +65,13 @@ class FavoritesUseCase(
 
     private suspend fun writeFavorite(favorite: Favorite) {
         val edit = codec.encode(favorite = favorite, block = Edit::Add)
-        editor.edit(edit = edit)
+        writer.edit(edit = edit)
         refresh()
     }
 
     private suspend fun removeFavorite(favorite: Favorite) {
         val edit = codec.encode(favorite = favorite, block = Edit::Delete)
-        val result = editor.edit(edit = edit)
+        val result = writer.edit(edit = edit)
         if (result.isFailure) logger.error(result.exceptionOrNull()) {}
         refresh()
     }

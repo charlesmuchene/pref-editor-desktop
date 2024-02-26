@@ -22,7 +22,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class AppListUseCase(private val command: AppListCommand, private val processor: Processor, private val decoder: AppListDecoder) {
+class AppListUseCase(
+    private val processor: Processor,
+    private val decoder: AppListDecoder,
+    private val command: AppListCommand,
+) {
     private val _status = MutableStateFlow<FetchStatus>(FetchStatus.Fetching)
     val status: StateFlow<FetchStatus> = _status.asStateFlow()
 

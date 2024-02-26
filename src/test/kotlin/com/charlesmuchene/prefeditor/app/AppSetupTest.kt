@@ -1,12 +1,12 @@
 package com.charlesmuchene.prefeditor.app
 
+import com.charlesmuchene.prefeditor.TestFixtures.EXECUTABLE
 import com.charlesmuchene.prefeditor.models.AppStatus
 import com.charlesmuchene.prefeditor.processor.Processor
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.io.TempDir
-import java.io.IOException
 import java.nio.file.Path
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -20,7 +20,7 @@ class AppSetupTest {
         runTest {
             val processor =
                 mockk<Processor> {
-                    coEvery { run(eq(listOf("adb")), any()) } returns Result.success("")
+                    coEvery { run(any(), any()) } returns Result.success(EXECUTABLE)
                 }
 
             val status = appSetup(pathOverride = path, processor = processor)
@@ -33,7 +33,7 @@ class AppSetupTest {
         runTest {
             val processor =
                 mockk<Processor> {
-                    coEvery { run(eq(listOf("adb")), any()) } throws IOException("not available")
+                    coEvery { run(any(), any()) } returns Result.failure(Throwable("not available"))
                 }
 
             val status = appSetup(pathOverride = path, processor = processor)

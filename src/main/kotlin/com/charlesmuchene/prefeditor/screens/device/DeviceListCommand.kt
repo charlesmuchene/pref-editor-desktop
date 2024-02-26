@@ -18,6 +18,6 @@ package com.charlesmuchene.prefeditor.screens.device
 
 import com.charlesmuchene.prefeditor.command.ReadCommand
 
-class DeviceListCommand : ReadCommand {
-    override fun command(): List<String> = "adb devices -l".split(ReadCommand.DELIMITER)
+class DeviceListCommand(private val executable: String) : ReadCommand {
+    override fun command(): List<String> = "$executable devices -l".split(ReadCommand.DELIMITER)
 }

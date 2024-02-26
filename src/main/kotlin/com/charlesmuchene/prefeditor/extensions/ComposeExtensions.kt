@@ -17,6 +17,8 @@
 package com.charlesmuchene.prefeditor.extensions
 
 import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -57,3 +59,15 @@ fun screenTransitionSpec(): ContentTransform =
             fadeOut(animationSpec = tween(durationMillis = 300)) +
                 scaleOut(targetScale = .92f, animationSpec = tween(durationMillis = 220)),
         )
+
+suspend fun hoverAnimation(
+    isHovered: Boolean,
+    targetValue: Float = 1.02f,
+    animatedScalePercent: Animatable<Float, AnimationVector1D>,
+) {
+    if (isHovered) {
+        animatedScalePercent.animateTo(targetValue = targetValue, animationSpec = tween(durationMillis = 300))
+    } else {
+        animatedScalePercent.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 700))
+    }
+}

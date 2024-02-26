@@ -25,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.navigation.EditScreen
+import com.charlesmuchene.prefeditor.providers.LocalAppState
 import com.charlesmuchene.prefeditor.providers.LocalBundle
 import com.charlesmuchene.prefeditor.providers.LocalReloadSignal
 import com.charlesmuchene.prefeditor.resources.PrefsKey
@@ -40,6 +41,7 @@ fun PreferencesScreen(
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
+    val appState = LocalAppState.current
     val reloadSignal = LocalReloadSignal.current
 
     val viewModel =
@@ -51,6 +53,7 @@ fun PreferencesScreen(
                 prefFile = screen.file,
                 readOnly = screen.readOnly,
                 reloadSignal = reloadSignal,
+                executable = appState.executable,
             )
         }
     val uiState by viewModel.uiState.collectAsState()

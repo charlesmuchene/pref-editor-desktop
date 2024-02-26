@@ -18,7 +18,6 @@ package com.charlesmuchene.prefeditor.ui.listing
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.hoverable
@@ -39,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import com.charlesmuchene.prefeditor.extensions.hoverAnimation
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.models.Favoritable
 import com.charlesmuchene.prefeditor.models.ItemRowAction
@@ -112,16 +112,5 @@ fun <T : Favoritable> ItemRow(
             }
             Divider(orientation = Orientation.Horizontal, color = dividerColor)
         }
-    }
-}
-
-private suspend fun hoverAnimation(
-    isHovered: Boolean,
-    animatedScalePercent: Animatable<Float, AnimationVector1D>,
-) {
-    if (isHovered) {
-        animatedScalePercent.animateTo(targetValue = 1.02f, animationSpec = tween(durationMillis = 300))
-    } else {
-        animatedScalePercent.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 700))
     }
 }

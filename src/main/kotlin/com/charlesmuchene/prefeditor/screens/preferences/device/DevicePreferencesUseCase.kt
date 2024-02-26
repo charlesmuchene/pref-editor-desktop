@@ -17,17 +17,11 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device
 
 import androidx.compose.runtime.mutableStateOf
-import com.charlesmuchene.prefeditor.command.DeviceWriteCommand
-import com.charlesmuchene.prefeditor.data.App
-import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preference
 import com.charlesmuchene.prefeditor.data.Preferences
-import com.charlesmuchene.prefeditor.processor.Processor
-import com.charlesmuchene.prefeditor.providers.TimeStampProviderImpl
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceReader
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
-import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.device.codec.DevicePreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
@@ -40,27 +34,18 @@ private val logger = KotlinLogging.logger { }
 
 class DevicePreferencesUseCase(
     val file: PrefFile,
-    private val app: App,
-    private val device: Device,
-    processor: Processor,
-    prefCodec: PreferencesCodec,
+    private val writer: PreferenceWriter,
+    private val reader: PreferenceReader,
+    private val codec: DevicePreferencesCodec,
 ) {
     val backup = mutableStateOf(false)
-
-    private val codec = DevicePreferencesCodec(codec = prefCodec)
-    private val timestamp = TimeStampProviderImpl()
-    private val command =
-        DeviceWriteCommand(app = app, device = device, file = file, backup = backup, timestamp = timestamp)
-    private val writer = PreferenceWriter(processor = processor, command = command)
-    private val reader = PreferenceReader(processor = processor)
 
     private val _preferences = MutableStateFlow(Preferences(preferences = emptyList()))
     val preferences: StateFlow<Preferences> = _preferences.asStateFlow()
 
     suspend fun readPreferences() {
         _preferences.emit(Preferences(emptyList()))
-        val command = PreferencesCommand(app = app, device = device, prefFile = file)
-        reader.read(command)
+        reader.read()
             .onSuccess { content -> _preferences.emit(codec.decode(content = content)) }
             .onFailure { logger.error(it) { "Failure when reading preferences" } }
     }

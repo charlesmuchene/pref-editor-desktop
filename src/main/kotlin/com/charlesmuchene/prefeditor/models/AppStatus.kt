@@ -17,12 +17,11 @@
 package com.charlesmuchene.prefeditor.models
 
 import com.charlesmuchene.prefeditor.app.AppState
-import com.charlesmuchene.prefeditor.bridge.BridgeStatus
 
 sealed interface AppStatus {
     data object Initializing : AppStatus
 
     data class Ready(val state: AppState) : AppStatus
 
-    data class NoBridge(val state: AppState, val bridgeStatus: BridgeStatus) : AppStatus
+    data class NoBridge(val state: AppState) : AppStatus
 }

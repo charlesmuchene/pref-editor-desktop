@@ -25,9 +25,6 @@ import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.AppPreferences
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
@@ -39,25 +36,25 @@ import kotlin.io.path.pathString
 suspend fun appSetup(
     pathOverride: Path? = null,
     processor: Processor = Processor(),
-): AppStatus =
-    coroutineScope {
-        val appState =
-            async {
-                val codec = PreferencesCodec()
-                EditorFiles.initialize(codec = codec, appPathOverride = pathOverride)
-                val path = EditorFiles.preferencesPath(appPathOverride = pathOverride).pathString
-                val command = DesktopWriteCommand(path = path)
-                val editor = PreferenceWriter(command = command, processor = processor)
-                val preferences = AppPreferences(codec = codec, editor = editor).apply { initialize() }
-                AppState(preferences = preferences)
-            }
+): AppStatus {
+    val codec = PreferencesCodec()
+    EditorFiles.initialize(codec = codec, appPathOverride = pathOverride)
+    val path = EditorFiles.preferencesPath(appPathOverride = pathOverride?.resolve(EditorFiles.ROOT_DIR))
+    val command = DesktopWriteCommand(path = path.pathString)
+    val editor = PreferenceWriter(command = command, processor = processor)
+    val preferences = AppPreferences(codec = codec, writer = editor, path = path).apply { initialize() }
+    val appState = AppState(preferences = preferences)
 
-        val bridgeStatus = async { Bridge(processor = processor).checkBridge() }
+    val bridgeStatus =
+        Bridge(processor = processor)
+            .checkBridge(executablePath = preferences.executable.path.value)
 
-        val result = awaitAll(appState, bridgeStatus)
-        val state = result[0] as AppState
-        when (val status = result[1] as BridgeStatus) {
-            BridgeStatus.Available -> AppStatus.Ready(state = state)
-            BridgeStatus.Unavailable -> AppStatus.NoBridge(state = state, bridgeStatus = status)
+    return when (bridgeStatus) {
+        is BridgeStatus.Available -> {
+            appState.executable = bridgeStatus.path
+            AppStatus.Ready(state = appState)
         }
+
+        BridgeStatus.Unavailable -> AppStatus.NoBridge(state = appState)
     }
+}

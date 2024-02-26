@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device.viewer
 
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,12 +36,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.charlesmuchene.prefeditor.data.Preference
 import com.charlesmuchene.prefeditor.data.preferenceIconName
+import com.charlesmuchene.prefeditor.extensions.hoverAnimation
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
@@ -48,6 +51,8 @@ import com.charlesmuchene.prefeditor.ui.APP_SPACING
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
 import com.charlesmuchene.prefeditor.ui.theme.Typography
 import com.charlesmuchene.prefeditor.ui.theme.appGray
+import kotlinx.coroutines.launch
+import org.jetbrains.jewel.foundation.modifier.onHover
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.ui.Orientation
 import org.jetbrains.jewel.ui.component.DefaultButton
@@ -93,9 +98,25 @@ private fun PreferenceRow(
 ) {
     val name = preferenceIconName(preference)
     val painter by rememberIconPainter(name)
+    val scope = rememberCoroutineScope()
+    val animatedScalePercent by remember { mutableStateOf(Animatable(initialValue = 1f)) }
 
-    Column(modifier = modifier.fillMaxWidth().padding(top = 8.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+                .onHover { isHovered ->
+                    scope.launch {
+                        hoverAnimation(
+                            targetValue = 1.2f,
+                            isHovered = isHovered,
+                            animatedScalePercent = animatedScalePercent,
+                        )
+                    }
+                },
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.scale(animatedScalePercent.value)) {
             Tooltip(tooltip = { Text(text = preference.text) }) {
                 Icon(
                     painter = painter,

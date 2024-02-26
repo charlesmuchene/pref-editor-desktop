@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device
 
+import com.charlesmuchene.prefeditor.command.DeviceWriteCommand
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
@@ -23,7 +24,11 @@ import com.charlesmuchene.prefeditor.data.Preferences
 import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.models.ReloadSignal
 import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.providers.TimeStampProviderImpl
+import com.charlesmuchene.prefeditor.screens.preferences.PreferenceReader
+import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
+import com.charlesmuchene.prefeditor.screens.preferences.device.codec.DevicePreferencesCodec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,13 +42,19 @@ class PreferencesViewModel(
     device: Device,
     readOnly: Boolean,
     prefFile: PrefFile,
+    executable: String,
     reloadSignal: ReloadSignal,
     private val scope: CoroutineScope,
 ) : CoroutineScope by scope {
     private val processor = Processor()
-    private val codec = PreferencesCodec()
-    val useCase =
-        DevicePreferencesUseCase(prefCodec = codec, app = app, device = device, file = prefFile, processor = processor)
+    private val timestamp = TimeStampProviderImpl()
+    private val codec = DevicePreferencesCodec(codec = PreferencesCodec())
+    private val readCommand =
+        PreferencesCommand(app = app, device = device, prefFile = prefFile, executable = executable)
+    private val writeCommand = DeviceWriteCommand(app = app, device = device, file = prefFile, timestamp = timestamp)
+    private val writer = PreferenceWriter(processor = processor, command = writeCommand)
+    private val reader = PreferenceReader(processor = processor, command = readCommand)
+    val useCase = DevicePreferencesUseCase(codec = codec, file = prefFile, reader = reader, writer = writer)
 
     private var isReadyOnly = readOnly
     private val _uiState = MutableStateFlow<UIState>(UIState.Loading)

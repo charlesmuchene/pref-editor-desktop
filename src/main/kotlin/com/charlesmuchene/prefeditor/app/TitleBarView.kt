@@ -161,9 +161,9 @@ private fun TitleBarIcon(
     isDark: Boolean,
     resource: String,
     contentDescription: String,
+    modifier: Modifier = Modifier,
     isForBar: Boolean = false,
     isSelected: Boolean = false,
-    modifier: Modifier = Modifier,
 ) {
     val selected = if (isSelected) "-selected" else ""
     val bar = if (isForBar) "@20x20" else ""

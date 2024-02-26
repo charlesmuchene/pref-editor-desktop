@@ -25,10 +25,11 @@ class PreferencesCommand(
     private val app: App,
     private val device: Device,
     private val prefFile: PrefFile,
+    private val executable: String,
 ) : ReadCommand {
     override fun command(): List<String> =
         (
-            "adb -s ${device.serial} exec-out run-as ${app.packageName} " +
+            "$executable -s ${device.serial} exec-out run-as ${app.packageName} " +
                 "cat /data/data/${app.packageName}/shared_prefs/${prefFile.name}"
         )
             .split(ReadCommand.DELIMITER)

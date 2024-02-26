@@ -20,7 +20,11 @@ import com.charlesmuchene.prefeditor.command.ReadCommand
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 
-class PrefFileListCommand(private val app: App, private val device: Device) : ReadCommand {
+class PrefFileListCommand(
+    private val app: App,
+    private val device: Device,
+    private val executable: String,
+) : ReadCommand {
     override fun command(): List<String> =
-        "adb -s ${device.serial} shell run-as ${app.packageName} ls shared_prefs".split(ReadCommand.DELIMITER)
+        "$executable -s ${device.serial} shell run-as ${app.packageName} ls shared_prefs".split(ReadCommand.DELIMITER)
 }

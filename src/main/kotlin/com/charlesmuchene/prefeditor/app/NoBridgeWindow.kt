@@ -25,10 +25,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
-import com.charlesmuchene.prefeditor.bridge.BridgeStatus
 import com.charlesmuchene.prefeditor.models.AppStatus
 import com.charlesmuchene.prefeditor.screens.bridge.BridgeUnavailable
-import com.charlesmuchene.prefeditor.ui.FullScreenText
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.window.DecoratedWindow
 
@@ -38,22 +36,13 @@ fun ApplicationScope.NoBridgeWindow(
     status: AppStatus.NoBridge,
     modifier: Modifier = Modifier,
 ) {
-    val bridgeStatus = status.bridgeStatus
     ProvideAppState(appState = status.state) {
         val windowState = rememberWindowState(position = WindowPosition.Aligned(Alignment.Center))
         DecoratedWindow(icon = icon, onCloseRequest = ::exitApplication, resizable = false, state = windowState) {
             TitleBarView()
             Column(modifier = modifier.background(JewelTheme.globalColors.paneBackground)) {
-                when (bridgeStatus) {
-                    BridgeStatus.Available -> BridgeAvailable()
-                    BridgeStatus.Unavailable -> BridgeUnavailable()
-                }
+                BridgeUnavailable()
             }
         }
     }
-}
-
-@Composable
-private fun BridgeAvailable(modifier: Modifier = Modifier) {
-    FullScreenText(primary = "Invalid UI: you shouldn't be reading this text!!!", modifier = modifier)
 }

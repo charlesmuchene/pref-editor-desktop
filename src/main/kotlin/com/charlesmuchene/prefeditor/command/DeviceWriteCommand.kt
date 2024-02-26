@@ -16,7 +16,6 @@
 
 package com.charlesmuchene.prefeditor.command
 
-import androidx.compose.runtime.State
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.ADD
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.CHANGE
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.DELETE
@@ -32,9 +31,10 @@ class DeviceWriteCommand(
     private val app: App,
     private val device: Device,
     private val file: PrefFile,
-    private val backup: State<Boolean>,
     private val timestamp: TimestampProvider,
 ) : WriteCommand {
+    var backup = false
+
     override fun MutableList<String>.delete(edit: Edit.Delete) {
         baseCommands(DELETE)
         add(edit.matcher.escaped())
@@ -65,7 +65,7 @@ class DeviceWriteCommand(
         add(edit)
         add(device.serial)
         add(app.packageName)
-        val inPlaceEdit = if (backup.value) "i.backup-${timestamp()}" else "i"
+        val inPlaceEdit = if (backup) "i.backup-${timestamp()}" else "i"
         add(inPlaceEdit)
     }
 

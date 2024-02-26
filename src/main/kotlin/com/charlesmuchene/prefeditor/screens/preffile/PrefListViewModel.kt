@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class PrefListViewModel(
+    executable: String,
     reloadSignal: ReloadSignal,
     private val app: App,
     private val device: Device,
@@ -53,7 +54,7 @@ class PrefListViewModel(
 ) : CoroutineScope by scope {
     private val processor = Processor()
     private val decoder = PrefFileListDecoder()
-    private val command = PrefFileListCommand(app = app, device = device)
+    private val command = PrefFileListCommand(app = app, device = device, executable = executable)
     private val useCase = PrefFileListUseCase(command = command, processor = processor, decoder = decoder)
 
     private var filter = ItemFilter.none

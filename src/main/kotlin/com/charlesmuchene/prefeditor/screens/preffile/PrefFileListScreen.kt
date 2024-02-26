@@ -86,6 +86,7 @@ fun FileListScreen(
                 navigation = navigation,
                 reloadSignal = reloadSignal,
                 favorites = appState.favorites,
+                executable = appState.executable,
             )
         }
     val uiState by viewModel.uiState.collectAsState()

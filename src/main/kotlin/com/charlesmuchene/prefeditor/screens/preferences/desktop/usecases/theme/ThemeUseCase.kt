@@ -18,8 +18,6 @@ package com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import com.charlesmuchene.prefeditor.extensions.throttleLatest
-import com.charlesmuchene.prefeditor.files.EditorFiles
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
 import com.charlesmuchene.prefeditor.screens.preferences.desktop.usecases.theme.EditorTheme.System
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -33,18 +31,18 @@ import kotlin.coroutines.CoroutineContext
 private val logger = KotlinLogging.logger {}
 
 class ThemeUseCase(
+    private val path: Path,
     private val codec: ThemeCodec,
-    private val editor: PreferenceWriter,
-    private val path: Path = EditorFiles.preferencesPath(),
+    private val writer: PreferenceWriter,
     private val context: CoroutineContext = Dispatchers.Default,
 ) : CoroutineScope by CoroutineScope(context) {
     private val _theme = mutableStateOf(System)
-    var theme: State<EditorTheme> = _theme
+    val theme: State<EditorTheme> = _theme
 
     private val saveFlow = MutableSharedFlow<EditorTheme>()
 
     init {
-        launch { saveFlow.throttleLatest(delayMillis = 2_000).collect(::saveTheme) }
+        launch { saveFlow.collect(::saveTheme) }
     }
 
     fun changeTheme(theme: EditorTheme) {
@@ -60,7 +58,7 @@ class ThemeUseCase(
 
     private suspend fun saveTheme(theme: EditorTheme) {
         val edit = codec.encode(theme = theme)
-        val result = editor.edit(edit = edit)
+        val result = writer.edit(edit = edit)
         if (result.isFailure) logger.error(result.exceptionOrNull()) {}
     }
 }

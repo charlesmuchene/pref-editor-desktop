@@ -49,15 +49,17 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class DeviceListViewModel(
+    executable: String,
+    reloadSignal: ReloadSignal,
     private val bundle: TextBundle,
     private val scope: CoroutineScope,
     private val navigation: Navigation,
-    private val reloadSignal: ReloadSignal,
     private val favorites: FavoritesUseCase,
 ) : CoroutineScope by scope {
     private val processor = Processor()
     private val decoder = DeviceListDecoder()
-    private val useCase = DeviceListUseCase(processor = processor, decoder = decoder, command = DeviceListCommand())
+    val command = DeviceListCommand(executable)
+    private val useCase = DeviceListUseCase(processor = processor, decoder = decoder, command = command)
 
     private var filter = ItemFilter.none
 

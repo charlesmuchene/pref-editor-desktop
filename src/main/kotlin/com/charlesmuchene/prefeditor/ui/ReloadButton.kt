@@ -77,7 +77,7 @@ fun ReloadButton(
                 Modifier
                     .onHover { isHovered ->
                         scope.launch {
-                            hoverAnimation(
+                            rotationalHoverAnimation(
                                 isHovered = isHovered,
                                 animatedRotationAngle = animatedRotationAngle,
                             )
@@ -111,7 +111,7 @@ fun ReloadButton(
     }
 }
 
-suspend fun hoverAnimation(
+private suspend fun rotationalHoverAnimation(
     isHovered: Boolean,
     animatedRotationAngle: Animatable<Float, AnimationVector1D>,
 ) {

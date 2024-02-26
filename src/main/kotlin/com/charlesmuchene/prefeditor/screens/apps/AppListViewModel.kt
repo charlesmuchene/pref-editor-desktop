@@ -43,6 +43,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class AppListViewModel(
+    executable: String,
     reloadSignal: ReloadSignal,
     private val device: Device,
     private val scope: CoroutineScope,
@@ -51,7 +52,7 @@ class AppListViewModel(
 ) : CoroutineScope by scope {
     private val processor = Processor()
     private val decoder = AppListDecoder()
-    private val command = AppListCommand(device = device)
+    private val command = AppListCommand(device = device, executable = executable)
     private val useCase = AppListUseCase(command = command, processor = processor, decoder = decoder)
 
     private var filter = ItemFilter.none

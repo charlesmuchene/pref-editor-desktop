@@ -1,6 +1,5 @@
 package com.charlesmuchene.prefeditor.command
 
-import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.TestFixtures
 import com.charlesmuchene.prefeditor.data.Edit
 import org.junit.jupiter.api.BeforeEach
@@ -9,7 +8,6 @@ import kotlin.test.assertEquals
 
 class DeviceWriteCommandTest {
     private lateinit var command: DeviceWriteCommand
-    private val backup = mutableStateOf(false)
 
     @BeforeEach
     fun setup() {
@@ -18,7 +16,6 @@ class DeviceWriteCommandTest {
                 app = TestFixtures.app,
                 device = TestFixtures.device,
                 file = TestFixtures.prefFile,
-                backup = backup,
                 timestamp = { "now" },
             )
     }
@@ -105,7 +102,7 @@ class DeviceWriteCommandTest {
 
     @Test
     fun `command backs up file before editing`() {
-        backup.value = true
+        command.backup = true
         val edit = Edit.Add(content = "content")
 
         val list =
