@@ -22,13 +22,15 @@ import kotlinx.coroutines.yield
 
 class AppListDecoder(private val sorted: Boolean = true) {
     suspend fun decode(content: String): Apps {
-        val apps = mutableListOf<App>()
-        content.lineSequence().forEach { line ->
-            yield()
-            apps.add(decodeApp(line = line))
-        }
-        if (sorted) apps.sortBy(App::packageName)
-        return apps
+        val apps =
+            buildList {
+                content.lineSequence()
+                    .forEach { line ->
+                        yield()
+                        add(decodeApp(line = line))
+                    }
+            }
+        return if (sorted) apps.sortedBy(App::packageName) else apps
     }
 
     private fun decodeApp(line: String): App {
