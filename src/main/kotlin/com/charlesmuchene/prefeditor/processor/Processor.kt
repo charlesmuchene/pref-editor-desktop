@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.processor
 
+import com.charlesmuchene.prefeditor.exceptions.ProcessorTimeoutException
 import com.charlesmuchene.prefeditor.files.EditorFiles
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
@@ -67,14 +68,17 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
                 }
 
             try {
-                runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }
                 val deferredText =
                     async {
                         BufferedReader(InputStreamReader(process.inputStream))
                             .use(BufferedReader::readText)
                     }
-                val output = deferredText.await().trim()
-                Result.success(output)
+                val done = runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }
+                if (done) {
+                    Result.success(deferredText.await().trim())
+                } else {
+                    Result.failure(ProcessorTimeoutException("Timed out waiting $TIMEOUT_SECONDS for $command"))
+                }
             } catch (exception: CancellationException) {
                 println(exception.message)
                 throw exception // propagate cancellation
