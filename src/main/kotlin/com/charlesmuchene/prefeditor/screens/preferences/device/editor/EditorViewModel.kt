@@ -137,11 +137,10 @@ class EditorViewModel(
     }
 
     private suspend fun saveChangesNow() {
-        val output = prefUseCase.writePreferences(edits.values)
-        if (output.all { it.isSuccess }) {
+        if (prefUseCase.writePreferences(edits.values)) {
             appState.showToast("Changes saved to ${prefFile.name}")
         } else {
-            output.filter { it.isFailure }.map { logger.error(it.exceptionOrNull()) {} }
+            _message.emit("Error saving changes. Check log for details.")
         }
     }
 
@@ -282,7 +281,9 @@ class EditorViewModel(
 
             val preference = createPreference(name = name, value = value, type = type)
             if (validator.isValid(preference)) {
-                prefUseCase.addPreference(preference).run { isSuccess }
+                val result = prefUseCase.addPreference(preference)
+                if (!result) _message.emit("Error adding $value.")
+                result
             } else {
                 _message.emit("'$value' cannot be added as ${type.name}")
                 false

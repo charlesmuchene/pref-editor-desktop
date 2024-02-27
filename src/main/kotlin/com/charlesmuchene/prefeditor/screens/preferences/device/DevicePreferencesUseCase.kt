@@ -45,19 +45,23 @@ class DevicePreferencesUseCase(
 
     suspend fun readPreferences() {
         _preferences.emit(Preferences(emptyList()))
-        reader.read()
-            .onSuccess { content -> _preferences.emit(codec.decode(content = content)) }
-            .onFailure { logger.error(it) { "Failure when reading preferences" } }
+        val result = reader.read()
+
+        if (result.isSuccess) {
+            _preferences.emit(codec.decode(content = result.output))
+        } else {
+            logger.error { "Failure when reading preferences" }
+        }
     }
 
-    suspend fun writePreferences(preferences: Collection<UIPreference>): List<Result<String>> {
+    suspend fun writePreferences(preferences: Collection<UIPreference>): Boolean {
         val edits = preferences.filter { it.state !is PreferenceState.None }
         val content = codec.encode(edits = edits, existing = this.preferences.value.preferences)
-        return writer.edit(content).also { readPreferences() }
+        return writer.edit(content).all { it.isSuccess }.also { readPreferences() }
     }
 
-    suspend fun addPreference(preference: Preference): Result<String> {
+    suspend fun addPreference(preference: Preference): Boolean {
         val list = listOf(UIPreference(preference, state = PreferenceState.New))
-        return writePreferences(list).first()
+        return writePreferences(list)
     }
 }

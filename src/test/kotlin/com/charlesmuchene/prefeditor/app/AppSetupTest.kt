@@ -1,8 +1,9 @@
 package com.charlesmuchene.prefeditor.app
 
-import com.charlesmuchene.prefeditor.TestFixtures.EXECUTABLE
 import com.charlesmuchene.prefeditor.models.AppStatus
 import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.processor.ProcessorResult
+import com.charlesmuchene.prefeditor.processor.successProcessorResult
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -20,7 +21,7 @@ class AppSetupTest {
         runTest {
             val processor =
                 mockk<Processor> {
-                    coEvery { run(any(), any()) } returns Result.success(EXECUTABLE)
+                    coEvery { run(any(), any()) } returns successProcessorResult()
                 }
 
             val status = appSetup(pathOverride = path, processor = processor)
@@ -33,7 +34,7 @@ class AppSetupTest {
         runTest {
             val processor =
                 mockk<Processor> {
-                    coEvery { run(any(), any()) } returns Result.failure(Throwable("not available"))
+                    coEvery { run(any(), any()) } returns ProcessorResult.failure()
                 }
 
             val status = appSetup(pathOverride = path, processor = processor)

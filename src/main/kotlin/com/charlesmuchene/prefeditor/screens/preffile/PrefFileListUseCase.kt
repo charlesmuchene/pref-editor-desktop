@@ -31,16 +31,13 @@ class PrefFileListUseCase(
     val status: StateFlow<FetchStatus> = _status.asStateFlow()
 
     suspend fun fetch() {
-        val result =
-            processor.run(command.command()).map { content ->
-                decoder.decode(content = content)
-            }
-
+        _status.emit(FetchStatus.Fetching)
+        val result = processor.run(command.command())
         val fetchStatus =
             if (result.isSuccess) {
-                result.getOrNull()?.let { FetchStatus.Done(it) } ?: FetchStatus.Error("No file result")
+                FetchStatus.Done(decoder.decode(content = result.output))
             } else {
-                FetchStatus.Error(result.exceptionOrNull()?.message ?: "Unknown")
+                FetchStatus.Error("Error fetching preference files.")
             }
         _status.emit(fetchStatus)
     }

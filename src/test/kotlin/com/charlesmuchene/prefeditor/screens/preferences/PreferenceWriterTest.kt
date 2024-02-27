@@ -20,6 +20,7 @@ import com.charlesmuchene.prefeditor.command.DesktopWriteCommand
 import com.charlesmuchene.prefeditor.command.WriteCommand
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.processor.successProcessorResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -48,7 +49,7 @@ class PreferenceWriterTest {
             mockk(relaxed = true) {
                 coEvery {
                     run(command = any(), config = eq({}))
-                } returns Result.success("")
+                } returns successProcessorResult()
             }
         writer = PreferenceWriter(processor = processor, command = command)
     }
@@ -84,9 +85,9 @@ class PreferenceWriterTest {
                 }
             val processor =
                 mockk<Processor> {
-                    coEvery { run(addCmd) } returns Result.success(addCmd.first())
-                    coEvery { run(deleteCmd) } returns Result.success(deleteCmd.first())
-                    coEvery { run(changeCmd) } returns Result.success(changeCmd.first())
+                    coEvery { run(addCmd) } returns successProcessorResult(addCmd.first())
+                    coEvery { run(deleteCmd) } returns successProcessorResult(deleteCmd.first())
+                    coEvery { run(changeCmd) } returns successProcessorResult(changeCmd.first())
                 }
             val writer = PreferenceWriter(processor, command)
 

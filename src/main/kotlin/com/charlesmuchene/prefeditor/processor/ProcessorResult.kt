@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-package com.charlesmuchene.prefeditor.screens.preferences
+package com.charlesmuchene.prefeditor.processor
 
-import com.charlesmuchene.prefeditor.command.ReadCommand
-import com.charlesmuchene.prefeditor.processor.Processor
-import com.charlesmuchene.prefeditor.processor.ProcessorResult
+/**
+ * Processor result
+ *
+ * For our use cases, 0 and 1 are treated as success.
+ * For example: Invoking executable without any args exits with code 1
+ */
+data class ProcessorResult(val exitCode: Int, val output: String) {
+    val isSuccess: Boolean = exitCode == 0 || exitCode == 1
 
-class PreferenceReader(private val processor: Processor, private val command: ReadCommand) {
-    suspend fun read(): ProcessorResult = processor.run(command = command.command())
+    companion object {
+        fun failure(
+            exitCode: Int = 105,
+            output: String = "Processor failure. See log for details.",
+        ) = ProcessorResult(exitCode = exitCode, output = output)
+    }
 }

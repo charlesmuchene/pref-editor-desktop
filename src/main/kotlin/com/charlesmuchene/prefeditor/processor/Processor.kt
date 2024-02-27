@@ -42,7 +42,7 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
     suspend fun run(
         command: List<String>,
         config: ProcessBuilder.() -> Unit = {},
-    ): Result<String> =
+    ): ProcessorResult =
         withContext(context) {
             val builder =
                 ProcessBuilder(command).apply {
@@ -58,13 +58,13 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
                     builder.start()
                 } catch (exception: IOException) {
                     logger.error(exception) { "Starting the process" }
-                    return@withContext Result.failure(exception)
+                    return@withContext ProcessorResult.failure()
                 } catch (exception: SecurityException) {
                     logger.error(exception) { "Starting the process" }
-                    return@withContext Result.failure(exception)
+                    return@withContext ProcessorResult.failure()
                 } catch (exception: UnsupportedOperationException) {
                     logger.error(exception) { "Starting the process" }
-                    return@withContext Result.failure(exception)
+                    return@withContext ProcessorResult.failure()
                 }
 
             try {
@@ -73,11 +73,11 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
                         BufferedReader(InputStreamReader(process.inputStream))
                             .use(BufferedReader::readText)
                     }
-                val done = runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }
-                if (done) {
-                    Result.success(deferredText.await().trim())
+                if (runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }) {
+                    ProcessorResult(exitCode = process.exitValue(), output = deferredText.await().trim())
                 } else {
-                    Result.failure(ProcessorTimeoutException("Timed out waiting $TIMEOUT_SECONDS for $command"))
+                    logger.error(ProcessorTimeoutException("Timed out waiting $TIMEOUT_SECONDS for $command")) {}
+                    ProcessorResult.failure()
                 }
             } catch (exception: CancellationException) {
                 println(exception.message)

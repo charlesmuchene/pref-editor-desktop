@@ -40,7 +40,6 @@ class ExecutableUseCase(
 
     suspend fun saveExecutable(path: Path) {
         val edit = codec.encode(path = path)
-        val result = writer.edit(edit)
-        if (result.isFailure) logger.error(result.exceptionOrNull()) {}
+        writer.edit(edit)
     }
 }

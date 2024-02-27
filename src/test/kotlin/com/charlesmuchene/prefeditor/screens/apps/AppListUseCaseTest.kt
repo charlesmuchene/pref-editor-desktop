@@ -5,6 +5,7 @@ import com.charlesmuchene.prefeditor.TestFixtures.APP_LIST_OUTPUT
 import com.charlesmuchene.prefeditor.TestFixtures.appList
 import com.charlesmuchene.prefeditor.TestFixtures.appListCommand
 import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.processor.successProcessorResult
 import com.charlesmuchene.prefeditor.screens.apps.AppListUseCase.FetchStatus.Done
 import com.charlesmuchene.prefeditor.screens.apps.AppListUseCase.FetchStatus.Fetching
 import io.mockk.coEvery
@@ -17,7 +18,7 @@ import kotlin.test.assertTrue
 class AppListUseCaseTest {
     private val processor =
         mockk<Processor> {
-            coEvery { run(any(), any()) } returns Result.success(APP_LIST_OUTPUT)
+            coEvery { run(any(), any()) } returns successProcessorResult(APP_LIST_OUTPUT)
         }
     private val decoder =
         mockk<AppListDecoder> {

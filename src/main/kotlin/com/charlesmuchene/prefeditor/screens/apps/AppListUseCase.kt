@@ -32,15 +32,12 @@ class AppListUseCase(
 
     suspend fun fetch() {
         _status.emit(FetchStatus.Fetching)
-        val result =
-            processor.run(command.command()).map { content ->
-                decoder.decode(content = content)
-            }
+        val result = processor.run(command.command())
         val fetchStatus =
             if (result.isSuccess) {
-                FetchStatus.Done(result.getOrDefault(emptyList()))
+                FetchStatus.Done(decoder.decode(content = result.output))
             } else {
-                FetchStatus.Error(result.exceptionOrNull()?.message ?: "Unknown")
+                FetchStatus.Error("Error fetching apps.")
             }
         _status.emit(fetchStatus)
     }

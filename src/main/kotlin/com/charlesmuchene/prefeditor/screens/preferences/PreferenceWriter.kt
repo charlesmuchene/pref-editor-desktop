@@ -19,6 +19,7 @@ package com.charlesmuchene.prefeditor.screens.preferences
 import com.charlesmuchene.prefeditor.command.WriteCommand
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.processor.ProcessorResult
 
 /**
  * Edit a given preference.
@@ -35,7 +36,7 @@ class PreferenceWriter(private val processor: Processor, private val command: Wr
      * @param edit [Edit] to make
      * @return Result of making the edit
      */
-    suspend fun edit(edit: Edit): Result<String> =
+    suspend fun edit(edit: Edit): ProcessorResult =
         when (edit) {
             is Edit.Add -> add(edit = edit)
             is Edit.Change -> change(edit = edit)
@@ -48,22 +49,22 @@ class PreferenceWriter(private val processor: Processor, private val command: Wr
      * @param edits A [List] of [Edit]s to make
      * @return Result of batch editing
      */
-    suspend fun edit(edits: List<Edit>): List<Result<String>> =
+    suspend fun edit(edits: List<Edit>): List<ProcessorResult> =
         buildList {
             edits.forEach { add(edit(it)) }
         }
 
-    private suspend fun add(edit: Edit.Add): Result<String> {
+    private suspend fun add(edit: Edit.Add): ProcessorResult {
         val command = command.command(edit = edit)
         return processor.run(command)
     }
 
-    private suspend fun delete(edit: Edit.Delete): Result<String> {
+    private suspend fun delete(edit: Edit.Delete): ProcessorResult {
         val command = command.command(edit = edit)
         return processor.run(command)
     }
 
-    private suspend fun change(edit: Edit.Change): Result<String> {
+    private suspend fun change(edit: Edit.Change): ProcessorResult {
         val command = command.command(edit = edit)
         return processor.run(command)
     }

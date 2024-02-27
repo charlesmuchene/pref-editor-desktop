@@ -3,6 +3,8 @@ package com.charlesmuchene.prefeditor.bridge
 import com.charlesmuchene.prefeditor.TestFixtures.EXECUTABLE
 import com.charlesmuchene.prefeditor.TestFixtures.executablePath
 import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.processor.ProcessorResult
+import com.charlesmuchene.prefeditor.processor.successProcessorResult
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -23,7 +25,7 @@ class BridgeTest {
     @Test
     fun `return bridge unavailable if processor cannot find it`() =
         runTest {
-            coEvery { processor.run(any(), any()) } returns Result.failure(Throwable("no bridge"))
+            coEvery { processor.run(any(), any()) } returns ProcessorResult.failure()
 
             val result = bridge.checkBridge(executablePath)
 
@@ -33,7 +35,7 @@ class BridgeTest {
     @Test
     fun `return bridge available if processor finds it`() =
         runTest {
-            coEvery { processor.run(any(), any()) } returns Result.success(EXECUTABLE)
+            coEvery { processor.run(any(), any()) } returns successProcessorResult()
 
             val result = bridge.checkBridge(executablePath)
 

@@ -32,17 +32,17 @@ class DeviceListUseCase(
 
     suspend fun fetch() {
         _status.emit(FetchStatus.Fetching)
-        val output = processor.run(command.command())
+        val result = processor.run(command.command())
         val fetchStatus =
-            if (output.isSuccess) {
-                val result = decoder.decode(output.getOrNull().orEmpty())
-                if (result.isSuccess) {
-                    FetchStatus.Done(result.getOrDefault(emptyList()))
+            if (result.isSuccess) {
+                val decoded = decoder.decode(result.output)
+                if (decoded.isSuccess) {
+                    FetchStatus.Done(decoded.getOrDefault(emptyList()))
                 } else {
-                    FetchStatus.Error(result.exceptionOrNull()?.message)
+                    FetchStatus.Error(decoded.exceptionOrNull()?.message)
                 }
             } else {
-                FetchStatus.Error(output.exceptionOrNull()?.message)
+                FetchStatus.Error("Error fetching devices.")
             }
         _status.emit(fetchStatus)
     }

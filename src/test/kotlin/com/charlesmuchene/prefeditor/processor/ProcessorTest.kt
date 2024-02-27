@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
+fun successProcessorResult(output: String = "") = ProcessorResult(exitCode = 0, output = output)
+
 class ProcessorTest {
     private lateinit var processor: Processor
     private val dispatcher = StandardTestDispatcher()

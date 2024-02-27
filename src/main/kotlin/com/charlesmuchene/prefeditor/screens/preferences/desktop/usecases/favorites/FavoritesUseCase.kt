@@ -71,8 +71,7 @@ class FavoritesUseCase(
 
     private suspend fun removeFavorite(favorite: Favorite) {
         val edit = codec.encode(favorite = favorite, block = Edit::Delete)
-        val result = writer.edit(edit = edit)
-        if (result.isFailure) logger.error(result.exceptionOrNull()) {}
+        writer.edit(edit = edit)
         refresh()
     }
 

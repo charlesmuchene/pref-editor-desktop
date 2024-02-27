@@ -58,7 +58,6 @@ class ThemeUseCase(
 
     private suspend fun saveTheme(theme: EditorTheme) {
         val edit = codec.encode(theme = theme)
-        val result = writer.edit(edit = edit)
-        if (result.isFailure) logger.error(result.exceptionOrNull()) {}
+        writer.edit(edit = edit)
     }
 }
