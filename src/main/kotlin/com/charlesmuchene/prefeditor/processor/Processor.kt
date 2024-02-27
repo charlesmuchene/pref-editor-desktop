@@ -67,9 +67,14 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
                 }
 
             try {
-                val output = async { BufferedReader(InputStreamReader(process.inputStream)).readText() }
                 runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }
-                Result.success(output.await().trim())
+                val deferredText =
+                    async {
+                        BufferedReader(InputStreamReader(process.inputStream))
+                            .use(BufferedReader::readText)
+                    }
+                val output = deferredText.await().trim()
+                Result.success(output)
             } catch (exception: CancellationException) {
                 println(exception.message)
                 throw exception // propagate cancellation
