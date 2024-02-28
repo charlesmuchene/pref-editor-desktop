@@ -54,7 +54,7 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
 
             val process =
                 try {
-                    logger.debug { "Executing: $command" }
+                    logger.debug { "Executing: ${command.joinToString(" ")}" }
                     builder.start()
                 } catch (exception: IOException) {
                     logger.error(exception) { "Starting the process" }
@@ -74,7 +74,9 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
                             .use(BufferedReader::readText)
                     }
                 if (runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }) {
-                    ProcessorResult(exitCode = process.exitValue(), output = deferredText.await().trim())
+                    ProcessorResult(exitCode = process.exitValue(), output = deferredText.await().trim()).also {
+                        if (!it.isSuccess) logger.error { "Process exit: ${it.exitCode} -> ${it.output}" }
+                    }
                 } else {
                     logger.error(ProcessorTimeoutException("Timed out waiting $TIMEOUT_SECONDS for $command")) {}
                     ProcessorResult.failure()
