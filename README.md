@@ -1,5 +1,10 @@
 # Preferences Editor
-A desktop app to edit on-device shared preferences.
+A desktop app to view and edit on-device shared preferences.
+
+Built using:
+* [Compose](https://github.com/JetBrains/compose-multiplatform) for Desktop
+* Themed by [Jewel](https://github.com/JetBrains/jewel)
+* Algorithm inspired by ...
 
 # Usage
 > Ensure `adb` is available on your `PATH`.
