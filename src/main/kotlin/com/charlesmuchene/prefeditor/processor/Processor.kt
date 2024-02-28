@@ -54,7 +54,7 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
 
             val process =
                 try {
-                    logger.debug { "Executing: ${command.joinToString(" ")}" }
+                    logger.debug { "Executing: $command" }
                     builder.start()
                 } catch (exception: IOException) {
                     logger.error(exception) { "Starting the process" }
