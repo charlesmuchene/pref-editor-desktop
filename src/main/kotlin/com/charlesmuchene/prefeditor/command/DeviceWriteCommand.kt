@@ -24,49 +24,54 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.data.PrefFile
-import com.charlesmuchene.prefeditor.data.Tags
 import com.charlesmuchene.prefeditor.providers.TimestampProvider
 
+/**
+ * Device writing commands
+ *
+ * NOTE: Ensure the command order here matches `device.sh`'s expectation.
+ */
 class DeviceWriteCommand(
     private val app: App,
     private val device: Device,
     private val file: PrefFile,
+    private val executable: String,
     private val timestamp: TimestampProvider,
 ) : WriteCommand {
     var backup = false
 
+    private val inPlaceEdit get() = if (backup) "i.backup-${timestamp()}" else "i"
+
     override fun MutableList<String>.delete(edit: Edit.Delete) {
-        baseCommands(DELETE)
-        add(edit.matcher.escaped())
-        add(file.name)
+        baseCommands(edit)
     }
 
     override fun MutableList<String>.change(edit: Edit.Change) {
-        baseCommands(CHANGE)
-        val matcher = edit.matcher.escaped()
-        val content = edit.content.escaped()
-        add(matcher)
-        add(content)
-        add(file.name)
+        baseCommands(edit)
+        add(edit.content.escaped())
     }
 
     override fun MutableList<String>.add(edit: Edit.Add) {
-        baseCommands(ADD)
-        val matcher = "</${Tags.ROOT}>".escaped()
-        val content = edit.content.escaped()
-        add(matcher)
-        add(content)
-        add(file.name)
+        baseCommands(edit)
+        add(edit.content.escaped())
     }
 
-    private fun MutableList<String>.baseCommands(edit: String) {
+    private fun MutableList<String>.baseCommands(edit: Edit) {
+        val (op, matcher) =
+            when (edit) {
+                is Edit.Add -> ADD to edit.matcher.escaped()
+                is Edit.Change -> CHANGE to edit.matcher.escaped()
+                is Edit.Delete -> DELETE to edit.matcher.escaped()
+            }
         add(SHELL)
         add(SCRIPT)
-        add(edit)
+        add(executable)
         add(device.serial)
         add(app.packageName)
-        val inPlaceEdit = if (backup) "i.backup-${timestamp()}" else "i"
+        add(file.name)
+        add(op)
         add(inPlaceEdit)
+        add(matcher)
     }
 
     companion object {

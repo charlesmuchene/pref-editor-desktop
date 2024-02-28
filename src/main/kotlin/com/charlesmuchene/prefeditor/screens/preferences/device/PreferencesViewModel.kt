@@ -51,7 +51,8 @@ class PreferencesViewModel(
     private val codec = DevicePreferencesCodec(codec = PreferencesCodec())
     private val readCommand =
         PreferencesCommand(app = app, device = device, prefFile = prefFile, executable = executable)
-    private val writeCommand = DeviceWriteCommand(app = app, device = device, file = prefFile, timestamp = timestamp)
+    private val writeCommand =
+        DeviceWriteCommand(app = app, device = device, file = prefFile, timestamp = timestamp, executable = executable)
     private val writer = PreferenceWriter(processor = processor, command = writeCommand)
     private val reader = PreferenceReader(processor = processor, command = readCommand)
     val useCase = DevicePreferencesUseCase(codec = codec, file = prefFile, reader = reader, writer = writer)

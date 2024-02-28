@@ -64,7 +64,7 @@ class FavoritesUseCase(
         }
 
     private suspend fun writeFavorite(favorite: Favorite) {
-        val edit = codec.encode(favorite = favorite, block = Edit::Add)
+        val edit = codec.encode(favorite = favorite, block = { Edit.Add(content = it) })
         writer.edit(edit = edit)
         refresh()
     }

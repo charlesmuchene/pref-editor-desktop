@@ -17,48 +17,48 @@
 #
 
 # Add edit
-# serial, package, in-place/backup, matcher, content, filename
+# executable, serial, package, filename, in-place/backup, matcher, content
 function add() {
-    adb -s "$1" exec-out \
-    run-as "$2" \
-    sed -E"$3" \
-    -e "/$4/i$5" \
-    "/data/data/$2/shared_prefs/$6"
+    "$1" -s "$2" exec-out \
+    run-as "$3" \
+    sed -E"$5" \
+    -e "/$6/i$7" \
+    "/data/data/$3/shared_prefs/$4"
 }
 
 # Delete edit
-# serial, package, in-place/backup, matcher, filename
+# executable, serial, package, filename, in-place/backup, matcher
 function delete() {
-    adb -s "$1" exec-out \
-    run-as "$2" \
-    sed -E"$3" \
-    -e "/$4/d" \
-    "/data/data/$2/shared_prefs/$5"
+    "$1" -s "$2" exec-out \
+    run-as "$3" \
+    sed -E"$5" \
+    -e "/$6/d" \
+    "/data/data/$3/shared_prefs/$4"
 }
 
 # Change edit
-# serial, package, in-place/backup, matcher, change, filename
+# executable, serial, package, filename, in-place/backup, matcher, content
 function change() {
-    adb -s "$1" exec-out \
-    run-as "$2" \
-    sed -E"$3" \
-    -e "s/$4/$5/" \
-    "/data/data/$2/shared_prefs/$6"
+    "$1" -s "$2" exec-out \
+    run-as "$3" \
+    sed -E"$5" \
+    -e "s/$6/$7/" \
+    "/data/data/$3/shared_prefs/$4"
 }
 
 #####
-# Execute based on type of edit
+# Execute based on the flavor of edit
 #####
-case $1 in
+case $5 in
   add)
-    # serial, package, in-place/backup, matcher, content, filename
-    add "$2" "$3" "$4" "$5" "$6" "$7"
+    # executable, serial, package, filename, in-place/backup, matcher, content
+    add "$1" "$2" "$3" "$4" "$6" "$7" "$8"
     ;;
   delete)
-    # serial, package, in-place/backup, matcher, filename
-    delete "$2" "$3" "$4" "$5" "$6"
+    # executable, serial, package, filename, in-place/backup, matcher
+    delete "$1" "$2" "$3" "$4" "$6" "$7"
     ;;
   change)
-    # serial, package, in-place/backup, matcher, change, filename
-    change "$2" "$3" "$4" "$5" "$6" "$7"
+    # executable, serial, package, filename, in-place/backup, matcher, content
+    change "$1" "$2" "$3" "$4" "$6" "$7" "$8"
 esac

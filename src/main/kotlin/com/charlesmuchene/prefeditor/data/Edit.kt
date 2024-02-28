@@ -16,10 +16,22 @@
 
 package com.charlesmuchene.prefeditor.data
 
+/**
+ * Edit commands
+ */
 sealed interface Edit {
-    data class Add(val content: String) : Edit
+    /**
+     * Add [content] after [matcher]
+     */
+    data class Add(val matcher: String = "</${Tags.ROOT}>", val content: String) : Edit
 
+    /**
+     * Delete line matching [matcher]
+     */
     data class Delete(val matcher: String) : Edit
 
+    /**
+     * Change [matcher] to [content]
+     */
     data class Change(val matcher: String, val content: String) : Edit
 }

@@ -1,6 +1,7 @@
 package com.charlesmuchene.prefeditor.command
 
 import com.charlesmuchene.prefeditor.TestFixtures
+import com.charlesmuchene.prefeditor.TestFixtures.EXECUTABLE
 import com.charlesmuchene.prefeditor.data.Edit
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -17,6 +18,7 @@ class DeviceWriteCommandTest {
                 device = TestFixtures.device,
                 file = TestFixtures.prefFile,
                 timestamp = { "now" },
+                executable = EXECUTABLE,
             )
     }
 
@@ -35,12 +37,13 @@ class DeviceWriteCommandTest {
             listOf(
                 "sh",
                 "device.sh",
-                "delete",
+                "exec",
                 "1B241CAA5079LR",
                 "com.charlesmuchene.pref-editor",
+                "preferences.xml",
+                "delete",
                 "i",
                 "matcher",
-                "preferences.xml",
             ),
             list,
         )
@@ -61,13 +64,14 @@ class DeviceWriteCommandTest {
             listOf(
                 "sh",
                 "device.sh",
-                "change",
+                "exec",
                 "1B241CAA5079LR",
                 "com.charlesmuchene.pref-editor",
+                "preferences.xml",
+                "change",
                 "i",
                 "matcher",
                 "content",
-                "preferences.xml",
             ),
             list,
         )
@@ -88,13 +92,14 @@ class DeviceWriteCommandTest {
             listOf(
                 "sh",
                 "device.sh",
-                "add",
+                "exec",
                 "1B241CAA5079LR",
                 "com.charlesmuchene.pref-editor",
+                "preferences.xml",
+                "add",
                 "i",
                 "<\\/map>",
                 "content",
-                "preferences.xml",
             ),
             list,
         )
@@ -116,13 +121,14 @@ class DeviceWriteCommandTest {
             listOf(
                 "sh",
                 "device.sh",
-                "add",
+                "exec",
                 "1B241CAA5079LR",
                 "com.charlesmuchene.pref-editor",
+                "preferences.xml",
+                "add",
                 "i.backup-now",
                 "<\\/map>",
                 "content",
-                "preferences.xml",
             ),
             list,
         )
