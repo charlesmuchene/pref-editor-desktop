@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.charlesmuchene.prefeditor"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.1"
 
 kotlin {
     jvmToolchain {
@@ -63,7 +63,6 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Preferences Editor"
-            packageVersion = "1.0.0"
             description = "View/Edit preferences"
             vendor = "Charles Muchene"
             licenseFile = rootProject.file("LICENSE")
