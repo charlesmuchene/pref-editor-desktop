@@ -37,7 +37,7 @@ dependencies {
     implementation(libs.kxml2)
     runtimeOnly(libs.sl4j)
 
-    detektPlugins(libs.detekt.compose.rules)
+    detektPlugins(libs.detekt.compose)
 
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)

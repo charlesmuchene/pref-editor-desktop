@@ -1,16 +1,16 @@
 [versions]
-kotlin = "1.9.21"
-jewel = "0.14.1"
+kotlin = "1.9.23"
+jewel = "0.15.2"
 kxml2 = "2.3.0"
-turbine = "1.0.0"
-logging = "5.0.1"
-sl4j = "2.0.3"
-mockk = "1.13.5"
-detekt = "1.23.3"
-rebugger = "1.0.0-rc02"
-coroutines-test = "1.7.2"
-compose-desktop = "1.6.0-rc02"
-detekt-compose-rules = "0.3.11"
+turbine = "1.1.0"
+logging = "6.0.9"
+sl4j = "2.0.13"
+mockk = "1.13.10"
+detekt = "1.23.6"
+rebugger = "1.0.0-rc03"
+coroutines-test = "1.8.0"
+compose-desktop = "1.6.2"
+detekt-compose = "0.3.20"
 immutable-collections = "0.3.7"
 
 [libraries]
@@ -21,8 +21,8 @@ turbine = { module = "app.cash.turbine:turbine-jvm", version.ref = "turbine" }
 rebugger = { module = "io.github.theapache64:rebugger", version.ref = "rebugger" }
 logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "logging" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+detekt-compose = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose" }
 jewel-standalone = { module = "org.jetbrains.jewel:jewel-int-ui-standalone", version.ref = "jewel" }
-detekt-compose-rules = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose-rules" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-test" }
 jewel-deco-window = { group = "org.jetbrains.jewel", name = "jewel-int-ui-decorated-window", version.ref = "jewel" }
 immutable-collections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }

@@ -83,7 +83,7 @@ fun PrimitivePreferenceRow(
         }
 
         TextField(
-            textStyle = JewelTheme.textStyle.copy(textDecoration = decoration),
+            textStyle = JewelTheme.defaultTextStyle.copy(textDecoration = decoration),
             outline = outline,
             enabled = isEnabled,
             value = textFieldValue,

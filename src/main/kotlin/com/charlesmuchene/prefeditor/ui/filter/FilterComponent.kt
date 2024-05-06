@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,9 +41,10 @@ fun FilterComponent(
 ) {
     var checked by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
+    val currentOnFilter by rememberUpdatedState(onFilter)
 
     LaunchedEffect(checked, text) {
-        onFilter(ItemFilter(text = text, starred = checked))
+        currentOnFilter(ItemFilter(text = text, starred = checked))
     }
 
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
