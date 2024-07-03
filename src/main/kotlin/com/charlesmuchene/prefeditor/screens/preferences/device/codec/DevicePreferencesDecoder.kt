@@ -25,5 +25,5 @@ interface DevicePreferencesDecoder {
      * @param content Output from downstream
      * @return [Preferences] instance
      */
-    suspend fun decode(content: String): Preferences // TODO Return Result?
+    suspend fun decode(content: ByteArray): Preferences // TODO Return Result?
 }

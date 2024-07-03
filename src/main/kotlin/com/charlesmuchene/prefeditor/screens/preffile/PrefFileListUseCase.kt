@@ -35,7 +35,7 @@ class PrefFileListUseCase(
         val result = processor.run(command.command())
         val fetchStatus =
             if (result.isSuccess) {
-                FetchStatus.Done(decoder.decode(content = result.output))
+                FetchStatus.Done(decoder.decode(content = result.outputString))
             } else {
                 FetchStatus.Error("Error fetching preference files.")
             }

@@ -32,11 +32,11 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 
 class DevicePreferencesDecoderImpl(private val decoder: PreferenceDecoder) : DevicePreferencesDecoder {
-    override suspend fun decode(content: String): Preferences {
+    override suspend fun decode(content: ByteArray): Preferences {
         val preferences =
             buildList {
                 // TODO Handle xml pull parser exception
-                decoder.decode(content.byteInputStream()) {
+                decoder.decode(content.inputStream()) {
                     when (name) {
                         Tags.BOOLEAN -> add(parseBoolean())
                         Tags.STRING -> add(parseString())

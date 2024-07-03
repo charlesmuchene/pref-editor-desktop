@@ -25,6 +25,7 @@ class AppListDecoder(private val sorted: Boolean = true) {
         val apps =
             buildList {
                 content.lineSequence()
+                    .filter(String::isNotBlank)
                     .forEach { line ->
                         yield()
                         add(decodeApp(line = line))

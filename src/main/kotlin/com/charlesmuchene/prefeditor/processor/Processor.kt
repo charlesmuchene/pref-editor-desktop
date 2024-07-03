@@ -23,9 +23,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
+import java.io.BufferedInputStream
 import java.io.IOException
-import java.io.InputStreamReader
+import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
@@ -68,14 +68,10 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
                 }
 
             try {
-                val deferredText =
-                    async {
-                        BufferedReader(InputStreamReader(process.inputStream))
-                            .use(BufferedReader::readText)
-                    }
+                val deferredData = async { BufferedInputStream(process.inputStream).use(InputStream::readAllBytes) }
                 if (runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }) {
-                    ProcessorResult(exitCode = process.exitValue(), output = deferredText.await().trim()).also {
-                        if (!it.isSuccess) logger.error { "Process exit: ${it.exitCode} -> ${it.output}" }
+                    ProcessorResult(exitCode = process.exitValue(), output = deferredData.await()).also { result ->
+                        if (!result.isSuccess) logger.error { "Process exit: ${result.exitCode} -> ${result.output}" }
                     }
                 } else {
                     logger.error(ProcessorTimeoutException("Timed out waiting $TIMEOUT_SECONDS for $command")) {}

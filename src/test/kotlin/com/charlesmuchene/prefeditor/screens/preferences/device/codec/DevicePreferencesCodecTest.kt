@@ -48,7 +48,7 @@ class DevicePreferencesCodecTest {
     @Test
     fun decodePreferences() =
         runTest {
-            val preferences = codec.decode(PREFERENCES).preferences
+            val preferences = codec.decode(PREFERENCES.toByteArray()).preferences
             assertEquals(expected = 8, actual = preferences.size)
 
             decodeSet(preferences[6])

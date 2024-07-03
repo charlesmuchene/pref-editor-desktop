@@ -25,22 +25,24 @@ import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFi
 import kotlinx.coroutines.yield
 
 class PrefFileListDecoder {
-    suspend fun decode(content: String): PrefFileResult =
-        when {
-            content.isBlank() -> EmptyPrefs
-            content == EMPTY_FILES -> EmptyFiles
-            content == EMPTY_PREFS -> EmptyPrefs
-            content.startsWith(NON_DEBUGGABLE) -> NonDebuggable
+    suspend fun decode(content: String): PrefFileResult {
+        val sanitizedContent = content.trim()
+        return when {
+            sanitizedContent.isBlank() -> EmptyPrefs
+            sanitizedContent == EMPTY_FILES -> EmptyFiles
+            sanitizedContent == EMPTY_PREFS -> EmptyPrefs
+            sanitizedContent.startsWith(NON_DEBUGGABLE) -> NonDebuggable
             else ->
                 Files(
                     buildList {
-                        content.lineSequence().forEach { name ->
+                        sanitizedContent.lineSequence().forEach { name ->
                             yield()
                             add(PrefFile(name = name, type = PrefFile.Type.KEY_VALUE))
                         }
                     },
                 )
         }
+    }
 
     sealed interface PrefFileResult {
         data object EmptyFiles : PrefFileResult

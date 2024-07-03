@@ -35,7 +35,7 @@ class DeviceListUseCase(
         val result = processor.run(command.command())
         val fetchStatus =
             if (result.isSuccess) {
-                val decoded = decoder.decode(result.output)
+                val decoded = decoder.decode(content = result.outputString)
                 if (decoded.isSuccess) {
                     FetchStatus.Done(decoded.getOrDefault(emptyList()))
                 } else {
