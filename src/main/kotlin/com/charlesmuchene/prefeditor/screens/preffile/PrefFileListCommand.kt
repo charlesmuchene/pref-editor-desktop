@@ -20,11 +20,30 @@ import com.charlesmuchene.prefeditor.command.ReadCommand
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 
-class PrefFileListCommand(
+sealed interface PrefFileListCommand : ReadCommand {
+    companion object {
+        fun create(app: App, device: Device, executable: String) = listOf(
+            KeyValuePrefFileListCommand(app = app, device = device, executable = executable),
+            DatastorePrefFileListCommand(app = app, device = device, executable = executable)
+        )
+    }
+}
+
+data class KeyValuePrefFileListCommand(
     private val app: App,
     private val device: Device,
     private val executable: String,
-) : ReadCommand {
+) : PrefFileListCommand {
     override fun command(): List<String> =
         "$executable -s ${device.serial} shell run-as ${app.packageName} ls shared_prefs".split(ReadCommand.DELIMITER)
+}
+
+data class DatastorePrefFileListCommand(
+    private val app: App,
+    private val device: Device,
+    private val executable: String,
+) : PrefFileListCommand {
+    override fun command(): List<String> =
+        "$executable -s ${device.serial} shell run-as ${app.packageName} ls files/datastore"
+            .split(ReadCommand.DELIMITER)
 }

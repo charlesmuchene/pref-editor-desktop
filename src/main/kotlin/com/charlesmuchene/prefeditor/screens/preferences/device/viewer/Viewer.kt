@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,6 +66,7 @@ import org.jetbrains.jewel.ui.component.Tooltip
 @OptIn(ExperimentalFoundationApi::class)
 fun Viewer(
     prefUseCase: DevicePreferencesUseCase,
+    showEditButton: Boolean,
     modifier: Modifier = Modifier,
     onEditClick: () -> Unit,
 ) {
@@ -73,10 +75,10 @@ fun Viewer(
         mutableStateOf(ViewerViewModel(prefUseCase = prefUseCase, scope = scope))
     }
 
-    val items by viewModel.preferences
+    val items by viewModel.preferences.collectAsState()
 
     Column(modifier = modifier) {
-        ViewerHeader(onClick = onEditClick)
+        ViewerHeader(onClick = onEditClick, showEditButton = showEditButton)
         Spacer(modifier = Modifier.height(8.dp))
         Divider(
             color = Color.LightGray.copy(alpha = 0.75f),
@@ -103,18 +105,18 @@ private fun PreferenceRow(
 
     Column(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-                .onHover { isHovered ->
-                    scope.launch {
-                        hoverAnimation(
-                            targetValue = 1.2f,
-                            isHovered = isHovered,
-                            animatedScalePercent = animatedScalePercent,
-                        )
-                    }
-                },
+        modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+            .onHover { isHovered ->
+                scope.launch {
+                    hoverAnimation(
+                        targetValue = 1.2f,
+                        isHovered = isHovered,
+                        animatedScalePercent = animatedScalePercent,
+                    )
+                }
+            },
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.scale(animatedScalePercent.value)) {
             Tooltip(tooltip = { Text(text = preference.text) }) {
@@ -143,6 +145,7 @@ private fun PreferenceRow(
 
 @Composable
 private fun ViewerHeader(
+    showEditButton: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
@@ -152,10 +155,11 @@ private fun ViewerHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(text = "Preferences", style = Typography.heading)
-        Box(modifier = Modifier, contentAlignment = Alignment.Center) {
-            DefaultButton(onClick = onClick, modifier = Modifier.pointerOnHover()) {
-                Text(text = "Edit")
+        if (showEditButton)
+            Box(modifier = Modifier, contentAlignment = Alignment.Center) {
+                DefaultButton(onClick = onClick, modifier = Modifier.pointerOnHover()) {
+                    Text(text = "Edit")
+                }
             }
-        }
     }
 }

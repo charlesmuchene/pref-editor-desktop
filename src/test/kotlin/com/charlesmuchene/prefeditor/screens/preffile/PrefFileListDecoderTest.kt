@@ -1,8 +1,8 @@
 package com.charlesmuchene.prefeditor.screens.preffile
 
 import com.charlesmuchene.prefeditor.data.PrefFile
-import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.EmptyPrefs
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.Files
+import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.NoFiles
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.NonDebuggable
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -20,15 +20,15 @@ class PrefFileListDecoderTest {
     @Test
     fun `empty preferences when we are missing preference directory`() =
         runTest {
-            val result = decoder.decode("ls: shared_prefs: No such file or directory")
-            assertTrue(result is EmptyPrefs)
+            val result = decoder.decode(listOf("ls: shared_prefs: No such file or directory"))
+            assertTrue(result is NoFiles)
         }
 
     @Test
     fun `empty preferences when there are no files in the directory`() =
         runTest {
-            val result = decoder.decode("")
-            assertTrue(result is EmptyPrefs)
+            val result = decoder.decode(listOf(""))
+            assertTrue(result is NoFiles)
         }
 
     @Test
@@ -39,7 +39,7 @@ class PrefFileListDecoderTest {
                 com.charlesmuchene.player_preferences.xml
                 named.xml
                 """.trimIndent()
-            val result = decoder.decode(content)
+            val result = decoder.decode(listOf(content))
             assertTrue(result is Files)
             val files = (result as Files).files
             kotlin.test.assertEquals(expected = 2, actual = files.size)
@@ -53,7 +53,7 @@ class PrefFileListDecoderTest {
     @Test
     fun `preference listing when app is not debuggable`() =
         runTest {
-            val result = decoder.decode("run-as: package not debuggable:")
+            val result = decoder.decode(listOf("run-as: package not debuggable:"))
             assertTrue(result is NonDebuggable)
         }
 }

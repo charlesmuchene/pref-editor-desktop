@@ -16,7 +16,7 @@ class DeviceWriteCommandTest {
             DeviceWriteCommand(
                 app = TestFixtures.app,
                 device = TestFixtures.device,
-                file = TestFixtures.prefFile,
+                file = TestFixtures.keyValuePrefFile,
                 timestamp = { "now" },
                 executable = EXECUTABLE,
             )

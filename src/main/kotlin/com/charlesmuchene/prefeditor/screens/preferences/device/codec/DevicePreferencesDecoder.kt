@@ -16,6 +16,7 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device.codec
 
+import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preferences
 
 interface DevicePreferencesDecoder {
@@ -23,7 +24,8 @@ interface DevicePreferencesDecoder {
      * Decode content
      *
      * @param content Output from downstream
+     * @param type Instance of [PrefFile.Type]
      * @return [Preferences] instance
      */
-    suspend fun decode(content: ByteArray): Preferences // TODO Return Result?
+    suspend fun decode(content: ByteArray, type: PrefFile.Type): Preferences
 }

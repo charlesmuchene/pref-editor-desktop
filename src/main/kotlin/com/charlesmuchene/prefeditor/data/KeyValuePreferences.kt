@@ -16,4 +16,8 @@
 
 package com.charlesmuchene.prefeditor.data
 
-data class Preferences(val preferences: List<Preference>)
+sealed interface Preferences
+
+data class KeyValuePreferences(val preferences: List<Preference>) : Preferences
+
+class DatastorePreferences(val content: ByteArray) : Preferences

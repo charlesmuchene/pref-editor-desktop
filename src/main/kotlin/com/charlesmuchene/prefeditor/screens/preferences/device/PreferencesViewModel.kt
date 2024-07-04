@@ -50,7 +50,7 @@ class PreferencesViewModel(
     private val timestamp = TimeStampProviderImpl()
     private val codec = DevicePreferencesCodec(codec = PreferencesCodec())
     private val readCommand =
-        PreferencesCommand(app = app, device = device, prefFile = prefFile, executable = executable)
+        PreferencesReadCommand(app = app, device = device, prefFile = prefFile, executable = executable)
     private val writeCommand =
         DeviceWriteCommand(app = app, device = device, file = prefFile, timestamp = timestamp, executable = executable)
     private val writer = PreferenceWriter(processor = processor, command = writeCommand)
