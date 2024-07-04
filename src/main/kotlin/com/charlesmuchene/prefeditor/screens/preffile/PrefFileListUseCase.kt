@@ -17,13 +17,14 @@
 package com.charlesmuchene.prefeditor.screens.preffile
 
 import com.charlesmuchene.prefeditor.processor.Processor
+import com.charlesmuchene.prefeditor.processor.ProcessorResult
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class PrefFileListUseCase(
-    private val command: PrefFileListCommand,
+    private val commands: List<PrefFileListCommand>,
     private val processor: Processor,
     private val decoder: PrefFileListDecoder,
 ) {
@@ -32,13 +33,15 @@ class PrefFileListUseCase(
 
     suspend fun fetch() {
         _status.emit(FetchStatus.Fetching)
-        val result = processor.run(command.command())
-        val fetchStatus =
-            if (result.isSuccess) {
-                FetchStatus.Done(decoder.decode(content = result.outputString))
-            } else {
-                FetchStatus.Error("Error fetching preference files.")
-            }
+        val results = commands.map { processor.run(it.command()) }
+        val output = results.filter(ProcessorResult::isSuccess).map(ProcessorResult::outputString)
+        val fetchStatus = if (output.isEmpty()) {
+            val message =
+                if (results.any { !it.isSuccess }) "Error fetching preference files." else "No preference output"
+            FetchStatus.Error(message)
+        } else {
+            FetchStatus.Done(decoder.decode(contents = output))
+        }
         _status.emit(fetchStatus)
     }
 

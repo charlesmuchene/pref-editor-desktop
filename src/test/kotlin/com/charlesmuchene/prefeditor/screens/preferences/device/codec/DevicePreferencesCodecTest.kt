@@ -22,7 +22,9 @@ import com.charlesmuchene.prefeditor.data.BooleanPreference
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.data.FloatPreference
 import com.charlesmuchene.prefeditor.data.IntPreference
+import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.data.LongPreference
+import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preference
 import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.data.StringPreference
@@ -48,7 +50,8 @@ class DevicePreferencesCodecTest {
     @Test
     fun decodePreferences() =
         runTest {
-            val preferences = codec.decode(PREFERENCES.toByteArray()).preferences
+            val preferences =
+                (codec.decode(PREFERENCES.toByteArray(), PrefFile.Type.KEY_VALUE) as KeyValuePreferences).preferences
             assertEquals(expected = 8, actual = preferences.size)
 
             decodeSet(preferences[6])

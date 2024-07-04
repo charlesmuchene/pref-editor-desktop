@@ -18,6 +18,7 @@ package com.charlesmuchene.prefeditor.screens.preffile
 
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.PrefFiles
 import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.models.ItemFilter
@@ -40,6 +41,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -54,8 +56,8 @@ class PrefListViewModel(
 ) : CoroutineScope by scope {
     private val processor = Processor()
     private val decoder = PrefFileListDecoder()
-    private val command = PrefFileListCommand(app = app, device = device, executable = executable)
-    private val useCase = PrefFileListUseCase(command = command, processor = processor, decoder = decoder)
+    private val commands = PrefFileListCommand.create(app = app, device = device, executable = executable)
+    private val useCase = PrefFileListUseCase(commands = commands, processor = processor, decoder = decoder)
 
     private var filter = ItemFilter.none
 
@@ -69,9 +71,11 @@ class PrefListViewModel(
     val message: SharedFlow<String?> = _message.asSharedFlow()
 
     init {
-        useCase.status
-            .onEach { _uiState.emit(mapToState(it)) }
-            .launchIn(scope = scope)
+        scope.launch {
+            useCase.status
+                .map(::mapToState)
+                .collect(_uiState)
+        }
 
         reloadSignal.signal
             .onEach { _uiState.emit(UIState.Loading) }
@@ -88,9 +92,7 @@ class PrefListViewModel(
             FetchStatus.Fetching -> UIState.Loading
             is FetchStatus.Done ->
                 when (val result = fetchStatus.result) {
-                    PrefFileResult.EmptyFiles,
-                    PrefFileResult.EmptyPrefs,
-                    -> UIState.Empty
+                    PrefFileResult.NoFiles -> UIState.Empty
 
                     is PrefFileResult.Files -> UIState.Files(filter(filter = filter, files = map(result.files)))
 
@@ -104,15 +106,18 @@ class PrefListViewModel(
     /**
      * Select a file
      *
+     * Note: Datastore preference files are readonly for now
+     *
      * @param file Selected [UIPrefFile]
-     * @param readOnly Determine if we should show read view or editor
+     * @param readOnly Determine if we should show readonly view or editor.
      */
     fun select(
         file: UIPrefFile,
         readOnly: Boolean = false,
     ) {
         launch {
-            navigation.navigate(screen = EditScreen(file = file.file, app = app, device = device, readOnly = readOnly))
+            val onlyRead = if (file.file.type == PrefFile.Type.DATA_STORE) true else readOnly
+            navigation.navigate(screen = EditScreen(file = file.file, app = app, device = device, readOnly = onlyRead))
         }
     }
 
@@ -148,7 +153,7 @@ class PrefListViewModel(
     ): ImmutableList<UIPrefFile> =
         files.filter { uiFile ->
             (if (filter.starred) uiFile.isFavorite else true) &&
-                uiFile.file.name.contains(other = filter.text, ignoreCase = true)
+                    uiFile.file.name.contains(other = filter.text, ignoreCase = true)
         }.toImmutableList()
 
     /**

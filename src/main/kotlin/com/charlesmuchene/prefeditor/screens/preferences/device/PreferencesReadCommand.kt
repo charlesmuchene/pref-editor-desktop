@@ -21,16 +21,18 @@ import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
 import com.charlesmuchene.prefeditor.data.PrefFile
 
-class PreferencesCommand(
+class PreferencesReadCommand(
+    val prefFile: PrefFile,
     private val app: App,
     private val device: Device,
-    private val prefFile: PrefFile,
     private val executable: String,
 ) : ReadCommand {
-    override fun command(): List<String> =
-        (
+    private val preferenceFilePath =
+        if (prefFile.type == PrefFile.Type.DATA_STORE) "files/datastore" else "shared_prefs"
+
+    override fun command(): List<String> = (
             "$executable -s ${device.serial} exec-out run-as ${app.packageName} " +
-                "cat /data/data/${app.packageName}/shared_prefs/${prefFile.name}"
-        )
-            .split(ReadCommand.DELIMITER)
+                    "cat /data/data/${app.packageName}/${preferenceFilePath}/${prefFile.name}"
+            )
+        .split(ReadCommand.DELIMITER)
 }

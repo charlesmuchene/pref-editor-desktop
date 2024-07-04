@@ -79,7 +79,7 @@ fun Editor(
             EditorViewModel(appState = appState, scope = scope, prefUseCase = prefUseCase)
         }
 
-    val prefs by viewModel.preferences
+    val prefs by viewModel.preferences.collectAsState()
     val partition by remember(prefs) { mutableStateOf(prefs.partition { it.preference is SetPreference }) }
     val (sets, primitives) = partition
 

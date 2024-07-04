@@ -16,10 +16,12 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences
 
-import com.charlesmuchene.prefeditor.command.ReadCommand
+import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.processor.ProcessorResult
+import com.charlesmuchene.prefeditor.screens.preferences.device.PreferencesReadCommand
 
-class PreferenceReader(private val processor: Processor, private val command: ReadCommand) {
-    suspend fun read(): ProcessorResult = processor.run(command = command.command())
+class PreferenceReader(private val processor: Processor, private val command: PreferencesReadCommand) {
+    suspend fun read(): Pair<PrefFile.Type, ProcessorResult> =
+        command.prefFile.type to processor.run(command = command.command())
 }

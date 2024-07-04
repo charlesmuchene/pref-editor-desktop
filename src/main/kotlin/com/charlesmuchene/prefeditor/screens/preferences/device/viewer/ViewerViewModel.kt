@@ -16,21 +16,37 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device.viewer
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import com.charlesmuchene.prefeditor.data.DatastorePreferences
+import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.data.Preference
+import com.charlesmuchene.prefeditor.data.StringPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class ViewerViewModel(prefUseCase: DevicePreferencesUseCase, scope: CoroutineScope) {
-    private val _preferences = mutableStateOf(emptyList<Preference>())
-    val preferences: State<List<Preference>> = _preferences
+    private val _preferences = MutableStateFlow(emptyList<Preference>())
+    val preferences: StateFlow<List<Preference>> = _preferences.asStateFlow()
 
     init {
-        prefUseCase.preferences.onEach { prefs ->
-            _preferences.value = prefs.preferences
-        }.launchIn(scope = scope)
+        scope.launch {
+            prefUseCase.preferences
+                .map {
+                    when (it) {
+                        is DatastorePreferences -> parseDatastoreContent(it)
+                        is KeyValuePreferences -> it.preferences
+                    }
+                }
+                .collect(_preferences)
+        }
+    }
+
+    private fun parseDatastoreContent(preferences: DatastorePreferences): List<Preference> {
+        // TODO Parse datastore preferences
+        return listOf(StringPreference(name = "datastore-preferences", value = String(preferences.content)))
     }
 }

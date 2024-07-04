@@ -18,36 +18,46 @@ package com.charlesmuchene.prefeditor.screens.preffile
 
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.PrefFiles
-import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.EmptyFiles
-import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.EmptyPrefs
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.Files
+import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.NoFiles
 import com.charlesmuchene.prefeditor.screens.preffile.PrefFileListDecoder.PrefFileResult.NonDebuggable
 import kotlinx.coroutines.yield
 
 class PrefFileListDecoder {
-    suspend fun decode(content: String): PrefFileResult {
+    suspend fun decode(contents: List<String>): PrefFileResult {
+        val results = contents.map { process(it) }.toSet()
+        val files = results.filterIsInstance<Files>().flatMap(Files::files)
+        return when {
+            files.isNotEmpty() -> Files(files)
+            results.contains(NonDebuggable) -> NonDebuggable
+            else -> NoFiles
+        }
+    }
+
+    private suspend fun process(content: String): PrefFileResult {
         val sanitizedContent = content.trim()
         return when {
-            sanitizedContent.isBlank() -> EmptyPrefs
-            sanitizedContent == EMPTY_FILES -> EmptyFiles
-            sanitizedContent == EMPTY_PREFS -> EmptyPrefs
+            sanitizedContent.isBlank() || sanitizedContent == EMPTY_PREFS || sanitizedContent == EMPTY_FILES -> NoFiles
             sanitizedContent.startsWith(NON_DEBUGGABLE) -> NonDebuggable
             else ->
                 Files(
                     buildList {
-                        sanitizedContent.lineSequence().forEach { name ->
-                            yield()
-                            add(PrefFile(name = name, type = PrefFile.Type.KEY_VALUE))
-                        }
+                        sanitizedContent
+                            .lineSequence()
+                            .forEach { name ->
+                                add(PrefFile(name = name, type = type(name)))
+                                yield()
+                            }
                     },
                 )
         }
     }
 
-    sealed interface PrefFileResult {
-        data object EmptyFiles : PrefFileResult
+    private fun type(name: String) =
+        if (name.endsWith(DATASTORE_FILENAME_SUFFIX)) PrefFile.Type.DATA_STORE else PrefFile.Type.KEY_VALUE
 
-        data object EmptyPrefs : PrefFileResult
+    sealed interface PrefFileResult {
+        data object NoFiles : PrefFileResult
 
         data object NonDebuggable : PrefFileResult
 
@@ -55,6 +65,7 @@ class PrefFileListDecoder {
     }
 
     private companion object {
+        const val DATASTORE_FILENAME_SUFFIX = ".preferences_pb"
         const val EMPTY_PREFS = "ls: shared_prefs: No such file or directory"
         const val EMPTY_FILES = "ls: files: No such file or directory"
         const val NON_DEBUGGABLE = "run-as: package not debuggable:"

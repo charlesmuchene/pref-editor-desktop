@@ -17,6 +17,7 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device
 
 import androidx.compose.runtime.mutableStateOf
+import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preference
 import com.charlesmuchene.prefeditor.data.Preferences
@@ -40,15 +41,14 @@ class DevicePreferencesUseCase(
 ) {
     val backup = mutableStateOf(false)
 
-    private val _preferences = MutableStateFlow(Preferences(preferences = emptyList()))
+    private val _preferences = MutableStateFlow<Preferences>(KeyValuePreferences(preferences = emptyList()))
     val preferences: StateFlow<Preferences> = _preferences.asStateFlow()
 
     suspend fun readPreferences() {
-        _preferences.emit(Preferences(emptyList()))
-        val result = reader.read()
-
+        _preferences.emit(KeyValuePreferences(emptyList()))
+        val (type, result) = reader.read()
         if (result.isSuccess) {
-            _preferences.emit(codec.decode(content = result.output))
+            _preferences.emit(codec.decode(content = result.output, type = type))
         } else {
             logger.error { "Failure when reading preferences" }
         }
@@ -56,7 +56,8 @@ class DevicePreferencesUseCase(
 
     suspend fun writePreferences(preferences: Collection<UIPreference>): Boolean {
         val edits = preferences.filter { it.state !is PreferenceState.None }
-        val content = codec.encode(edits = edits, existing = this.preferences.value.preferences)
+        val existing = this.preferences.value as? KeyValuePreferences ?: return false
+        val content = codec.encode(edits = edits, existing = existing.preferences)
         return writer.edit(content).all { it.isSuccess }.also { readPreferences() }
     }
 

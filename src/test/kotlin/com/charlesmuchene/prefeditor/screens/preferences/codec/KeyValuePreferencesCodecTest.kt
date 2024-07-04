@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class PreferencesCodecTest {
+class KeyValuePreferencesCodecTest {
     private lateinit var manager: PreferencesCodec
 
     @BeforeEach

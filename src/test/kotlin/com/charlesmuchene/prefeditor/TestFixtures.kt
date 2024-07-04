@@ -23,7 +23,7 @@ import com.charlesmuchene.prefeditor.data.FloatPreference
 import com.charlesmuchene.prefeditor.data.IntPreference
 import com.charlesmuchene.prefeditor.data.LongPreference
 import com.charlesmuchene.prefeditor.data.PrefFile
-import com.charlesmuchene.prefeditor.data.Preferences
+import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.data.SetPreference
 import com.charlesmuchene.prefeditor.data.StringPreference
 import com.charlesmuchene.prefeditor.screens.apps.AppListCommand
@@ -89,10 +89,11 @@ object TestFixtures {
 
     val app = App(packageName = "com.charlesmuchene.pref-editor")
 
-    val prefFile = PrefFile(name = "preferences.xml", type = PrefFile.Type.KEY_VALUE)
+    val keyValuePrefFile = PrefFile(name = "preferences.xml", type = PrefFile.Type.KEY_VALUE)
+    val datastorePrefFile = PrefFile(name = "preferences.preferences_pb", type = PrefFile.Type.DATA_STORE)
 
     val prefs =
-        Preferences(
+        KeyValuePreferences(
             preferences =
                 listOf(
                     BooleanPreference(name = "boolean", value = "false"),

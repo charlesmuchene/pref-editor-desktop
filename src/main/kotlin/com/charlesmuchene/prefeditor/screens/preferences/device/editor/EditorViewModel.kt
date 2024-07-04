@@ -16,12 +16,11 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.prefeditor.app.AppState
 import com.charlesmuchene.prefeditor.data.BooleanPreference
 import com.charlesmuchene.prefeditor.data.FloatPreference
 import com.charlesmuchene.prefeditor.data.IntPreference
+import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.data.LongPreference
 import com.charlesmuchene.prefeditor.data.Preference
 import com.charlesmuchene.prefeditor.data.SetPreference
@@ -30,25 +29,22 @@ import com.charlesmuchene.prefeditor.models.PreferenceType
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferenceValidator
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.SetSubPreference.Header
-import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.jetbrains.jewel.ui.Outline
 import kotlin.coroutines.CoroutineContext
-
-private val logger = KotlinLogging.logger {}
 
 sealed interface PreferenceState {
     data object Changed : PreferenceState
@@ -89,8 +85,8 @@ class EditorViewModel(
 
     val backupEnabled = prefUseCase.backup
 
-    private val _preferences = mutableStateOf(emptyList<UIPreference>())
-    val preferences: State<List<UIPreference>> = _preferences
+    private val _preferences = MutableStateFlow(emptyList<UIPreference>())
+    val preferences: StateFlow<List<UIPreference>> = _preferences
 
     private val _message = MutableSharedFlow<String?>()
     val message: SharedFlow<String?> = _message.asSharedFlow()
@@ -101,11 +97,17 @@ class EditorViewModel(
             .stateIn(scope = scope, started = SharingStarted.WhileSubscribed(), initialValue = false)
 
     init {
-        prefUseCase.preferences.onEach { prefs ->
-            initialPrefs = prefs.preferences.associate(Preference::toPair)
-            edits = prefs.preferences.map(::UIPreference).associateBy { it.preference.name }.toMutableMap()
-            _preferences.value = edits.values.toList()
-        }.launchIn(scope = scope)
+        scope.launch {
+            prefUseCase.preferences
+                .mapNotNull { it as? KeyValuePreferences }
+                .map { prefs ->
+                    initialPrefs = prefs.preferences.associate(Preference::toPair)
+                    prefs.preferences.map(::UIPreference).also { map ->
+                        edits = map.associateBy { it.preference.name }.toMutableMap()
+                    }
+                }
+                .collect(_preferences)
+        }
     }
 
     /**

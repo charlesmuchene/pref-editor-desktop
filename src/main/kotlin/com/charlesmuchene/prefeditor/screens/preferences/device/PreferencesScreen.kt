@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.extensions.screenTransitionSpec
 import com.charlesmuchene.prefeditor.navigation.EditScreen
 import com.charlesmuchene.prefeditor.providers.LocalAppState
@@ -65,6 +66,7 @@ fun PreferencesScreen(
             is UIState.Success ->
                 if (state.readOnly) {
                     Viewer(
+                        showEditButton = state.preferences is KeyValuePreferences,
                         prefUseCase = viewModel.useCase,
                         onEditClick = viewModel::edit,
                         modifier = modifier,
