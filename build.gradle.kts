@@ -26,6 +26,10 @@ java {
 }
 
 dependencies {
+
+    // Publish dependency to maven
+    implementation(files("libs/DatastorePreferencesParser-1.0-SNAPSHOT.jar"))
+
     implementation(compose.desktop.currentOs) {
         exclude(group = "org.jetbrains.compose.material") // we're jeweling up! :D
     }
