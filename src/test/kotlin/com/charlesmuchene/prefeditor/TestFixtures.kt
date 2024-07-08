@@ -16,16 +16,16 @@
 
 package com.charlesmuchene.prefeditor
 
+import com.charlesmuchene.datastore.preferences.BooleanPreference
+import com.charlesmuchene.datastore.preferences.FloatPreference
+import com.charlesmuchene.datastore.preferences.IntPreference
+import com.charlesmuchene.datastore.preferences.LongPreference
+import com.charlesmuchene.datastore.preferences.StringPreference
+import com.charlesmuchene.datastore.preferences.StringSetPreference
 import com.charlesmuchene.prefeditor.data.App
-import com.charlesmuchene.prefeditor.data.BooleanPreference
 import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.data.FloatPreference
-import com.charlesmuchene.prefeditor.data.IntPreference
-import com.charlesmuchene.prefeditor.data.LongPreference
-import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.KeyValuePreferences
-import com.charlesmuchene.prefeditor.data.SetPreference
-import com.charlesmuchene.prefeditor.data.StringPreference
+import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.screens.apps.AppListCommand
 import java.nio.file.Files
 import java.nio.file.Path
@@ -40,13 +40,13 @@ object TestFixtures {
             serial = "1B241CAA5079LR",
             type = Device.Type.Device,
             attributes =
-                listOf(
-                    Device.Attribute(name = "usb", value = "1O845693Y"),
-                    Device.Attribute(name = "product", value = "redfin"),
-                    Device.Attribute(name = "model", value = "Pixel_5"),
-                    Device.Attribute(name = "device", value = "redfin"),
-                    Device.Attribute(name = "transport_id", value = "4"),
-                ),
+            listOf(
+                Device.Attribute(name = "usb", value = "1O845693Y"),
+                Device.Attribute(name = "product", value = "redfin"),
+                Device.Attribute(name = "model", value = "Pixel_5"),
+                Device.Attribute(name = "device", value = "redfin"),
+                Device.Attribute(name = "transport_id", value = "4"),
+            ),
         )
 
     val deviceOne =
@@ -54,13 +54,13 @@ object TestFixtures {
             serial = "1B241CAA5079LR",
             type = Device.Type.Device,
             attributes =
-                listOf(
-                    Device.Attribute(name = "usb", value = "1O845693Y"),
-                    Device.Attribute(name = "product", value = "redfin"),
-                    Device.Attribute(name = "model", value = "Pixel_5"),
-                    Device.Attribute(name = "device", value = "redfin"),
-                    Device.Attribute(name = "transport_id", value = "4"),
-                ),
+            listOf(
+                Device.Attribute(name = "usb", value = "1O845693Y"),
+                Device.Attribute(name = "product", value = "redfin"),
+                Device.Attribute(name = "model", value = "Pixel_5"),
+                Device.Attribute(name = "device", value = "redfin"),
+                Device.Attribute(name = "transport_id", value = "4"),
+            ),
         )
 
     val deviceTwo =
@@ -68,12 +68,12 @@ object TestFixtures {
             serial = "emulator-5554",
             type = Device.Type.Device,
             attributes =
-                listOf(
-                    Device.Attribute(name = "product", value = "sdk_gphone64_arm64"),
-                    Device.Attribute(name = "model", value = "sdk_gphone64_arm64"),
-                    Device.Attribute(name = "device", value = "emu64a"),
-                    Device.Attribute(name = "transport_id", value = "1"),
-                ),
+            listOf(
+                Device.Attribute(name = "product", value = "sdk_gphone64_arm64"),
+                Device.Attribute(name = "model", value = "sdk_gphone64_arm64"),
+                Device.Attribute(name = "device", value = "emu64a"),
+                Device.Attribute(name = "transport_id", value = "1"),
+            ),
         )
 
     val unauthorized =
@@ -81,10 +81,10 @@ object TestFixtures {
             serial = "1B241CAA5079LR",
             type = Device.Type.Unauthorized,
             attributes =
-                listOf(
-                    Device.Attribute(name = "usb", value = "1O845693Y"),
-                    Device.Attribute(name = "transport_id", value = "4"),
-                ),
+            listOf(
+                Device.Attribute(name = "usb", value = "1O845693Y"),
+                Device.Attribute(name = "transport_id", value = "4"),
+            ),
         )
 
     val app = App(packageName = "com.charlesmuchene.pref-editor")
@@ -95,16 +95,16 @@ object TestFixtures {
     val prefs =
         KeyValuePreferences(
             preferences =
-                listOf(
-                    BooleanPreference(name = "boolean", value = "false"),
-                    StringPreference(name = "string", value = "string"),
-                    IntPreference(name = "another-integer", value = "0"),
-                    StringPreference(name = "empty-string", value = ""),
-                    IntPreference(name = "integer", value = "-1"),
-                    FloatPreference(name = "float", value = "0.0"),
-                    SetPreference(name = "string-set", entries = listOf("strings", "one", "two", "three")),
-                    LongPreference(name = "long", value = "0"),
-                ),
+            listOf(
+                BooleanPreference(key = "boolean", value = "false"),
+                StringPreference(key = "string", value = "string"),
+                IntPreference(key = "another-integer", value = "0"),
+                StringPreference(key = "empty-string", value = ""),
+                IntPreference(key = "integer", value = "-1"),
+                FloatPreference(key = "float", value = "0.0"),
+                StringSetPreference(key = "string-set", entries = setOf("strings", "one", "two", "three")),
+                LongPreference(key = "long", value = "0"),
+            ),
         )
 
     const val PREFERENCES = """<?xml version='1.0' encoding='utf-8' standalone='yes' ?>

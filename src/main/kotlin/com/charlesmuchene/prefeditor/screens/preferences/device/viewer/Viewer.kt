@@ -42,11 +42,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.Preference
-import com.charlesmuchene.prefeditor.data.preferenceIconName
+import com.charlesmuchene.datastore.preferences.Preference
 import com.charlesmuchene.prefeditor.extensions.hoverAnimation
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
+import com.charlesmuchene.prefeditor.models.preferenceIconName
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.ui.APP_SPACING
 import com.charlesmuchene.prefeditor.ui.listing.ItemListing
@@ -85,7 +85,7 @@ fun Viewer(
             orientation = Orientation.Horizontal,
         )
         ItemListing {
-            items(items = items, key = Preference::name) { preference ->
+            items(items = items, key = Preference::key) { preference ->
                 PreferenceRow(preference = preference, modifier = Modifier.animateItemPlacement())
             }
         }
@@ -129,7 +129,7 @@ private fun PreferenceRow(
             }
             Spacer(modifier = Modifier.width(APP_SPACING))
             Column {
-                Text(text = preference.name, fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))
+                Text(text = preference.key, fontSize = TextUnit(value = 16f, type = TextUnitType.Sp))
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = preference.value,

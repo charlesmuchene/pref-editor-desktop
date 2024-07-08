@@ -19,11 +19,11 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.BooleanPreference
-import com.charlesmuchene.prefeditor.data.FloatPreference
-import com.charlesmuchene.prefeditor.data.IntPreference
-import com.charlesmuchene.prefeditor.data.LongPreference
-import com.charlesmuchene.prefeditor.data.StringPreference
+import com.charlesmuchene.datastore.preferences.BooleanPreference
+import com.charlesmuchene.datastore.preferences.FloatPreference
+import com.charlesmuchene.datastore.preferences.IntPreference
+import com.charlesmuchene.datastore.preferences.LongPreference
+import com.charlesmuchene.datastore.preferences.StringPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.BooleanPreferenceRow
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.FloatPreferenceRow
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.IntPreferenceRow

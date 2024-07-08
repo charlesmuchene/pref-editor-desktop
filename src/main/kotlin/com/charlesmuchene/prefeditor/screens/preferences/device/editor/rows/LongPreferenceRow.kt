@@ -19,7 +19,7 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import com.charlesmuchene.prefeditor.data.LongPreference
+import com.charlesmuchene.datastore.preferences.LongPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 

@@ -16,13 +16,15 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device
 
-import com.charlesmuchene.prefeditor.data.BooleanPreference
-import com.charlesmuchene.prefeditor.data.FloatPreference
-import com.charlesmuchene.prefeditor.data.IntPreference
-import com.charlesmuchene.prefeditor.data.LongPreference
-import com.charlesmuchene.prefeditor.data.Preference
-import com.charlesmuchene.prefeditor.data.SetPreference
-import com.charlesmuchene.prefeditor.data.StringPreference
+import com.charlesmuchene.datastore.preferences.BooleanPreference
+import com.charlesmuchene.datastore.preferences.ByteArrayPreference
+import com.charlesmuchene.datastore.preferences.DoublePreference
+import com.charlesmuchene.datastore.preferences.FloatPreference
+import com.charlesmuchene.datastore.preferences.IntPreference
+import com.charlesmuchene.datastore.preferences.LongPreference
+import com.charlesmuchene.datastore.preferences.Preference
+import com.charlesmuchene.datastore.preferences.StringPreference
+import com.charlesmuchene.datastore.preferences.StringSetPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 
@@ -56,10 +58,11 @@ class PreferenceValidator {
      */
     fun isValid(preference: Preference): Boolean =
         when (preference) {
-            is SetPreference, is StringPreference -> true
+            is StringSetPreference, is StringPreference, is ByteArrayPreference -> true
             is IntPreference -> preference.value.toIntOrNull() != null
             is LongPreference -> preference.value.toLongOrNull() != null
             is FloatPreference -> preference.value.toFloatOrNull() != null
             is BooleanPreference -> preference.value.toBooleanStrictOrNull() != null
+            is DoublePreference -> preference.value.toDoubleOrNull() != null
         }
 }

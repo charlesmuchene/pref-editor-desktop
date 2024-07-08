@@ -16,18 +16,18 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device.codec
 
+import com.charlesmuchene.datastore.preferences.BooleanPreference
+import com.charlesmuchene.datastore.preferences.FloatPreference
+import com.charlesmuchene.datastore.preferences.IntPreference
+import com.charlesmuchene.datastore.preferences.LongPreference
+import com.charlesmuchene.datastore.preferences.Preference
+import com.charlesmuchene.datastore.preferences.StringPreference
+import com.charlesmuchene.datastore.preferences.StringSetPreference
 import com.charlesmuchene.prefeditor.TestFixtures.PREFERENCES
 import com.charlesmuchene.prefeditor.TestFixtures.prefs
-import com.charlesmuchene.prefeditor.data.BooleanPreference
 import com.charlesmuchene.prefeditor.data.Edit
-import com.charlesmuchene.prefeditor.data.FloatPreference
-import com.charlesmuchene.prefeditor.data.IntPreference
 import com.charlesmuchene.prefeditor.data.KeyValuePreferences
-import com.charlesmuchene.prefeditor.data.LongPreference
 import com.charlesmuchene.prefeditor.data.PrefFile
-import com.charlesmuchene.prefeditor.data.Preference
-import com.charlesmuchene.prefeditor.data.SetPreference
-import com.charlesmuchene.prefeditor.data.StringPreference
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferencesCodec
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
@@ -98,7 +98,7 @@ class DevicePreferencesCodecTest {
     private fun decodeBoolean(preference: Preference) {
         assertTrue(preference is BooleanPreference)
         assertFalse(preference.value.toBooleanStrict())
-        assertEquals(expected = "boolean", actual = preference.name)
+        assertEquals(expected = "boolean", actual = preference.key)
     }
 
     private fun decodeString(
@@ -106,11 +106,11 @@ class DevicePreferencesCodecTest {
         another: Preference,
     ) {
         assertTrue(preference is StringPreference)
-        assertEquals(expected = "string", actual = preference.name)
+        assertEquals(expected = "string", actual = preference.key)
         assertEquals(expected = "string", actual = preference.value)
         assertTrue(another is StringPreference)
         assertEquals(expected = "", actual = another.value)
-        assertEquals(expected = "empty-string", actual = another.name)
+        assertEquals(expected = "empty-string", actual = another.key)
     }
 
     private fun decodeInt(
@@ -119,33 +119,33 @@ class DevicePreferencesCodecTest {
     ) {
         assertTrue(preference is IntPreference)
         assertEquals(expected = -1, actual = preference.value.toInt())
-        assertEquals(expected = "integer", actual = preference.name)
+        assertEquals(expected = "integer", actual = preference.key)
 
         assertTrue(another is IntPreference)
         assertEquals(expected = 0, actual = another.value.toInt())
-        assertEquals(expected = "another-integer", actual = another.name)
+        assertEquals(expected = "another-integer", actual = another.key)
     }
 
     private fun decodeFloat(preference: Preference) {
         assertTrue(preference is FloatPreference)
-        assertEquals(expected = "float", actual = preference.name)
+        assertEquals(expected = "float", actual = preference.key)
         assertEquals(expected = 0.0f, actual = preference.value.toFloat())
     }
 
     private fun decodeLong(preference: Preference) {
         assertTrue(preference is LongPreference)
         assertEquals(expected = 100L, actual = preference.value.toLong())
-        assertEquals(expected = "long", actual = preference.name)
+        assertEquals(expected = "long", actual = preference.key)
     }
 
     private fun decodeSet(preference: Preference) {
-        assertTrue(preference is SetPreference)
-        assertEquals(expected = "string-set", actual = preference.name)
+        assertTrue(preference is StringSetPreference)
+        assertEquals(expected = "string-set", actual = preference.key)
         val subPreferences = preference.entries
         assertEquals(expected = 4, actual = subPreferences.size)
-        assertEquals(expected = "strings", actual = subPreferences.first())
-        assertEquals(expected = "one", actual = subPreferences[1])
-        assertEquals(expected = "two", actual = subPreferences[2])
-        assertEquals(expected = "three", actual = subPreferences[3])
+        assertTrue(subPreferences.contains("strings"))
+        assertTrue(subPreferences.contains("one"))
+        assertTrue(subPreferences.contains("two"))
+        assertTrue(subPreferences.contains("three"))
     }
 }

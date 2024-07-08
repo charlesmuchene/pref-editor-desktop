@@ -69,7 +69,7 @@ fun PrimitivePreferenceRow(
         Text(
             textDecoration = decoration,
             style = Typography.h3TextStyle(),
-            text = preference.preference.name,
+            text = preference.preference.key,
             modifier = Modifier.weight(NAME_COMPONENT_WEIGHT),
         )
 

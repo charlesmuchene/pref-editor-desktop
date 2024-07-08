@@ -24,4 +24,4 @@ import kotlinx.coroutines.flow.onEach
 
 fun <T> Flow<T>.throttleLatest(delayMillis: Long): Flow<T> = conflate().onEach { delay(delayMillis) }
 
-val editorLogger = KotlinLogging.logger(name = "Debugging logger")
+val editorLogger = KotlinLogging.logger {}

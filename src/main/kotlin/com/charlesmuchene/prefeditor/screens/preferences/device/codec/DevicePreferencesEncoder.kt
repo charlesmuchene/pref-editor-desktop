@@ -16,8 +16,8 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device.codec
 
+import com.charlesmuchene.datastore.preferences.Preference
 import com.charlesmuchene.prefeditor.data.Edit
-import com.charlesmuchene.prefeditor.data.Preference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 
 interface DevicePreferencesEncoder {
