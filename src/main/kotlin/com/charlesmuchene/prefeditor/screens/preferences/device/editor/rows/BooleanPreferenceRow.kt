@@ -27,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.BooleanPreference
+import com.charlesmuchene.datastore.preferences.BooleanPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.ACTION_COMPONENT_WEIGHT
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.NAME_COMPONENT_WEIGHT
@@ -72,7 +72,7 @@ fun BooleanPreferenceRow(
         }
 
         Text(
-            text = preference.name,
+            text = preference.key,
             textDecoration = decoration,
             style = Typography.h3TextStyle(),
             modifier = Modifier.weight(NAME_COMPONENT_WEIGHT),

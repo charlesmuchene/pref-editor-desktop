@@ -16,14 +16,14 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device.codec
 
-import com.charlesmuchene.prefeditor.data.BooleanPreference
+import com.charlesmuchene.datastore.preferences.BooleanPreference
+import com.charlesmuchene.datastore.preferences.FloatPreference
+import com.charlesmuchene.datastore.preferences.IntPreference
+import com.charlesmuchene.datastore.preferences.LongPreference
+import com.charlesmuchene.datastore.preferences.Preference
+import com.charlesmuchene.datastore.preferences.StringPreference
+import com.charlesmuchene.datastore.preferences.StringSetPreference
 import com.charlesmuchene.prefeditor.data.Edit
-import com.charlesmuchene.prefeditor.data.FloatPreference
-import com.charlesmuchene.prefeditor.data.IntPreference
-import com.charlesmuchene.prefeditor.data.LongPreference
-import com.charlesmuchene.prefeditor.data.Preference
-import com.charlesmuchene.prefeditor.data.SetPreference
-import com.charlesmuchene.prefeditor.data.StringPreference
 import com.charlesmuchene.prefeditor.data.Tags
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceEncoder
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceEncoder.Encoder.attrib
@@ -42,10 +42,10 @@ class DevicePreferencesEncoderImpl(private val encoder: PreferenceEncoder) : Dev
                 PreferenceState.Changed -> {
                     val change = preference.preference
                     val initial = (
-                        existing.find { it.name == preference.preference.name }
+                        existing.find { it.key == preference.preference.key }
                             ?: error("${preference.preference} is missing from existing preferences")
                     )
-                    require(value = change.value != initial.value) { "${change.name} didn't change value" }
+                    require(value = change.value != initial.value) { "${change.key} didn't change value" }
                     encodeChange(change = change, existing = initial)
                 }
 
@@ -102,24 +102,26 @@ class DevicePreferencesEncoderImpl(private val encoder: PreferenceEncoder) : Dev
      */
     private fun XmlSerializer.serializePreference(preference: Preference) {
         when (preference) {
-            is BooleanPreference -> tag(Tags.BOOLEAN) { attribute(name = preference.name, value = preference.value) }
-            is FloatPreference -> tag(Tags.FLOAT) { attribute(name = preference.name, value = preference.value) }
-            is LongPreference -> tag(Tags.LONG) { attribute(name = preference.name, value = preference.value) }
-            is IntPreference -> tag(Tags.INT) { attribute(name = preference.name, value = preference.value) }
+            is BooleanPreference -> tag(Tags.BOOLEAN) { attribute(name = preference.key, value = preference.value) }
+            is FloatPreference -> tag(Tags.FLOAT) { attribute(name = preference.key, value = preference.value) }
+            is LongPreference -> tag(Tags.LONG) { attribute(name = preference.key, value = preference.value) }
+            is IntPreference -> tag(Tags.INT) { attribute(name = preference.key, value = preference.value) }
 
             is StringPreference ->
                 tag(Tags.STRING) {
-                    attrib(name = DevicePreferencesCodec.NAME, value = preference.name)
+                    attrib(name = DevicePreferencesCodec.NAME, value = preference.key)
                     text(preference.value)
                 }
 
-            is SetPreference ->
+            is StringSetPreference ->
                 tag(Tags.SET) {
-                    attrib(name = DevicePreferencesCodec.NAME, value = preference.name)
+                    attrib(name = DevicePreferencesCodec.NAME, value = preference.key)
                     preference.entries.forEach { string ->
                         tag(Tags.STRING) { text(string) }
                     }
                 }
+
+            else -> error("$preference is not supported in key value preferences")
         }
     }
 

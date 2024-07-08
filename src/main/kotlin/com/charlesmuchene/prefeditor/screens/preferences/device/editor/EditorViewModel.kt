@@ -16,15 +16,15 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 
+import com.charlesmuchene.datastore.preferences.BooleanPreference
+import com.charlesmuchene.datastore.preferences.FloatPreference
+import com.charlesmuchene.datastore.preferences.IntPreference
+import com.charlesmuchene.datastore.preferences.LongPreference
+import com.charlesmuchene.datastore.preferences.Preference
+import com.charlesmuchene.datastore.preferences.StringPreference
+import com.charlesmuchene.datastore.preferences.StringSetPreference
 import com.charlesmuchene.prefeditor.app.AppState
-import com.charlesmuchene.prefeditor.data.BooleanPreference
-import com.charlesmuchene.prefeditor.data.FloatPreference
-import com.charlesmuchene.prefeditor.data.IntPreference
 import com.charlesmuchene.prefeditor.data.KeyValuePreferences
-import com.charlesmuchene.prefeditor.data.LongPreference
-import com.charlesmuchene.prefeditor.data.Preference
-import com.charlesmuchene.prefeditor.data.SetPreference
-import com.charlesmuchene.prefeditor.data.StringPreference
 import com.charlesmuchene.prefeditor.models.PreferenceType
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferenceValidator
@@ -103,7 +103,7 @@ class EditorViewModel(
                 .map { prefs ->
                     initialPrefs = prefs.preferences.associate(Preference::toPair)
                     prefs.preferences.map(::UIPreference).also { map ->
-                        edits = map.associateBy { it.preference.name }.toMutableMap()
+                        edits = map.associateBy { it.preference.key }.toMutableMap()
                     }
                 }
                 .collect(_preferences)
@@ -113,11 +113,11 @@ class EditorViewModel(
     /**
      * Create sub-preferences for a set preference
      *
-     * @param preference [SetPreference]
-     * @return [List] of [SetSubPreference.Preference]
+     * @param preference [StringSetPreference]
+     * @return [List] of [SetSubPreference.Pref]
      */
-    fun createSubPreferences(preference: SetPreference): Pair<Header, List<SetSubPreference.Preference>> =
-        Pair(Header(preference.name), preference.entries.map(SetSubPreference::Preference))
+    fun createSubPreferences(preference: StringSetPreference): Pair<Header, List<SetSubPreference.Pref>> =
+        Pair(Header(preference.key), preference.entries.map(SetSubPreference::Pref))
 
     /**
      * Save edits
@@ -165,7 +165,7 @@ class EditorViewModel(
         when (preference) {
             is FloatPreference, is IntPreference, is LongPreference -> numberOutline(preference = preference)
             is BooleanPreference, is StringPreference ->
-                if (initialPrefs[preference.name] == preference.value) Outline.None else Outline.Warning
+                if (initialPrefs[preference.key] == preference.value) Outline.None else Outline.Warning
 
             else -> Outline.None
         }
@@ -177,7 +177,7 @@ class EditorViewModel(
      * @return [Outline] instance
      */
     private fun numberOutline(preference: Preference): Outline {
-        if (initialPrefs[preference.name] == preference.value) return Outline.None
+        if (initialPrefs[preference.key] == preference.value) return Outline.None
         return if (validator.isValid(preference = preference)) Outline.Warning else Outline.Error
     }
 
@@ -201,9 +201,9 @@ class EditorViewModel(
      * @return Unedited [UIPreference]
      */
     private fun preferenceReset(preference: Preference): UIPreference {
-        val value = initialPrefs[preference.name] ?: error("Missing preference value ${preference.name}")
+        val value = initialPrefs[preference.key] ?: error("Missing preference value ${preference.key}")
         return UIPreference(createPreference(preference = preference, value = value)).also { uiPreference ->
-            edits[preference.name] = uiPreference
+            edits[preference.key] = uiPreference
             launch { changes.emit(Unit) }
         }
     }
@@ -216,7 +216,7 @@ class EditorViewModel(
      */
     private fun preferenceDeleted(preference: Preference): UIPreference {
         return UIPreference(preference = preference, state = PreferenceState.Deleted).also { uiPreference ->
-            edits[preference.name] = uiPreference
+            edits[preference.key] = uiPreference
             launch { changes.emit(Unit) }
         }
     }
@@ -235,9 +235,9 @@ class EditorViewModel(
     ): UIPreference {
         val newPref = createPreference(preference = preference, value = change)
         val state =
-            if (initialPrefs[preference.name] == newPref.value) PreferenceState.None else PreferenceState.Changed
+            if (initialPrefs[preference.key] == newPref.value) PreferenceState.None else PreferenceState.Changed
         return UIPreference(preference = newPref, state = state).also { uiPreference ->
-            edits[preference.name] = uiPreference
+            edits[preference.key] = uiPreference
             launch { changes.emit(Unit) }
         }
     }
@@ -253,11 +253,11 @@ class EditorViewModel(
         preference: Preference,
         value: String,
     ) = when (preference) {
-        is BooleanPreference -> BooleanPreference(preference.name, value = value)
-        is FloatPreference -> FloatPreference(preference.name, value = value)
-        is IntPreference -> IntPreference(preference.name, value = value)
-        is LongPreference -> LongPreference(preference.name, value = value)
-        is StringPreference -> StringPreference(preference.name, value = value)
+        is BooleanPreference -> BooleanPreference(preference.key, value = value)
+        is FloatPreference -> FloatPreference(preference.key, value = value)
+        is IntPreference -> IntPreference(preference.key, value = value)
+        is LongPreference -> LongPreference(preference.key, value = value)
+        is StringPreference -> StringPreference(preference.key, value = value)
         else -> error("Changing $preference is not supported")
     }
 
@@ -298,11 +298,11 @@ class EditorViewModel(
         type: PreferenceType,
     ): Preference =
         when (type) {
-            PreferenceType.Boolean -> BooleanPreference(name = name, value = value)
-            PreferenceType.String -> StringPreference(name = name, value = value)
-            PreferenceType.Float -> FloatPreference(name = name, value = value)
-            PreferenceType.Integer -> IntPreference(name = name, value = value)
-            PreferenceType.Long -> LongPreference(name = name, value = value)
-            PreferenceType.Set -> SetPreference(name = name, entries = listOf(value))
+            PreferenceType.Boolean -> BooleanPreference(key = name, value = value)
+            PreferenceType.String -> StringPreference(key = name, value = value)
+            PreferenceType.Float -> FloatPreference(key = name, value = value)
+            PreferenceType.Integer -> IntPreference(key = name, value = value)
+            PreferenceType.Long -> LongPreference(key = name, value = value)
+            PreferenceType.Set -> StringSetPreference(key = name, entries = setOf(value))
         }
 }

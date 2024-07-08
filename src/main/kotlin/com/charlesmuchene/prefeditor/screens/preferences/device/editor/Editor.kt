@@ -46,7 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.SetPreference
+import com.charlesmuchene.datastore.preferences.StringSetPreference
 import com.charlesmuchene.prefeditor.extensions.pointerOnHover
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
 import com.charlesmuchene.prefeditor.providers.LocalAppState
@@ -80,7 +80,7 @@ fun Editor(
         }
 
     val prefs by viewModel.preferences.collectAsState()
-    val partition by remember(prefs) { mutableStateOf(prefs.partition { it.preference is SetPreference }) }
+    val partition by remember(prefs) { mutableStateOf(prefs.partition { it.preference is StringSetPreference }) }
     val (sets, primitives) = partition
 
     Column(modifier = modifier.fillMaxSize()) {
@@ -160,7 +160,7 @@ private fun LazyListScope.primitives(
     preferences: List<UIPreference>,
     viewModel: EditorViewModel,
 ) {
-    items(items = preferences, key = { it.preference.name }) { preference ->
+    items(items = preferences, key = { it.preference.key }) { preference ->
         val modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
         PrimitivePreference(preference = preference, viewModel = viewModel, modifier = modifier.animateItemPlacement())
     }

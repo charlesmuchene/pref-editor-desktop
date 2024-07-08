@@ -27,7 +27,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.charlesmuchene.prefeditor.data.SetPreference
+import com.charlesmuchene.datastore.preferences.StringSetPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.rows.SetPreferenceRow
 import com.charlesmuchene.prefeditor.ui.SET_PREFERENCE_ITEM_HEIGHT
 import com.charlesmuchene.prefeditor.ui.theme.Typography
@@ -65,13 +65,16 @@ fun LazyListScope.setPreferenceSection(
         }
     }
 
-    items(items = preferences.mapNotNull { it.preference as? SetPreference }, key = SetPreference::name) { preference ->
+    items(
+        items = preferences.mapNotNull { it.preference as? StringSetPreference },
+        key = StringSetPreference::key
+    ) { preference ->
         SetPreferenceRow(
             preference = preference,
             viewModel = viewModel,
             modifier =
-                Modifier.padding(end = 18.dp).fillMaxWidth()
-                    .height(SET_PREFERENCE_ITEM_HEIGHT * preference.entries.size),
+            Modifier.padding(end = 18.dp).fillMaxWidth()
+                .height(SET_PREFERENCE_ITEM_HEIGHT * preference.entries.size),
         )
     }
 }

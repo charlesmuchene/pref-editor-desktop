@@ -19,5 +19,5 @@ package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 interface SetSubPreference {
     data class Header(val name: String) : SetSubPreference
 
-    data class Preference(val value: String) : SetSubPreference
+    data class Pref(val value: String) : SetSubPreference
 }

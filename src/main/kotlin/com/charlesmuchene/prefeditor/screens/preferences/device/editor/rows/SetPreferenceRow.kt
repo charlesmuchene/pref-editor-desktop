@@ -23,7 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.charlesmuchene.prefeditor.data.SetPreference
+import com.charlesmuchene.datastore.preferences.StringSetPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.EditorViewModel
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.SetSubPreference
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
@@ -36,7 +36,7 @@ import org.jetbrains.jewel.ui.component.Typography
 @OptIn(ExperimentalJewelApi::class)
 @Composable
 fun SetPreferenceRow(
-    preference: SetPreference,
+    preference: StringSetPreference,
     viewModel: EditorViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -57,7 +57,7 @@ fun SetPreferenceRow(
     ) { element ->
         when (val data = element.data) {
             is SetSubPreference.Header -> SetSubPreferenceHeaderRow(data)
-            is SetSubPreference.Preference -> SetSubPreferenceRow(data)
+            is SetSubPreference.Pref -> SetSubPreferenceRow(data)
         }
     }
 }
@@ -72,7 +72,7 @@ private fun SetSubPreferenceHeaderRow(
 
 @Composable
 private fun SetSubPreferenceRow(
-    preference: SetSubPreference.Preference,
+    preference: SetSubPreference.Pref,
     modifier: Modifier = Modifier,
 ) {
     var value by remember { mutableStateOf(preference.value) }

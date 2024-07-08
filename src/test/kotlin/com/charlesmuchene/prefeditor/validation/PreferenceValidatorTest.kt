@@ -1,9 +1,9 @@
 package com.charlesmuchene.prefeditor.validation
 
-import com.charlesmuchene.prefeditor.data.FloatPreference
-import com.charlesmuchene.prefeditor.data.IntPreference
-import com.charlesmuchene.prefeditor.data.LongPreference
-import com.charlesmuchene.prefeditor.data.StringPreference
+import com.charlesmuchene.datastore.preferences.FloatPreference
+import com.charlesmuchene.datastore.preferences.IntPreference
+import com.charlesmuchene.datastore.preferences.LongPreference
+import com.charlesmuchene.datastore.preferences.StringPreference
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferenceValidator
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
@@ -40,7 +40,7 @@ class PreferenceValidatorTest {
 
     @Test
     fun `an empty integer value is invalid`() {
-        val preference = IntPreference(name = "empty-integer", value = "")
+        val preference = IntPreference(key = "empty-integer", value = "")
 
         val isValid = validator.isValid(preference)
 
@@ -49,7 +49,7 @@ class PreferenceValidatorTest {
 
     @Test
     fun `a very long number is invalid`() {
-        val preference = LongPreference(name = "cannot-be-a-long", value = "789456123065403210987")
+        val preference = LongPreference(key = "cannot-be-a-long", value = "789456123065403210987")
 
         val isValid = validator.isValid(preference)
 
@@ -58,7 +58,7 @@ class PreferenceValidatorTest {
 
     @Test
     fun `a float number is valid`() {
-        val preference = FloatPreference(name = "valid-float", value = "3.142678324")
+        val preference = FloatPreference(key = "valid-float", value = "3.142678324")
 
         val isValid = validator.isValid(preference)
 

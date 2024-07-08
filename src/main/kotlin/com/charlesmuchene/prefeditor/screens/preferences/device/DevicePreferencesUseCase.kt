@@ -17,9 +17,9 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device
 
 import androidx.compose.runtime.mutableStateOf
+import com.charlesmuchene.datastore.preferences.Preference
 import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.data.PrefFile
-import com.charlesmuchene.prefeditor.data.Preference
 import com.charlesmuchene.prefeditor.data.Preferences
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceReader
 import com.charlesmuchene.prefeditor.screens.preferences.PreferenceWriter
