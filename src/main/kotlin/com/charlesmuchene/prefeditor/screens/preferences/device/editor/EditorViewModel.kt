@@ -17,6 +17,8 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device.editor
 
 import com.charlesmuchene.datastore.preferences.BooleanPreference
+import com.charlesmuchene.datastore.preferences.ByteArrayPreference
+import com.charlesmuchene.datastore.preferences.DoublePreference
 import com.charlesmuchene.datastore.preferences.FloatPreference
 import com.charlesmuchene.datastore.preferences.IntPreference
 import com.charlesmuchene.datastore.preferences.LongPreference
@@ -303,6 +305,8 @@ class EditorViewModel(
             PreferenceType.Float -> FloatPreference(key = name, value = value)
             PreferenceType.Integer -> IntPreference(key = name, value = value)
             PreferenceType.Long -> LongPreference(key = name, value = value)
-            PreferenceType.Set -> StringSetPreference(key = name, entries = setOf(value))
+            PreferenceType.Double -> DoublePreference(key = name, value = value)
+            PreferenceType.StringSet -> StringSetPreference(key = name, entries = setOf(value))
+            PreferenceType.ByteArray -> ByteArrayPreference(key = name, content = value.toByteArray())
         }
 }
