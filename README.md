@@ -4,15 +4,18 @@ A desktop app to view and edit on-device shared preferences.
 Built using:
 * [Compose](https://github.com/JetBrains/compose-multiplatform) for Desktop
 * Themed by [Jewel](https://github.com/JetBrains/jewel)
-* Algorithm inspired by ...
 
 # Usage
 > Ensure `adb` is available on your `PATH`.
 
-A local installation of ADB is required. It should be included in the Android SDK Platform Tools package downloaded while setting up Android Studio.
+>  [!IMPORTANT]  
+>  A local installation of ADB is required. It should be included in the Android SDK Platform Tools package downloaded while setting up Android Studio.
 If not, download the package with the SDK Manager or get the standalone tools from [here](https://developer.android.com/studio/releases/platform-tools).
 
-From the main window:
+Clone the project. With the terminal pointing to the root directory, run `./gradlew run`.
+You can also run the project from an IDE's run configuration.
+
+From the app's main window:
 * Select device
 * Choose your app
 * Select preferences file
@@ -29,9 +32,8 @@ And we go dark too 😎
 |---------------------------------------------|------------------------------------------------|
 | ![image](./images/03-pref-editor-files.png) | ![image](./images/02-pref-editor-filtered.png) |
 
-# Installation
-
-// TBD
+# Building
+Run the project the commandline with `./gradlew run`. 
 
 # License
 
