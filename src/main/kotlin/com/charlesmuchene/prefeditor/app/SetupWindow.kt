@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import com.charlesmuchene.prefeditor.extensions.rememberIconPainter
+import com.charlesmuchene.prefeditor.resources.AppVersion
 import com.charlesmuchene.prefeditor.ui.APP_SPACING
 import org.jetbrains.jewel.foundation.theme.JewelTheme
 import org.jetbrains.jewel.intui.standalone.theme.IntUiTheme
@@ -58,6 +59,8 @@ fun SetupWindow(modifier: Modifier = Modifier) {
                 Icon(painter = painter, contentDescription = "Application icon", tint = JewelTheme.contentColor)
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(text = title, style = Typography.h0TextStyle())
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(text = AppVersion.version, style = Typography.labelTextStyle())
                 Spacer(modifier = Modifier.height(12.dp))
                 val url = "https://www.charlesmuchene.com"
                 ExternalLink(

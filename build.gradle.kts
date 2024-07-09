@@ -108,3 +108,15 @@ detekt {
     config.from(file(path = "detekt.yaml"))
     buildUponDefaultConfig = true
 }
+
+val versionTheRelease by tasks.registering {
+    description = "Write version file to resources"
+    doLast {
+        file("src/main/resources/version")
+            .writeText(text = "v$version")
+    }
+}
+
+val jar by tasks.existing(Jar::class) {
+    dependsOn(versionTheRelease)
+}
