@@ -1,26 +1,29 @@
 # Preferences Editor
-A desktop app to view and edit on-device shared preferences.
+A desktop app to view and edit on-device preferences. The app supports reading/writing _legacy_ **shared preferences**.
+**Datastore-based** preferences are currently supported in read-only mode. 😎
 
 Built using:
 * [Compose](https://github.com/JetBrains/compose-multiplatform) for Desktop
 * Themed by [Jewel](https://github.com/JetBrains/jewel)
 
-# Usage
+# Installation
 > Ensure `adb` is available on your `PATH`.
+
+Find and install the [latest release](https://github.com/charlesmuchene/pref-editor-desktop/releases/latest).
+The app can be run from source too. See the section on [Building](#building) below.
+
+# Usage
 
 >  [!IMPORTANT]  
 >  A local installation of ADB is required. It should be included in the Android SDK Platform Tools package downloaded while setting up Android Studio.
 If not, download the package with the SDK Manager or get the standalone tools from [here](https://developer.android.com/studio/releases/platform-tools).
 
-Clone the project. With the terminal pointing to the root directory, run `./gradlew run`.
-You can also run the project from an IDE's run configuration.
-
-From the app's main window:
+From the app's window:
 * Select device
 * Choose your app
 * Select preferences file
 * View/Edit preferences
-* Star any item to find it faster next time
+* Star any item for easier filtering
 
 | Device Listing                                | Editing Preferences                        |
 |-----------------------------------------------|--------------------------------------------|
@@ -33,7 +36,7 @@ And we go dark too 😎
 | ![image](./images/03-pref-editor-files.png) | ![image](./images/02-pref-editor-filtered.png) |
 
 # Building
-Run the project the commandline with `./gradlew run`. 
+[Clone](https://github.com/charlesmuchene/pref-editor-desktop/archive/refs/heads/main.zip) the project and execute `./gradlew run`. 
 
 # License
 
