@@ -17,6 +17,8 @@
 package com.charlesmuchene.prefeditor.models
 
 import com.charlesmuchene.datastore.preferences.BooleanPreference
+import com.charlesmuchene.datastore.preferences.ByteArrayPreference
+import com.charlesmuchene.datastore.preferences.DoublePreference
 import com.charlesmuchene.datastore.preferences.FloatPreference
 import com.charlesmuchene.datastore.preferences.IntPreference
 import com.charlesmuchene.datastore.preferences.LongPreference
@@ -29,17 +31,18 @@ enum class PreferenceType(val icon: kotlin.String) {
     Float(icon = "cylindrical"),
     Integer(icon = "conical"),
     Long(icon = "pyramidical"),
-    Set(icon = "triangular"),
+    StringSet(icon = "triangular"),
     String(icon = "cubical"),
+    Double(icon = "cylindrical"),
+    ByteArray(icon = "triangular"),
 }
 
 fun preferenceIconName(preference: Preference): String =
     when (preference) {
         is BooleanPreference -> PreferenceType.Boolean.icon
         is StringPreference -> PreferenceType.String.icon
-        is FloatPreference -> PreferenceType.Float.icon
         is IntPreference -> PreferenceType.Integer.icon
         is LongPreference -> PreferenceType.Long.icon
-        is StringSetPreference -> PreferenceType.Set.icon
-        else -> PreferenceType.Integer.icon
+        is FloatPreference, is DoublePreference -> PreferenceType.Float.icon
+        is StringSetPreference, is ByteArrayPreference -> PreferenceType.StringSet.icon
     }
