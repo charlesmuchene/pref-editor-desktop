@@ -28,11 +28,15 @@ import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preferences
 import com.charlesmuchene.prefeditor.data.Tags
+import com.charlesmuchene.prefeditor.exceptions.DecodeException
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceDecoder
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceDecoder.Reader.gobbleTag
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceDecoder.Reader.skip
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
+
+private val logger = KotlinLogging.logger { }
 
 class DevicePreferencesDecoderImpl(private val decoder: PreferenceDecoder) : DevicePreferencesDecoder {
     override suspend fun decode(content: ByteArray, type: PrefFile.Type): Preferences =
@@ -43,17 +47,21 @@ class DevicePreferencesDecoderImpl(private val decoder: PreferenceDecoder) : Dev
 
     private suspend fun parseKeyValuePreferences(content: ByteArray): KeyValuePreferences =
         KeyValuePreferences(preferences = buildList {
-            // TODO Handle xml pull parser exception
-            decoder.decode(content.inputStream()) {
-                when (name) {
-                    Tags.BOOLEAN -> add(parseBoolean())
-                    Tags.STRING -> add(parseString())
-                    Tags.FLOAT -> add(parseFloat())
-                    Tags.LONG -> add(parseLong())
-                    Tags.INT -> add(parseInt())
-                    Tags.SET -> add(parseSet())
-                    else -> skip()
+            try {
+                decoder.decode(content.inputStream()) {
+                    when (name) {
+                        Tags.BOOLEAN -> add(parseBoolean())
+                        Tags.STRING -> add(parseString())
+                        Tags.FLOAT -> add(parseFloat())
+                        Tags.LONG -> add(parseLong())
+                        Tags.INT -> add(parseInt())
+                        Tags.SET -> add(parseSet())
+                        else -> skip()
+                    }
                 }
+            } catch (e: XmlPullParserException) {
+                logger.error(e) { e.message }
+                throw DecodeException("Could not decode file type: see supported formats.")
             }
         })
 }

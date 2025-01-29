@@ -33,6 +33,7 @@ interface PreferenceDecoder {
      * @param block Block to extract tags from -- has a [XmlPullParser] as the receiver
      * @throws [XmlPullParserException]
      */
+    @Throws(XmlPullParserException::class)
     suspend fun decode(
         inputStream: InputStream,
         block: XmlPullParser.() -> Unit,
