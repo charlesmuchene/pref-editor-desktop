@@ -13,7 +13,12 @@ dependencyResolutionManagement {
         maven(url = "https://packages.jetbrains.team/maven/p/kpm/public")
         mavenCentral()
         google()
+        mavenLocal()
     }
 }
 
-rootProject.name = "desktop"
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
+}
+
+rootProject.name = "pref-editor"

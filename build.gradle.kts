@@ -11,25 +11,23 @@ plugins {
 group = "com.charlesmuchene.prefeditor"
 version = "1.1.0"
 
+val langVersion = 21
+
 kotlin {
     jvmToolchain {
         vendor = JvmVendorSpec.JETBRAINS
-        languageVersion = 17
+        languageVersion = langVersion
     }
 }
 
 java {
     toolchain {
         vendor = JvmVendorSpec.JETBRAINS
-        languageVersion = 17
+        languageVersion = langVersion
     }
 }
 
 dependencies {
-
-    // Publish dependency to maven
-    implementation(files("libs/DatastorePreferencesParser-1.0-SNAPSHOT.jar"))
-
     implementation(compose.desktop.currentOs) {
         exclude(group = "org.jetbrains.compose.material") // we're jeweling up! :D
     }
@@ -38,6 +36,7 @@ dependencies {
     implementation(libs.jewel.standalone)
     implementation(libs.rebugger)
     implementation(libs.logging)
+    implementation(libs.parser)
     implementation(libs.kxml2)
     runtimeOnly(libs.sl4j)
 
@@ -95,7 +94,7 @@ tasks.withType<JavaExec> {
         javaLauncher =
             project.javaToolchains.launcherFor {
                 vendor = JvmVendorSpec.JETBRAINS
-                languageVersion = 17
+                languageVersion = langVersion
             }
         setExecutable(javaLauncher.map { it.executablePath.asFile.absoluteFile }.get())
     }
