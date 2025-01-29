@@ -36,7 +36,9 @@ And we go dark too 😎
 | ![image](./images/03-pref-editor-files.png) | ![image](./images/02-pref-editor-filtered.png) |
 
 # Building
-[Clone](https://github.com/charlesmuchene/pref-editor-desktop/archive/refs/heads/main.zip) the project and execute `./gradlew run`. 
+* [Clone](https://github.com/charlesmuchene/pref-editor-desktop/archive/refs/heads/main.zip) the project
+* Add [parser](https://github.com/charlesmuchene/datastore-preferences) as a dependency e.g. publishing it locally
+* Execute `./gradlew run`. 
 
 # License
 
