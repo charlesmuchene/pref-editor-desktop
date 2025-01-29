@@ -54,7 +54,7 @@ class PrefFileListDecoder {
     }
 
     private fun type(name: String) =
-        if (name.endsWith(DATASTORE_FILENAME_SUFFIX)) PrefFile.Type.DATA_STORE else PrefFile.Type.KEY_VALUE
+        if (DATASTORE_FILENAME_SUFFIX.matches(name)) PrefFile.Type.DATA_STORE else PrefFile.Type.KEY_VALUE
 
     sealed interface PrefFileResult {
         data object NoFiles : PrefFileResult
@@ -65,7 +65,7 @@ class PrefFileListDecoder {
     }
 
     private companion object {
-        const val DATASTORE_FILENAME_SUFFIX = ".preferences_pb"
+        private val DATASTORE_FILENAME_SUFFIX = ".*pb".toRegex()
         const val EMPTY_PREFS = "ls: shared_prefs: No such file or directory"
         const val EMPTY_FILES = "ls: files: No such file or directory"
         const val NON_DEBUGGABLE = "run-as: package not debuggable:"
