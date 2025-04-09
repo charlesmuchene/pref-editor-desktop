@@ -26,11 +26,13 @@ import com.charlesmuchene.datastore.preferences.Preference
 import com.charlesmuchene.datastore.preferences.StringPreference
 import com.charlesmuchene.datastore.preferences.StringSetPreference
 import com.charlesmuchene.prefeditor.app.AppState
+import com.charlesmuchene.prefeditor.data.DatastorePreferences
 import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.models.PreferenceType
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferenceValidator
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.SetSubPreference.Header
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -41,12 +43,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import org.jetbrains.jewel.ui.Outline
 import kotlin.coroutines.CoroutineContext
+
+private val logger = KotlinLogging.logger { }
 
 sealed interface PreferenceState {
     data object Changed : PreferenceState
@@ -101,10 +104,13 @@ class EditorViewModel(
     init {
         scope.launch {
             prefUseCase.preferences
-                .mapNotNull { it as? KeyValuePreferences }
-                .map { prefs ->
-                    initialPrefs = prefs.preferences.associate(Preference::toPair)
-                    prefs.preferences.map(::UIPreference).also { map ->
+                .map { preferences ->
+                    val prefs = when (preferences) {
+                        is DatastorePreferences -> preferences.parse()
+                        is KeyValuePreferences -> preferences.preferences
+                    }
+                    initialPrefs = prefs.associate(Preference::toPair)
+                    prefs.map(::UIPreference).also { map ->
                         edits = map.associateBy { it.preference.key }.toMutableMap()
                     }
                 }

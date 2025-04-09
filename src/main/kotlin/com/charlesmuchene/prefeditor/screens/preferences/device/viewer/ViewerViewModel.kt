@@ -17,20 +17,15 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device.viewer
 
 import com.charlesmuchene.datastore.preferences.Preference
-import com.charlesmuchene.datastore.preferences.exceptions.MalformedContentException
-import com.charlesmuchene.datastore.preferences.parsePreferences
 import com.charlesmuchene.prefeditor.data.DatastorePreferences
 import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
-import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-
-private val logger = KotlinLogging.logger { }
 
 class ViewerViewModel(prefUseCase: DevicePreferencesUseCase, scope: CoroutineScope) {
     private val _preferences = MutableStateFlow(emptyList<Preference>())
@@ -41,20 +36,11 @@ class ViewerViewModel(prefUseCase: DevicePreferencesUseCase, scope: CoroutineSco
             prefUseCase.preferences
                 .map {
                     when (it) {
-                        is DatastorePreferences -> parseDatastoreContent(it)
+                        is DatastorePreferences -> it.parse()
                         is KeyValuePreferences -> it.preferences
                     }
                 }
                 .collect(_preferences)
-        }
-    }
-
-    private fun parseDatastoreContent(preferences: DatastorePreferences): List<Preference> {
-        return try {
-            parsePreferences(preferences.content)
-        } catch (e: MalformedContentException) {
-            logger.error(e) { e.message }
-            emptyList()
         }
     }
 }
