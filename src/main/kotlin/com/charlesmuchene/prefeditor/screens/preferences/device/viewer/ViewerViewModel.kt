@@ -17,8 +17,7 @@
 package com.charlesmuchene.prefeditor.screens.preferences.device.viewer
 
 import com.charlesmuchene.datastore.preferences.Preference
-import com.charlesmuchene.prefeditor.data.DatastorePreferences
-import com.charlesmuchene.prefeditor.data.KeyValuePreferences
+import com.charlesmuchene.prefeditor.data.Preferences
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,12 +33,7 @@ class ViewerViewModel(prefUseCase: DevicePreferencesUseCase, scope: CoroutineSco
     init {
         scope.launch {
             prefUseCase.preferences
-                .map {
-                    when (it) {
-                        is DatastorePreferences -> it.parse()
-                        is KeyValuePreferences -> it.preferences
-                    }
-                }
+                .map(Preferences::prefs)
                 .collect(_preferences)
         }
     }

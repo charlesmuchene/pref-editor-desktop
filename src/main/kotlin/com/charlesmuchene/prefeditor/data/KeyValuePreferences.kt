@@ -21,7 +21,12 @@ import com.charlesmuchene.datastore.preferences.exceptions.MalformedContentExcep
 import com.charlesmuchene.datastore.preferences.parsePreferences
 import io.github.oshai.kotlinlogging.KotlinLogging
 
-sealed interface Preferences
+sealed interface Preferences {
+    fun prefs() = when (this) {
+        is DatastorePreferences -> parse()
+        is KeyValuePreferences -> preferences
+    }
+}
 
 data class KeyValuePreferences(val preferences: List<Preference>) : Preferences
 

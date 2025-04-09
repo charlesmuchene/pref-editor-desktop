@@ -26,8 +26,6 @@ import com.charlesmuchene.datastore.preferences.Preference
 import com.charlesmuchene.datastore.preferences.StringPreference
 import com.charlesmuchene.datastore.preferences.StringSetPreference
 import com.charlesmuchene.prefeditor.app.AppState
-import com.charlesmuchene.prefeditor.data.DatastorePreferences
-import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.models.PreferenceType
 import com.charlesmuchene.prefeditor.screens.preferences.device.DevicePreferencesUseCase
 import com.charlesmuchene.prefeditor.screens.preferences.device.PreferenceValidator
@@ -105,10 +103,7 @@ class EditorViewModel(
         scope.launch {
             prefUseCase.preferences
                 .map { preferences ->
-                    val prefs = when (preferences) {
-                        is DatastorePreferences -> preferences.parse()
-                        is KeyValuePreferences -> preferences.preferences
-                    }
+                    val prefs = preferences.prefs()
                     initialPrefs = prefs.associate(Preference::toPair)
                     prefs.map(::UIPreference).also { map ->
                         edits = map.associateBy { it.preference.key }.toMutableMap()
