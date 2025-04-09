@@ -21,7 +21,7 @@ class DeviceListDecoderTest {
     fun `parses empty devices stream`() =
         runTest {
             val result = decoder.decode(EMPTY_DEVICES)
-            assertTrue(result.isSuccess)
+            assertTrue(result.isSuccess())
             assertTrue(result.getOrThrow().isEmpty())
         }
 

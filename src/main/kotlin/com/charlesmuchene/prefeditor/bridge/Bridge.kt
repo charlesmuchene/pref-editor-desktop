@@ -57,6 +57,6 @@ class Bridge(private val processor: Processor = Processor()) {
                 redirectOutput(ProcessBuilder.Redirect.DISCARD)
                 redirectError(ProcessBuilder.Redirect.DISCARD)
             }
-        return if (result.isSuccess) Available(command) else Unavailable
+        return if (result.isSuccess(alternateSuccessCode = 1)) Available(command) else Unavailable
     }
 }

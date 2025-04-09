@@ -37,7 +37,7 @@ class PrefFileListUseCase(
         val output = results.filter(ProcessorResult::isSuccess).map(ProcessorResult::outputString)
         val fetchStatus = if (output.isEmpty()) {
             val message =
-                if (results.any { !it.isSuccess }) "Error fetching preference files." else "No preference output"
+                if (results.any { !it.isSuccess() }) "Error fetching preference files." else "No preference output"
             FetchStatus.Error(message)
         } else {
             FetchStatus.Done(decoder.decode(contents = output))

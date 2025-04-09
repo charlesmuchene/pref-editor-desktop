@@ -34,7 +34,7 @@ class AppListUseCase(
         _status.emit(FetchStatus.Fetching)
         val result = processor.run(command.command())
         val fetchStatus =
-            if (result.isSuccess) {
+            if (result.isSuccess()) {
                 FetchStatus.Done(decoder.decode(content = result.outputString))
             } else {
                 FetchStatus.Error("Error fetching apps.")

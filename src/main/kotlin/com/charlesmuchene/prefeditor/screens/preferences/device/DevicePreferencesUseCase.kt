@@ -47,7 +47,7 @@ class DevicePreferencesUseCase(
     suspend fun readPreferences() {
         _preferences.emit(KeyValuePreferences(emptyList()))
         val (type, result) = reader.read()
-        if (result.isSuccess) {
+        if (result.isSuccess()) {
             _preferences.emit(codec.decode(content = result.output, type = type))
         } else {
             logger.error { "Failure when reading preferences" }
@@ -58,7 +58,7 @@ class DevicePreferencesUseCase(
         val edits = preferences.filter { it.state !is PreferenceState.None }
         val existing = this.preferences.value as? KeyValuePreferences ?: return false
         val content = codec.encode(edits = edits, existing = existing.preferences)
-        return writer.edit(content).all { it.isSuccess }.also { readPreferences() }
+        return writer.edit(content).all { it.isSuccess() }.also { readPreferences() }
     }
 
     suspend fun addPreference(preference: Preference): Boolean {

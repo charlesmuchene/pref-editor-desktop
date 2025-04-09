@@ -19,16 +19,13 @@ package com.charlesmuchene.prefeditor.processor
 /**
  * Processor result
  *
- * For our use cases, 0 and 1 are treated as success.
- * For example: Invoking executable without any args exits with code 1
- *
  * @param exitCode Exit code of running a system process
  * @param output [ByteArray] to support processing binary files
  */
 data class ProcessorResult(val exitCode: Int, val output: ByteArray) {
-    val isSuccess: Boolean = exitCode == 0 || exitCode == 1
-
     val outputString get() = String(bytes = output)
+
+    fun isSuccess(alternateSuccessCode: Int? = null) = exitCode == 0 || exitCode == alternateSuccessCode
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -38,7 +35,6 @@ data class ProcessorResult(val exitCode: Int, val output: ByteArray) {
 
         if (exitCode != other.exitCode) return false
         if (!output.contentEquals(other.output)) return false
-        if (isSuccess != other.isSuccess) return false
 
         return true
     }
@@ -46,7 +42,6 @@ data class ProcessorResult(val exitCode: Int, val output: ByteArray) {
     override fun hashCode(): Int {
         var result = exitCode
         result = 31 * result + output.contentHashCode()
-        result = 31 * result + isSuccess.hashCode()
         return result
     }
 

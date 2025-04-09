@@ -71,7 +71,7 @@ class Processor(private val context: CoroutineContext = Dispatchers.IO) {
                 val deferredData = async { BufferedInputStream(process.inputStream).use(InputStream::readAllBytes) }
                 if (runInterruptible { process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS) }) {
                     ProcessorResult(exitCode = process.exitValue(), output = deferredData.await()).also { result ->
-                        if (!result.isSuccess) logger.error { "Process exit: ${result.exitCode} -> ${result.output}" }
+                        if (!result.isSuccess()) logger.error { "Process exit: ${result.exitCode} -> ${result.output}" }
                     }
                 } else {
                     logger.error(ProcessorTimeoutException("Timed out waiting $TIMEOUT_SECONDS for $command")) {}
