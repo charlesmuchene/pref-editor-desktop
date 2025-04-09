@@ -44,6 +44,6 @@ data class DatastorePrefFileListCommand(
     private val executable: String,
 ) : PrefFileListCommand {
     override fun command(): List<String> =
-        "$executable -s ${device.serial} shell run-as ${app.packageName} [ -d files/datastore ] && ls files/datastore"
+        "$executable -s ${device.serial} shell run-as ${app.packageName} ls files/datastore"
             .split(ReadCommand.DELIMITER)
 }
