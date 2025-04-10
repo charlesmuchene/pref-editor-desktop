@@ -16,34 +16,34 @@
 # limitations under the License.
 #
 
-# Add edit
-# executable, serial, package, filename, in-place/backup, matcher, content
+# Add
+# executable, serial, package, filename, matcher, content
 function add() {
     "$1" -s "$2" exec-out \
     run-as "$3" \
-    sed -E"$5" \
-    -e "/$6/i$7" "$4"
+    sed -Ei \
+    -e "/$5/i$6" "$4"
 }
 
-# Delete edit
-# executable, serial, package, filename, in-place/backup, matcher
+# Delete
+# executable, serial, package, filename, matcher
 function delete() {
     "$1" -s "$2" exec-out \
     run-as "$3" \
-    sed -E"$5" \
-    -e "/$6/d" "$4"
+    sed -Ei \
+    -e "/$5/d" "$4"
 }
 
-# Change edit
-# executable, serial, package, filename, in-place/backup, matcher, content
+# Change
+# executable, serial, package, filename, matcher, content
 function change() {
     "$1" -s "$2" exec-out \
     run-as "$3" \
-    sed -E"$5" \
-    -e "s/$6/$7/" "$4"
+    sed -Ei \
+    -e "s/$5/$6/" "$4"
 }
 
-# Replace edit
+# Replace
 # executable, serial, package, filename, content
 function replace() {
     "$1" -s "$2" exec-out \
@@ -64,16 +64,16 @@ function backup() {
 #####
 case $5 in
   add)
-    # executable, serial, package, filename, in-place/backup, matcher, content
-    add "$1" "$2" "$3" "$4" "$6" "$7" "$8"
+    # executable, serial, package, filename, matcher, content
+    add "$1" "$2" "$3" "$4" "$6" "$7"
     ;;
   delete)
-    # executable, serial, package, filename, in-place/backup, matcher
-    delete "$1" "$2" "$3" "$4" "$6" "$7"
+    # executable, serial, package, filename, matcher
+    delete "$1" "$2" "$3" "$4" "$6"
     ;;
   change)
-    # executable, serial, package, filename, in-place/backup, matcher, content
-    change "$1" "$2" "$3" "$4" "$6" "$7" "$8"
+    # executable, serial, package, filename, matcher, content
+    change "$1" "$2" "$3" "$4" "$6" "$7"
     ;;
   replace)
     # executable, serial, package, filename, content

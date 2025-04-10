@@ -77,7 +77,6 @@ class DeviceWriteCommand(
             }
         baseCommands()
         add(op)
-        add("i")
         add(matcher)
     }
 
