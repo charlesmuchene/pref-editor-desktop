@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.charlesmuchene.prefeditor"
-version = "1.1.0"
+version = "1.2.0"
 
 val langVersion = 21
 
@@ -18,6 +18,9 @@ kotlin {
     jvmToolchain {
         vendor = JvmVendorSpec.JETBRAINS
         languageVersion = langVersion
+    }
+    compilerOptions {
+        optIn.add("kotlin.io.encoding.ExperimentalEncodingApi")
     }
 }
 

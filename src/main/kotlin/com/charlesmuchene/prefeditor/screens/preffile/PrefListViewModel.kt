@@ -18,7 +18,6 @@ package com.charlesmuchene.prefeditor.screens.preffile
 
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
-import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.PrefFiles
 import com.charlesmuchene.prefeditor.extensions.throttleLatest
 import com.charlesmuchene.prefeditor.models.ItemFilter
@@ -116,8 +115,7 @@ class PrefListViewModel(
         readOnly: Boolean = false,
     ) {
         launch {
-            val onlyRead = if (file.file.type == PrefFile.Type.DATA_STORE) true else readOnly
-            navigation.navigate(screen = EditScreen(file = file.file, app = app, device = device, readOnly = onlyRead))
+            navigation.navigate(screen = EditScreen(file = file.file, app = app, device = device, readOnly = readOnly))
         }
     }
 

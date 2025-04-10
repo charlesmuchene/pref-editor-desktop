@@ -23,7 +23,7 @@ function add() {
     run-as "$3" \
     sed -E"$5" \
     -e "/$6/i$7" \
-    "/data/data/$3/shared_prefs/$4"
+    "shared_prefs/$4"
 }
 
 # Delete edit
@@ -33,7 +33,7 @@ function delete() {
     run-as "$3" \
     sed -E"$5" \
     -e "/$6/d" \
-    "/data/data/$3/shared_prefs/$4"
+    "shared_prefs/$4"
 }
 
 # Change edit
@@ -43,7 +43,15 @@ function change() {
     run-as "$3" \
     sed -E"$5" \
     -e "s/$6/$7/" \
-    "/data/data/$3/shared_prefs/$4"
+    "shared_prefs/$4"
+}
+
+# Replace edit
+# executable, serial, package, filename, content
+function replace() {
+    "$1" -s "$2" exec-out \
+    "run-as $3 sh -c \
+    \"echo $5 | base64 -d | dd of=files/datastore/$4\" status=none"
 }
 
 #####
@@ -61,4 +69,9 @@ case $5 in
   change)
     # executable, serial, package, filename, in-place/backup, matcher, content
     change "$1" "$2" "$3" "$4" "$6" "$7" "$8"
+    ;;
+  replace)
+    # executable, serial, package, filename, content
+    replace "$1" "$2" "$3" "$4" "$6"
+    ;;
 esac

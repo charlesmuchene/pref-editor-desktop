@@ -34,4 +34,14 @@ sealed interface Edit {
      * Change [matcher] to [content]
      */
     data class Change(val matcher: String, val content: String) : Edit
+
+    /**
+     * Replace with [content]
+     *
+     * NB: Content is base64 encoded because byte 0 (null) doesn't play well with
+     * [java.lang.ProcessBuilder] command list.
+     *
+     * @see `device.sh` -> replace
+     */
+    data class Replace(val content: String) : Edit
 }

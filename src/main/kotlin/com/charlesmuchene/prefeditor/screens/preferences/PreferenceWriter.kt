@@ -20,14 +20,16 @@ import com.charlesmuchene.prefeditor.command.WriteCommand
 import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.processor.Processor
 import com.charlesmuchene.prefeditor.processor.ProcessorResult
+import kotlinx.coroutines.yield
 
 /**
  * Edit a given preference.
  *
- * There are 3 edit operations supported:
+ * The following operations are supported:
  *  - [Edit.Add]
  *  - [Edit.Change]
  *  - [Edit.Delete]
+ *  - [Edit.Replace]
  */
 class PreferenceWriter(private val processor: Processor, private val command: WriteCommand) {
     /**
@@ -36,12 +38,7 @@ class PreferenceWriter(private val processor: Processor, private val command: Wr
      * @param edit [Edit] to make
      * @return Result of making the edit
      */
-    suspend fun edit(edit: Edit): ProcessorResult =
-        when (edit) {
-            is Edit.Add -> add(edit = edit)
-            is Edit.Change -> change(edit = edit)
-            is Edit.Delete -> delete(edit = edit)
-        }
+    suspend fun edit(edit: Edit): ProcessorResult = processor.run(command.command(edit = edit))
 
     /**
      * Perform a collection of edits
@@ -51,21 +48,9 @@ class PreferenceWriter(private val processor: Processor, private val command: Wr
      */
     suspend fun edit(edits: List<Edit>): List<ProcessorResult> =
         buildList {
-            edits.forEach { add(edit(it)) }
+            edits.forEach {
+                yield()
+                add(edit(it))
+            }
         }
-
-    private suspend fun add(edit: Edit.Add): ProcessorResult {
-        val command = command.command(edit = edit)
-        return processor.run(command)
-    }
-
-    private suspend fun delete(edit: Edit.Delete): ProcessorResult {
-        val command = command.command(edit = edit)
-        return processor.run(command)
-    }
-
-    private suspend fun change(edit: Edit.Change): ProcessorResult {
-        val command = command.command(edit = edit)
-        return processor.run(command)
-    }
 }

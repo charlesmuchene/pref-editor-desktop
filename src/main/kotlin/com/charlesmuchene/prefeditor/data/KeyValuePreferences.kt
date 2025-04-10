@@ -17,9 +17,27 @@
 package com.charlesmuchene.prefeditor.data
 
 import com.charlesmuchene.datastore.preferences.Preference
+import com.charlesmuchene.datastore.preferences.exceptions.MalformedContentException
+import com.charlesmuchene.datastore.preferences.parsePreferences
+import io.github.oshai.kotlinlogging.KotlinLogging
 
-sealed interface Preferences
+sealed interface Preferences {
+    fun prefs() = when (this) {
+        is DatastorePreferences -> parse()
+        is KeyValuePreferences -> preferences
+    }
+}
 
 data class KeyValuePreferences(val preferences: List<Preference>) : Preferences
 
-class DatastorePreferences(val content: ByteArray) : Preferences
+class DatastorePreferences(val content: ByteArray) : Preferences {
+
+    private val logger = KotlinLogging.logger { }
+
+    fun parse(): List<Preference> = try {
+        parsePreferences(content)
+    } catch (e: MalformedContentException) {
+        logger.error(e) { e.message }
+        emptyList()
+    }
+}

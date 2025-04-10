@@ -72,7 +72,7 @@ class DevicePreferencesCodecTest {
                     UIPreference(preference = preference, state = state)
                 }
 
-            val output = codec.encode(edits, preferences)
+            val output = codec.encode(edits, prefs)
 
             output.filterIndexed { index, _ -> index % 2 == 0 }.all { it is Edit.Delete }
         }
@@ -82,7 +82,7 @@ class DevicePreferencesCodecTest {
         val edits = listOf(UIPreference(IntPreference("non-existent", "1"), PreferenceState.Changed))
 
         assertThrows<IllegalStateException> {
-            codec.encode(edits = edits, existing = prefs.preferences)
+            codec.encode(edits = edits, existing = prefs)
         }
     }
 
@@ -91,7 +91,7 @@ class DevicePreferencesCodecTest {
         val first = prefs.preferences.first()
         val pref = UIPreference(first, PreferenceState.Changed)
         assertThrows<IllegalArgumentException> {
-            codec.encode(listOf(element = pref), prefs.preferences)
+            codec.encode(listOf(element = pref), prefs)
         }
     }
 
