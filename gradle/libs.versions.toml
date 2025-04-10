@@ -21,7 +21,7 @@ turbine = { module = "app.cash.turbine:turbine-jvm", version.ref = "turbine" }
 rebugger = { module = "io.github.theapache64:rebugger", version.ref = "rebugger" }
 logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "logging" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-parser = { module = "com.charlesmuchene:datastore-preferences-parser", version = "0.0.1" }
+parser = { module = "com.charlesmuchene:datastore-preferences-parser", version = "0.1.0" }
 detekt-compose = { module = "io.nlopez.compose.rules:detekt", version.ref = "detekt-compose" }
 jewel-standalone = { module = "org.jetbrains.jewel:jewel-int-ui-standalone", version.ref = "jewel" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-test" }

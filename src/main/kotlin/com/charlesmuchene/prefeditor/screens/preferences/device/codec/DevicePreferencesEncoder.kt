@@ -16,8 +16,8 @@
 
 package com.charlesmuchene.prefeditor.screens.preferences.device.codec
 
-import com.charlesmuchene.datastore.preferences.Preference
 import com.charlesmuchene.prefeditor.data.Edit
+import com.charlesmuchene.prefeditor.data.Preferences
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 
 interface DevicePreferencesEncoder {
@@ -25,11 +25,11 @@ interface DevicePreferencesEncoder {
      * Encode edits
      *
      * @param edits A developer's edits
-     * @param existing Downstream preferences
+     * @param existing Existing [Preferences]
      * @return A [List] of [Edit]s
      */
     fun encode(
         edits: List<UIPreference>,
-        existing: List<Preference>,
+        existing: Preferences,
     ): List<Edit>
 }

@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import kotlin.io.encoding.Base64
 import kotlin.io.path.pathString
 
 class PreferenceWriterTest {
@@ -73,27 +74,33 @@ class PreferenceWriterTest {
             val addCmd = listOf("add")
             val deleteCmd = listOf("delete")
             val changeCmd = listOf("change")
+            val replaceCmd = listOf("replace")
             val add = Edit.Add(content = content)
             val delete = Edit.Delete(matcher = matcher)
             val change = Edit.Change(matcher = matcher, content = content)
+            val replace = Edit.Replace(content = Base64.encode(content.encodeToByteArray()))
 
             val command =
                 mockk<WriteCommand> {
                     every { command(add) } returns addCmd
                     every { command(delete) } returns deleteCmd
                     every { command(change) } returns changeCmd
+                    every { command(replace) } returns replaceCmd
                 }
+
             val processor =
                 mockk<Processor> {
-                    coEvery { run(addCmd) } returns successProcessorResult(addCmd.first())
-                    coEvery { run(deleteCmd) } returns successProcessorResult(deleteCmd.first())
-                    coEvery { run(changeCmd) } returns successProcessorResult(changeCmd.first())
+                    coEvery { run(addCmd, any()) } returns successProcessorResult(addCmd.first())
+                    coEvery { run(deleteCmd, any()) } returns successProcessorResult(deleteCmd.first())
+                    coEvery { run(changeCmd, any()) } returns successProcessorResult(changeCmd.first())
+                    coEvery { run(replaceCmd, any()) } returns successProcessorResult(replaceCmd.first())
                 }
             val writer = PreferenceWriter(processor, command)
 
-            writer.edit(listOf(add, delete, change))
-            coVerify { processor.run(addCmd) }
-            coVerify { processor.run(deleteCmd) }
-            coVerify { processor.run(changeCmd) }
+            writer.edit(listOf(add, delete, change, replace))
+            coVerify { processor.run(addCmd, any()) }
+            coVerify { processor.run(deleteCmd, any()) }
+            coVerify { processor.run(changeCmd, any()) }
+            coVerify { processor.run(replaceCmd, any()) }
         }
 }

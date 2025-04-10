@@ -19,6 +19,7 @@ package com.charlesmuchene.prefeditor.command
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.ADD
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.CHANGE
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.DELETE
+import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.REPLACE
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.SHELL
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
@@ -43,35 +44,46 @@ class DeviceWriteCommand(
     private val inPlaceEdit get() = if (backup) "i.backup-${timestamp()}" else "i"
 
     override fun MutableList<String>.delete(edit: Edit.Delete) {
-        baseCommands(edit)
+        commandsWithMatcher(edit)
     }
 
     override fun MutableList<String>.change(edit: Edit.Change) {
-        baseCommands(edit)
+        commandsWithMatcher(edit)
         add(edit.content.escaped())
     }
 
     override fun MutableList<String>.add(edit: Edit.Add) {
-        baseCommands(edit)
+        commandsWithMatcher(edit)
         add(edit.content.escaped())
     }
 
-    private fun MutableList<String>.baseCommands(edit: Edit) {
+    override fun MutableList<String>.replace(edit: Edit.Replace) {
+        baseCommands()
+        add(REPLACE)
+        add(edit.content.escaped())
+    }
+
+    private fun MutableList<String>.commandsWithMatcher(edit: Edit) {
         val (op, matcher) =
             when (edit) {
                 is Edit.Add -> ADD to edit.matcher.escaped()
                 is Edit.Change -> CHANGE to edit.matcher.escaped()
                 is Edit.Delete -> DELETE to edit.matcher.escaped()
+                is Edit.Replace -> error("Unsupported operation")
             }
+        baseCommands()
+        add(op)
+        add(inPlaceEdit)
+        add(matcher)
+    }
+
+    private fun MutableList<String>.baseCommands() {
         add(SHELL)
         add(SCRIPT)
         add(executable)
         add(device.serial)
         add(app.packageName)
         add(file.name)
-        add(op)
-        add(inPlaceEdit)
-        add(matcher)
     }
 
     companion object {

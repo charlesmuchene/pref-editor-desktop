@@ -56,9 +56,8 @@ class DevicePreferencesUseCase(
 
     suspend fun writePreferences(preferences: Collection<UIPreference>): Boolean {
         val edits = preferences.filter { it.state !is PreferenceState.None }
-        val existing = this.preferences.value as? KeyValuePreferences ?: return false
-        val content = codec.encode(edits = edits, existing = existing.preferences)
-        return writer.edit(content).all { it.isSuccess() }.also { readPreferences() }
+        val content = codec.encode(edits = edits, existing = this.preferences.value)
+        return writer.edit(content).all { it.isSuccess() }.also { if (it) readPreferences() }
     }
 
     suspend fun addPreference(preference: Preference): Boolean {

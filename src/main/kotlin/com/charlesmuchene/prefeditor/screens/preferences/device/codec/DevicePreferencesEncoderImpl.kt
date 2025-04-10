@@ -23,7 +23,11 @@ import com.charlesmuchene.datastore.preferences.LongPreference
 import com.charlesmuchene.datastore.preferences.Preference
 import com.charlesmuchene.datastore.preferences.StringPreference
 import com.charlesmuchene.datastore.preferences.StringSetPreference
+import com.charlesmuchene.datastore.preferences.encodePreferences
+import com.charlesmuchene.prefeditor.data.DatastorePreferences
 import com.charlesmuchene.prefeditor.data.Edit
+import com.charlesmuchene.prefeditor.data.KeyValuePreferences
+import com.charlesmuchene.prefeditor.data.Preferences
 import com.charlesmuchene.prefeditor.data.Tags
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceEncoder
 import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceEncoder.Encoder.attrib
@@ -31,20 +35,25 @@ import com.charlesmuchene.prefeditor.screens.preferences.codec.PreferenceEncoder
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.PreferenceState
 import com.charlesmuchene.prefeditor.screens.preferences.device.editor.UIPreference
 import org.xmlpull.v1.XmlSerializer
+import kotlin.io.encoding.Base64
 
 class DevicePreferencesEncoderImpl(private val encoder: PreferenceEncoder) : DevicePreferencesEncoder {
-    override fun encode(
-        edits: List<UIPreference>,
-        existing: List<Preference>,
-    ): List<Edit> =
+
+    override fun encode(edits: List<UIPreference>, existing: Preferences): List<Edit> =
+        when (val preferences = existing) {
+            is DatastorePreferences -> encodeDatastorePreferences(edits = edits, existing = preferences.prefs())
+            is KeyValuePreferences -> encodeKeyValuePreferences(edits = edits, existing = preferences.prefs())
+        }
+
+    private fun encodeKeyValuePreferences(edits: List<UIPreference>, existing: List<Preference>) =
         edits.map { preference ->
             when (preference.state) {
                 PreferenceState.Changed -> {
                     val change = preference.preference
                     val initial = (
-                        existing.find { it.key == preference.preference.key }
-                            ?: error("${preference.preference} is missing from existing preferences")
-                    )
+                            existing.find { it.key == preference.preference.key }
+                                ?: error("${preference.preference} is missing from existing preferences")
+                            )
                     require(value = change.value != initial.value) { "${change.key} didn't change value" }
                     encodeChange(change = change, existing = initial)
                 }
@@ -54,6 +63,22 @@ class DevicePreferencesEncoderImpl(private val encoder: PreferenceEncoder) : Dev
                 PreferenceState.None -> error("Unnecessary encode: no change to $preference")
             }
         }
+
+    private fun encodeDatastorePreferences(edits: List<UIPreference>, existing: List<Preference>): List<Edit> {
+        val preferences = buildList {
+            for (preference in existing) {
+                val edited = edits.find { it.preference.key == preference.key }
+                if (edited == null) add(preference)
+                else when (edited.state) {
+                    PreferenceState.Deleted -> Unit
+                    PreferenceState.Changed -> add(edited.preference)
+                    else -> error("Illegal encode for $preference")
+                }
+            }
+            addAll(edits.filter { it.state == PreferenceState.New }.map(UIPreference::preference))
+        }
+        return listOf(Edit.Replace(content = Base64.encode(encodePreferences(preferences))))
+    }
 
     /**
      * Encode a preference to be changed
@@ -73,7 +98,7 @@ class DevicePreferencesEncoderImpl(private val encoder: PreferenceEncoder) : Dev
     }
 
     /**
-     * Encode an preference to be deleted
+     * Encode a preference to be deleted
      *
      * @param preference [Preference] to delete
      * @return [Edit.Delete] instance
