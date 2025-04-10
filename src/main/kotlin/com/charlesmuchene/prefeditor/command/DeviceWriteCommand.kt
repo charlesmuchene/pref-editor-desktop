@@ -17,6 +17,7 @@
 package com.charlesmuchene.prefeditor.command
 
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.ADD
+import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.BACKUP
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.CHANGE
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.DELETE
 import com.charlesmuchene.prefeditor.command.WriteCommand.Companion.REPLACE
@@ -39,9 +40,6 @@ class DeviceWriteCommand(
     private val executable: String,
     private val timestamp: TimestampProvider,
 ) : WriteCommand {
-    var backup = false
-
-    private val inPlaceEdit get() = if (backup) "i.backup-${timestamp()}" else "i"
 
     override fun MutableList<String>.delete(edit: Edit.Delete) {
         commandsWithMatcher(edit)
@@ -63,17 +61,23 @@ class DeviceWriteCommand(
         add(edit.content.escaped())
     }
 
+    override fun MutableList<String>.backup(edit: Edit.Backup) {
+        baseCommands()
+        add(BACKUP)
+        add("${file.filepath}.backup-${timestamp()}${file.suffix}")
+    }
+
     private fun MutableList<String>.commandsWithMatcher(edit: Edit) {
         val (op, matcher) =
             when (edit) {
                 is Edit.Add -> ADD to edit.matcher.escaped()
                 is Edit.Change -> CHANGE to edit.matcher.escaped()
                 is Edit.Delete -> DELETE to edit.matcher.escaped()
-                is Edit.Replace -> error("Unsupported operation")
+                else -> error("Unsupported operation")
             }
         baseCommands()
         add(op)
-        add(inPlaceEdit)
+        add("i")
         add(matcher)
     }
 
@@ -83,7 +87,7 @@ class DeviceWriteCommand(
         add(executable)
         add(device.serial)
         add(app.packageName)
-        add(file.name)
+        add(file.filepath)
     }
 
     companion object {

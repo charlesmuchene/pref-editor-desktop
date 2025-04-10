@@ -18,6 +18,7 @@ package com.charlesmuchene.prefeditor.screens.preferences.device
 
 import androidx.compose.runtime.mutableStateOf
 import com.charlesmuchene.datastore.preferences.Preference
+import com.charlesmuchene.prefeditor.data.Edit
 import com.charlesmuchene.prefeditor.data.KeyValuePreferences
 import com.charlesmuchene.prefeditor.data.PrefFile
 import com.charlesmuchene.prefeditor.data.Preferences
@@ -56,6 +57,7 @@ class DevicePreferencesUseCase(
 
     suspend fun writePreferences(preferences: Collection<UIPreference>): Boolean {
         val edits = preferences.filter { it.state !is PreferenceState.None }
+        if (edits.isNotEmpty() && backup.value) backupFile()
         val content = codec.encode(edits = edits, existing = this.preferences.value)
         return writer.edit(content).all { it.isSuccess() }.also { if (it) readPreferences() }
     }
@@ -63,5 +65,9 @@ class DevicePreferencesUseCase(
     suspend fun addPreference(preference: Preference): Boolean {
         val list = listOf(UIPreference(preference, state = PreferenceState.New))
         return writePreferences(list)
+    }
+
+    private suspend fun backupFile() {
+        if (!writer.edit(Edit.Backup).isSuccess()) logger.error { "File backup failed" }
     }
 }

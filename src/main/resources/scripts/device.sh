@@ -22,8 +22,7 @@ function add() {
     "$1" -s "$2" exec-out \
     run-as "$3" \
     sed -E"$5" \
-    -e "/$6/i$7" \
-    "shared_prefs/$4"
+    -e "/$6/i$7" "$4"
 }
 
 # Delete edit
@@ -32,8 +31,7 @@ function delete() {
     "$1" -s "$2" exec-out \
     run-as "$3" \
     sed -E"$5" \
-    -e "/$6/d" \
-    "shared_prefs/$4"
+    -e "/$6/d" "$4"
 }
 
 # Change edit
@@ -42,8 +40,7 @@ function change() {
     "$1" -s "$2" exec-out \
     run-as "$3" \
     sed -E"$5" \
-    -e "s/$6/$7/" \
-    "shared_prefs/$4"
+    -e "s/$6/$7/" "$4"
 }
 
 # Replace edit
@@ -51,7 +48,15 @@ function change() {
 function replace() {
     "$1" -s "$2" exec-out \
     "run-as $3 sh -c \
-    \"echo $5 | base64 -d | dd of=files/datastore/$4\" status=none"
+    \"echo $5 | base64 -d | dd of=$4 status=none"
+}
+
+# Backup file
+# executable, serial, package, filename, backup
+function backup() {
+    "$1" -s "$2" exec-out \
+    run-as "$3" \
+    cp "$4" "$5"
 }
 
 #####
@@ -74,4 +79,7 @@ case $5 in
     # executable, serial, package, filename, content
     replace "$1" "$2" "$3" "$4" "$6"
     ;;
+  backup)
+    # executable, serial, package, filename, backup
+    backup "$1" "$2" "$3" "$4" "$6"
 esac

@@ -16,11 +16,29 @@
 
 package com.charlesmuchene.prefeditor.data
 
+import com.charlesmuchene.prefeditor.data.PrefFile.Type.DATA_STORE
+import com.charlesmuchene.prefeditor.data.PrefFile.Type.KEY_VALUE
+
 typealias PrefFiles = List<PrefFile>
 
 data class PrefFile(val name: String, val type: Type) {
+
+    val filepath: String get() = "${type.path}/${name}"
+
+    val suffix: String
+        get() = when (type) {
+            KEY_VALUE -> ".xml"
+            DATA_STORE -> ".pb"
+        }
+
     enum class Type(val text: String) {
         KEY_VALUE(text = "Key-Value"),
-        DATA_STORE(text = "Datastore"),
+        DATA_STORE(text = "Datastore");
+
+        val path: String
+            get() = when (this) {
+                KEY_VALUE -> "shared_prefs"
+                DATA_STORE -> "files/datastore"
+            }
     }
 }

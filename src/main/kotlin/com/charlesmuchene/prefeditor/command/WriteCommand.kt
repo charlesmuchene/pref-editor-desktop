@@ -26,6 +26,7 @@ interface WriteCommand {
                 is Edit.Change -> change(edit = edit)
                 is Edit.Delete -> delete(edit = edit)
                 is Edit.Replace -> replace(edit = edit)
+                is Edit.Backup -> backup(edit = edit)
             }
         }
 
@@ -36,7 +37,11 @@ interface WriteCommand {
     fun MutableList<String>.add(edit: Edit.Add)
 
     fun MutableList<String>.replace(edit: Edit.Replace) {
-        error("Unsupported command")
+        error("Unsupported command: Replace")
+    }
+
+    fun MutableList<String>.backup(edit: Edit.Backup) {
+        error("Unsupported command: Backup")
     }
 
     fun String.escaped(): String =
@@ -49,5 +54,6 @@ interface WriteCommand {
         const val CHANGE = "change"
         const val DELETE = "delete"
         const val REPLACE = "replace"
+        const val BACKUP = "backup"
     }
 }

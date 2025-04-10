@@ -15,7 +15,7 @@ class PreferencesReadCommandTest {
         assertTrue { keyValuePrefFile.name.endsWith(suffix = ".xml") }
         val expected =
             "$EXECUTABLE -s ${device.serial} exec-out run-as ${app.packageName} " +
-                "cat /data/data/${app.packageName}/shared_prefs/${keyValuePrefFile.name}"
+                "cat ${keyValuePrefFile.filepath}"
         val command = PreferencesReadCommand(
             app = app,
             device = device,
@@ -33,7 +33,7 @@ class PreferencesReadCommandTest {
         assertTrue { datastorePrefFile.name.endsWith(suffix = ".preferences_pb") }
         val expected =
             "$EXECUTABLE -s ${device.serial} exec-out run-as ${app.packageName} " +
-                "cat /data/data/${app.packageName}/files/datastore/${datastorePrefFile.name}"
+                "cat ${datastorePrefFile.filepath}"
         val command = PreferencesReadCommand(
             app = app,
             device = device,

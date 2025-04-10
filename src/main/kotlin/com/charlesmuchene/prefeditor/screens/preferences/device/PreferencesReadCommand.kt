@@ -27,12 +27,8 @@ class PreferencesReadCommand(
     private val device: Device,
     private val executable: String,
 ) : ReadCommand {
-    private val preferenceFilePath =
-        if (prefFile.type == PrefFile.Type.DATA_STORE) "files/datastore" else "shared_prefs"
 
-    override fun command(): List<String> = (
-            "$executable -s ${device.serial} exec-out run-as ${app.packageName} " +
-                    "cat /data/data/${app.packageName}/${preferenceFilePath}/${prefFile.name}"
-            )
-        .split(ReadCommand.DELIMITER)
+    override fun command(): List<String> =
+        "$executable -s ${device.serial} exec-out run-as ${app.packageName} cat ${prefFile.filepath}"
+            .split(ReadCommand.DELIMITER)
 }

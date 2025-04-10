@@ -19,6 +19,7 @@ package com.charlesmuchene.prefeditor.screens.preffile
 import com.charlesmuchene.prefeditor.command.ReadCommand
 import com.charlesmuchene.prefeditor.data.App
 import com.charlesmuchene.prefeditor.data.Device
+import com.charlesmuchene.prefeditor.data.PrefFile
 
 sealed interface PrefFileListCommand : ReadCommand {
     companion object {
@@ -35,7 +36,8 @@ data class KeyValuePrefFileListCommand(
     private val executable: String,
 ) : PrefFileListCommand {
     override fun command(): List<String> =
-        "$executable -s ${device.serial} shell run-as ${app.packageName} ls shared_prefs".split(ReadCommand.DELIMITER)
+        "$executable -s ${device.serial} shell run-as ${app.packageName} ls ${PrefFile.Type.KEY_VALUE.path}"
+            .split(ReadCommand.DELIMITER)
 }
 
 data class DatastorePrefFileListCommand(
@@ -44,6 +46,6 @@ data class DatastorePrefFileListCommand(
     private val executable: String,
 ) : PrefFileListCommand {
     override fun command(): List<String> =
-        "$executable -s ${device.serial} shell run-as ${app.packageName} ls files/datastore"
+        "$executable -s ${device.serial} shell run-as ${app.packageName} ls ${PrefFile.Type.DATA_STORE.path}"
             .split(ReadCommand.DELIMITER)
 }

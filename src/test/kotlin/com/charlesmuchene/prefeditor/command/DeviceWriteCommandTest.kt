@@ -40,7 +40,7 @@ class DeviceWriteCommandTest {
                 "exec",
                 "1B241CAA5079LR",
                 "com.charlesmuchene.pref-editor",
-                "preferences.xml",
+                "shared_prefs/preferences.xml",
                 "delete",
                 "i",
                 "matcher",
@@ -67,7 +67,7 @@ class DeviceWriteCommandTest {
                 "exec",
                 "1B241CAA5079LR",
                 "com.charlesmuchene.pref-editor",
-                "preferences.xml",
+                "shared_prefs/preferences.xml",
                 "change",
                 "i",
                 "matcher",
@@ -95,7 +95,7 @@ class DeviceWriteCommandTest {
                 "exec",
                 "1B241CAA5079LR",
                 "com.charlesmuchene.pref-editor",
-                "preferences.xml",
+                "shared_prefs/preferences.xml",
                 "add",
                 "i",
                 "<\\/map>",
@@ -106,16 +106,8 @@ class DeviceWriteCommandTest {
     }
 
     @Test
-    fun `command backs up file before editing`() {
-        command.backup = true
-        val edit = Edit.Add(content = "content")
-
-        val list =
-            buildList {
-                with(command) {
-                    add(edit = edit)
-                }
-            }
+    fun `backup command is correctly formed`() {
+        val commandList = command.command(Edit.Backup)
 
         assertEquals(
             listOf(
@@ -124,13 +116,11 @@ class DeviceWriteCommandTest {
                 "exec",
                 "1B241CAA5079LR",
                 "com.charlesmuchene.pref-editor",
-                "preferences.xml",
-                "add",
-                "i.backup-now",
-                "<\\/map>",
-                "content",
+                "shared_prefs/preferences.xml",
+                "backup",
+                "shared_prefs/preferences.xml.backup-now.xml",
             ),
-            list,
+            commandList,
         )
     }
 }

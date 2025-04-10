@@ -44,4 +44,9 @@ sealed interface Edit {
      * @see `device.sh` -> replace
      */
     data class Replace(val content: String) : Edit
+
+    /**
+     * Backup file
+     */
+    data object Backup : Edit
 }
